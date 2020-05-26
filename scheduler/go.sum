@@ -27,8 +27,8 @@ github.com/golang/protobuf v1.3.4/go.mod h1:vzj43D7+SQXF/4pzW/hwtAqwc6iTitCiVSaW
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/horahoradev/horahora v0.0.0-20200526021234-4848dc1ba342 h1:6DZIwNkWb/zp478lyU40f1fgw9MHDhMt/z+rIvSZiJA=
-github.com/horahoradev/horahora v0.0.0-20200526021234-4848dc1ba342/go.mod h1:fX9CJ8gr+I3y/60r87rgkBnjwZnSBGnzwQ0BoQM69a4=
+github.com/horahoradev/horahora v0.0.0-20200526021707-5f7ff4db77c6 h1:P0y12hiYfk2bf+zvuVhZ0LPekm58Gv+pWtj9OhhYuWU=
+github.com/horahoradev/horahora v0.0.0-20200526021707-5f7ff4db77c6/go.mod h1:fX9CJ8gr+I3y/60r87rgkBnjwZnSBGnzwQ0BoQM69a4=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
 github.com/jmespath/go-jmespath v0.3.0/go.mod h1:9QtRXoHjLGCJ5IBSaohpXITPlowMeeYCZ7fLUTSywik=
 github.com/jmoiron/sqlx v1.2.0 h1:41Ip0zITnmWNR/vHV+S4m+VoUivnWY5E4OJfLZjCJMA=
