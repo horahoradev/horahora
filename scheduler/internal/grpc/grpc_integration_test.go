@@ -10,7 +10,7 @@ import (
 	"log"
 	"testing"
 
-	"github.com/horahoradev/horahora/scheduler/config"
+	"github.com/horahoradev/horahora/scheduler/internal/config"
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/stretchr/testify/assert"
 )

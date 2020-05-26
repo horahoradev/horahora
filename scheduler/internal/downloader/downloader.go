@@ -14,7 +14,7 @@ import (
 
 	proto "github.com/horahoradev/horahora/video_service/protocol"
 
-	"github.com/horahoradev/horahora/scheduler/schedule"
+	"github.com/horahoradev/horahora/scheduler/internal/schedule"
 	log "github.com/sirupsen/logrus"
 )
 

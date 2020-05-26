@@ -12,10 +12,10 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/horahoradev/horahora/scheduler/config"
-	"github.com/horahoradev/horahora/scheduler/downloader"
-	grpcserver "github.com/horahoradev/horahora/scheduler/grpc"
-	"github.com/horahoradev/horahora/scheduler/schedule"
+	"github.com/horahoradev/horahora/scheduler/internal/config"
+	"github.com/horahoradev/horahora/scheduler/internal/downloader"
+	grpcserver "github.com/horahoradev/horahora/scheduler/internal/grpc"
+	"github.com/horahoradev/horahora/scheduler/internal/schedule"
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 )
