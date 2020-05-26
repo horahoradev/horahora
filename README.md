@@ -15,7 +15,7 @@ Currently, there are three microservices:
 
 All microservices are horizontally scalable, containerized, and communicate via gRPC.
 
-The MVP will also consist of a frontend service to handle HTML templating, and a Censorship service (name is a WIP) to manage the workflow for video approvals, and censorship of obscene content from foreign websites.  
+The MVP will also consist of a frontend service to handle HTML templating, and a Censorship Service (name is a WIP) to manage the workflow for video approvals, and censorship of obscene content from foreign websites.  
 
 ## How to Use
 Currently, only local use is supported.
