@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"log"
 
-	"git.horahora.org/otoman/user-service.git/internal/auth"
+	"github.com/horahoradev/horahora/user_service/internal/auth"
 
 	"github.com/jmoiron/sqlx"
 
-	"git.horahora.org/otoman/user-service.git/internal/grpcserver"
+	"github.com/horahoradev/horahora/user_service/internal/grpcserver"
 
-	"git.horahora.org/otoman/user-service.git/internal/config"
+	"github.com/horahoradev/horahora/user_service/internal/config"
 	_ "github.com/lib/pq"
 )
 

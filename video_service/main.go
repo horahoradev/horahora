@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"git.horahora.org/otoman/video-service.git/internal/config"
-	"git.horahora.org/otoman/video-service.git/internal/grpcserver"
+	"github.com/horahoradev/horahora/video_service/internal/config"
+	"github.com/horahoradev/horahora/video_service/internal/grpcserver"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"

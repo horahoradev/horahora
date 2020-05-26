@@ -1,4 +1,4 @@
-module git.horahora.org/otoman/scheduler.git
+module github.com/horahoradev/horahora/scheduler
 
 go 1.13
 

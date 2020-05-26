@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 
-	proto "git.horahora.org/otoman/scheduler.git/protocol"
+	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/grpc"
 )

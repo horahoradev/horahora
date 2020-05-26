@@ -7,11 +7,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"git.horahora.org/otoman/user-service.git/errors"
+	"github.com/horahoradev/horahora/user_service/errors"
 
 	dbsql "database/sql"
 
-	proto "git.horahora.org/otoman/user-service.git/protocol"
+	proto "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )

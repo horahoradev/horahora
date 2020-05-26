@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	userproto "git.horahora.org/otoman/user-service.git/protocol"
+	userproto "github.com/horahoradev/horahora/video_service/protocol"
 
 	"github.com/DATA-DOG/go-sqlmock"
 
@@ -13,9 +13,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 
-	usermocks "git.horahora.org/otoman/user-service.git/protocol/mocks"
-	proto "git.horahora.org/otoman/video-service.git/protocol"
-	mocks "git.horahora.org/otoman/video-service.git/protocol/mocks"
+	usermocks "github.com/horahoradev/horahora/user_service/protocol/mocks"
+	proto "github.com/horahoradev/horahora/video_service/protocol"
+	mocks "github.com/horahoradev/horahora/video_service/protocol/mocks"
 	"github.com/stretchr/testify/assert"
 
 	_ "github.com/stretchr/testify/assert"

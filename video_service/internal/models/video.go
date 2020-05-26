@@ -6,13 +6,13 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"git.horahora.org/otoman/user-service.git/errors"
+	"github.com/horahoradev/horahora/user_service/errors"
 
 	"google.golang.org/grpc/status"
 
-	proto "git.horahora.org/otoman/user-service.git/protocol"
+	proto "github.com/horahoradev/horahora/user_service/protocol"
 
-	_ "git.horahora.org/otoman/user-service.git/protocol"
+	_ "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/jmoiron/sqlx"
 )
 

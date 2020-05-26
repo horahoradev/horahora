@@ -7,8 +7,8 @@ import (
 	"encoding/pem"
 	"errors"
 
-	"git.horahora.org/otoman/user-service.git/internal/model"
-	userproto "git.horahora.org/otoman/user-service.git/protocol"
+	"github.com/horahoradev/horahora/user_service/internal/model"
+	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	"golang.org/x/crypto/bcrypt"
 	jose "gopkg.in/square/go-jose.v2"
 )

@@ -1,4 +1,4 @@
-module git.horahora.org/otoman/video-service.git
+module github.com/horahoradev/horahora/video_service
 
 go 1.13
 

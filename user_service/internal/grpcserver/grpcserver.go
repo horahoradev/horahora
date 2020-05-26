@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"net"
 
-	"git.horahora.org/otoman/user-service.git/internal/auth"
-	"git.horahora.org/otoman/user-service.git/internal/model"
+	"github.com/horahoradev/horahora/user_service/internal/auth"
+	"github.com/horahoradev/horahora/user_service/internal/model"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jmoiron/sqlx"
 
-	proto "git.horahora.org/otoman/user-service.git/protocol"
+	proto "github.com/horahoradev/horahora/user_service/protocol"
 	"google.golang.org/grpc"
 )
 

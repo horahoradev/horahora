@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	proto "git.horahora.org/otoman/video-service.git/protocol"
+	proto "github.com/horahoradev/horahora/video_service/protocol"
 
-	"git.horahora.org/otoman/scheduler.git/schedule"
+	"github.com/horahoradev/horahora/scheduler/schedule"
 	log "github.com/sirupsen/logrus"
 )
 

@@ -8,14 +8,14 @@ import (
 	_ "sync"
 	"syscall"
 
-	proto "git.horahora.org/otoman/video-service.git/protocol"
+	proto "github.com/horahoradev/horahora/video_service/protocol"
 
 	"google.golang.org/grpc"
 
-	"git.horahora.org/otoman/scheduler.git/config"
-	"git.horahora.org/otoman/scheduler.git/downloader"
-	grpcserver "git.horahora.org/otoman/scheduler.git/grpc"
-	"git.horahora.org/otoman/scheduler.git/schedule"
+	"github.com/horahoradev/horahora/scheduler/config"
+	"github.com/horahoradev/horahora/downloader"
+	grpcserver "github.com/horahoradev/horahora/scheduler/grpc"
+	"github.com/horahoradev/horahora/schedule"
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 )

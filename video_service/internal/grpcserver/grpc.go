@@ -13,16 +13,16 @@ import (
 
 	"github.com/google/uuid"
 
-	"git.horahora.org/otoman/video-service.git/internal/dashutils"
+	"github.com/horahoradev/horahora/video_service/internal/dashutils"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 
-	"git.horahora.org/otoman/video-service.git/internal/models"
+	"github.com/horahoradev/horahora/video_service/internal/models"
 
-	userproto "git.horahora.org/otoman/user-service.git/protocol"
-	proto "git.horahora.org/otoman/video-service.git/protocol"
+	userproto "github.com/horahoradev/horahora/user_service/protocol"
+	proto "github.com/horahoradev/horahora/video_service/protocol"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
