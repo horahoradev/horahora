@@ -9,7 +9,8 @@ require (
 	github.com/golang/mock v1.4.3
 	github.com/golang/protobuf v1.3.4
 	github.com/google/uuid v1.1.1
-	github.com/horahoradev/horahora/user_service v0.0.0-20200526021707-5f7ff4db77c6
+	github.com/horahoradev/horahora v0.0.0-20200526031340-64e1705d00d7 // indirect
+	github.com/horahoradev/horahora/user_service v0.0.0-20200526031340-64e1705d00d7
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.4.0
 	github.com/sirupsen/logrus v1.4.2
