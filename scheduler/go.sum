@@ -1,8 +1,4 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-git.horahora.org/otoman/user-service.git v0.0.0-20200509202405-ded0a57d0834/go.mod h1:IemyNMnFh6x/PqHEamwHCZ/pQ+zgDm4s7vpXiy6Sn9s=
-git.horahora.org/otoman/video-service.git v0.0.0-20200502193205-81ff18452b17/go.mod h1:e4A5iUh59aZmETPXjd9TsjidYdR6MXAILrhxbVI78SU=
-git.horahora.org/otoman/video-service.git v0.0.0-20200509210553-b4e335f123e5 h1:o4sOchAZuR9bLGrw3yfsiVvobbkMiR4o743wF1YyXYQ=
-git.horahora.org/otoman/video-service.git v0.0.0-20200509210553-b4e335f123e5/go.mod h1:YtDj3qa7c8JdFbe9GgmF/1M0hbSjTZuQ6MOgyXzuIUA=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/DATA-DOG/go-sqlmock v1.4.1/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/aws/aws-sdk-go v1.30.4/go.mod h1:5zCpMtNQVjRREroY7sYe8lOMRSxkhG6MZveU8YkpAk0=
@@ -31,6 +27,8 @@ github.com/golang/protobuf v1.3.4/go.mod h1:vzj43D7+SQXF/4pzW/hwtAqwc6iTitCiVSaW
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/horahoradev/horahora v0.0.0-20200526021234-4848dc1ba342 h1:6DZIwNkWb/zp478lyU40f1fgw9MHDhMt/z+rIvSZiJA=
+github.com/horahoradev/horahora v0.0.0-20200526021234-4848dc1ba342/go.mod h1:fX9CJ8gr+I3y/60r87rgkBnjwZnSBGnzwQ0BoQM69a4=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
 github.com/jmespath/go-jmespath v0.3.0/go.mod h1:9QtRXoHjLGCJ5IBSaohpXITPlowMeeYCZ7fLUTSywik=
 github.com/jmoiron/sqlx v1.2.0 h1:41Ip0zITnmWNR/vHV+S4m+VoUivnWY5E4OJfLZjCJMA=
