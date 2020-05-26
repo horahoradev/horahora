@@ -13,9 +13,9 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/horahoradev/horahora/scheduler/config"
-	"github.com/horahoradev/horahora/downloader"
+	"github.com/horahoradev/horahora/scheduler/downloader"
 	grpcserver "github.com/horahoradev/horahora/scheduler/grpc"
-	"github.com/horahoradev/horahora/schedule"
+	"github.com/horahoradev/horahora/scheduler/schedule"
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 )
