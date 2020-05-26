@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/golang/protobuf v1.3.4
-	github.com/horahoradev/horahora/video_service v0.0.0-20200526031340-64e1705d00d7
+	github.com/horahoradev/horahora/video_service v0.0.0-20200526071714-b58f4515b481
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.4.0
 	github.com/sirupsen/logrus v1.4.2
