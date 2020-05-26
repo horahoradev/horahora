@@ -1,0 +1,4 @@
+test_files/*.webm
+test_files/*.mp4
+test_files/*.mpd
+vendor/*

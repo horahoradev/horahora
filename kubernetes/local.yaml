@@ -1,0 +1,228 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scheduler
+  labels:
+    app: scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scheduler
+  template:
+    metadata:
+      labels:
+        app: scheduler
+    spec:
+      containers:
+      - name: scheduler
+        image: scheduler:latest
+        imagePullPolicy: Never
+        env:
+          - name: pgs_host
+            value: "scheduledb"
+          - name: pgs_port
+            value: "5432"
+          - name: pgs_user
+            value: "guest"
+          - name: pgs_pass
+            value: "guest"
+          - name: pgs_db
+            value: "scheduler"
+          - name: GRPCPort
+            value: "7777"
+          - name: VideoServiceGRPCAddress
+            value: "videoservice:7777"
+          - name: NumberOfRetries
+            value: "5"
+      imagePullSecrets:
+      - name: us-west-1-ecr-registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: videoservice
+  labels:
+    app: videoservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: videoservice
+  template:
+    metadata:
+      labels:
+        app: videoservice
+    spec:
+      containers:
+        - name: videoservice
+          image: videoservice:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 7777
+          env:
+            - name: pgs_host
+              value: "scheduledb"
+            - name: pgs_port
+              value: "5432"
+            - name: pgs_user
+              value: "guest"
+            - name: pgs_pass
+              value: "guest"
+            - name: pgs_db
+              value: "videoservice"
+            - name: GRPCPort
+              value: "7777"
+            - name: UserServiceGRPCAddress
+              value: "userservice:7777"
+            - name: BucketName
+              value: "horahora-dev-otomads"
+            - name: Local
+              value: "true"
+      imagePullSecrets:
+        - name: us-west-1-ecr-registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scheduledb
+  labels:
+    app: scheduledb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scheduledb
+  template:
+    metadata:
+      labels:
+        app: scheduledb
+    spec:
+      containers:
+      - name: scheduledb
+        image: postgres:12
+        env:
+        - name: POSTGRES_USER
+          value: "guest"
+        - name: POSTGRES_PASSWORD
+          value: "guest"
+      imagePullSecrets:
+        - name: us-west-1-ecr-registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice
+  labels:
+    app: userservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    metadata:
+      labels:
+        app: userservice
+    spec:
+      containers:
+      - name: userservice
+        image: userservice:latest
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 7777
+        env:
+        - name: pgs_host
+          value: "scheduledb"
+        - name: pgs_port
+          value: "5432"
+        - name: pgs_user
+          value: "guest"
+        - name: pgs_pass
+          value: "guest"
+        - name: pgs_db
+          value: "userservice"
+        - name: RSA_KEYPAIR
+          value: |+
+                  -----BEGIN RSA PRIVATE KEY-----
+                  MIIEpgIBAAKCAQEA+MHfP6bK1Tm5Qsy49WSD9TIsdKvstfnshIIlc6Or7jr4Lz/c
+                  ZqivsGtsuenlyyMg0uEFKGC2VXojdyysPwsPN1V+OZNKrUexuUKCJ25xCob8xncJ
+                  3ml2zLRyEKTAWTyV9KlaviapphoKdO+kUzVM+mM+BqXv2C/gS4nGhH4xN/8GRlGM
+                  3x/w9d/kMbk0yVo8WvNCObAj1PBzTTc6pvXHijS8HwR4Kf6cUgEjLbAjDZqTAFQH
+                  kL3wTTUspRbyCqNBY3pahqsMJsur3TnHBzdYrKhXOIdW5HF2H0Vi0URX03mD1uo3
+                  775yQMy/R90pX2pYDXO50HVmlaBSRaRwVq4PWwIDAQABAoIBAQDOnDAx7PXxLfWK
+                  3wEMiIT1hcvYx+deqgthb7ttlda6ku4KSI9mENuDu2Xd8MB0/WNI467l/5XR3xVP
+                  6aHS5vunaPHjHkxbKf4aMnxqBdgL91xB9yMSQSR0F7fZzQ0Z0TF3uaXt46zqkhx3
+                  TYd9uPqLyRv+Z5qTRAiWlQN2jl2Q9DRn3HdTaGPF5rsn2CjFPmoQGX7A+objSBSq
+                  3JrU4cv6huqCZODqyCgVjdHfaRUFLGCPs5phoO29LY2DElo6BhWaJl2tvIXy2eqN
+                  yqNwYjHHfMmzBv+OWyOY9IuussRajx4JvlIdh0M8Fm5Tniqeip/LpG0GOvK8l+qd
+                  n3q3GLrJAoGBAP8SkhpL5A0HIkFwsL56eye9Ofquj71AoWeIxs3A/GYssjGoDQnU
+                  rG3GUBFNuTSo5ulPSe43vJ3naTZZBffQXI8bW+2+dIAoExApu/jqH+ETfERhRQMS
+                  4N8u88jxYTdi3WCOjhGpRjnXm9Wtwgq91wsvAAh+fv6b03FH1EZKgEDHAoGBAPmp
+                  bEYK8QWg4AKK6e/EQhZW9su4Sdb38U4wQTyTvlDN7Bc+ZYvXeOlyBxdHDiEWC+XL
+                  wHtrOlqQ+U9nCfC4lrJbGbVmrQ4mSwVhLGPQz2zntvxw8jQwZx+K4OFs4JFqHhWc
+                  khpz21VGxWsJ3Jix6GoDKtz03IomcDpr9lxUZFDNAoGBAKJnMYz6qu28kAv4cyAk
+                  Hcu0iHjasfw+bUXdaS7R5CIt7Rr+s6aBuXN/Y7VQtk4YCEWeTSUWacpj77JBxjH9
+                  gSFAuyxJKiX63gBZgiw+7SNCY8mp4OXPHEwduexD+7DnCqqSuVP3YhYr+DV5l2V9
+                  b7DYMP43hCYaEus6X6aNgtE7AoGBAIg6GgpeDgW0MocwpVVfEXB/I0sl06SoxdKU
+                  IgSb2UzeD+Te9ynG+QLoZVYeP2duUC+jbfPqHn0sfd0FrDbdgdzwOKbyz5rY6jaV
+                  P1N3rLcP+JjmSEKR5rMfZHWcoyy1apUASfiFHzj41OADEYuACAFQmSLXuT7omnRG
+                  VLcslVBBAoGBAMJgmuUGIXvS4cBDsgjrKH7mCssjBandLN2NPkNN6uhSnANxm7n8
+                  g36Dcu4E9TEcC7qNSJ8eVeutOENerGTVJ8fUAbXhIdvjcLz0iSMkpROCNz+Zr35G
+                  rd258VnoYyNVswrjem4jHKTm4frORBF3sx6R1i/KiFSptp941g2hYjGe
+                  -----END RSA PRIVATE KEY-----
+        - name: GRPCPort
+          value: "7777"
+      imagePullSecrets:
+        - name: us-west-1-ecr-registry
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsutils
+  namespace: default
+spec:
+  containers:
+  - name: dnsutils
+    image: gcr.io/kubernetes-e2e-test-images/dnsutils:1.3
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scheduledb
+spec:
+  selector:
+    app: scheduledb
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservice
+spec:
+  selector:
+    app: userservice
+  ports:
+    - protocol: TCP
+      port: 7777
+      targetPort: 7777
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: videoservice
+spec:
+  selector:
+    app: videoservice
+  ports:
+    - protocol: TCP
+      port: 7777
+      targetPort: 7777

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package proto;
+
+service Scheduler {
+    rpc dlChannel(ChannelRequest) returns (Empty) {}
+
+    rpc dlPlaylist(PlaylistRequest) returns (Empty) {}
+
+    rpc dlTag(TagRequest) returns (Empty) {}
+}
+
+message Empty {}
+
+enum site {
+  niconico = 0;
+  bilibili = 1;
+  youtube = 2;
+}
+
+message ChannelRequest {
+    site website = 1;
+    string userID = 2; // User who made the request
+    uint64 NumToDownload = 3;
+    string channelID = 4;
+}
+
+message PlaylistRequest {
+    site website = 1;
+    string userID = 2; // User who made the request
+    uint64 NumToDownload = 3;
+    string playlistID = 4;
+}
+
+message TagRequest {
+    site website = 1;
+    string userID = 2; // User who made the request
+    uint64 NumToDownload = 3;
+    string tagValue = 4;
+}

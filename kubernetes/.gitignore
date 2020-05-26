@@ -1,0 +1,5 @@
+build.sh
+registry-creds/*
+registry-creds
+certs*
+.idea/*

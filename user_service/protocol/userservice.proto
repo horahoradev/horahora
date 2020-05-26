@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package proto;
+
+service UserService {
+    rpc Register(RegisterRequest) returns (RegisterResponse){}
+    rpc Login(LoginRequest) returns (LoginResponse){}
+    rpc GetUserFromID(GetUserFromIDRequest) returns (UserResponse){}
+    rpc ValidateJWT(validateJWTRequest) returns (validateJWTResponse){}
+    rpc GetUserForForeignUID(GetForeignUserRequest) returns (GetForeignUserResponse){}
+}
+
+message GetForeignUserRequest {
+    site originalWebsite = 1;
+    string foreignUserID = 2;
+}
+
+message GetForeignUserResponse {
+    int64 newUID = 1;
+}
+
+message validateJWTRequest {
+    string jwt = 1;
+}
+
+message validateJWTResponse {
+    bool isValid = 1;
+    int64 uid = 2;
+}
+
+message RegisterRequest {
+    string email = 1;
+    string username = 2;
+    string password = 3;
+    bool foreignUser = 4; // If true, indicates that the user was created due to archival from another website, in which case
+    // the password field will not be used
+    string foreignUserID = 5;
+    site foreignWebsite = 6;
+}
+
+enum site {
+  niconico = 0;
+    bilibili = 1;
+    youtube = 2;
+}
+
+
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string jwt = 1;
+}
+
+message RegisterResponse {
+    string jwt = 1;
+}
+
+message GetUserFromIDRequest {
+    int64 userID = 1;
+}
+
+message UserResponse {
+    string username = 1;
+    string email = 2;
+}

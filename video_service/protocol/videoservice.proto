@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package proto;
+
+service VideoService {
+    rpc uploadVideo(stream InputVideoChunk) returns (uploadResponse) {}
+
+    rpc downloadVideo(VideoRequest) returns (stream ResponseVideoChunk) {}
+}
+
+message VideoRequest {
+    string videoID = 1;
+}
+
+message InputVideoChunk {
+    oneof Payload {
+        FileContent content = 1;
+        InputFileMetadata meta = 2;
+    }
+}
+
+message ResponseVideoChunk {
+    oneof Payload {
+        FileContent content = 1;
+        ResponseFileMetadata meta = 2;
+    }
+}
+
+message FileContent {
+    bytes Data = 1;
+}
+
+// Could make the reupload fields optional
+message InputFileMetadata {
+    string title = 1;
+    string description = 2;
+    string authorUID = 3;// 0 if reupload
+    string originalVideoLink = 4; // If reupload
+    string authorUsername = 5; // If reupload
+    website originalSite = 6; // If reupload
+}
+
+// For now, these two are the same, but may deviate in future
+message ResponseFileMetadata {
+    string title = 1;
+    string description = 2;
+    int64 authorUID = 3;// 0 if reupload
+    string originalVideoLink = 4; // If reupload
+}
+
+enum website {
+    niconico = 0;
+    bilibili = 1;
+    youtube = 2;
+}
+
+
+message uploadResponse {
+    int64 videoID = 1;
+}
