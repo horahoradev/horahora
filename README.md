@@ -6,7 +6,16 @@ This project is a WIP, and under active development.
 Join our discord here: https://discord.gg/psuj8QQ
 
 ## Architecture
+![](Architectural_Drawing.png)
 
+Currently, there are three microservices:
+1. User Service, which handles registration, logins, and JWT validation
+2. Video Service, which handles video uploads (both from Scheduler and from users), transcoding/chunking as required for DASH, uploads to the origin, and storage of metadata.
+3. Scheduler, which handles content archival requests from users. For example, if a user specifies that they'd like all videos on Niconico with the tag "YTPMV" to be downloaded, Scheduler will download those videos, register them (and their associated creator) with video service and user service, and check that category of content regularly for new videos.
+
+All microservices should be horizontally scalable. 
+
+The MVP will also consist of a frontend service to handle HTML templating, and a Censorship service (name is a WIP) to manage the workflow for video approvals, and censorship of obscene content from foreign websites.  
 
 ## How to Use
 Currently, only local use is supported.
@@ -32,6 +41,8 @@ The following is a non-exhaustive list of features which should be added for the
   - log aggregation
 8. Videoservice support for regular video uploads
 9. Scheduler should send video tags to videoservice
+10. Microservice to manage video approval workflow and flagging/censorship of obscene content
+11. Tracking views/upvotes/downvotes for videos
   
 ## Missing Non-essential Features
 1. L7 load balancing between services with Envoy
