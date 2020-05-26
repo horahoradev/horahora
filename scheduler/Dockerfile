@@ -4,6 +4,9 @@ COPY . /scheduler
 
 WORKDIR /scheduler
 
+RUN apt install -y git
+RUN go get github.com/go-delve/delve/cmd/dlv
+
 # Fetch youtube-dl
 RUN git clone https://github.com/animelover1984/youtube-dl.git  && \
     cd youtube-dl && \
@@ -12,6 +15,6 @@ RUN git clone https://github.com/animelover1984/youtube-dl.git  && \
     apt-get install -y python3 python3-pip && \
     pip3 install -r /scheduler/youtube-dl/requirements.txt
 
-RUN go build --mod=vendor -o scheduler .
+RUN go build --mod=vendor -gcflags "all=-N -l" -o scheduler .
 
 ENTRYPOINT ["./scheduler"]

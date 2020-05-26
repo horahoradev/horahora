@@ -16,6 +16,8 @@ spec:
     spec:
       containers:
       - name: scheduler
+#        command: ["/go/bin/dlv"]
+#        args: ["--listen=:39001",  "--headless=true", "--api-version=2", "exec", "./scheduler"]
         image: scheduler:latest
         imagePullPolicy: Never
         env:
@@ -57,6 +59,8 @@ spec:
       containers:
         - name: videoservice
           image: videoservice:latest
+#          command: ["/go/bin/dlv"]
+#          args: ["--listen=:39002", "--headless=true", "--api-version=2", "exec", "./videoservice"]
           imagePullPolicy: Never
           ports:
             - containerPort: 7777
@@ -128,6 +132,9 @@ spec:
       containers:
       - name: userservice
         image: userservice:latest
+#        command: ["/go/bin/dlv"]
+#        args: ["--listen=:39003",  "--headless=true", "--api-version=2", "exec", "./userservice"]
+        # "--continue", "--accept-multiclient", to avoid waiting for debugger
         imagePullPolicy: Never
         ports:
           - containerPort: 7777

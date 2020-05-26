@@ -4,7 +4,10 @@ COPY . /videoservice
 
 WORKDIR /videoservice
 
-RUN go build --mod=vendor -o videoservice .
+RUN apt install -y git
+RUN go get github.com/go-delve/delve/cmd/dlv
+
+RUN go build --mod=vendor -gcflags "all=-N -l" -o videoservice .
 
 RUN apt update && \
     apt install -y ffmpeg
