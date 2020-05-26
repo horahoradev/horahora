@@ -6,7 +6,7 @@ This project is a WIP, and under active development.
 Join our discord here: https://discord.gg/psuj8QQ
 
 ## Architecture
-TODO
+
 
 ## How to Use
 Currently, only local use is supported.
@@ -30,7 +30,11 @@ The following is a non-exhaustive list of features which should be added for the
 7. All necessary AWS infrastructure:
   - autoscaling EKS cluster
   - log aggregation
+8. Videoservice support for regular video uploads
+9. Scheduler should send video tags to videoservice
   
 ## Missing Non-essential Features
 1. L7 load balancing between services with Envoy
+2. Scheduler should be refactored a bit
+3. Videoservice should be refactored a bit
 
