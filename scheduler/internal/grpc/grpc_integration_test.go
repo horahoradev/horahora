@@ -29,10 +29,9 @@ func init() {
 
 func TestTagDl(t *testing.T) {
 	request := proto.TagRequest{
-		Website:       proto.Site_niconico,
-		UserID:        "1",
-		NumToDownload: 100,
-		TagValue:      "YTPMV",
+		Website:  proto.Site_niconico,
+		UserID:   "1",
+		TagValue: "YTPMV",
 	}
 
 	_, err := s.DlTag(context.Background(), &request)

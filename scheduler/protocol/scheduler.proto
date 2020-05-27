@@ -21,20 +21,17 @@ enum site {
 message ChannelRequest {
     site website = 1;
     string userID = 2; // User who made the request
-    uint64 NumToDownload = 3;
-    string channelID = 4;
+    string channelID = 3;
 }
 
 message PlaylistRequest {
     site website = 1;
     string userID = 2; // User who made the request
-    uint64 NumToDownload = 3;
-    string playlistID = 4;
+    string playlistID = 3;
 }
 
 message TagRequest {
     site website = 1;
     string userID = 2; // User who made the request
-    uint64 NumToDownload = 3;
-    string tagValue = 4;
+    string tagValue = 3;
 }

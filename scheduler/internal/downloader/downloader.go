@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/horahoradev/horahora/scheduler/internal/models"
 	"io"
 	"os"
 	"os/exec"
@@ -14,18 +15,17 @@ import (
 
 	proto "github.com/horahoradev/horahora/video_service/protocol"
 
-	"github.com/horahoradev/horahora/scheduler/internal/schedule"
 	log "github.com/sirupsen/logrus"
 )
 
 type downloader struct {
-	downloadQueue   chan *schedule.VideoDlRequest
+	downloadQueue   chan *models.VideoDlRequest
 	outputLoc       string
 	videoClient     proto.VideoServiceClient
 	numberOfRetries int
 }
 
-func New(dlQueue chan *schedule.VideoDlRequest, outputLoc string, client proto.VideoServiceClient, numberOfRetries int) downloader {
+func New(dlQueue chan *models.VideoDlRequest, outputLoc string, client proto.VideoServiceClient, numberOfRetries int) downloader {
 	return downloader{
 		downloadQueue:   dlQueue,
 		outputLoc:       outputLoc,
@@ -35,7 +35,7 @@ func New(dlQueue chan *schedule.VideoDlRequest, outputLoc string, client proto.V
 }
 
 // SubscribeAndDownload reads from the download queue
-func (d *downloader) SubscribeAndDownload(ctx context.Context, ch chan *schedule.VideoDlRequest) error {
+func (d *downloader) SubscribeAndDownload(ctx context.Context, ch chan *models.VideoDlRequest) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -62,7 +62,7 @@ type Video struct {
 }
 
 // Deals with a particular download request
-func (d *downloader) downloadRequest(ctx context.Context, dlReq *schedule.VideoDlRequest) error {
+func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlRequest) error {
 	args, err := getVideoListString(dlReq)
 	if err != nil {
 		return err
@@ -287,7 +287,7 @@ loop:
 	return nil
 }
 
-func getVideoListString(dlReq *schedule.VideoDlRequest) ([]string, error) {
+func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 	// TODO: type safety, switch to enum?
 
 	downloadPreference := "all"
@@ -300,7 +300,7 @@ func getVideoListString(dlReq *schedule.VideoDlRequest) ([]string, error) {
 		latestVideo, err := dlReq.GetLatestVideoForRequest()
 
 		switch {
-		case err == schedule.NeverDownloaded:
+		case err == models.NeverDownloaded:
 			// keep as all
 			log.Infof("Tag category %s has never been downloaded, downloading all", dlReq.ContentValue)
 			break
@@ -313,7 +313,7 @@ func getVideoListString(dlReq *schedule.VideoDlRequest) ([]string, error) {
 	}
 
 	// This is ugly lol
-	args := []string{"/app/youtube-dl/youtube_dl/__main__.py", "-j", "--flat-playlist"}
+	args := []string{"/scheduler/youtube-dl/youtube_dl/__main__.py", "-j", "--flat-playlist"}
 	switch {
 	case dlReq.Website == "niconico" && dlReq.ContentType == "tag":
 		args = append(args, fmt.Sprintf("nicosearch%s:%s", downloadPreference, dlReq.ContentValue))
@@ -325,7 +325,7 @@ func getVideoListString(dlReq *schedule.VideoDlRequest) ([]string, error) {
 
 func (d *downloader) getVideoDownloadArgs(video *Video) ([]string, error) {
 	args := []string{
-		"/app/youtube-dl/youtube_dl/__main__.py",
+		"/scheduler/youtube-dl/youtube_dl/__main__.py",
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"-o",

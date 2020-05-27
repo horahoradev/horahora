@@ -3,6 +3,7 @@ package grpcserver
 import (
 	"context"
 	"fmt"
+	"github.com/horahoradev/horahora/scheduler/internal/models"
 	"net"
 
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -12,7 +13,7 @@ import (
 
 type schedulerServer struct {
 	proto.UnimplementedSchedulerServer
-	Db *sqlx.DB
+	M *models.ArchiveRequestModel
 }
 
 func NewGRPCServer(ctx context.Context, conn *sqlx.DB, port int) error {
@@ -36,20 +37,14 @@ func NewGRPCServer(ctx context.Context, conn *sqlx.DB, port int) error {
 
 func initializeSchedulerServer(conn *sqlx.DB) schedulerServer {
 	return schedulerServer{
-		Db: conn,
+		M: models.NewArchiveRequest(conn),
 	}
 }
 
 func (s schedulerServer) DlChannel(ctx context.Context, req *proto.ChannelRequest) (*proto.Empty, error) {
 	ret := &proto.Empty{}
 
-	website, err := getWebsiteStringFromEnum(req.Website)
-	if err != nil {
-		return ret, err
-	}
-
-	_, err = s.Db.Exec("INSERT INTO downloads(date_created, website, attribute_type, attribute_value) "+
-		"VALUES (Now(), $1, $2, $3)", website, "channel", req.ChannelID)
+	err := s.M.New(models.Channel, string(req.ChannelID), req.Website)
 
 	return ret, err
 }
@@ -57,41 +52,15 @@ func (s schedulerServer) DlChannel(ctx context.Context, req *proto.ChannelReques
 func (s schedulerServer) DlPlaylist(ctx context.Context, req *proto.PlaylistRequest) (*proto.Empty, error) {
 	ret := &proto.Empty{}
 
-	website, err := getWebsiteStringFromEnum(req.Website)
-	if err != nil {
-		return ret, err
-	}
-
-	// TODO: implement num to download
-	_, err = s.Db.Exec("INSERT INTO downloads(date_created, website, attribute_type, attribute_value) "+
-		"VALUES (Now(), $1, $2, $3)", website, "playlist", req.PlaylistID)
+	err := s.M.New(models.Playlist, req.PlaylistID, req.Website)
 
 	return ret, err
 }
+
 func (s schedulerServer) DlTag(ctx context.Context, req *proto.TagRequest) (*proto.Empty, error) {
 	ret := &proto.Empty{}
 
-	website, err := getWebsiteStringFromEnum(req.Website)
-	if err != nil {
-		return ret, err
-	}
-
-	_, err = s.Db.Exec("INSERT INTO downloads(date_created, website, attribute_type, attribute_value) "+
-		"VALUES (Now(), $1, $2, $3)", website, "tag", req.TagValue)
+	err := s.M.New(models.Tag, req.TagValue, req.Website)
 
 	return ret, err
-}
-
-// FIXME: this is dumb
-func getWebsiteStringFromEnum(enumVal proto.Site) (string, error) {
-	switch enumVal {
-	case proto.Site_niconico:
-		return "niconico", nil
-	case proto.Site_bilibili:
-		return "bilibili", nil
-	case proto.Site_youtube:
-		return "youtube", nil
-	default:
-		return "", fmt.Errorf("could not find specified website for enum %d", enumVal)
-	}
 }

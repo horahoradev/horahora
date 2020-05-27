@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/horahoradev/horahora/scheduler/internal/models"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -22,7 +23,7 @@ func NewPoller(db *sqlx.DB) (poller, error) {
 	return poller{Db: db, PollingDelay: time.Second * 5}, nil
 }
 
-func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue chan *VideoDlRequest) error {
+func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue chan *models.VideoDlRequest) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -53,7 +54,7 @@ var FailedToFetch error = errors.New("failed to retrieve desired number of items
 // dequeueFromDatabase pops the n most recent items from the database and timestamps them
 // I'm using postgres as a message queue because it's easy
 // requires isolation to be serial
-func (p *poller) dequeueFromDatabase(ctx context.Context, numItems int) ([]*VideoDlRequest, error) {
+func (p *poller) dequeueFromDatabase(ctx context.Context, numItems int) ([]*models.VideoDlRequest, error) {
 	tx, err := p.Db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
 		return nil, err
@@ -65,17 +66,16 @@ func (p *poller) dequeueFromDatabase(ctx context.Context, numItems int) ([]*Vide
 		return nil, err
 	}
 
-	var dlReqs []*VideoDlRequest
+	var dlReqs []*models.VideoDlRequest
 	// At this point, we've acquired the selected items
 	for rows.Next() {
-		i := VideoDlRequest{}
+		i := models.VideoDlRequest{}
 
-		err := rows.Scan(&i.id, &i.Website, &i.ContentType, &i.ContentValue)
+		err := rows.Scan(&i.Id, &i.Website, &i.ContentType, &i.ContentValue)
 		if err != nil {
 			return nil, err
 		}
-		i.db = p.Db
-		i.NumberToDownload = 100 //  FIXME
+		i.Db = p.Db
 
 		dlReqs = append(dlReqs, &i)
 	}
@@ -89,7 +89,7 @@ func (p *poller) dequeueFromDatabase(ctx context.Context, numItems int) ([]*Vide
 	}
 
 	for _, req := range dlReqs {
-		results, err := tx.Exec("UPDATE downloads SET last_polled = NOW(), lock = NOW() WHERE id=$1", req.id)
+		results, err := tx.Exec("UPDATE downloads SET last_polled = NOW(), lock = NOW() WHERE id=$1", req.Id)
 		rowsAffected, err2 := results.RowsAffected()
 		if err2 != nil {
 			return nil, err2

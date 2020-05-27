@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/horahoradev/horahora/scheduler/internal/models"
 	"os"
 	"os/signal"
 	"sync"
@@ -47,7 +48,7 @@ func main() {
 
 	wg := sync.WaitGroup{}
 
-	dlQueue := make(chan *schedule.VideoDlRequest, 100)
+	dlQueue := make(chan *models.VideoDlRequest, 100)
 
 	// Start one publisher goroutine to poll postgres and send download requests into the channel
 	// could potentially expand this to multiple publishers
