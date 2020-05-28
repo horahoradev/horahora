@@ -28,24 +28,11 @@ To run horahora locally, follow these steps:
 2. Start minikube, and use `./run-local.sh` in the Kubernetes directory. If the database migrations fail to apply, keep running run-local.sh until they succeed.
 3. `./run-tests.sh` will run local integration tests. Currently, this will send an archival request to scheduler for all YTPMVs on Niconico.
 
-## Missing Essential Features
-The following is a non-exhaustive list of features which should be added for the MVP:
-1. A frontend
-2. redis locking (or some other form of distributed locking) for video downloads to prevent concurrent downloads of the same videos from two categories of content
-3. Extended archival request support. Currently, only tags archive requests from Niconico are supported.
-4. Expanded unit tests
-5. Expanded integration tests
-6. A less awkward local development workflow
-7. All necessary AWS infrastructure:
-  - autoscaling EKS cluster
-  - log aggregation
-8. Videoservice support for regular video uploads
-9. Scheduler should send video tags to videoservice
-10. Microservice to manage video approval workflow and flagging/censorship of obscene content
-11. Tracking views/upvotes/downvotes for videos
-  
-## Missing Non-essential Features
-1. L7 load balancing between services with Envoy
-2. Scheduler should be refactored a bit
-3. Videoservice should be refactored a bit
+## Task Roadmap
+Missing features are tracked using Trello.
+
+Our Trello board is:
+https://trello.com/b/Rm5TPR4Q/horahora
+
+
 
