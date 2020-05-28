@@ -57,51 +57,15 @@ type Video struct {
 	Type  string `json:"_type"`
 	URL   string `json:"url"`
 	IeKey string `json:"ie_key"`
-	ID    string
+	ID    string `json:"id"`
 	Title string `json:"title"`
 }
 
 // Deals with a particular download request
 func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlRequest) error {
-	args, err := getVideoListString(dlReq)
+	videos, err := d.getDownloadList(dlReq)
 	if err != nil {
 		return err
-	}
-
-	// get the list of videos to download
-	cmd := exec.Command("/usr/bin/python3", args...)
-	payload, err := cmd.Output()
-	if err != nil {
-		log.Errorf("Command `%s` finished with err %s", cmd, err)
-		return err
-	}
-
-	var videos []Video
-	// The json isn't formatted as a list LMAO please FIXME
-	// I assume that the list provided by youtube-dl will be in descending order by upload date.
-	// Download by upload date asc so that we can resume at newest download.
-	spl := strings.Split(string(payload), "\n")
-	log.Infof("For category %s payload (Len %d): %s", dlReq.ContentValue, len(spl), spl)
-	for i := len(spl) - 2; i >= 0; i-- {
-		line := spl[i]
-		var video Video
-		err = json.Unmarshal([]byte(line), &video)
-		if err != nil {
-			log.Errorf("Failed to unmarshal json. Payload: %s. Err: %s", line, err)
-			return err
-		}
-
-		// FIXME DUMB
-		// this won't work for all websites. Apparently youtube-dl removed the id from metadata?
-		spl := strings.Split(video.URL, "/")
-		video.ID = spl[len(spl)-1]
-
-		videos = append(videos, video)
-	}
-
-	if len(videos) == 0 {
-		log.Errorf("Could not unmarshal, videolist len is 0")
-		return errors.New("Unmarshal failure")
 	}
 
 	log.Infof("Downloading %d videos for content type %s content value %s", len(videos), dlReq.ContentType, dlReq.ContentValue)
@@ -143,6 +107,47 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 		}
 	}
 	return nil
+}
+
+func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]Video, error) {
+	args, err := getVideoListString(dlReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// get the list of videos to download
+	cmd := exec.Command("/usr/bin/python3", args...)
+	payload, err := cmd.Output()
+	if err != nil {
+		log.Errorf("Command `%s` finished with err %s", cmd, err)
+		return nil, err
+	}
+
+	var videos []Video
+	// The json isn't formatted as a list LMAO please FIXME
+	// I assume that the list provided by youtube-dl will be in descending order by upload date.
+	// Download by upload date asc so that we can resume at newest download.
+	spl := strings.Split(string(payload), "\n")
+	log.Infof("For category %s payload (Len %d): %s", dlReq.ContentValue, len(spl), spl)
+	for i := len(spl) - 2; i >= 0; i-- {
+		line := spl[i]
+		var video Video
+		err = json.Unmarshal([]byte(line), &video)
+
+		if err != nil {
+			log.Errorf("Failed to unmarshal json. Payload: %s. Err: %s", line, err)
+			return nil, err
+		}
+
+		videos = append(videos, video)
+	}
+
+	if len(videos) == 0 {
+		log.Errorf("Could not unmarshal, videolist len is 0")
+		return nil, errors.New("unmarshal failure")
+	}
+
+	return videos, nil
 }
 
 func (d *downloader) downloadVideo(video Video) (*YTDLMetadata, error) {
@@ -190,8 +195,6 @@ func (d *downloader) downloadVideo(video Video) (*YTDLMetadata, error) {
 
 	return &metadata, nil
 }
-
-var NotImplementedError error = errors.New("content mode unimplemented in downloader")
 
 // FIXME: this function is quite long and complicated
 func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video Video) error {
@@ -289,38 +292,71 @@ loop:
 
 func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 	// TODO: type safety, switch to enum?
-
+	args := []string{"/scheduler/youtube-dl/youtube_dl/__main__.py", "-j", "--flat-playlist"}
 	downloadPreference := "all"
 
 	// If it's a tag we're downloading from, then there may be a large number of videos.
 	// If we've downloaded from this tag before, we should terminate the search once reaching the latest
 	// video we've downloaded.
 
-	if dlReq.ContentType == "tag" {
-		latestVideo, err := dlReq.GetLatestVideoForRequest()
+	// WOW that's a lot of switch statements, should probably flatten or refactor this out into separate functions so
+	// that I can actually read this
+	switch dlReq.Website {
+	case models.Niconico:
+		switch dlReq.ContentType {
+		case models.Tag:
+			latestVideo, err := dlReq.GetLatestVideoForRequest()
 
-		switch {
-		case err == models.NeverDownloaded:
-			// keep as all
-			log.Infof("Tag category %s has never been downloaded, downloading all", dlReq.ContentValue)
-			break
-		case err != nil:
-			return nil, err
+			switch {
+			case err == models.NeverDownloaded:
+				// keep as all
+				log.Infof("Tag category %s has never been downloaded, downloading all", dlReq.ContentValue)
+
+			case err != nil:
+				return nil, err
+			default:
+				log.Infof("Tag category %s has been downloaded before, resuming at %s", dlReq.ContentValue, *latestVideo)
+				downloadPreference = fmt.Sprintf("id%s", *latestVideo)
+			}
+			args = append(args, fmt.Sprintf("nicosearch%s:%s", downloadPreference, dlReq.ContentValue))
+
 		default:
-			log.Infof("Tag category %s has been downloaded before, resuming at %s", dlReq.ContentValue, *latestVideo)
-			downloadPreference = fmt.Sprintf("id%s", *latestVideo)
+			err := fmt.Errorf("content type %s is not implemented for niconico.", dlReq.ContentType)
+			return nil, err
 		}
+
+	case models.Bilibili:
+		switch dlReq.ContentType {
+		case models.Tag:
+			args = append(args, fmt.Sprintf("bilisearch%s:%s", downloadPreference, dlReq.ContentValue))
+			log.Infof("downloading videos of tag %s from bilibili", dlReq.ContentValue)
+		// TODO: implement continuation from latest video for bilibili in extractor
+		// for now, try to download everything in the list every time
+		//latestVideo, err := dlReq.GetLatestVideoForRequest()
+
+		default:
+			err := fmt.Errorf("content type %s is not implemented for bilibili.", dlReq.ContentType)
+			return nil, err
+		}
+
+	case models.Youtube:
+		switch dlReq.ContentType {
+		case models.Tag:
+			args = append(args, fmt.Sprintf("ytsearch%s:%s", downloadPreference, dlReq.ContentValue))
+			log.Infof("downloading videos of tag %s from youtube", dlReq.ContentValue)
+		// TODO: ensure youtube extractor returns list in desc order, implements continuation from latest video id
+
+		default:
+			err := fmt.Errorf("content type %s is not implemented for youtube.", dlReq.ContentType)
+			return nil, err
+		}
+
+	default:
+		err := fmt.Errorf("no archive request implementations for website %s", dlReq.Website)
+		return nil, err
 	}
 
-	// This is ugly lol
-	args := []string{"/scheduler/youtube-dl/youtube_dl/__main__.py", "-j", "--flat-playlist"}
-	switch {
-	case dlReq.Website == "niconico" && dlReq.ContentType == "tag":
-		args = append(args, fmt.Sprintf("nicosearch%s:%s", downloadPreference, dlReq.ContentValue))
-		return args, nil
-	default:
-		return nil, NotImplementedError
-	}
+	return args, nil
 }
 
 func (d *downloader) getVideoDownloadArgs(video *Video) ([]string, error) {

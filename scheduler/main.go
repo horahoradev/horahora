@@ -69,7 +69,7 @@ func main() {
 	}()
 
 	// Start two goroutines to subscribe to channel and download items
-	numOfSubscribers := 1
+	numOfSubscribers := 2
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
 		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, client, cfg.NumberOfRetries)

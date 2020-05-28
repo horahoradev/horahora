@@ -9,7 +9,8 @@ CREATE TABLE downloads (
     website website_t,
     attribute_type content_type_t, /* tag, channel, or playlist */
     attribute_value varchar(255), /* tag id, channel id, or playlist id*/
-    lock timestamp /* timestamp indicating category in use by worker, expires in 30 mins */
+    lock timestamp, /* timestamp indicating category in use by worker, expires in 30 mins */
+    UNIQUE(website, attribute_type, attribute_value)
 );
 
 CREATE TABLE previous_downloads (

@@ -27,9 +27,31 @@ func init() {
 	s = initializeSchedulerServer(conf.Conn)
 }
 
-func TestTagDl(t *testing.T) {
+func TestTagDlNiconico(t *testing.T) {
 	request := proto.TagRequest{
 		Website:  proto.Site_niconico,
+		UserID:   "1",
+		TagValue: "YTPMV",
+	}
+
+	_, err := s.DlTag(context.Background(), &request)
+	assert.NoError(t, err)
+}
+
+func TestTagDlBilibili(t *testing.T) {
+	request := proto.TagRequest{
+		Website:  proto.Site_bilibili,
+		UserID:   "1",
+		TagValue: "YTPMV",
+	}
+
+	_, err := s.DlTag(context.Background(), &request)
+	assert.NoError(t, err)
+}
+
+func TestTagDlYoutube(t *testing.T) {
+	request := proto.TagRequest{
+		Website:  proto.Site_youtube,
 		UserID:   "1",
 		TagValue: "YTPMV",
 	}
