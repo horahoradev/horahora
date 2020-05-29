@@ -9,10 +9,6 @@ import (
 	_ "sync"
 	"syscall"
 
-	proto "github.com/horahoradev/horahora/video_service/protocol"
-
-	"google.golang.org/grpc"
-
 	"github.com/horahoradev/horahora/scheduler/internal/config"
 	"github.com/horahoradev/horahora/scheduler/internal/downloader"
 	grpcserver "github.com/horahoradev/horahora/scheduler/internal/grpc"
@@ -27,13 +23,7 @@ func main() {
 		log.Fatalf("Could not get config. Err: %s", err)
 	}
 
-	conn, err := grpc.Dial(cfg.VideoServiceGRPCAddress, grpc.WithInsecure())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	client := proto.NewVideoServiceClient(conn)
-	defer conn.Close()
+	defer cfg.GRPCConn.Close()
 
 	ctx, close := context.WithCancel(context.Background())
 
@@ -72,9 +62,9 @@ func main() {
 	numOfSubscribers := 2
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
-		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, client, cfg.NumberOfRetries)
+		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, nil)
 		go func() {
-			err := dler.SubscribeAndDownload(ctx, dlQueue)
+			err := dler.SubscribeAndDownload(ctx)
 			if err != nil {
 				log.Errorf("Downloader failed. Err: %s", err)
 			}

@@ -2,6 +2,8 @@ package config
 
 import (
 	"fmt"
+	proto "github.com/horahoradev/horahora/video_service/protocol"
+	"google.golang.org/grpc"
 	"log"
 
 	"github.com/caarlos0/env"
@@ -23,6 +25,8 @@ type config struct {
 	VideoServiceGRPCAddress string `env:"VideoServiceGRPCAddress",required"`
 	NumberOfRetries         int    `env:"NumberOfRetries",required"`
 	Conn                    *sqlx.DB
+	GRPCConn                *grpc.ClientConn
+	Client                  proto.VideoServiceClient
 }
 
 func New() (*config, error) {
@@ -41,6 +45,13 @@ func New() (*config, error) {
 	if err != nil {
 		log.Fatalf("Could not connect to postgres. Err: %s", err)
 	}
+
+	config.GRPCConn, err = grpc.Dial(config.VideoServiceGRPCAddress, grpc.WithInsecure())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	config.Client = proto.NewVideoServiceClient(config.GRPCConn)
 
 	return &config, err
 }

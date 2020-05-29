@@ -145,6 +145,15 @@ loop:
 		}
 	}
 
+	log.Infof("Finished receiving file data for %s", video.Meta.Meta.Title)
+
+	if g.Local {
+		resp := proto.UploadResponse{
+			VideoID: 1,
+		}
+		return inpStream.SendAndClose(&resp)
+	}
+
 	transcodeResults, err := dashutils.TranscodeAndChunk(video.FileData.Name())
 	if err != nil {
 		return fmt.Errorf("failed to transcode and chunk. Err: %s", err)

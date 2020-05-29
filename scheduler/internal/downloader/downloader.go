@@ -19,36 +19,37 @@ import (
 )
 
 type downloader struct {
-	downloadQueue   chan *models.VideoDlRequest
-	outputLoc       string
-	videoClient     proto.VideoServiceClient
-	numberOfRetries int
+	downloadQueue       chan *models.VideoDlRequest
+	outputLoc           string
+	videoClient         proto.VideoServiceClient
+	numberOfRetries     int
+	successfulDownloads chan Video
 }
 
-func New(dlQueue chan *models.VideoDlRequest, outputLoc string, client proto.VideoServiceClient, numberOfRetries int) downloader {
+func New(dlQueue chan *models.VideoDlRequest, outputLoc string, client proto.VideoServiceClient, numberOfRetries int, successfulDownloads chan Video) downloader {
 	return downloader{
-		downloadQueue:   dlQueue,
-		outputLoc:       outputLoc,
-		videoClient:     client,
-		numberOfRetries: numberOfRetries,
+		downloadQueue:       dlQueue,
+		outputLoc:           outputLoc,
+		videoClient:         client,
+		numberOfRetries:     numberOfRetries,
+		successfulDownloads: successfulDownloads,
 	}
 }
 
 // SubscribeAndDownload reads from the download queue
-func (d *downloader) SubscribeAndDownload(ctx context.Context, ch chan *models.VideoDlRequest) error {
+func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
 	for {
 		select {
 		case <-ctx.Done():
 			log.Info("Context done, downloader returning")
 			return nil
 
-		case r := <-ch:
+		case r := <-d.downloadQueue:
 			err := d.downloadRequest(ctx, r)
 			if err != nil {
-				// FIXME
+				// FIXME: increase robustness
 				return err
 			}
-
 		}
 	}
 }
@@ -75,6 +76,13 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 	for _, video := range videos {
 	currVideoLoop:
 		for currentRetryNum := 1; currentRetryNum <= d.numberOfRetries+1; currentRetryNum++ {
+			select {
+			case <-ctx.Done():
+				log.Infof("Context done, returning from download request loop for content type %s content val %s", dlReq.ContentType, dlReq.ContentValue)
+				return nil
+			default:
+			}
+
 			switch {
 			case currentRetryNum == d.numberOfRetries+1:
 				log.Errorf("Failed to download %s in %d attempts", video.URL, d.numberOfRetries)
@@ -93,12 +101,17 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 					log.Errorf("Could not set latest video. Err: %s", err)
 				}
 
-				err = d.uploadToVideoService(ctx, metadata, video)
+				// Background is used here to try to ensure that the service will deal with whatever it's currently
+				// downloading before shutting down.
+				err = d.uploadToVideoService(context.Background(), metadata, video, dlReq.Website)
 				if err != nil {
 					log.Infof("failed to upload to video service. Err: %s. Continuing...", err)
 					continue
 				}
 
+				if d.successfulDownloads != nil {
+					d.successfulDownloads <- video
+				}
 				break
 			}
 			// Just keep trying to download until we succeed
@@ -197,7 +210,7 @@ func (d *downloader) downloadVideo(video Video) (*YTDLMetadata, error) {
 }
 
 // FIXME: this function is quite long and complicated
-func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video Video) error {
+func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video Video, website models.Website) error {
 	stream, err := d.videoClient.UploadVideo(ctx)
 	if err != nil {
 		return fmt.Errorf("could not start video upload stream. Err: %s", err)
@@ -214,12 +227,12 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 
 	var site proto.Website
 	// FIXME: this is dumb
-	switch {
-	case strings.Contains(video.URL, "nicovideo.jp"):
+	switch website {
+	case models.Niconico:
 		site = proto.Website_niconico
-	case strings.Contains(video.URL, "bilibili.com"):
+	case models.Bilibili:
 		site = proto.Website_bilibili
-	case strings.Contains(video.URL, "youtube.com"):
+	case models.Youtube:
 		site = proto.Website_youtube
 	default:
 		return fmt.Errorf("unknown video URL: %s", video.URL)
@@ -248,11 +261,11 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	if err != nil {
 		return fmt.Errorf("could not open globbed file. Err: %s", err)
 	}
-
-	buf := make([]byte, 1*1024*1024)
+	defer file.Close()
 
 loop:
 	for {
+		buf := make([]byte, 1*1024*1024)
 		n, err := file.Read(buf)
 
 		switch {
@@ -329,10 +342,13 @@ func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 		switch dlReq.ContentType {
 		case models.Tag:
 			args = append(args, fmt.Sprintf("bilisearch%s:%s", downloadPreference, dlReq.ContentValue))
-			log.Infof("downloading videos of tag %s from bilibili", dlReq.ContentValue)
-		// TODO: implement continuation from latest video for bilibili in extractor
-		// for now, try to download everything in the list every time
-		//latestVideo, err := dlReq.GetLatestVideoForRequest()
+			log.Infof("Downloading videos of tag %s from bilibili", dlReq.ContentValue)
+			// TODO: implement continuation from latest video for bilibili in extractor
+			// for now, try to download everything in the list every time
+
+		case models.Channel:
+			log.Infof("Downloading videos from bilibili user %s", dlReq.ContentValue)
+			args = append(args, fmt.Sprintf("https://space.bilibili.com/%s", dlReq.ContentValue))
 
 		default:
 			err := fmt.Errorf("content type %s is not implemented for bilibili.", dlReq.ContentType)
@@ -345,6 +361,10 @@ func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 			args = append(args, fmt.Sprintf("ytsearch%s:%s", downloadPreference, dlReq.ContentValue))
 			log.Infof("downloading videos of tag %s from youtube", dlReq.ContentValue)
 		// TODO: ensure youtube extractor returns list in desc order, implements continuation from latest video id
+
+		case models.Channel:
+			log.Infof("Downloading videos from youtube user %s", dlReq.ContentValue)
+			args = append(args, fmt.Sprintf("https://www.youtube.com/channel/%s", dlReq.ContentValue))
 
 		default:
 			err := fmt.Errorf("content type %s is not implemented for youtube.", dlReq.ContentType)
