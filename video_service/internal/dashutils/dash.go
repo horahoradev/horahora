@@ -3,11 +3,9 @@ package dashutils
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"os/exec"
 	"path/filepath"
-	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type DASHVideo struct {
@@ -15,20 +13,27 @@ type DASHVideo struct {
 	QualityMap   []string
 }
 
-func TranscodeAndChunk(path string) (*DASHVideo, error) {
-	// FIXME: remove extension from path to maintain compatibility with bad scripts
-	// I should fix this!
-	path = strings.Replace(path, ".mp4", "", 1)
+func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
+	var encodeArgs []string
+	switch local {
+	case true:
+		// make the encoding really fast so we don't have to wait 90 minutes for integration tests
+		// I don't really understand the difference between the  speed and deadline args, but the documentation implies
+		// they're separate
+		encodeArgs = []string{path, "-speed 16 -deadline realtime -r 1 -crf 63 -t 10"}
+	case false:
+		encodeArgs = []string{path, "-speed 3 -deadline good -crf 30"}
+	}
 
-	cmd := exec.Command("./scripts/transcode.sh", path)
+	cmd := exec.Command("./scripts/transcode.sh", encodeArgs...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Errorf("%s", out)
 		return nil, err
 	}
 
-	// At this point it's been transcoded, so chunk/generate the DASH manifest
-	cmd = exec.Command("./scripts/chunk.sh", path)
+	// At this point it's been transcoded, so generate the DASH manifest
+	cmd = exec.Command("./scripts/manifest.sh", path)
 	_, err = cmd.CombinedOutput()
 	if err != nil {
 		return nil, err

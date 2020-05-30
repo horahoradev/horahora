@@ -50,7 +50,7 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 	switch {
 	case grpcErr.Message() == errors.UserDoesNotExistMessage:
 		// Create the user
-		log.Info("User does not exist for video")
+		log.Info("User does not exist for video, creating...")
 
 		regReq := proto.RegisterRequest{
 			Email:          "",

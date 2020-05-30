@@ -105,7 +105,7 @@ func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) 
 	uploadDir := fmt.Sprintf("%s/test_files/", currWd)
 
 	// TODO: mirror input file container format. I assume mp4s for now.
-	tmpFile, err := ioutil.TempFile(uploadDir, "*.mp4")
+	tmpFile, err := ioutil.TempFile(uploadDir, "*")
 	if err != nil {
 		err = fmt.Errorf("could not create tmp file. Err: %s", err)
 		log.Error(err)
@@ -147,14 +147,7 @@ loop:
 
 	log.Infof("Finished receiving file data for %s", video.Meta.Meta.Title)
 
-	if g.Local {
-		resp := proto.UploadResponse{
-			VideoID: 1,
-		}
-		return inpStream.SendAndClose(&resp)
-	}
-
-	transcodeResults, err := dashutils.TranscodeAndChunk(video.FileData.Name())
+	transcodeResults, err := dashutils.TranscodeAndGenerateManifest(video.FileData.Name(), g.Local)
 	if err != nil {
 		return fmt.Errorf("failed to transcode and chunk. Err: %s", err)
 	}
@@ -180,6 +173,7 @@ loop:
 		VideoID: videoID,
 	}
 
+	log.Infof("Finished handling video %s", video.Meta.Meta.Title)
 	return inpStream.SendAndClose(&uploadResp)
 }
 
