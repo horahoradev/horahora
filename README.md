@@ -26,7 +26,8 @@ To run horahora locally, follow these steps:
   - Kubernetes
 
 2. Start minikube, and use `./run-local.sh` in the Kubernetes directory. If the database migrations fail to apply, keep running run-local.sh until they succeed.
-3. `./run-tests.sh` will run local integration tests. Currently, this will send an archival request to scheduler for all YTPMVs on Niconico.
+3. Run `./build.all.sh` to build all Docker images and send to the Docker daemon within minikube
+4. `./run-tests.sh` will run local integration tests. Currently, this will send an archival request to scheduler for all YTPMVs on Niconico.
 
 ## Task Roadmap
 Missing features are tracked using Trello.
