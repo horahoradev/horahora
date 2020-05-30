@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	proto "github.com/horahoradev/horahora/video_service/protocol"
+	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -21,12 +21,12 @@ import (
 type downloader struct {
 	downloadQueue       chan *models.VideoDlRequest
 	outputLoc           string
-	videoClient         proto.VideoServiceClient
+	videoClient         videoproto.VideoServiceClient
 	numberOfRetries     int
 	successfulDownloads chan Video
 }
 
-func New(dlQueue chan *models.VideoDlRequest, outputLoc string, client proto.VideoServiceClient, numberOfRetries int, successfulDownloads chan Video) downloader {
+func New(dlQueue chan *models.VideoDlRequest, outputLoc string, client videoproto.VideoServiceClient, numberOfRetries int, successfulDownloads chan Video) downloader {
 	return downloader{
 		downloadQueue:       dlQueue,
 		outputLoc:           outputLoc,
@@ -89,6 +89,37 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 				break currVideoLoop
 			case currentRetryNum > 1:
 				log.Infof("Attempting to download %s, attempt %d of %d", video.URL, currentRetryNum, d.numberOfRetries)
+			}
+
+			// LOL
+			var videoWebsite videoproto.Website
+			switch dlReq.Website {
+			case models.Niconico:
+				videoWebsite = videoproto.Website_niconico
+			case models.Bilibili:
+				videoWebsite = videoproto.Website_bilibili
+			case models.Youtube:
+				videoWebsite = videoproto.Website_youtube
+			default:
+				log.Errorf("unknown website: %s", dlReq.Website)
+				break currVideoLoop
+			}
+
+			videoReq := videoproto.ForeignVideoCheck{
+				ForeignVideoID: video.ID,
+				ForeignWebsite: videoWebsite, // LMAO FIXME
+			}
+
+			videoExists, err := d.videoClient.ForeignVideoExists(context.TODO(), &videoReq)
+			if err != nil {
+				err := fmt.Errorf("could not check whether video exists for video ID %s", video.ID)
+				log.Error(err)
+				break currVideoLoop
+			}
+
+			if videoExists.Exists {
+				log.Errorf("Video ID %s (title %s) already exists", video.ID, video.Title)
+				break currVideoLoop
 			}
 
 			metadata, err := d.downloadVideo(video)
@@ -225,29 +256,30 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return fmt.Errorf("unexpected number of matched files: %d", len(generatedFiles))
 	}
 
-	var site proto.Website
+	var site videoproto.Website
 	// FIXME: this is dumb
 	switch website {
 	case models.Niconico:
-		site = proto.Website_niconico
+		site = videoproto.Website_niconico
 	case models.Bilibili:
-		site = proto.Website_bilibili
+		site = videoproto.Website_bilibili
 	case models.Youtube:
-		site = proto.Website_youtube
+		site = videoproto.Website_youtube
 	default:
 		return fmt.Errorf("unknown video URL: %s", video.URL)
 	}
 
 	// Send metadata
-	metaPayload := proto.InputVideoChunk{
-		Payload: &proto.InputVideoChunk_Meta{
-			Meta: &proto.InputFileMetadata{
+	metaPayload := videoproto.InputVideoChunk{
+		Payload: &videoproto.InputVideoChunk_Meta{
+			Meta: &videoproto.InputFileMetadata{
 				Title:             metadata.Title,
 				Description:       metadata.Description,
 				AuthorUID:         metadata.UploaderID,
 				OriginalVideoLink: video.URL,
 				AuthorUsername:    metadata.Uploader,
 				OriginalSite:      site,
+				OriginalID:        metadata.ID,
 			},
 		},
 	}
@@ -277,9 +309,9 @@ loop:
 
 		buf = buf[:n]
 
-		dataPayload := proto.InputVideoChunk{
-			Payload: &proto.InputVideoChunk_Content{
-				Content: &proto.FileContent{
+		dataPayload := videoproto.InputVideoChunk{
+			Payload: &videoproto.InputVideoChunk_Content{
+				Content: &videoproto.FileContent{
 					Data: buf,
 				},
 			},

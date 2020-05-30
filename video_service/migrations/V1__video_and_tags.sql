@@ -1,12 +1,12 @@
 CREATE TABLE videos (
      id SERIAL primary key,
-     title varchar(60),
+     title varchar(200),
      description varchar(4096),
      userID int,
      originalSite int, -- could use an enum...
-     originalLink varchar(60),
-     originalID varchar(60), -- not normalized, but whatever
-     newLink varchar(60)
+     originalLink varchar(200),
+     originalID varchar(200), -- not normalized, but whatever
+     newLink varchar(200)
 );
 
 CREATE TABLE tags (
