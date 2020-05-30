@@ -6,8 +6,8 @@ package mocks
 
 import (
 	context "context"
-	proto "github.com/horahoradev/horahora/video_service/protocol"
 	gomock "github.com/golang/mock/gomock"
+	proto "github.com/horahoradev/horahora/video_service/protocol"
 	metadata "google.golang.org/grpc/metadata"
 	reflect "reflect"
 )

@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	sql2 "database/sql"
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
@@ -11,6 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	proto "github.com/horahoradev/horahora/user_service/protocol"
+	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 
 	_ "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/jmoiron/sqlx"
@@ -29,7 +31,8 @@ func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient) (*VideoModel, er
 // check if user has been created
 // if it hasn't, then create it
 // list user as parent of this video
-func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description string, authorUsername string, authorID string, originalSite proto.Site, originalVideoLink, newURI string, tags []string) (int64, error) {
+func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description string, authorUsername string, authorID string,
+	originalSite proto.Site, originalVideoLink, originalVideoID, newURI string, tags []string) (int64, error) {
 	tx, err := v.db.BeginTx(ctx, nil)
 	if err != nil {
 		return 0, err
@@ -90,14 +93,14 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 	}
 
 	sql := "INSERT INTO videos (title, description, userID, originalSite, " +
-		"originalLink, newLink) " +
-		"VALUES ($1, $2, $3, $4, $5, $6)" +
+		"originalLink, newLink, originalID) " +
+		"VALUES ($1, $2, $3, $4, $5, $6, $7)" +
 		"returning id"
 
 	// By this point the user should exist
 	// Username is unique, so will fail if user already exists
 	var videoID int64
-	res := tx.QueryRow(sql, title, description, horahoraUID, originalSite, originalVideoLink, newURI)
+	res := tx.QueryRow(sql, title, description, horahoraUID, originalSite, originalVideoLink, newURI, originalVideoID)
 
 	err = res.Scan(&videoID)
 	if err != nil {
@@ -121,4 +124,19 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 	}
 
 	return videoID, nil
+}
+
+func (v *VideoModel) ForeignVideoExists(foreignVideoID string, website videoproto.Website) (bool, error) {
+	sql := "SELECT id FROM videos WHERE originalSite=$1 AND originalID=$2"
+	var videoID int64
+	res := v.db.QueryRow(sql, website, foreignVideoID)
+	err := res.Scan(&videoID)
+	switch {
+	case err == sql2.ErrNoRows:
+		return false, nil
+	case err != nil:
+		return false, err
+	default: // err == nil
+		return true, nil
+	}
 }

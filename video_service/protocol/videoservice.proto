@@ -4,8 +4,17 @@ package proto;
 
 service VideoService {
     rpc uploadVideo(stream InputVideoChunk) returns (uploadResponse) {}
-
     rpc downloadVideo(VideoRequest) returns (stream ResponseVideoChunk) {}
+    rpc foreignVideoExists(ForeignVideoCheck) returns (VideoExistenceResponse) {}
+}
+
+message VideoExistenceResponse {
+    bool Exists = 1;
+}
+
+message ForeignVideoCheck {
+    string ForeignVideoID = 1;
+    website ForeignWebsite = 2;
 }
 
 message VideoRequest {
@@ -38,6 +47,7 @@ message InputFileMetadata {
     string originalVideoLink = 4; // If reupload
     string authorUsername = 5; // If reupload
     website originalSite = 6; // If reupload
+    string originalID = 7; // If reupload // this is a little dumb
 }
 
 // For now, these two are the same, but may deviate in future

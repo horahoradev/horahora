@@ -5,6 +5,7 @@ CREATE TABLE videos (
      userID int,
      originalSite int, -- could use an enum...
      originalLink varchar(60),
+     originalID varchar(60), -- not normalized, but whatever
      newLink varchar(60)
 );
 

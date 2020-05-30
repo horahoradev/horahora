@@ -104,8 +104,13 @@ func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) 
 
 	uploadDir := fmt.Sprintf("%s/test_files/", currWd)
 
-	// TODO: mirror input file container format. I assume mp4s for now.
-	tmpFile, err := ioutil.TempFile(uploadDir, "*")
+	// UUID for tmp filename and all uploads provides probabilistic guarantee of uniqueness
+	id, err := uuid.NewUUID()
+	if err != nil {
+		return err
+	}
+
+	tmpFile, err := ioutil.TempFile(uploadDir, id.String())
 	if err != nil {
 		err = fmt.Errorf("could not create tmp file. Err: %s", err)
 		log.Error(err)
@@ -140,6 +145,7 @@ loop:
 				log.Error(err)
 				return err
 			}
+
 			video.Meta = r
 			log.Infof("Received metadata for video %s", video.Meta.Meta.Title)
 		}
@@ -161,9 +167,10 @@ loop:
 	}
 
 	// This is MESSY
+	// TODO: switch to struct for args
 	videoID, err := g.VideoModel.SaveForeignVideo(context.TODO(), video.Meta.Meta.Title, video.Meta.Meta.Description,
 		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, userproto.Site(video.Meta.Meta.OriginalSite),
-		video.Meta.Meta.OriginalVideoLink, transcodeResults.ManifestPath, nil)
+		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, transcodeResults.ManifestPath, nil)
 	if err != nil {
 		return fmt.Errorf("failed to save video to postgres. Err: %s", err)
 		return err
@@ -177,16 +184,23 @@ loop:
 	return inpStream.SendAndClose(&uploadResp)
 }
 
-func (g GRPCServer) UploadMPDSet(d *dashutils.DASHVideo) error {
-	// Generate file name for the mpd manifest
-	id, err := uuid.NewUUID()
+func (g GRPCServer) ForeignVideoExists(ctx context.Context, foreignVideoCheck *proto.ForeignVideoCheck) (*proto.VideoExistenceResponse, error) {
+	exists, err := g.VideoModel.ForeignVideoExists(foreignVideoCheck.ForeignVideoID, foreignVideoCheck.ForeignWebsite)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	filename := id.String()
 
+	resp := proto.VideoExistenceResponse{Exists: exists}
+
+	return &resp, nil
+}
+
+// UploadMPDSet uploads the files to S3. Files may be overwritten (but they're versioned so they're safe).
+// Need to ensure as a precondition that the video hasn't been uploaded before and the temp file ID hasn't been
+// used.
+func (g GRPCServer) UploadMPDSet(d *dashutils.DASHVideo) error {
 	// send manifest to origin
-	err = g.SendToOriginServer(d.ManifestPath, filename)
+	err := g.SendToOriginServer(d.ManifestPath, filepath.Base(d.ManifestPath))
 	if err != nil {
 		return err
 	}
