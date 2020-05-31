@@ -16,12 +16,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	conn, err := sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", conf.Hostname, conf.Username, conf.Password, conf.Db))
+	conn, err := sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", conf.PostgresInfo.Hostname, conf.PostgresInfo.Username, conf.PostgresInfo.Password, conf.PostgresInfo.Db))
 	if err != nil {
 		log.Fatalf("Could not connect to postgres. Err: %s", err)
 	}
 
-	err = grpcserver.NewGRPCServer(conf.BucketName, conn, conf.GRPCPort, conf.UserServiceGRPCAddress, conf.Local)
+	err = grpcserver.NewGRPCServer(conf.BucketName, conn, conf.GRPCPort, conf.UserServiceGRPCAddress, conf.Local, conf.RedisConn)
 	if err != nil {
 		log.Fatal(err)
 	}

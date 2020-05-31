@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/go-redsync/redsync"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
 	"time"
 
@@ -17,10 +18,11 @@ import (
 type poller struct {
 	Db           *sqlx.DB
 	PollingDelay time.Duration
+	Redsync      *redsync.Redsync
 }
 
-func NewPoller(db *sqlx.DB) (poller, error) {
-	return poller{Db: db, PollingDelay: time.Second * 5}, nil
+func NewPoller(db *sqlx.DB, redsync *redsync.Redsync) (poller, error) {
+	return poller{Db: db, PollingDelay: time.Second * 5, Redsync: redsync}, nil
 }
 
 func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue chan *models.VideoDlRequest) error {
@@ -76,6 +78,7 @@ func (p *poller) dequeueFromDatabase(ctx context.Context, numItems int) ([]*mode
 			return nil, err
 		}
 		i.Db = p.Db
+		i.Redsync = p.Redsync
 
 		dlReqs = append(dlReqs, &i)
 	}

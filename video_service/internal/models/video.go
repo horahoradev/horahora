@@ -4,6 +4,8 @@ import (
 	"context"
 	sql2 "database/sql"
 	"fmt"
+	"github.com/go-redis/redis"
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
 
@@ -18,14 +20,20 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+const (
+	maxRating = 10.00
+)
+
 type VideoModel struct {
-	db         *sqlx.DB
-	grpcClient proto.UserServiceClient
+	db          *sqlx.DB
+	grpcClient  proto.UserServiceClient
+	redisClient *redis.Client
 }
 
-func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient) (*VideoModel, error) {
+func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *redis.Client) (*VideoModel, error) {
 	return &VideoModel{db: db,
-		grpcClient: client}, nil
+		grpcClient:  client,
+		redisClient: redisClient}, nil
 }
 
 // check if user has been created
@@ -139,4 +147,74 @@ func (v *VideoModel) ForeignVideoExists(foreignVideoID string, website videoprot
 	default: // err == nil
 		return true, nil
 	}
+}
+
+func (v *VideoModel) IncrementViewsForVideo(videoID string) error {
+	// Sorted set with atomic incremenetation
+	// Every single command is atomic: https://www.slideshare.net/RedisLabs/atomicity-in-redis-thomas-hunter
+	floatCmd := v.redisClient.ZIncrBy("videos:views", 1.00, videoID)
+	return floatCmd.Err()
+}
+
+func (v *VideoModel) GetViewsForVideo(videoID string) error {
+	// just fetch from sorted set
+	floatCmd := v.redisClient.ZScore("videos:views", videoID)
+	return floatCmd.Err()
+}
+
+func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue float64) error {
+	// hash table for each video with key being user ID
+	// really easy
+	if ratingValue > 10.0 || ratingValue < 0.00 {
+		return fmt.Errorf("invalid rating value: %f. Video ratings must be real numbers between 0 and 10.")
+	}
+
+	videoKey := fmt.Sprintf("ratings:%s", videoID)
+
+	boolCmd := v.redisClient.HSet(videoKey, ratingUID, ratingValue)
+	return boolCmd.Err()
+}
+
+func (v *VideoModel) GetAverageRatingForVideoID(videoID string) (float64, error) {
+	// iterate through elements of hash table and compute the average
+	// this is probably too expensive to do every time, so if it gets to be
+	// an issue we can compute every ~30 mins and cache the result
+	// alternatively could keep running total, probably doesn't matter
+	// Idea: cache in sorted set with expiration time of 30 mins? can use to return sorted list to frontend
+	ratingTotalNum := 0.00
+	ratingTotalDenom := 0.00
+
+	videoKey := fmt.Sprintf("ratings:%s", videoID)
+
+	// according to docs, cursor value starts at 0, and server returns next value to pass in
+	var cursorVal uint64 = 0
+
+	scanCmd := v.redisClient.HScan(videoKey, cursorVal, "", 0)
+	var keys []string
+	keys, cursorVal = scanCmd.Val()
+	// Every second element is a rating
+	for i := 1; i < len(keys); i += 2 {
+		rating, err := strconv.ParseFloat(keys[i], 64)
+		if err != nil {
+			return 0.00, err
+		}
+
+		ratingTotalNum += rating
+		ratingTotalDenom += maxRating
+	}
+
+	for cursorVal != 0 {
+		keys, cursorVal = scanCmd.Val()
+		for i := 1; i < len(keys); i += 2 {
+			rating, err := strconv.ParseFloat(keys[i], 64)
+			if err != nil {
+				return 0.00, err
+			}
+
+			ratingTotalNum += rating
+			ratingTotalDenom += maxRating
+		}
+	}
+
+	return ratingTotalNum / ratingTotalDenom, nil
 }

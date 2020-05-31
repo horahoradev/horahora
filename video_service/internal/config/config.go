@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"github.com/caarlos0/env"
+	"github.com/go-redis/redis"
 )
 
 type PostgresInfo struct {
@@ -12,8 +14,16 @@ type PostgresInfo struct {
 	Db       string `env:"pgs_db,required"`
 }
 
+type RedisInfo struct {
+	Hostname string `env:"redis_host,required"`
+	Port     int    `env:"redis_port,required"`
+	Password string `env:"redis_pass,required"`
+}
+
 type config struct {
 	PostgresInfo
+	RedisInfo
+	RedisConn              *redis.Client
 	GRPCPort               int    `env:"GRPCPort,required"`
 	UserServiceGRPCAddress string `env:"UserServiceGRPCAddress,required"`
 	BucketName             string `env:"BucketName,required"`
@@ -27,6 +37,17 @@ func New() (*config, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	err = env.Parse(&config.RedisInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	config.RedisConn = redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%s", config.RedisInfo.Hostname, config.RedisInfo.Port),
+		Password: config.RedisInfo.Password, // no password set
+		DB:       0,                         // use default DB
+	})
 
 	err = env.Parse(&config)
 	return &config, err

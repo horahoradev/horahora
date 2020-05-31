@@ -122,6 +122,15 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 				break currVideoLoop
 			}
 
+			// Video does not yet exist, try to acquire lock
+			err = dlReq.AcquireLockForVideo(video.ID)
+			if err != nil {
+				// If we can't get the lock, just skip the video in the current archive request
+				log.Errorf("Could not acquire redis lock for video ID %s during download of content type %s value %s, err: %s", video.ID,
+					dlReq.ContentType, dlReq.ContentValue, err)
+				break currVideoLoop
+			}
+
 			metadata, err := d.downloadVideo(video)
 			if err == nil {
 				log.Infof("Download succeeded for video %s", video.ID)

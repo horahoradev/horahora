@@ -3,6 +3,7 @@ package grpcserver
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis"
 	"io"
 	"io/ioutil"
 	"net"
@@ -41,14 +42,15 @@ type GRPCServer struct {
 	Local      bool
 }
 
-func NewGRPCServer(bucketName string, db *sqlx.DB, port int, userGRPCAddress string, local bool) error {
+func NewGRPCServer(bucketName string, db *sqlx.DB, port int, userGRPCAddress string, local bool,
+	redisClient *redis.Client) error {
 	conn, err := grpc.Dial(userGRPCAddress, grpc.WithInsecure())
 	if err != nil {
 		return err
 	}
 	client := userproto.NewUserServiceClient(conn)
 
-	g, err := initGRPCServer(bucketName, db, client, local)
+	g, err := initGRPCServer(bucketName, db, client, local, redisClient)
 	if err != nil {
 		return err
 	}
@@ -63,7 +65,8 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, userGRPCAddress str
 	return grpcServer.Serve(lis)
 }
 
-func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool) (*GRPCServer, error) {
+func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
+	redisClient *redis.Client) (*GRPCServer, error) {
 	cfg, err := external.LoadDefaultAWSConfig()
 	if err != nil {
 		return nil, err
@@ -78,7 +81,7 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 		Local:      local,
 	}
 
-	g.VideoModel, err = models.NewVideoModel(db, client)
+	g.VideoModel, err = models.NewVideoModel(db, client, redisClient)
 	if err != nil {
 		return nil, err
 	}
@@ -263,5 +266,25 @@ func (g GRPCServer) SendToOriginServer(path, desiredFilename string) error {
 // Do we need this?
 func (g GRPCServer) DownloadVideo(req *proto.VideoRequest, outputStream proto.VideoService_DownloadVideoServer) error {
 	return nil
+	// TODO
+}
+
+func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQueryConfig) (*proto.VideoList, error) {
+	return nil, nil
+	// TODO
+}
+
+func (g GRPCServer) RateVideo(ctx context.Context, rating *proto.VideoRating) (*proto.Nothing, error) {
+	return nil, nil
+	// TODO
+}
+
+func (g GRPCServer) ViewVideo(context.Context, *proto.VideoViewing) (*proto.Nothing, error) {
+	return nil, nil
+	// TODO
+}
+
+func (g GRPCServer) GetVideo(context.Context, *proto.VideoRequest) (*proto.VideoMetadata, error) {
+	return nil, nil
 	// TODO
 }

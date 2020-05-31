@@ -16,7 +16,6 @@ import (
 const hashCost = 5
 
 func Login(username, password string, privateKey *rsa.PrivateKey, u *model.UserModel) (string, error) {
-
 	uid, err := u.GetUserWithUsername(username)
 	if err != nil {
 		return "", err

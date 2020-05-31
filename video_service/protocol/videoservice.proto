@@ -6,6 +6,43 @@ service VideoService {
     rpc uploadVideo(stream InputVideoChunk) returns (uploadResponse) {}
     rpc downloadVideo(VideoRequest) returns (stream ResponseVideoChunk) {}
     rpc foreignVideoExists(ForeignVideoCheck) returns (VideoExistenceResponse) {}
+    rpc getVideoList(VideoQueryConfig) returns (VideoList) {}
+    rpc getVideo(VideoRequest) returns (videoMetadata) {}
+    rpc rateVideo(videoRating) returns (Nothing) {}
+    rpc viewVideo(videoViewing) returns (Nothing) {}
+}
+
+message Nothing{}
+
+message videoMetadata{
+    // TODO
+}
+
+
+message videoRating {
+    string userID = 1;
+    int64 videoID = 2;
+    float rating = 3;
+}
+
+message videoViewing {
+    int64 videoID = 1;
+}
+
+message VideoQueryConfig {
+    orderCategory orderBy = 1;
+    sortDirection direction = 2;
+}
+
+message VideoList {
+    repeated Video videos = 1;
+}
+
+message Video {
+    string videoTitle = 1;
+    uint64 views = 2;
+    float rating = 3;
+    string thumbnailLoc = 4;
 }
 
 message VideoExistenceResponse {
@@ -64,6 +101,16 @@ enum website {
     youtube = 2;
 }
 
+enum orderCategory {
+    views = 0;
+    rating = 1;
+    upload_date = 2;
+}
+
+enum sortDirection {
+    asc = 0;
+    desc = 2;
+}
 
 message uploadResponse {
     int64 videoID = 1;

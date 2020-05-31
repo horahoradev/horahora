@@ -52,6 +52,364 @@ func (Website) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_673ac1e0917b87c1, []int{0}
 }
 
+type OrderCategory int32
+
+const (
+	OrderCategory_views       OrderCategory = 0
+	OrderCategory_rating      OrderCategory = 1
+	OrderCategory_upload_date OrderCategory = 2
+)
+
+var OrderCategory_name = map[int32]string{
+	0: "views",
+	1: "rating",
+	2: "upload_date",
+}
+
+var OrderCategory_value = map[string]int32{
+	"views":       0,
+	"rating":      1,
+	"upload_date": 2,
+}
+
+func (x OrderCategory) String() string {
+	return proto.EnumName(OrderCategory_name, int32(x))
+}
+
+func (OrderCategory) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_673ac1e0917b87c1, []int{1}
+}
+
+type SortDirection int32
+
+const (
+	SortDirection_asc  SortDirection = 0
+	SortDirection_desc SortDirection = 2
+)
+
+var SortDirection_name = map[int32]string{
+	0: "asc",
+	2: "desc",
+}
+
+var SortDirection_value = map[string]int32{
+	"asc":  0,
+	"desc": 2,
+}
+
+func (x SortDirection) String() string {
+	return proto.EnumName(SortDirection_name, int32(x))
+}
+
+func (SortDirection) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_673ac1e0917b87c1, []int{2}
+}
+
+type Nothing struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Nothing) Reset()         { *m = Nothing{} }
+func (m *Nothing) String() string { return proto.CompactTextString(m) }
+func (*Nothing) ProtoMessage()    {}
+func (*Nothing) Descriptor() ([]byte, []int) {
+	return fileDescriptor_673ac1e0917b87c1, []int{0}
+}
+
+func (m *Nothing) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Nothing.Unmarshal(m, b)
+}
+func (m *Nothing) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Nothing.Marshal(b, m, deterministic)
+}
+func (m *Nothing) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Nothing.Merge(m, src)
+}
+func (m *Nothing) XXX_Size() int {
+	return xxx_messageInfo_Nothing.Size(m)
+}
+func (m *Nothing) XXX_DiscardUnknown() {
+	xxx_messageInfo_Nothing.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Nothing proto.InternalMessageInfo
+
+type VideoMetadata struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *VideoMetadata) Reset()         { *m = VideoMetadata{} }
+func (m *VideoMetadata) String() string { return proto.CompactTextString(m) }
+func (*VideoMetadata) ProtoMessage()    {}
+func (*VideoMetadata) Descriptor() ([]byte, []int) {
+	return fileDescriptor_673ac1e0917b87c1, []int{1}
+}
+
+func (m *VideoMetadata) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_VideoMetadata.Unmarshal(m, b)
+}
+func (m *VideoMetadata) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_VideoMetadata.Marshal(b, m, deterministic)
+}
+func (m *VideoMetadata) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VideoMetadata.Merge(m, src)
+}
+func (m *VideoMetadata) XXX_Size() int {
+	return xxx_messageInfo_VideoMetadata.Size(m)
+}
+func (m *VideoMetadata) XXX_DiscardUnknown() {
+	xxx_messageInfo_VideoMetadata.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_VideoMetadata proto.InternalMessageInfo
+
+type VideoRating struct {
+	UserID               string   `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty"`
+	VideoID              int64    `protobuf:"varint,2,opt,name=videoID,proto3" json:"videoID,omitempty"`
+	Rating               float32  `protobuf:"fixed32,3,opt,name=rating,proto3" json:"rating,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *VideoRating) Reset()         { *m = VideoRating{} }
+func (m *VideoRating) String() string { return proto.CompactTextString(m) }
+func (*VideoRating) ProtoMessage()    {}
+func (*VideoRating) Descriptor() ([]byte, []int) {
+	return fileDescriptor_673ac1e0917b87c1, []int{2}
+}
+
+func (m *VideoRating) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_VideoRating.Unmarshal(m, b)
+}
+func (m *VideoRating) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_VideoRating.Marshal(b, m, deterministic)
+}
+func (m *VideoRating) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VideoRating.Merge(m, src)
+}
+func (m *VideoRating) XXX_Size() int {
+	return xxx_messageInfo_VideoRating.Size(m)
+}
+func (m *VideoRating) XXX_DiscardUnknown() {
+	xxx_messageInfo_VideoRating.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_VideoRating proto.InternalMessageInfo
+
+func (m *VideoRating) GetUserID() string {
+	if m != nil {
+		return m.UserID
+	}
+	return ""
+}
+
+func (m *VideoRating) GetVideoID() int64 {
+	if m != nil {
+		return m.VideoID
+	}
+	return 0
+}
+
+func (m *VideoRating) GetRating() float32 {
+	if m != nil {
+		return m.Rating
+	}
+	return 0
+}
+
+type VideoViewing struct {
+	VideoID              int64    `protobuf:"varint,1,opt,name=videoID,proto3" json:"videoID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *VideoViewing) Reset()         { *m = VideoViewing{} }
+func (m *VideoViewing) String() string { return proto.CompactTextString(m) }
+func (*VideoViewing) ProtoMessage()    {}
+func (*VideoViewing) Descriptor() ([]byte, []int) {
+	return fileDescriptor_673ac1e0917b87c1, []int{3}
+}
+
+func (m *VideoViewing) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_VideoViewing.Unmarshal(m, b)
+}
+func (m *VideoViewing) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_VideoViewing.Marshal(b, m, deterministic)
+}
+func (m *VideoViewing) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VideoViewing.Merge(m, src)
+}
+func (m *VideoViewing) XXX_Size() int {
+	return xxx_messageInfo_VideoViewing.Size(m)
+}
+func (m *VideoViewing) XXX_DiscardUnknown() {
+	xxx_messageInfo_VideoViewing.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_VideoViewing proto.InternalMessageInfo
+
+func (m *VideoViewing) GetVideoID() int64 {
+	if m != nil {
+		return m.VideoID
+	}
+	return 0
+}
+
+type VideoQueryConfig struct {
+	OrderBy              OrderCategory `protobuf:"varint,1,opt,name=orderBy,proto3,enum=proto.OrderCategory" json:"orderBy,omitempty"`
+	Direction            SortDirection `protobuf:"varint,2,opt,name=direction,proto3,enum=proto.SortDirection" json:"direction,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *VideoQueryConfig) Reset()         { *m = VideoQueryConfig{} }
+func (m *VideoQueryConfig) String() string { return proto.CompactTextString(m) }
+func (*VideoQueryConfig) ProtoMessage()    {}
+func (*VideoQueryConfig) Descriptor() ([]byte, []int) {
+	return fileDescriptor_673ac1e0917b87c1, []int{4}
+}
+
+func (m *VideoQueryConfig) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_VideoQueryConfig.Unmarshal(m, b)
+}
+func (m *VideoQueryConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_VideoQueryConfig.Marshal(b, m, deterministic)
+}
+func (m *VideoQueryConfig) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VideoQueryConfig.Merge(m, src)
+}
+func (m *VideoQueryConfig) XXX_Size() int {
+	return xxx_messageInfo_VideoQueryConfig.Size(m)
+}
+func (m *VideoQueryConfig) XXX_DiscardUnknown() {
+	xxx_messageInfo_VideoQueryConfig.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_VideoQueryConfig proto.InternalMessageInfo
+
+func (m *VideoQueryConfig) GetOrderBy() OrderCategory {
+	if m != nil {
+		return m.OrderBy
+	}
+	return OrderCategory_views
+}
+
+func (m *VideoQueryConfig) GetDirection() SortDirection {
+	if m != nil {
+		return m.Direction
+	}
+	return SortDirection_asc
+}
+
+type VideoList struct {
+	Videos               []*Video `protobuf:"bytes,1,rep,name=videos,proto3" json:"videos,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *VideoList) Reset()         { *m = VideoList{} }
+func (m *VideoList) String() string { return proto.CompactTextString(m) }
+func (*VideoList) ProtoMessage()    {}
+func (*VideoList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_673ac1e0917b87c1, []int{5}
+}
+
+func (m *VideoList) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_VideoList.Unmarshal(m, b)
+}
+func (m *VideoList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_VideoList.Marshal(b, m, deterministic)
+}
+func (m *VideoList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VideoList.Merge(m, src)
+}
+func (m *VideoList) XXX_Size() int {
+	return xxx_messageInfo_VideoList.Size(m)
+}
+func (m *VideoList) XXX_DiscardUnknown() {
+	xxx_messageInfo_VideoList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_VideoList proto.InternalMessageInfo
+
+func (m *VideoList) GetVideos() []*Video {
+	if m != nil {
+		return m.Videos
+	}
+	return nil
+}
+
+type Video struct {
+	VideoTitle           string   `protobuf:"bytes,1,opt,name=videoTitle,proto3" json:"videoTitle,omitempty"`
+	Views                uint64   `protobuf:"varint,2,opt,name=views,proto3" json:"views,omitempty"`
+	Rating               float32  `protobuf:"fixed32,3,opt,name=rating,proto3" json:"rating,omitempty"`
+	ThumbnailLoc         string   `protobuf:"bytes,4,opt,name=thumbnailLoc,proto3" json:"thumbnailLoc,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Video) Reset()         { *m = Video{} }
+func (m *Video) String() string { return proto.CompactTextString(m) }
+func (*Video) ProtoMessage()    {}
+func (*Video) Descriptor() ([]byte, []int) {
+	return fileDescriptor_673ac1e0917b87c1, []int{6}
+}
+
+func (m *Video) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Video.Unmarshal(m, b)
+}
+func (m *Video) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Video.Marshal(b, m, deterministic)
+}
+func (m *Video) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Video.Merge(m, src)
+}
+func (m *Video) XXX_Size() int {
+	return xxx_messageInfo_Video.Size(m)
+}
+func (m *Video) XXX_DiscardUnknown() {
+	xxx_messageInfo_Video.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Video proto.InternalMessageInfo
+
+func (m *Video) GetVideoTitle() string {
+	if m != nil {
+		return m.VideoTitle
+	}
+	return ""
+}
+
+func (m *Video) GetViews() uint64 {
+	if m != nil {
+		return m.Views
+	}
+	return 0
+}
+
+func (m *Video) GetRating() float32 {
+	if m != nil {
+		return m.Rating
+	}
+	return 0
+}
+
+func (m *Video) GetThumbnailLoc() string {
+	if m != nil {
+		return m.ThumbnailLoc
+	}
+	return ""
+}
+
 type VideoExistenceResponse struct {
 	Exists               bool     `protobuf:"varint,1,opt,name=Exists,proto3" json:"Exists,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -63,7 +421,7 @@ func (m *VideoExistenceResponse) Reset()         { *m = VideoExistenceResponse{}
 func (m *VideoExistenceResponse) String() string { return proto.CompactTextString(m) }
 func (*VideoExistenceResponse) ProtoMessage()    {}
 func (*VideoExistenceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_673ac1e0917b87c1, []int{0}
+	return fileDescriptor_673ac1e0917b87c1, []int{7}
 }
 
 func (m *VideoExistenceResponse) XXX_Unmarshal(b []byte) error {
@@ -103,7 +461,7 @@ func (m *ForeignVideoCheck) Reset()         { *m = ForeignVideoCheck{} }
 func (m *ForeignVideoCheck) String() string { return proto.CompactTextString(m) }
 func (*ForeignVideoCheck) ProtoMessage()    {}
 func (*ForeignVideoCheck) Descriptor() ([]byte, []int) {
-	return fileDescriptor_673ac1e0917b87c1, []int{1}
+	return fileDescriptor_673ac1e0917b87c1, []int{8}
 }
 
 func (m *ForeignVideoCheck) XXX_Unmarshal(b []byte) error {
@@ -149,7 +507,7 @@ func (m *VideoRequest) Reset()         { *m = VideoRequest{} }
 func (m *VideoRequest) String() string { return proto.CompactTextString(m) }
 func (*VideoRequest) ProtoMessage()    {}
 func (*VideoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_673ac1e0917b87c1, []int{2}
+	return fileDescriptor_673ac1e0917b87c1, []int{9}
 }
 
 func (m *VideoRequest) XXX_Unmarshal(b []byte) error {
@@ -191,7 +549,7 @@ func (m *InputVideoChunk) Reset()         { *m = InputVideoChunk{} }
 func (m *InputVideoChunk) String() string { return proto.CompactTextString(m) }
 func (*InputVideoChunk) ProtoMessage()    {}
 func (*InputVideoChunk) Descriptor() ([]byte, []int) {
-	return fileDescriptor_673ac1e0917b87c1, []int{3}
+	return fileDescriptor_673ac1e0917b87c1, []int{10}
 }
 
 func (m *InputVideoChunk) XXX_Unmarshal(b []byte) error {
@@ -271,7 +629,7 @@ func (m *ResponseVideoChunk) Reset()         { *m = ResponseVideoChunk{} }
 func (m *ResponseVideoChunk) String() string { return proto.CompactTextString(m) }
 func (*ResponseVideoChunk) ProtoMessage()    {}
 func (*ResponseVideoChunk) Descriptor() ([]byte, []int) {
-	return fileDescriptor_673ac1e0917b87c1, []int{4}
+	return fileDescriptor_673ac1e0917b87c1, []int{11}
 }
 
 func (m *ResponseVideoChunk) XXX_Unmarshal(b []byte) error {
@@ -348,7 +706,7 @@ func (m *FileContent) Reset()         { *m = FileContent{} }
 func (m *FileContent) String() string { return proto.CompactTextString(m) }
 func (*FileContent) ProtoMessage()    {}
 func (*FileContent) Descriptor() ([]byte, []int) {
-	return fileDescriptor_673ac1e0917b87c1, []int{5}
+	return fileDescriptor_673ac1e0917b87c1, []int{12}
 }
 
 func (m *FileContent) XXX_Unmarshal(b []byte) error {
@@ -394,7 +752,7 @@ func (m *InputFileMetadata) Reset()         { *m = InputFileMetadata{} }
 func (m *InputFileMetadata) String() string { return proto.CompactTextString(m) }
 func (*InputFileMetadata) ProtoMessage()    {}
 func (*InputFileMetadata) Descriptor() ([]byte, []int) {
-	return fileDescriptor_673ac1e0917b87c1, []int{6}
+	return fileDescriptor_673ac1e0917b87c1, []int{13}
 }
 
 func (m *InputFileMetadata) XXX_Unmarshal(b []byte) error {
@@ -479,7 +837,7 @@ func (m *ResponseFileMetadata) Reset()         { *m = ResponseFileMetadata{} }
 func (m *ResponseFileMetadata) String() string { return proto.CompactTextString(m) }
 func (*ResponseFileMetadata) ProtoMessage()    {}
 func (*ResponseFileMetadata) Descriptor() ([]byte, []int) {
-	return fileDescriptor_673ac1e0917b87c1, []int{7}
+	return fileDescriptor_673ac1e0917b87c1, []int{14}
 }
 
 func (m *ResponseFileMetadata) XXX_Unmarshal(b []byte) error {
@@ -539,7 +897,7 @@ func (m *UploadResponse) Reset()         { *m = UploadResponse{} }
 func (m *UploadResponse) String() string { return proto.CompactTextString(m) }
 func (*UploadResponse) ProtoMessage()    {}
 func (*UploadResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_673ac1e0917b87c1, []int{8}
+	return fileDescriptor_673ac1e0917b87c1, []int{15}
 }
 
 func (m *UploadResponse) XXX_Unmarshal(b []byte) error {
@@ -569,6 +927,15 @@ func (m *UploadResponse) GetVideoID() int64 {
 
 func init() {
 	proto.RegisterEnum("proto.Website", Website_name, Website_value)
+	proto.RegisterEnum("proto.OrderCategory", OrderCategory_name, OrderCategory_value)
+	proto.RegisterEnum("proto.SortDirection", SortDirection_name, SortDirection_value)
+	proto.RegisterType((*Nothing)(nil), "proto.Nothing")
+	proto.RegisterType((*VideoMetadata)(nil), "proto.videoMetadata")
+	proto.RegisterType((*VideoRating)(nil), "proto.videoRating")
+	proto.RegisterType((*VideoViewing)(nil), "proto.videoViewing")
+	proto.RegisterType((*VideoQueryConfig)(nil), "proto.VideoQueryConfig")
+	proto.RegisterType((*VideoList)(nil), "proto.VideoList")
+	proto.RegisterType((*Video)(nil), "proto.Video")
 	proto.RegisterType((*VideoExistenceResponse)(nil), "proto.VideoExistenceResponse")
 	proto.RegisterType((*ForeignVideoCheck)(nil), "proto.ForeignVideoCheck")
 	proto.RegisterType((*VideoRequest)(nil), "proto.VideoRequest")
@@ -583,42 +950,60 @@ func init() {
 func init() { proto.RegisterFile("videoservice.proto", fileDescriptor_673ac1e0917b87c1) }
 
 var fileDescriptor_673ac1e0917b87c1 = []byte{
-	// 548 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0x5f, 0x8f, 0xd2, 0x40,
-	0x10, 0x6f, 0xef, 0x80, 0x1e, 0x53, 0x44, 0x18, 0x4f, 0x52, 0xf1, 0x4f, 0xb0, 0x0f, 0x86, 0x5c,
-	0x0c, 0x39, 0x6b, 0xe2, 0xb3, 0x11, 0xbc, 0x1c, 0x89, 0x46, 0xd3, 0x8b, 0xfa, 0xbc, 0x94, 0xf1,
-	0x6e, 0x03, 0xb7, 0x8b, 0xed, 0x96, 0xf3, 0x12, 0x9f, 0xfc, 0x0a, 0xbe, 0xf9, 0x01, 0xfd, 0x1c,
-	0xa6, 0xdb, 0x2d, 0x14, 0xb8, 0xc4, 0x44, 0x7d, 0xd8, 0xc0, 0xfc, 0xe6, 0x37, 0x33, 0x3f, 0x86,
-	0x99, 0x01, 0x5c, 0xf2, 0x29, 0xc9, 0x84, 0xe2, 0x25, 0x8f, 0x68, 0xb0, 0x88, 0xa5, 0x92, 0x58,
-	0xd5, 0x1f, 0xfe, 0x31, 0x74, 0x3e, 0x66, 0xce, 0xd7, 0x5f, 0x79, 0xa2, 0x48, 0x44, 0x14, 0x52,
-	0xb2, 0x90, 0x22, 0x21, 0xec, 0x40, 0x4d, 0x83, 0x89, 0x67, 0xf7, 0xec, 0xfe, 0x41, 0x68, 0x2c,
-	0x3f, 0x81, 0xf6, 0x89, 0x8c, 0x89, 0x9f, 0x0b, 0x1d, 0x38, 0xbc, 0xa0, 0x68, 0x86, 0x4f, 0xa0,
-	0x59, 0x06, 0xc7, 0x23, 0x1d, 0x54, 0x0f, 0xb7, 0x50, 0x7c, 0xb1, 0xe2, 0x7d, 0xa2, 0x49, 0xc2,
-	0x15, 0x79, 0x7b, 0x3d, 0xbb, 0xdf, 0x0c, 0x9a, 0xb9, 0xaa, 0xc1, 0x55, 0x8e, 0x86, 0x5b, 0x2c,
-	0xbf, 0x0f, 0x0d, 0x9d, 0x22, 0xa4, 0x2f, 0x29, 0x25, 0x0a, 0x3d, 0x70, 0x96, 0x1b, 0x85, 0x0a,
-	0xd3, 0xff, 0x06, 0xb7, 0xc7, 0x62, 0x91, 0x2a, 0x23, 0x2e, 0x15, 0x33, 0x1c, 0x80, 0x13, 0x49,
-	0xa1, 0x48, 0x28, 0x4d, 0x76, 0x03, 0x34, 0xd5, 0x4e, 0xf8, 0x9c, 0x86, 0xb9, 0xe7, 0xd4, 0x0a,
-	0x0b, 0x12, 0x0e, 0xa0, 0x72, 0x49, 0x8a, 0x69, 0x69, 0x6e, 0xe0, 0x19, 0xb2, 0xce, 0x9a, 0x45,
-	0xbc, 0x25, 0xc5, 0xa6, 0x4c, 0xb1, 0x53, 0x2b, 0xd4, 0xbc, 0x57, 0x75, 0x70, 0xde, 0xb3, 0xeb,
-	0xb9, 0x64, 0x53, 0xff, 0xbb, 0x0d, 0x58, 0x74, 0xf0, 0x1f, 0x14, 0x3c, 0xdb, 0x50, 0x70, 0xdf,
-	0x90, 0x8b, 0xc4, 0x7f, 0x12, 0xf1, 0x18, 0xdc, 0x52, 0x5e, 0x44, 0xa8, 0x8c, 0x98, 0x62, 0xba,
-	0x72, 0x23, 0xd4, 0xdf, 0xfd, 0x1f, 0x7b, 0xd0, 0xde, 0xf9, 0x41, 0x78, 0x08, 0x55, 0xc5, 0xd5,
-	0x9c, 0x4c, 0x4f, 0x73, 0x03, 0x7b, 0xe0, 0x4e, 0x29, 0x89, 0x62, 0xbe, 0x50, 0x5c, 0x0a, 0xad,
-	0xa9, 0x1e, 0x96, 0x21, 0x7c, 0x00, 0x75, 0x96, 0xaa, 0x0b, 0x19, 0x7f, 0x18, 0x8f, 0xbc, 0x7d,
-	0xed, 0x5f, 0x03, 0xf8, 0x14, 0xda, 0x32, 0xe6, 0xe7, 0x5c, 0xb0, 0xb9, 0x6e, 0xc9, 0x1b, 0x2e,
-	0x66, 0x5e, 0x45, 0xb3, 0x76, 0x1d, 0xd9, 0x24, 0x99, 0xd0, 0x84, 0x62, 0xc1, 0x2e, 0xc9, 0xab,
-	0xe6, 0x93, 0xb4, 0x89, 0x62, 0x00, 0x8d, 0x22, 0xf8, 0x2c, 0x9b, 0xa3, 0xda, 0x8d, 0x73, 0xb4,
-	0xc1, 0xc1, 0x47, 0x00, 0x85, 0x3d, 0x1e, 0x79, 0x8e, 0xce, 0x5b, 0x42, 0xfc, 0x9f, 0x36, 0x1c,
-	0xde, 0xd4, 0xe4, 0xff, 0xd7, 0x98, 0xfd, 0xbf, 0x6e, 0x8c, 0x7f, 0x04, 0xcd, 0x74, 0x91, 0xfd,
-	0xbf, 0xab, 0x0d, 0xdd, 0x5a, 0x82, 0xfd, 0xd5, 0x12, 0x1c, 0x05, 0xe0, 0x98, 0x0e, 0x60, 0x03,
-	0x0e, 0x04, 0x8f, 0x64, 0xf6, 0x5a, 0x56, 0x66, 0x4d, 0xf8, 0x9c, 0x67, 0xaf, 0x65, 0xa3, 0x0b,
-	0xce, 0xb5, 0x4c, 0x55, 0x3a, 0xa1, 0xd6, 0x5e, 0xf0, 0xcb, 0x36, 0x3b, 0x76, 0x96, 0xdf, 0x09,
-	0x7c, 0x09, 0x6e, 0x5e, 0x50, 0xa3, 0xd8, 0x29, 0xef, 0xc1, 0x7a, 0xb6, 0xbb, 0x77, 0x0d, 0xbe,
-	0x29, 0xce, 0xb7, 0xfa, 0x36, 0x0e, 0xe1, 0xd6, 0x54, 0x5e, 0x89, 0x75, 0x8e, 0x3b, 0x86, 0x5b,
-	0xde, 0xe5, 0xee, 0xbd, 0xad, 0xf1, 0x5e, 0xe7, 0xf6, 0xad, 0x63, 0x1b, 0xdf, 0x01, 0x7e, 0x2e,
-	0x1d, 0x91, 0xfc, 0x0a, 0x61, 0xb1, 0x95, 0x3b, 0xa7, 0xa8, 0xfb, 0xb0, 0x5c, 0x63, 0xe7, 0xac,
-	0xf9, 0xd6, 0xa4, 0xa6, 0xfd, 0xcf, 0x7f, 0x07, 0x00, 0x00, 0xff, 0xff, 0x25, 0x2c, 0x85, 0xe5,
-	0x16, 0x05, 0x00, 0x00,
+	// 847 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0x5b, 0x6f, 0xe3, 0x44,
+	0x14, 0xb6, 0x93, 0xb4, 0xa9, 0x4f, 0xd2, 0xd6, 0x3d, 0x94, 0x62, 0xc2, 0x45, 0x61, 0x84, 0x50,
+	0x54, 0xa1, 0x6a, 0x1b, 0x24, 0xf6, 0x81, 0x17, 0xb4, 0x09, 0xab, 0x8d, 0xb4, 0xdc, 0xbc, 0xb0,
+	0xfb, 0x88, 0x26, 0xce, 0x6c, 0x3a, 0x6a, 0x3a, 0x13, 0xec, 0x71, 0x4b, 0x24, 0x9e, 0xf8, 0x0b,
+	0xbc, 0xf1, 0x77, 0xf8, 0x63, 0x68, 0x6e, 0xb5, 0x9d, 0x74, 0x85, 0x04, 0xfb, 0x10, 0xc5, 0xe7,
+	0x9b, 0xef, 0x9c, 0x39, 0x73, 0xae, 0x80, 0xb7, 0x7c, 0xc1, 0x64, 0xc1, 0xf2, 0x5b, 0x9e, 0xb1,
+	0x8b, 0x75, 0x2e, 0x95, 0xc4, 0x3d, 0xf3, 0x47, 0x22, 0xe8, 0x7e, 0x27, 0xd5, 0x15, 0x17, 0x4b,
+	0x72, 0x0c, 0x87, 0x86, 0xf7, 0x2d, 0x53, 0x74, 0x41, 0x15, 0x25, 0xaf, 0xa0, 0x67, 0x80, 0x94,
+	0x2a, 0x2e, 0x96, 0x78, 0x06, 0xfb, 0x65, 0xc1, 0xf2, 0xd9, 0x34, 0x09, 0x87, 0xe1, 0x28, 0x4a,
+	0x9d, 0x84, 0x09, 0x74, 0x0d, 0x6d, 0x36, 0x4d, 0x5a, 0xc3, 0x70, 0xd4, 0x4e, 0xbd, 0xa8, 0x35,
+	0x72, 0xa3, 0x9b, 0xb4, 0x87, 0xe1, 0xa8, 0x95, 0x3a, 0x89, 0x8c, 0xa0, 0x6f, 0x28, 0x2f, 0x39,
+	0xbb, 0xd3, 0x96, 0x6b, 0x16, 0xc2, 0x86, 0x05, 0x72, 0x0b, 0xf1, 0x4b, 0xfd, 0xf9, 0x63, 0xc9,
+	0xf2, 0xcd, 0x44, 0x8a, 0xd7, 0x7c, 0x89, 0x17, 0xd0, 0x95, 0xf9, 0x82, 0xe5, 0x4f, 0x36, 0x86,
+	0x7d, 0x34, 0x3e, 0xb5, 0x4f, 0xba, 0x30, 0xe8, 0x84, 0x2a, 0xb6, 0x94, 0xf9, 0x26, 0xf5, 0x24,
+	0x1c, 0x43, 0xb4, 0xe0, 0x39, 0xcb, 0x14, 0x97, 0xc2, 0x78, 0x58, 0x69, 0x14, 0x32, 0x57, 0x53,
+	0x7f, 0x96, 0x56, 0x34, 0x72, 0x09, 0x91, 0xb9, 0xf7, 0x39, 0x2f, 0x14, 0x7e, 0x0a, 0xfb, 0x36,
+	0x80, 0x49, 0x38, 0x6c, 0x8f, 0x7a, 0xe3, 0xbe, 0xd3, 0x36, 0x8c, 0xd4, 0x9d, 0x91, 0x0d, 0xec,
+	0x19, 0x00, 0x3f, 0x06, 0x30, 0xd0, 0x4f, 0x5c, 0xad, 0x98, 0x8b, 0x55, 0x0d, 0xc1, 0x53, 0xd8,
+	0xbb, 0xe5, 0xec, 0xae, 0x30, 0xbe, 0x74, 0x52, 0x2b, 0xbc, 0x29, 0x56, 0x48, 0xa0, 0xaf, 0xae,
+	0xca, 0x9b, 0xb9, 0xa0, 0x7c, 0xf5, 0x5c, 0x66, 0x49, 0xc7, 0xd8, 0x6b, 0x60, 0xe4, 0x11, 0x9c,
+	0x99, 0xab, 0xbf, 0xf9, 0x8d, 0x17, 0x8a, 0x89, 0x8c, 0xa5, 0xac, 0x58, 0x4b, 0x51, 0x30, 0x6d,
+	0xd5, 0x80, 0x85, 0xf1, 0xe3, 0x20, 0x75, 0x12, 0x29, 0xe0, 0xe4, 0xa9, 0xcc, 0x19, 0x5f, 0x0a,
+	0xa3, 0x38, 0xb9, 0x62, 0xd9, 0x35, 0x7e, 0x06, 0x47, 0x75, 0xf0, 0x3e, 0xd1, 0x5b, 0x28, 0x7e,
+	0x79, 0xcf, 0x7b, 0xc5, 0xe6, 0x05, 0x57, 0xcc, 0x45, 0xf5, 0xc8, 0xc5, 0xe5, 0xce, 0xa2, 0xe9,
+	0x16, 0x4b, 0xa7, 0xdd, 0x86, 0x8c, 0xfd, 0x5a, 0xb2, 0x42, 0x6d, 0xa7, 0x3d, 0xaa, 0xd2, 0xfe,
+	0x3b, 0x1c, 0xcf, 0xc4, 0xba, 0x54, 0xce, 0xb9, 0x52, 0x5c, 0xeb, 0xac, 0x67, 0x52, 0x28, 0x26,
+	0x94, 0x21, 0xf7, 0xc6, 0xe8, 0x6e, 0x7b, 0xca, 0x57, 0x6c, 0x62, 0x4f, 0x9e, 0x05, 0xa9, 0x27,
+	0xe1, 0x05, 0x74, 0x6e, 0x98, 0xa2, 0xc6, 0xb5, 0xde, 0x38, 0x71, 0x64, 0x63, 0x55, 0x6b, 0xf8,
+	0x22, 0x7f, 0x16, 0xa4, 0x86, 0xf7, 0x24, 0x82, 0xee, 0x0f, 0x74, 0xb3, 0x92, 0x74, 0x41, 0xfe,
+	0x08, 0x01, 0x7d, 0x04, 0xff, 0x87, 0x07, 0x97, 0x0d, 0x0f, 0x3e, 0x70, 0x64, 0x6f, 0xf8, 0xdf,
+	0x9c, 0xf8, 0x04, 0x7a, 0x35, 0xbb, 0x88, 0xd0, 0x99, 0x52, 0x45, 0xcd, 0xcd, 0xfd, 0xd4, 0x7c,
+	0x93, 0x3f, 0x5b, 0x70, 0xb2, 0xf3, 0x20, 0x5d, 0x5e, 0xaa, 0x56, 0x79, 0x56, 0xc0, 0x21, 0xf4,
+	0x16, 0xac, 0xc8, 0x72, 0xbe, 0xbe, 0x6f, 0x83, 0x28, 0xad, 0x43, 0xf8, 0x21, 0x44, 0xb4, 0x54,
+	0x57, 0x32, 0xff, 0x79, 0x36, 0x35, 0x35, 0x18, 0xa5, 0x15, 0x80, 0x9f, 0xc3, 0x89, 0xcc, 0xf9,
+	0x92, 0x0b, 0xba, 0x72, 0x8d, 0x21, 0xae, 0x5d, 0x2d, 0xee, 0x1e, 0xe8, 0x4a, 0x72, 0xaa, 0x05,
+	0xcb, 0x05, 0xbd, 0x61, 0xc9, 0x9e, 0xad, 0xa4, 0x26, 0x8a, 0x63, 0xe8, 0x7b, 0xe5, 0x17, 0xba,
+	0x8e, 0xf6, 0x1f, 0xac, 0xa3, 0x06, 0x47, 0xb7, 0x97, 0x97, 0x67, 0xd3, 0xa4, 0x6b, 0xdb, 0xab,
+	0x42, 0xc8, 0x5f, 0x21, 0x9c, 0x3e, 0x14, 0xe4, 0xb7, 0x17, 0x98, 0xf6, 0x7f, 0x0e, 0x0c, 0x39,
+	0x87, 0xa3, 0x72, 0xad, 0xf3, 0x7b, 0xdf, 0xa1, 0x6f, 0x9c, 0x7d, 0xe7, 0x63, 0xe8, 0xba, 0x08,
+	0x60, 0x1f, 0x0e, 0x04, 0xcf, 0xa4, 0xfe, 0xc5, 0x81, 0x96, 0xe6, 0x7c, 0xc5, 0xf5, 0x2f, 0x0e,
+	0xb1, 0x07, 0xdd, 0x8d, 0x2c, 0x55, 0x39, 0x67, 0x71, 0xeb, 0xfc, 0x31, 0x1c, 0x36, 0xa6, 0x20,
+	0x46, 0x6e, 0xd8, 0xc4, 0x01, 0x82, 0x9f, 0x30, 0x71, 0x88, 0xc7, 0xd0, 0xb3, 0x7e, 0xfc, 0xb2,
+	0xa0, 0x4a, 0x2b, 0x12, 0x38, 0x6c, 0x0c, 0x43, 0xec, 0x42, 0x9b, 0x16, 0x59, 0x1c, 0xe0, 0x01,
+	0x74, 0x74, 0x34, 0xe2, 0xd6, 0xf8, 0xef, 0xb6, 0x6b, 0xe0, 0x17, 0x76, 0x93, 0xe0, 0xd7, 0xde,
+	0x8a, 0x1d, 0x7c, 0x67, 0xf5, 0x26, 0xab, 0x1a, 0x67, 0xf0, 0xae, 0xc3, 0x9b, 0x2f, 0x27, 0xc1,
+	0x28, 0xc4, 0x09, 0x1c, 0x2e, 0xe4, 0x9d, 0xa8, 0x6c, 0xbc, 0xd3, 0x98, 0xad, 0x76, 0x50, 0x0c,
+	0xde, 0xdf, 0xea, 0x9d, 0xca, 0x36, 0x09, 0x1e, 0x85, 0xf8, 0x3d, 0xe0, 0xeb, 0xda, 0x84, 0xb2,
+	0x23, 0x0e, 0x7d, 0xcb, 0xef, 0xcc, 0xb9, 0xc1, 0x47, 0xf5, 0x3b, 0x76, 0x66, 0x26, 0x09, 0xf0,
+	0x2b, 0xe8, 0x2f, 0x99, 0xaa, 0x16, 0xc0, 0x7b, 0x75, 0x85, 0xda, 0x2a, 0x1a, 0xc4, 0xf5, 0x03,
+	0x4d, 0x25, 0x01, 0x3e, 0x86, 0x03, 0xaf, 0xfc, 0xf0, 0x6b, 0xfc, 0xf2, 0x69, 0x2e, 0xdb, 0x00,
+	0x2f, 0x21, 0xca, 0xa9, 0xb2, 0x8f, 0x43, 0xac, 0x93, 0xec, 0x02, 0x1e, 0xf8, 0xbe, 0xf0, 0x0b,
+	0x3b, 0xd0, 0xab, 0x4d, 0x67, 0xb7, 0x79, 0x59, 0x7d, 0xb5, 0xee, 0xea, 0xcc, 0xf7, 0x0d, 0xf0,
+	0xc5, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xc4, 0x7a, 0x7d, 0xba, 0x15, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -636,6 +1021,10 @@ type VideoServiceClient interface {
 	UploadVideo(ctx context.Context, opts ...grpc.CallOption) (VideoService_UploadVideoClient, error)
 	DownloadVideo(ctx context.Context, in *VideoRequest, opts ...grpc.CallOption) (VideoService_DownloadVideoClient, error)
 	ForeignVideoExists(ctx context.Context, in *ForeignVideoCheck, opts ...grpc.CallOption) (*VideoExistenceResponse, error)
+	GetVideoList(ctx context.Context, in *VideoQueryConfig, opts ...grpc.CallOption) (*VideoList, error)
+	GetVideo(ctx context.Context, in *VideoRequest, opts ...grpc.CallOption) (*VideoMetadata, error)
+	RateVideo(ctx context.Context, in *VideoRating, opts ...grpc.CallOption) (*Nothing, error)
+	ViewVideo(ctx context.Context, in *VideoViewing, opts ...grpc.CallOption) (*Nothing, error)
 }
 
 type videoServiceClient struct {
@@ -721,11 +1110,51 @@ func (c *videoServiceClient) ForeignVideoExists(ctx context.Context, in *Foreign
 	return out, nil
 }
 
+func (c *videoServiceClient) GetVideoList(ctx context.Context, in *VideoQueryConfig, opts ...grpc.CallOption) (*VideoList, error) {
+	out := new(VideoList)
+	err := c.cc.Invoke(ctx, "/proto.VideoService/getVideoList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *videoServiceClient) GetVideo(ctx context.Context, in *VideoRequest, opts ...grpc.CallOption) (*VideoMetadata, error) {
+	out := new(VideoMetadata)
+	err := c.cc.Invoke(ctx, "/proto.VideoService/getVideo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *videoServiceClient) RateVideo(ctx context.Context, in *VideoRating, opts ...grpc.CallOption) (*Nothing, error) {
+	out := new(Nothing)
+	err := c.cc.Invoke(ctx, "/proto.VideoService/rateVideo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *videoServiceClient) ViewVideo(ctx context.Context, in *VideoViewing, opts ...grpc.CallOption) (*Nothing, error) {
+	out := new(Nothing)
+	err := c.cc.Invoke(ctx, "/proto.VideoService/viewVideo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VideoServiceServer is the server API for VideoService service.
 type VideoServiceServer interface {
 	UploadVideo(VideoService_UploadVideoServer) error
 	DownloadVideo(*VideoRequest, VideoService_DownloadVideoServer) error
 	ForeignVideoExists(context.Context, *ForeignVideoCheck) (*VideoExistenceResponse, error)
+	GetVideoList(context.Context, *VideoQueryConfig) (*VideoList, error)
+	GetVideo(context.Context, *VideoRequest) (*VideoMetadata, error)
+	RateVideo(context.Context, *VideoRating) (*Nothing, error)
+	ViewVideo(context.Context, *VideoViewing) (*Nothing, error)
 }
 
 // UnimplementedVideoServiceServer can be embedded to have forward compatible implementations.
@@ -740,6 +1169,18 @@ func (*UnimplementedVideoServiceServer) DownloadVideo(req *VideoRequest, srv Vid
 }
 func (*UnimplementedVideoServiceServer) ForeignVideoExists(ctx context.Context, req *ForeignVideoCheck) (*VideoExistenceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ForeignVideoExists not implemented")
+}
+func (*UnimplementedVideoServiceServer) GetVideoList(ctx context.Context, req *VideoQueryConfig) (*VideoList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVideoList not implemented")
+}
+func (*UnimplementedVideoServiceServer) GetVideo(ctx context.Context, req *VideoRequest) (*VideoMetadata, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVideo not implemented")
+}
+func (*UnimplementedVideoServiceServer) RateVideo(ctx context.Context, req *VideoRating) (*Nothing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RateVideo not implemented")
+}
+func (*UnimplementedVideoServiceServer) ViewVideo(ctx context.Context, req *VideoViewing) (*Nothing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ViewVideo not implemented")
 }
 
 func RegisterVideoServiceServer(s *grpc.Server, srv VideoServiceServer) {
@@ -811,6 +1252,78 @@ func _VideoService_ForeignVideoExists_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VideoService_GetVideoList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VideoQueryConfig)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServiceServer).GetVideoList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.VideoService/GetVideoList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServiceServer).GetVideoList(ctx, req.(*VideoQueryConfig))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VideoService_GetVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VideoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServiceServer).GetVideo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.VideoService/GetVideo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServiceServer).GetVideo(ctx, req.(*VideoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VideoService_RateVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VideoRating)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServiceServer).RateVideo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.VideoService/RateVideo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServiceServer).RateVideo(ctx, req.(*VideoRating))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VideoService_ViewVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VideoViewing)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServiceServer).ViewVideo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.VideoService/ViewVideo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServiceServer).ViewVideo(ctx, req.(*VideoViewing))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _VideoService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "proto.VideoService",
 	HandlerType: (*VideoServiceServer)(nil),
@@ -818,6 +1331,22 @@ var _VideoService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "foreignVideoExists",
 			Handler:    _VideoService_ForeignVideoExists_Handler,
+		},
+		{
+			MethodName: "getVideoList",
+			Handler:    _VideoService_GetVideoList_Handler,
+		},
+		{
+			MethodName: "getVideo",
+			Handler:    _VideoService_GetVideo_Handler,
+		},
+		{
+			MethodName: "rateVideo",
+			Handler:    _VideoService_RateVideo_Handler,
+		},
+		{
+			MethodName: "viewVideo",
+			Handler:    _VideoService_ViewVideo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

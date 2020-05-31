@@ -37,6 +37,12 @@ spec:
             value: "videoservice:7777"
           - name: NumberOfRetries
             value: "5"
+          - name: redis_host
+            value: "videoredis"
+          - name: redis_port
+            value: "6379"
+          - name: redis_pass
+            value: ""
       imagePullSecrets:
       - name: us-west-1-ecr-registry
 ---
@@ -83,6 +89,12 @@ spec:
               value: "horahora-dev-otomads"
             - name: Local
               value: "true"
+            - name: redis_host
+              value: "videoredis"
+            - name: redis_port
+              value: "6379"
+            - name: redis_pass
+              value: ""
       imagePullSecrets:
         - name: us-west-1-ecr-registry
 ---
@@ -110,6 +122,28 @@ spec:
           value: "guest"
         - name: POSTGRES_PASSWORD
           value: "guest"
+      imagePullSecrets:
+        - name: us-west-1-ecr-registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: videoredis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: videoredis
+  template:
+    metadata:
+      labels:
+        app: videoredis
+    spec:
+      containers:
+        - name: videoredis
+          image: redis:6
       imagePullSecrets:
         - name: us-west-1-ecr-registry
 ---
@@ -209,6 +243,18 @@ spec:
     - protocol: TCP
       port: 5432
       targetPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: videoredis
+spec:
+  selector:
+    app: videoredis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
 ---
 apiVersion: v1
 kind: Service
