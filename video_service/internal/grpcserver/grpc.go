@@ -175,7 +175,7 @@ loop:
 	// TODO: switch to struct for args
 	videoID, err := g.VideoModel.SaveForeignVideo(context.TODO(), video.Meta.Meta.Title, video.Meta.Meta.Description,
 		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, userproto.Site(video.Meta.Meta.OriginalSite),
-		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, transcodeResults.ManifestPath, nil)
+		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, transcodeResults.ManifestPath, nil, video.Meta.Meta.DomesticAuthorID)
 	if err != nil {
 		return fmt.Errorf("failed to save video to postgres. Err: %s", err)
 		return err

@@ -96,6 +96,7 @@ message InputFileMetadata {
     string authorUsername = 5; // If reupload
     website originalSite = 6; // If reupload
     string originalID = 7; // If reupload // this is a little dumb
+    int64 domesticAuthorID = 8;
 }
 
 // For now, these two are the same, but may deviate in future

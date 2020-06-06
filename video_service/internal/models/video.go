@@ -41,8 +41,10 @@ func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *red
 // check if user has been created
 // if it hasn't, then create it
 // list user as parent of this video
-func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description string, authorUsername string, authorID string,
-	originalSite proto.Site, originalVideoLink, originalVideoID, newURI string, tags []string) (int64, error) {
+// FIXME this signature is too long lol
+// If domesticAuthorID is 0, will interpret as foreign video from foreign user
+func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description string, authorUsername string, foreignAuthorID string,
+	originalSite proto.Site, originalVideoLink, originalVideoID, newURI string, tags []string, domesticAuthorID int64) (int64, error) {
 	tx, err := v.db.BeginTx(ctx, nil)
 	if err != nil {
 		return 0, err
@@ -50,56 +52,58 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 
 	req := proto.GetForeignUserRequest{
 		OriginalWebsite: originalSite,
-		ForeignUserID:   authorID,
+		ForeignUserID:   foreignAuthorID,
 	}
 
-	var horahoraUID int64
+	horahoraUID := domesticAuthorID
 
-	resp, err := v.grpcClient.GetUserForForeignUID(ctx, &req)
-	grpcErr, ok := status.FromError(err)
-	if !ok {
-		return 0, fmt.Errorf("could not parse gRPC err")
-	}
-	switch {
-	case grpcErr.Message() == errors.UserDoesNotExistMessage:
-		// Create the user
-		log.Info("User does not exist for video, creating...")
-
-		regReq := proto.RegisterRequest{
-			Email:          "",
-			Username:       authorUsername,
-			Password:       "",
-			ForeignUser:    true,
-			ForeignUserID:  authorID,
-			ForeignWebsite: originalSite,
+	if horahoraUID == 0 {
+		resp, err := v.grpcClient.GetUserForForeignUID(ctx, &req)
+		grpcErr, ok := status.FromError(err)
+		if !ok {
+			return 0, fmt.Errorf("could not parse gRPC err")
 		}
-		regResp, err := v.grpcClient.Register(ctx, &regReq)
-		if err != nil {
+		switch {
+		case grpcErr.Message() == errors.UserDoesNotExistMessage:
+			// Create the user
+			log.Info("User does not exist for video, creating...")
+
+			regReq := proto.RegisterRequest{
+				Email:          "",
+				Username:       authorUsername,
+				Password:       "",
+				ForeignUser:    true,
+				ForeignUserID:  foreignAuthorID,
+				ForeignWebsite: originalSite,
+			}
+			regResp, err := v.grpcClient.Register(ctx, &regReq)
+			if err != nil {
+				return 0, err
+			}
+
+			validateReq := proto.ValidateJWTRequest{
+				Jwt: regResp.Jwt,
+			}
+
+			// The validation is superfluous, but we need the claims
+			// FIXME: can probably optimize
+			validateResp, err := v.grpcClient.ValidateJWT(ctx, &validateReq)
+			if err != nil {
+				return 0, err
+			}
+
+			if !validateResp.IsValid {
+				return 0, fmt.Errorf("jwt invalid (this should never happen!)")
+			}
+
+			horahoraUID = validateResp.Uid
+
+		case err != nil:
 			return 0, err
+
+		case err == nil:
+			horahoraUID = resp.NewUID
 		}
-
-		validateReq := proto.ValidateJWTRequest{
-			Jwt: regResp.Jwt,
-		}
-
-		// The validation is superfluous, but we need the claims
-		// FIXME: can probably optimize
-		validateResp, err := v.grpcClient.ValidateJWT(ctx, &validateReq)
-		if err != nil {
-			return 0, err
-		}
-
-		if !validateResp.IsValid {
-			return 0, fmt.Errorf("jwt invalid (this should never happen!)")
-		}
-
-		horahoraUID = validateResp.Uid
-
-	case err != nil:
-		return 0, err
-
-	case err == nil:
-		horahoraUID = resp.NewUID
 	}
 
 	sql := "INSERT INTO videos (title, description, userID, originalSite, " +
