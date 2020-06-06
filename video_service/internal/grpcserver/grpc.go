@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"io"
 	"io/ioutil"
 	"net"
@@ -270,21 +272,61 @@ func (g GRPCServer) DownloadVideo(req *proto.VideoRequest, outputStream proto.Vi
 }
 
 func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQueryConfig) (*proto.VideoList, error) {
-	return nil, nil
-	// TODO
+	switch queryConfig.OrderBy {
+	case proto.OrderCategory_rating:
+		st := status.New(codes.Unimplemented, "unimplemented")
+		return nil, st.Err()
+
+	case proto.OrderCategory_upload_date:
+		switch queryConfig.Direction {
+		case proto.SortDirection_asc, proto.SortDirection_desc:
+			videos, err := g.VideoModel.GetVideoList(queryConfig.Direction, queryConfig.PageNumber)
+			if err != nil {
+				return nil, err
+			}
+
+			return &proto.VideoList{
+				Videos: videos,
+			}, nil
+
+		default:
+			st := status.New(codes.InvalidArgument, "bad sort order")
+			return nil, st.Err()
+		}
+
+	case proto.OrderCategory_views:
+		st := status.New(codes.Unimplemented, "unimplemented")
+		return nil, st.Err()
+
+	default:
+		st := status.New(codes.InvalidArgument, "invalid order category")
+		return nil, st.Err()
+	}
 }
 
 func (g GRPCServer) RateVideo(ctx context.Context, rating *proto.VideoRating) (*proto.Nothing, error) {
-	return nil, nil
-	// TODO
+	err := g.VideoModel.AddRatingToVideoID(rating.UserID, string(rating.VideoID), float64(rating.Rating))
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.Nothing{}, nil
 }
 
-func (g GRPCServer) ViewVideo(context.Context, *proto.VideoViewing) (*proto.Nothing, error) {
-	return nil, nil
-	// TODO
+func (g GRPCServer) ViewVideo(ctx context.Context, videoInp *proto.VideoViewing) (*proto.Nothing, error) {
+	err := g.VideoModel.IncrementViewsForVideo(string(videoInp.VideoID))
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.Nothing{}, nil
 }
 
-func (g GRPCServer) GetVideo(context.Context, *proto.VideoRequest) (*proto.VideoMetadata, error) {
-	return nil, nil
-	// TODO
+func (g GRPCServer) GetVideo(ctx context.Context, req *proto.VideoRequest) (*proto.VideoMetadata, error) {
+	videoMetadata, err := g.VideoModel.GetVideoInfo(req.VideoID)
+	if err != nil {
+		return nil, err
+	}
+
+	return videoMetadata, nil
 }

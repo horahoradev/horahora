@@ -14,10 +14,30 @@ service VideoService {
 
 message Nothing{}
 
-message videoMetadata{
-    // TODO
+message videoMetadata {
+    string videoLoc = 1; // The location of the DASH manifest
+    string videoTitle = 2;
+    double rating = 3;
+    string authorName = 4;
+    uint64 views = 5;
+    int64 videoID = 6;
+    string uploadDate = 7;
+    string description = 8;
 }
 
+message VideoList {
+    repeated Video videos = 1;
+}
+
+message Video {
+    string videoTitle = 1;
+    uint64 views = 2;
+    double rating = 3;
+    string thumbnailLoc = 4;
+    int64 videoID = 5;
+    string authorName = 6;
+    string uploadDate = 7;
+}
 
 message videoRating {
     string userID = 1;
@@ -32,18 +52,9 @@ message videoViewing {
 message VideoQueryConfig {
     orderCategory orderBy = 1;
     sortDirection direction = 2;
+    int64 pageNumber = 3;
 }
 
-message VideoList {
-    repeated Video videos = 1;
-}
-
-message Video {
-    string videoTitle = 1;
-    uint64 views = 2;
-    float rating = 3;
-    string thumbnailLoc = 4;
-}
 
 message VideoExistenceResponse {
     bool Exists = 1;

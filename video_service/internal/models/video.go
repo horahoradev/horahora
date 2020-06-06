@@ -21,7 +21,9 @@ import (
 )
 
 const (
-	maxRating = 10.00
+	maxRating         = 10.00
+	numResultsPerPage = 50
+	cdnURL            = "images.horahora.org"
 )
 
 type VideoModel struct {
@@ -101,8 +103,8 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 	}
 
 	sql := "INSERT INTO videos (title, description, userID, originalSite, " +
-		"originalLink, newLink, originalID) " +
-		"VALUES ($1, $2, $3, $4, $5, $6, $7)" +
+		"originalLink, newLink, originalID, upload_date) " +
+		"VALUES ($1, $2, $3, $4, $5, $6, $7, Now())" +
 		"returning id"
 
 	// By this point the user should exist
@@ -156,10 +158,10 @@ func (v *VideoModel) IncrementViewsForVideo(videoID string) error {
 	return floatCmd.Err()
 }
 
-func (v *VideoModel) GetViewsForVideo(videoID string) error {
+func (v *VideoModel) GetViewsForVideo(videoID string) (uint64, error) {
 	// just fetch from sorted set
 	floatCmd := v.redisClient.ZScore("videos:views", videoID)
-	return floatCmd.Err()
+	return uint64(floatCmd.Val()), floatCmd.Err()
 }
 
 func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue float64) error {
@@ -173,6 +175,111 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue f
 
 	boolCmd := v.redisClient.HSet(videoKey, ratingUID, ratingValue)
 	return boolCmd.Err()
+}
+
+func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64) ([]*videoproto.Video, error) {
+	minResultNum := pageNum * numResultsPerPage
+	maxResultNum := minResultNum + numResultsPerPage
+
+	sql := "SELECT id, title, userID FROM videos ORDER BY upload_date %s LIMIT %d, %d"
+	switch direction {
+	case videoproto.SortDirection_asc:
+		sql = fmt.Sprintf(sql, "asc", minResultNum, maxResultNum)
+	case videoproto.SortDirection_desc:
+		sql = fmt.Sprintf(sql, "desc", minResultNum, maxResultNum)
+	}
+
+	var results []*videoproto.Video
+
+	rows, err := v.db.Query(sql)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var video videoproto.Video
+		var authorID int64
+		err = rows.Scan(&video.VideoID, &video.VideoTitle, &authorID)
+		if err != nil {
+			return nil, err
+		}
+
+		basicInfo, err := v.getBasicVideoInfo(authorID, string(video.VideoID))
+		if err != nil {
+			return nil, err
+		}
+
+		video.Rating = basicInfo.rating
+		video.AuthorName = basicInfo.authorName
+		video.Views = basicInfo.views
+		video.ThumbnailLoc = fmt.Sprintf("%s/%d.jpg", cdnURL, video.VideoID)
+
+		// TODO: could alloc in advance
+		results = append(results, &video)
+	}
+
+	return results, nil
+}
+
+type basicVideoInfo struct {
+	views      uint64
+	authorName string
+	rating     float64
+}
+
+func (v *VideoModel) GetVideoInfo(videoID string) (*videoproto.VideoMetadata, error) {
+	sql := "SELECT id, title, description, upload_date, userID, newLink FROM videos WHERE id=$1"
+	var video videoproto.VideoMetadata
+	var authorID int64
+
+	row := v.db.QueryRow(sql, videoID)
+
+	err := row.Scan(&video.VideoID, &video.VideoTitle, &video.Description, &video.UploadDate, &authorID, &video.VideoLoc)
+	if err != nil {
+		return nil, err
+	}
+
+	basicInfo, err := v.getBasicVideoInfo(authorID, string(video.VideoID))
+	if err != nil {
+		return nil, err
+	}
+
+	video.Rating = basicInfo.rating
+	video.AuthorName = basicInfo.authorName
+	video.Views = basicInfo.views
+
+	return &video, nil
+}
+
+func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID string) (*basicVideoInfo, error) {
+	var videoInfo basicVideoInfo
+
+	// Given user id, look up author name
+	userReq := proto.GetUserFromIDRequest{
+		UserID: authorID,
+	}
+
+	userResp, err := v.grpcClient.GetUserFromID(context.TODO(), &userReq)
+	if err != nil {
+		// maybe we should skip if we can't look them up?
+		return nil, err
+	}
+
+	videoInfo.authorName = userResp.Username
+
+	// Look up views from redis
+	videoInfo.views, err = v.GetViewsForVideo(videoID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Look up ratings from redis
+	videoInfo.rating, err = v.GetAverageRatingForVideoID(videoID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &videoInfo, nil
 }
 
 func (v *VideoModel) GetAverageRatingForVideoID(videoID string) (float64, error) {
