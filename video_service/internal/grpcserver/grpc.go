@@ -45,13 +45,7 @@ type GRPCServer struct {
 }
 
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, userGRPCAddress string, local bool,
-	redisClient *redis.Client) error {
-	conn, err := grpc.Dial(userGRPCAddress, grpc.WithInsecure())
-	if err != nil {
-		return err
-	}
-	client := userproto.NewUserServiceClient(conn)
-
+	redisClient *redis.Client, client userproto.UserServiceClient) error {
 	g, err := initGRPCServer(bucketName, db, client, local, redisClient)
 	if err != nil {
 		return err

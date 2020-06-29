@@ -58,14 +58,18 @@ type User struct {
 
 func (m *UserModel) GetUserWithID(userID int64) (*User, error) {
 	sql := "SELECT id, username, email FROM users WHERE id=$1"
-	user := User{}
+	var user []User
 
 	err := m.Conn.Select(&user, sql, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &user, nil
+	if len(user) < 1 {
+		return nil, fmt.Errorf("No user with that name")
+	}
+
+	return &user[0], nil
 }
 
 func (m *UserModel) GetUserWithUsername(username string) (int64, error) {

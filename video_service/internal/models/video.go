@@ -43,7 +43,7 @@ func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *red
 // list user as parent of this video
 // FIXME this signature is too long lol
 // If domesticAuthorID is 0, will interpret as foreign video from foreign user
-func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description string, authorUsername string, foreignAuthorID string,
+func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description string, foreignAuthorUsername string, foreignAuthorID string,
 	originalSite proto.Site, originalVideoLink, originalVideoID, newURI string, tags []string, domesticAuthorID int64) (int64, error) {
 	tx, err := v.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -70,7 +70,7 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 
 			regReq := proto.RegisterRequest{
 				Email:          "",
-				Username:       authorUsername,
+				Username:       foreignAuthorUsername,
 				Password:       "",
 				ForeignUser:    true,
 				ForeignUserID:  foreignAuthorID,
@@ -122,7 +122,7 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 		return 0, err
 	}
 
-	tagSQL := "INSERT INTO video_tags (video_id, tag) VALUES ($1, $2)"
+	tagSQL := "INSERT INTO tags (video_id, tag) VALUES ($1, $2)"
 	for _, tag := range tags {
 		_, err = tx.Exec(tagSQL, videoID, tag)
 		if err != nil {
@@ -172,7 +172,7 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue f
 	// hash table for each video with key being user ID
 	// really easy
 	if ratingValue > 10.0 || ratingValue < 0.00 {
-		return fmt.Errorf("invalid rating value: %f. Video ratings must be real numbers between 0 and 10.")
+		return fmt.Errorf("invalid rating value: %f. Video ratings must be real numbers between 0 and 10.", ratingValue)
 	}
 
 	videoKey := fmt.Sprintf("ratings:%s", videoID)
@@ -185,12 +185,12 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 	minResultNum := pageNum * numResultsPerPage
 	maxResultNum := minResultNum + numResultsPerPage
 
-	sql := "SELECT id, title, userID FROM videos ORDER BY upload_date %s LIMIT %d, %d"
+	sql := "SELECT id, title, userID FROM videos ORDER BY upload_date %s OFFSET %d LIMIT %d"
 	switch direction {
 	case videoproto.SortDirection_asc:
-		sql = fmt.Sprintf(sql, "asc", minResultNum, maxResultNum)
+		sql = fmt.Sprintf(sql, "asc", minResultNum, maxResultNum-minResultNum)
 	case videoproto.SortDirection_desc:
-		sql = fmt.Sprintf(sql, "desc", minResultNum, maxResultNum)
+		sql = fmt.Sprintf(sql, "desc", minResultNum, maxResultNum-minResultNum)
 	}
 
 	var results []*videoproto.Video
@@ -273,13 +273,19 @@ func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID string) (*basicVi
 
 	// Look up views from redis
 	videoInfo.views, err = v.GetViewsForVideo(videoID)
-	if err != nil {
+	switch {
+	case err != nil && err.Error() == "redis: nil":
+		break
+	case err != nil:
 		return nil, err
 	}
 
 	// Look up ratings from redis
 	videoInfo.rating, err = v.GetAverageRatingForVideoID(videoID)
-	if err != nil {
+	switch {
+	case err != nil && err.Error() == "redis: nil":
+		break
+	case err != nil:
 		return nil, err
 	}
 
