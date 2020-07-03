@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"github.com/caarlos0/env"
+	"github.com/jmoiron/sqlx"
 )
 
 type PostgresInfo struct {
@@ -16,6 +18,7 @@ type config struct {
 	PostgresInfo
 	RSAKeypair string `env:"RSA_KEYPAIR,required"`
 	GRPCPort   int64  `env:"GRPCPort,required"`
+	DbConn     *sqlx.DB
 }
 
 func New() (*config, error) {
@@ -26,5 +29,13 @@ func New() (*config, error) {
 	}
 
 	err = env.Parse(&config)
+
+	// https://www.calhoun.io/connecting-to-a-postgresql-database-with-gos-database-sql-package/
+	conn, err := sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", config.Hostname, config.Username, config.Password, config.Db))
+	if err != nil {
+		return nil, fmt.Errorf("could not connect to postgres. Err: %s", err)
+	}
+
+	config.DbConn = conn
 	return &config, err
 }

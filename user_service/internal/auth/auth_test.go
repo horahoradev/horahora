@@ -1,11 +1,36 @@
 package auth
 
 import (
+	"crypto/rsa"
+	"github.com/horahoradev/horahora/user_service/internal/config"
+	"github.com/horahoradev/horahora/user_service/internal/model"
+	proto "github.com/horahoradev/horahora/user_service/protocol"
+	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var u *model.UserModel
+var privateKey *rsa.PrivateKey
+
+func init() {
+	cfg, err := config.New()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	u, err = model.NewUserModel(cfg.DbConn)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	privateKey, err = ParsePrivateKey(cfg.RSAKeypair)
+	if err != nil {
+		log.Panic(err)
+	}
+}
 
 func TestPasswordValidation(t *testing.T) {
 	testPassword := "mystrongpassword"
@@ -53,4 +78,28 @@ rd258VnoYyNVswrjem4jHKTm4frORBF3sx6R1i/KiFSptp941g2hYjGe
 	privateKey, err := ParsePrivateKey(keypair)
 	assert.NoError(t, err)
 	assert.NotEqual(t, nil, privateKey)
+}
+
+var RegistrationTests = []struct {
+	username string
+	email    string
+	password string
+}{
+	{"mytestuser", "wow@wow.com", "testpassword"},
+}
+
+func TestDomesticRegistrationAndLogin(t *testing.T) {
+	for _, user := range RegistrationTests {
+		// FIXME: need to clean up function signature
+		_, err := Register(user.username, user.email, user.password, u, privateKey, false, "", proto.Site_niconico)
+		assert.NoError(t, err)
+
+		_, err = Login(user.username, user.password, privateKey, u)
+		assert.NoError(t, err)
+	}
+}
+
+func TestForeignRegistration(t *testing.T) {
+	_, err := Register("foreignUser", "", "", u, privateKey, true, "10", proto.Site_niconico)
+	assert.NoError(t, err)
 }

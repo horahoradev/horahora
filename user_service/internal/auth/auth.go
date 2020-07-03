@@ -26,12 +26,7 @@ func Login(username, password string, privateKey *rsa.PrivateKey, u *model.UserM
 		return "", err
 	}
 
-	inpPassHash, err := bcrypt.GenerateFromPassword([]byte(password), hashCost)
-	if err != nil {
-		return "", err
-	}
-
-	isValid, err := compareHashedPassword([]byte(passHash), inpPassHash)
+	isValid, err := compareHashedPassword([]byte(password), []byte(passHash))
 	if err != nil {
 		return "", err
 	}

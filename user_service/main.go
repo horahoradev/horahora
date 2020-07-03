@@ -1,12 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/horahoradev/horahora/user_service/internal/auth"
-
-	"github.com/jmoiron/sqlx"
 
 	"github.com/horahoradev/horahora/user_service/internal/grpcserver"
 
@@ -20,18 +17,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// https://www.calhoun.io/connecting-to-a-postgresql-database-with-gos-database-sql-package/
-	conn, err := sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", conf.Hostname, conf.Username, conf.Password, conf.Db))
-	if err != nil {
-		log.Fatalf("Could not connect to postgres. Err: %s", err)
-	}
-
 	privateKey, err := auth.ParsePrivateKey(conf.RSAKeypair)
 	if err != nil {
 		log.Fatalf("Could not parse RSA keypair. Err: %s", err)
 	}
 
-	err = grpcserver.NewGRPCServer(conn, privateKey, conf.GRPCPort)
+	err = grpcserver.NewGRPCServer(conf.DbConn, privateKey, conf.GRPCPort)
 	if err != nil {
 		log.Fatalf("gRPC server terminated with error: %s", err)
 	}
