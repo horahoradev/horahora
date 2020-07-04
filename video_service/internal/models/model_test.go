@@ -71,10 +71,14 @@ func TestRating(t *testing.T) {
 }
 
 func TestViews(t *testing.T) {
-	err := v.IncrementViewsForVideo("0")
-	assert.NoError(t, err)
-
 	info, err := v.getBasicVideoInfo(10, "0")
 	assert.NoError(t, err)
-	assert.Equal(t, 1, info.views)
+	originalViews := info.views
+
+	err = v.IncrementViewsForVideo("0")
+	assert.NoError(t, err)
+
+	info, err = v.getBasicVideoInfo(10, "0")
+	assert.NoError(t, err)
+	assert.Equal(t, originalViews+1, info.views)
 }

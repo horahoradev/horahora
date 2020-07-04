@@ -306,31 +306,25 @@ func (v *VideoModel) GetAverageRatingForVideoID(videoID string) (float64, error)
 	// according to docs, cursor value starts at 0, and server returns next value to pass in
 	var cursorVal uint64 = 0
 
-	scanCmd := v.redisClient.HScan(videoKey, cursorVal, "", 0)
-	var keys []string
-	keys, cursorVal = scanCmd.Val()
+	scanIterator := v.redisClient.HScan(videoKey, cursorVal, "", 0).Iterator()
+
 	// Every second element is a rating
-	for i := 1; i < len(keys); i += 2 {
-		rating, err := strconv.ParseFloat(keys[i], 64)
+	i := 0
+	for scanIterator.Next() {
+		log.Info(scanIterator.Val())
+		if i%2 == 0 {
+			i++
+			continue
+		}
+		i++
+
+		rating, err := strconv.ParseFloat(scanIterator.Val(), 64)
 		if err != nil {
 			return 0.00, err
 		}
 
 		ratingTotalNum += rating
-		ratingTotalDenom += maxRating
-	}
-
-	for cursorVal != 0 {
-		keys, cursorVal = scanCmd.Val()
-		for i := 1; i < len(keys); i += 2 {
-			rating, err := strconv.ParseFloat(keys[i], 64)
-			if err != nil {
-				return 0.00, err
-			}
-
-			ratingTotalNum += rating
-			ratingTotalDenom += maxRating
-		}
+		ratingTotalDenom++
 	}
 
 	return ratingTotalNum / ratingTotalDenom, nil
