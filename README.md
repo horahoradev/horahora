@@ -1,5 +1,5 @@
 # horahora
-Horahora is a microservice-based video hosting website with additional functionality for group content archival from Niconico, Bilibili, and Youtube. Users can upload content, or schedule categories of content from other websites to be archived (e.g. a given channel on Niconico, a tag on Youtube, or a playlist from Bilibili).
+Horahora is a microservice-based video hosting website with additional functionality for group content archival from Niconico, Bilibili, and Youtube. Users can upload their own content, or schedule categories of content from other websites to be archived (e.g. a given channel on Niconico, a tag on Youtube, or a playlist from Bilibili).
 
 This project is a WIP, and under active development. 
 
