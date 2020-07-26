@@ -12,30 +12,30 @@ import (
 	reflect "reflect"
 )
 
-// MockVideoService_UploadVideoServer is a mock of VideoService_UploadVideoServer interface.
+// MockVideoService_UploadVideoServer is a mock of VideoService_UploadVideoServer interface
 type MockVideoService_UploadVideoServer struct {
 	ctrl     *gomock.Controller
 	recorder *MockVideoService_UploadVideoServerMockRecorder
 }
 
-// MockVideoService_UploadVideoServerMockRecorder is the mock recorder for MockVideoService_UploadVideoServer.
+// MockVideoService_UploadVideoServerMockRecorder is the mock recorder for MockVideoService_UploadVideoServer
 type MockVideoService_UploadVideoServerMockRecorder struct {
 	mock *MockVideoService_UploadVideoServer
 }
 
-// NewMockVideoService_UploadVideoServer creates a new mock instance.
+// NewMockVideoService_UploadVideoServer creates a new mock instance
 func NewMockVideoService_UploadVideoServer(ctrl *gomock.Controller) *MockVideoService_UploadVideoServer {
 	mock := &MockVideoService_UploadVideoServer{ctrl: ctrl}
 	mock.recorder = &MockVideoService_UploadVideoServerMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use.
+// EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockVideoService_UploadVideoServer) EXPECT() *MockVideoService_UploadVideoServerMockRecorder {
 	return m.recorder
 }
 
-// Context mocks base method.
+// Context mocks base method
 func (m *MockVideoService_UploadVideoServer) Context() context.Context {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Context")
@@ -43,13 +43,13 @@ func (m *MockVideoService_UploadVideoServer) Context() context.Context {
 	return ret0
 }
 
-// Context indicates an expected call of Context.
+// Context indicates an expected call of Context
 func (mr *MockVideoService_UploadVideoServerMockRecorder) Context() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Context", reflect.TypeOf((*MockVideoService_UploadVideoServer)(nil).Context))
 }
 
-// Recv mocks base method.
+// Recv mocks base method
 func (m *MockVideoService_UploadVideoServer) Recv() (*proto.InputVideoChunk, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Recv")
@@ -58,13 +58,13 @@ func (m *MockVideoService_UploadVideoServer) Recv() (*proto.InputVideoChunk, err
 	return ret0, ret1
 }
 
-// Recv indicates an expected call of Recv.
+// Recv indicates an expected call of Recv
 func (mr *MockVideoService_UploadVideoServerMockRecorder) Recv() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Recv", reflect.TypeOf((*MockVideoService_UploadVideoServer)(nil).Recv))
 }
 
-// RecvMsg mocks base method.
+// RecvMsg mocks base method
 func (m *MockVideoService_UploadVideoServer) RecvMsg(arg0 interface{}) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RecvMsg", arg0)
@@ -72,13 +72,13 @@ func (m *MockVideoService_UploadVideoServer) RecvMsg(arg0 interface{}) error {
 	return ret0
 }
 
-// RecvMsg indicates an expected call of RecvMsg.
+// RecvMsg indicates an expected call of RecvMsg
 func (mr *MockVideoService_UploadVideoServerMockRecorder) RecvMsg(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecvMsg", reflect.TypeOf((*MockVideoService_UploadVideoServer)(nil).RecvMsg), arg0)
 }
 
-// SendAndClose mocks base method.
+// SendAndClose mocks base method
 func (m *MockVideoService_UploadVideoServer) SendAndClose(arg0 *proto.UploadResponse) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendAndClose", arg0)
@@ -86,13 +86,13 @@ func (m *MockVideoService_UploadVideoServer) SendAndClose(arg0 *proto.UploadResp
 	return ret0
 }
 
-// SendAndClose indicates an expected call of SendAndClose.
+// SendAndClose indicates an expected call of SendAndClose
 func (mr *MockVideoService_UploadVideoServerMockRecorder) SendAndClose(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAndClose", reflect.TypeOf((*MockVideoService_UploadVideoServer)(nil).SendAndClose), arg0)
 }
 
-// SendHeader mocks base method.
+// SendHeader mocks base method
 func (m *MockVideoService_UploadVideoServer) SendHeader(arg0 metadata.MD) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendHeader", arg0)
@@ -100,13 +100,13 @@ func (m *MockVideoService_UploadVideoServer) SendHeader(arg0 metadata.MD) error 
 	return ret0
 }
 
-// SendHeader indicates an expected call of SendHeader.
+// SendHeader indicates an expected call of SendHeader
 func (mr *MockVideoService_UploadVideoServerMockRecorder) SendHeader(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendHeader", reflect.TypeOf((*MockVideoService_UploadVideoServer)(nil).SendHeader), arg0)
 }
 
-// SendMsg mocks base method.
+// SendMsg mocks base method
 func (m *MockVideoService_UploadVideoServer) SendMsg(arg0 interface{}) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendMsg", arg0)
@@ -114,13 +114,13 @@ func (m *MockVideoService_UploadVideoServer) SendMsg(arg0 interface{}) error {
 	return ret0
 }
 
-// SendMsg indicates an expected call of SendMsg.
+// SendMsg indicates an expected call of SendMsg
 func (mr *MockVideoService_UploadVideoServerMockRecorder) SendMsg(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMsg", reflect.TypeOf((*MockVideoService_UploadVideoServer)(nil).SendMsg), arg0)
 }
 
-// SetHeader mocks base method.
+// SetHeader mocks base method
 func (m *MockVideoService_UploadVideoServer) SetHeader(arg0 metadata.MD) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetHeader", arg0)
@@ -128,19 +128,19 @@ func (m *MockVideoService_UploadVideoServer) SetHeader(arg0 metadata.MD) error {
 	return ret0
 }
 
-// SetHeader indicates an expected call of SetHeader.
+// SetHeader indicates an expected call of SetHeader
 func (mr *MockVideoService_UploadVideoServerMockRecorder) SetHeader(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetHeader", reflect.TypeOf((*MockVideoService_UploadVideoServer)(nil).SetHeader), arg0)
 }
 
-// SetTrailer mocks base method.
+// SetTrailer mocks base method
 func (m *MockVideoService_UploadVideoServer) SetTrailer(arg0 metadata.MD) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetTrailer", arg0)
 }
 
-// SetTrailer indicates an expected call of SetTrailer.
+// SetTrailer indicates an expected call of SetTrailer
 func (mr *MockVideoService_UploadVideoServerMockRecorder) SetTrailer(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTrailer", reflect.TypeOf((*MockVideoService_UploadVideoServer)(nil).SetTrailer), arg0)

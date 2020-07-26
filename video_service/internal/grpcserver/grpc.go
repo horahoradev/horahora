@@ -94,14 +94,8 @@ func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) 
 	log.Info("Handling video upload")
 
 	var video VideoUpload
-	currWd, err := os.Getwd()
-	if err != nil {
-		err = fmt.Errorf("could not get current working directory. Err: %s", err)
-		log.Error(err)
-		return err
-	}
 
-	uploadDir := fmt.Sprintf("%s/test_files/", currWd)
+	uploadDir := "/videoservice/test_files/"
 
 	// UUID for tmp filename and all uploads provides probabilistic guarantee of uniqueness
 	id, err := uuid.NewUUID()

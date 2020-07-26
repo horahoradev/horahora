@@ -51,7 +51,7 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 	return nil
 }
 
-var FailedToFetch error = errors.New("failed to retrieve desired number of items")
+var FailedToFetch = errors.New("failed to retrieve desired number of items")
 
 // dequeueFromDatabase pops the n most recent items from the database and timestamps them
 // I'm using postgres as a message queue because it's easy

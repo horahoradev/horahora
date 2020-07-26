@@ -1,15 +1,16 @@
-FROM golang:1.13.7-buster
+FROM golang:1.14.6-alpine3.12
 
 COPY . /videoservice
 
 WORKDIR /videoservice
 
-RUN apt install -y git
+RUN apk add git
+RUN apk add bash
+
 RUN go get github.com/go-delve/delve/cmd/dlv
 
-RUN go build --mod=vendor -gcflags "all=-N -l" -o videoservice .
+RUN cgo_enabled=0 go build --mod=vendor -o videoservice .
 
-RUN apt update && \
-    apt install -y ffmpeg
+RUN apk add ffmpeg
 
 ENTRYPOINT ["./videoservice"]

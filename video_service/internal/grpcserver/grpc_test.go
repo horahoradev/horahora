@@ -1,11 +1,12 @@
 package grpcserver
 
 import (
+	"github.com/horahoradev/horahora/video_service/internal/config"
 	"io"
 	"os"
 	"testing"
 
-	userproto "github.com/horahoradev/horahora/video_service/protocol"
+	userproto "github.com/horahoradev/horahora/user_service/protocol"
 
 	"github.com/DATA-DOG/go-sqlmock"
 
@@ -23,7 +24,7 @@ import (
 
 // This is a really huge test... it'd probably be better if I split things up
 func TestGRPCUpload(t *testing.T) {
-	bucketName := "horahora-dev-videos"
+	bucketName := "horahora-dev-otomads"
 
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)
@@ -31,20 +32,24 @@ func TestGRPCUpload(t *testing.T) {
 
 	sqlxMock := sqlx.NewDb(db, "sqlmock")
 	mock.ExpectBegin()
-	mock.ExpectExec("INSERT INTO videos").WillReturnResult(sqlmock.NewResult(1, 1))
+	// https://github.com/DATA-DOG/go-sqlmock/issues/27
+	mock.ExpectQuery("INSERT INTO videos").WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(),
+		sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).WillReturnRows(sqlmock.NewRows([]string{"1"}).AddRow(1))
+
 	mock.ExpectCommit()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockResp := userproto.GetForeignUserResponse{
-		NewUID: 1,
-	}
+	mockResp := userproto.GetForeignUserResponse{NewUID: 1}
 
 	mockClient := usermocks.NewMockUserServiceClient(mockCtrl)
 	mockClient.EXPECT().GetUserForForeignUID(gomock.Any(), gomock.Any(), gomock.Any()).Return(&mockResp, nil)
 
-	g, err := initGRPCServer(bucketName, sqlxMock, mockClient)
+	cfg, err := config.New()
+	assert.NoError(t, err)
+
+	g, err := initGRPCServer(bucketName, sqlxMock, mockClient, true, cfg.RedisConn)
 	assert.NoError(t, err)
 
 	file, err := os.Open("../../test_files/NO.mp4")
@@ -79,6 +84,8 @@ func TestGRPCUpload(t *testing.T) {
 	mockServ.EXPECT().Recv().Return(&metaPayload, nil).Times(1)
 	mockServ.EXPECT().Recv().Return(&payload, nil).Times(1)
 	mockServ.EXPECT().Recv().Return(nil, io.EOF).Times(1)
+
+	mockServ.EXPECT().SendAndClose(gomock.Any()).Return(nil).Times(1)
 
 	err = g.UploadVideo(mockServ)
 	assert.NoError(t, err)

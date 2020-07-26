@@ -113,6 +113,8 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 
 	// By this point the user should exist
 	// Username is unique, so will fail if user already exists
+	// FIXME: there might be some issues with error handling here. Should test to make sure scan returns ErrNoRows if insertion fail.
+	// maybe switch to: https://github.com/jmoiron/sqlx/issues/154#issuecomment-148216948
 	var videoID int64
 	res := tx.QueryRow(sql, title, description, horahoraUID, originalSite, originalVideoLink, newURI, originalVideoID)
 
