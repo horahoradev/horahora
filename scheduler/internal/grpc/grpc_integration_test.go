@@ -29,7 +29,7 @@ func init() {
 
 func TestTagDlNiconico(t *testing.T) {
 	request := proto.TagRequest{
-		Website:  proto.Site_niconico,
+		Website:  proto.SupportedSite_niconico,
 		UserID:   "1",
 		TagValue: "YTPMV",
 	}
@@ -40,7 +40,7 @@ func TestTagDlNiconico(t *testing.T) {
 
 func TestTagDlBilibili(t *testing.T) {
 	request := proto.TagRequest{
-		Website:  proto.Site_bilibili,
+		Website:  proto.SupportedSite_bilibili,
 		UserID:   "1",
 		TagValue: "YTPMV",
 	}
@@ -51,7 +51,7 @@ func TestTagDlBilibili(t *testing.T) {
 
 func TestTagDlYoutube(t *testing.T) {
 	request := proto.TagRequest{
-		Website:  proto.Site_youtube,
+		Website:  proto.SupportedSite_youtube,
 		UserID:   "1",
 		TagValue: "YTPMV",
 	}

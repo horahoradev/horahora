@@ -7,7 +7,11 @@ kubectl apply -f local.yaml
 
 # 2. Apply migrations
 kill -9 $(ps -aux | grep "svc/scheduledb 5432:5432" | awk '{print $2}') || true
+kill -9 $(ps -aux | grep "svc/frontend" | awk '{print $2}') || true
+
 kubectl port-forward svc/scheduledb 5432:5432 &
+kubectl port-forward svc/frontend 8080:80 &
+
 sleep 20 # lol
 psql --host=localhost -c 'create database scheduler' --user=guest || true
 psql --host=localhost -c 'create database userservice' --user=guest || true

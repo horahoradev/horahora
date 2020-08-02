@@ -217,6 +217,39 @@ spec:
       imagePullSecrets:
         - name: us-west-1-ecr-registry
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: frontend:latest
+          #        command: ["/go/bin/dlv"]
+          #        args: ["--listen=:39003",  "--headless=true", "--api-version=2", "exec", "./userservice"]
+          # "--continue", "--accept-multiclient", to avoid waiting for debugger
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          env:
+            - name: UserServiceGRPCAddress
+              value: "userservice:7777"
+            - name: VideoServiceGRPCAddress
+              value: "videoservice:7777"
+            - name: SchedulerServiceGRPCAddress
+              value: "scheduler:7777"
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -279,3 +312,27 @@ spec:
     - protocol: TCP
       port: 7777
       targetPort: 7777
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scheduler
+spec:
+  selector:
+    app: scheduler
+  ports:
+    - protocol: TCP
+      port: 7777
+      targetPort: 7777
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

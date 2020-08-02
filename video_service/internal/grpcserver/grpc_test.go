@@ -18,8 +18,6 @@ import (
 	proto "github.com/horahoradev/horahora/video_service/protocol"
 	mocks "github.com/horahoradev/horahora/video_service/protocol/mocks"
 	"github.com/stretchr/testify/assert"
-
-	_ "github.com/stretchr/testify/assert"
 )
 
 // This is a really huge test... it'd probably be better if I split things up

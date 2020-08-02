@@ -49,6 +49,9 @@ func New() (*config, error) {
 	}
 
 	err = env.Parse(&config)
+	if err != nil {
+		return nil, err
+	}
 	config.VideoOutputLoc = "./videos"
 
 	// I'm putting this here because it makes it easier to do integration tests

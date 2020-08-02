@@ -40,8 +40,8 @@ message RegisterRequest {
 
 enum site {
   niconico = 0;
-    bilibili = 1;
-    youtube = 2;
+  bilibili = 1;
+  youtube = 2;
 }
 
 
