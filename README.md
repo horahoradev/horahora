@@ -29,6 +29,10 @@ To run horahora locally, follow these steps:
 3. Run `./build.all.sh` to build all Docker images and send to the Docker daemon within minikube
 4. `./run-tests.sh` will run local integration tests. Currently, this will send an archival request to scheduler for all YTPMVs on Niconico.
 
+## Designs
+Designs are listed here:
+https://github.com/horahoradev/horahora-designs
+
 ## Task Roadmap
 Missing features are tracked using Trello.
 
