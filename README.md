@@ -33,6 +33,12 @@ To run horahora locally, follow these steps:
 Designs are listed here:
 https://github.com/horahoradev/horahora-designs
 
+![](https://github.com/horahoradev/horahora-designs/blob/master/Login.png?raw=true)
+
+![](https://github.com/horahoradev/horahora-designs/blob/master/Video.png?raw=true)
+
+![](https://github.com/horahoradev/horahora-designs/blob/master/Profile.png?raw=true)
+
 ## Task Roadmap
 Missing features are tracked using Trello.
 
