@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/horahoradev/horahora/frontend/internal/config"
+	"github.com/horahoradev/horahora/frontend/internal/templates"
 	"net/http"
 
 	custommiddleware "github.com/horahoradev/horahora/frontend/internal/middleware"
@@ -26,6 +27,10 @@ func main() {
 
 	setupRoutes(e)
 
+	t := templates.New()
+
+	e.Renderer = t
+
 	e.Logger.Fatal(e.Start(":80"))
 }
 
@@ -35,14 +40,34 @@ func setupRoutes(e *echo.Echo) {
 	e.GET("/", getHome)
 }
 
-// This section is just a placeholder
+type Video struct {
+	Title    string
+	Views    int64
+	AuthorID int64
+	Rating   float32
+}
+
+type ProfileData struct {
+	ActiveUserID    int64
+	ProfileUserID   int64
+	ProfileUsername string
+	ProfileVideos   []Video
+}
 
 func getUser(c echo.Context) error {
 	// TODO
 	// User ID from path `users/:id`
-	id := c.Param("id")
+	//id := c.Param("id")
 
-	return c.String(http.StatusOK, id)
+	data := ProfileData{}
+
+	id, ok := c.Get(custommiddleware.UserIDKey).(*int64)
+	if ok && id != nil {
+		data.ActiveUserID = *id
+	}
+	// TODO: get the rest of data
+
+	return c.Render(http.StatusOK, "profile", data)
 }
 
 func getVideo(c echo.Context) error {

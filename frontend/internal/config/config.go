@@ -19,7 +19,7 @@ type Config struct {
 }
 
 func New() (*Config, error) {
-	config := &Config{}
+	config := Config{}
 
 	err := env.Parse(&config)
 	if err != nil {
@@ -45,5 +45,5 @@ func New() (*Config, error) {
 	config.UserClient = userproto.NewUserServiceClient(userGRPCConn)
 	config.VideoClient = videoproto.NewVideoServiceClient(videoGRPCConn)
 
-	return config, nil
+	return &config, nil
 }
