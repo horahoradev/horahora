@@ -7,8 +7,6 @@ set -e -x -o pipefail
 # In the future, there should be smarter, more customizable behavior here.
 # E.g. if the input video is 360p, there's no need to output a version at 1080p.
 
-# $2 sho
-
 VP9_DASH_PARAMS="-tile-columns 4 -frame-parallel 1"
 COMMON_VIDEO_ARGS="-keyint_min 150 -g 150 -threads 8"
 

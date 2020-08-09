@@ -20,6 +20,8 @@ type ArchiveRequestModel struct {
 	Db *sqlx.DB
 }
 
+// FIXME: this API feels a little dumb
+
 func NewArchiveRequest(db *sqlx.DB) *ArchiveRequestModel {
 	return &ArchiveRequestModel{Db: db}
 }

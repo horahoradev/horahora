@@ -1,7 +1,7 @@
 # horahora
 Horahora is a microservice-based video hosting website with additional functionality for group content archival from Niconico, Bilibili, and Youtube. Users can upload their own content, or schedule categories of content from other websites to be archived (e.g. a given channel on Niconico, a tag on Youtube, or a playlist from Bilibili).
 
-This project is a WIP, and under active development. 
+This project is a WIP, and under active development. Contributions and suggestions are always welcome! If you have any questions regarding this project, feel free to contact me either via discord or email.
 
 Join our discord here: https://discord.gg/6TAEmAA
 
@@ -12,6 +12,8 @@ Currently, there are three microservices:
 1. User Service, which handles registration, logins, and JWT validation
 2. Video Service, which handles video uploads (both from Scheduler and from users), transcoding/chunking as required for DASH, uploads to the origin, and storage of metadata.
 3. Scheduler, which handles content archival requests from users. For example, if a user specifies that they'd like all videos on Niconico with the tag "YTPMV" to be downloaded, Scheduler will download those videos, register them (and their associated creator) with video service and user service, and check that category of content regularly for new videos.
+
+For more in-depth information on a given microservice, consult its README.
 
 All microservices are horizontally scalable, containerized, and communicate via gRPC.
 

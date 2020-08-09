@@ -38,6 +38,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 		}
 
 		c.Set(UserIDKey, uid)
+		// TODO: add other stuff in here like username, profile picture location, etc
 		return next(c)
 	}
 }

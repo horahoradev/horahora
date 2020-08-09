@@ -3,7 +3,7 @@
     <ul>
         <li><a href="/">Horahora</a></li>
         <li><textarea cols="1" rows="1">Search for videos</textarea></li>
-        <li><a href="/login">Login</a></li>
+        {{if .L.Username}} <a href="/profile/{{.L.UserID}}" {{.L.Username}} </a> {{else}}<li><a href="/login">Login</a></li> {{end}}
     </ul>
 </head>
 {{end}}

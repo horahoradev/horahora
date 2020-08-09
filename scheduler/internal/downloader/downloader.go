@@ -6,14 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
+	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
-
-	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -134,12 +133,6 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 			metadata, err := d.downloadVideo(video)
 			if err == nil {
 				log.Infof("Download succeeded for video %s", video.ID)
-				err := dlReq.SetLatestVideo(video.ID, time.Now())
-
-				// TODO: handle better? retry?
-				if err != nil {
-					log.Errorf("Could not set latest video. Err: %s", err)
-				}
 
 				// Background is used here to try to ensure that the service will deal with whatever it's currently
 				// downloading before shutting down.
@@ -149,6 +142,14 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 					continue
 				}
 
+				err := dlReq.SetLatestVideo(video.ID, time.Now())
+
+				// TODO: handle better? retry?
+				if err != nil {
+					log.Errorf("Could not set latest video. Err: %s", err)
+				}
+
+				// TODO: why did I make this channel? I don't remember what it was for, successful video download notifications to client?
 				if d.successfulDownloads != nil {
 					d.successfulDownloads <- video
 				}

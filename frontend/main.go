@@ -47,11 +47,18 @@ type Video struct {
 	Rating   float32
 }
 
+type LoggedInUserData struct {
+	UserID            int64
+	Username          string
+	ProfilePictureURL string
+}
+
 type ProfileData struct {
-	ActiveUserID    int64
-	ProfileUserID   int64
-	ProfileUsername string
-	ProfileVideos   []Video
+	L                 LoggedInUserData
+	UserID            int64
+	Username          string
+	ProfilePictureURL string
+	Videos            []Video
 }
 
 func getUser(c echo.Context) error {
@@ -63,7 +70,7 @@ func getUser(c echo.Context) error {
 
 	id, ok := c.Get(custommiddleware.UserIDKey).(*int64)
 	if ok && id != nil {
-		data.ActiveUserID = *id
+		data.L.UserID = *id
 	}
 	// TODO: get the rest of data
 

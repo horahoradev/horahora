@@ -22,9 +22,6 @@ flyway -user=guest -password=guest -url=jdbc:postgresql://localhost:5432/schedul
 flyway -user=guest -password=guest -url=jdbc:postgresql://localhost:5432/userservice -locations=filesystem://$(pwd)/../user_service/migrations migrate
 flyway -user=guest -password=guest -url=jdbc:postgresql://localhost:5432/videoservice -locations=filesystem://$(pwd)/../video_service/migrations migrate
 
-sleep 30
-./run-tests.sh
-
 echo "Press enter to kill"
 read
 kill -9 $proxyPID
