@@ -1,0 +1,15 @@
+{{define "register"}}
+    {{ template "header" . }}
+    <div class="panel">
+        <form action="/register" method="post">
+            <label>Username</label><input type="text" name="username" required>
+            <p></p>
+            <label>Email</label><input type="text" name="email" required>
+            <p></p>
+            <label>Password</label><input type="password" name="password" required>
+            <p></p>
+            <button type="submit">Login</button>
+
+        </form>
+    </div>
+{{end}}

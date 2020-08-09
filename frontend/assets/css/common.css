@@ -1,0 +1,95 @@
+body {
+    background-color: #f9f4e9;
+    padding: 0px;
+    margin: 0px;
+}
+
+.navbar {
+    background-color: #ffffff;
+    filter: drop-shadow(0px 2px 1px #000000);
+    height: 40px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.navbar > div:nth-child(1) {
+    position: absolute;
+    left: 0%;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+}
+
+.navbar > div:nth-child(2) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 50%;
+    display: inline-block;
+}
+
+.navbar > div:nth-child(3) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 95%;
+    display: inline-block;
+}
+
+.panel {
+    background-color: #ffffff;
+    filter: drop-shadow(0px 2px 4px #000000);
+    top: 50px;
+    position: relative;
+}
+
+h1 {
+    font-family: "Lato";
+    font-weight: bold;
+    font-size: 20px;
+}
+
+h2 {
+    font-family: "Lato";
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.pfp {
+    height: 128px;
+    width: 128px;
+    vertical-align: top;
+    top: 50px;
+}
+
+.bodydiv {
+    padding: 50px;
+}
+
+.video-thumb {
+    height: 80%;
+    width: 100%;
+}
+
+.video-section {
+    top: 50px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.video-container {
+    height: 150px;
+    width: 135px;
+    display: inline-block;
+    margin: 10px;
+    vertical-align: top;
+}
+
+p {
+    padding: 0px;
+    margin: 0px;
+    vertical-align: top;
+
+}

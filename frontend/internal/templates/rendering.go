@@ -16,7 +16,7 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 
 func New() *Template {
 	t := &Template{
-		templates: template.Must(template.ParseGlob("./internal/templates/html/*.html")),
+		templates: template.Must(template.ParseGlob("./internal/templates/html/*.gohtml")),
 	}
 
 	return t

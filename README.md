@@ -21,15 +21,15 @@ The MVP will also consist of a frontend service to handle HTML templating, and a
 
 ## How to Use
 Currently, only local use is supported.
-To run horahora locally, follow these steps:
-1. First install the following depdendencies:
+To run Horahora locally, follow these steps:
+1. First install the following dependencies:
   - Flyway
   - Docker
   - Kubernetes
 
 2. Start minikube, and use `./run-local.sh` in the Kubernetes directory. If the database migrations fail to apply, keep running run-local.sh until they succeed.
 3. Run `./build.all.sh` to build all Docker images and send to the Docker daemon within minikube
-4. `./run-tests.sh` will run local integration tests. Currently, this will send an archival request to scheduler for all YTPMVs on Niconico.
+4. `./run-tests.sh` will run local integration tests.
 
 ## Designs
 Designs are listed here:
