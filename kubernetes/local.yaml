@@ -62,7 +62,18 @@ spec:
       labels:
         app: videoservice
     spec:
+      volumes:
+        - name: shared-data
+          emptyDir: {}
       containers:
+        - name: nginx-container
+          image: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: shared-data
+              mountPath: /usr/share/nginx/html
+
         - name: videoservice
           image: videoservice:latest
 #          command: ["/go/bin/dlv"]
@@ -95,6 +106,9 @@ spec:
               value: "6379"
             - name: redis_pass
               value: ""
+          volumeMounts:
+            - name: shared-data
+              mountPath: /videoservice/test_files
       imagePullSecrets:
         - name: us-west-1-ecr-registry
 ---
@@ -241,7 +255,7 @@ spec:
           # "--continue", "--accept-multiclient", to avoid waiting for debugger
           imagePullPolicy: Never
           ports:
-            - containerPort: 80
+            - containerPort: 8081
           env:
             - name: UserServiceGRPCAddress
               value: "userservice:7777"
@@ -334,5 +348,17 @@ spec:
     app: frontend
   ports:
     - protocol: TCP
-      port: 80
+      port: 8081
+      targetPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  selector:
+    app: videoservice
+  ports:
+    - protocol: TCP
+      port: 86
       targetPort: 80

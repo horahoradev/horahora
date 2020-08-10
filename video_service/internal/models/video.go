@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	"strconv"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -187,7 +188,7 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 	minResultNum := pageNum * numResultsPerPage
 	maxResultNum := minResultNum + numResultsPerPage
 
-	sql := "SELECT id, title, userID FROM videos ORDER BY upload_date %s OFFSET %d LIMIT %d"
+	sql := "SELECT id, title, userID, newLink FROM videos ORDER BY upload_date %s OFFSET %d LIMIT %d"
 	switch direction {
 	case videoproto.SortDirection_asc:
 		sql = fmt.Sprintf(sql, "asc", minResultNum, maxResultNum-minResultNum)
@@ -205,7 +206,8 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 	for rows.Next() {
 		var video videoproto.Video
 		var authorID int64
-		err = rows.Scan(&video.VideoID, &video.VideoTitle, &authorID)
+		var mpdLoc string
+		err = rows.Scan(&video.VideoID, &video.VideoTitle, &authorID, &mpdLoc)
 		if err != nil {
 			return nil, err
 		}
@@ -218,7 +220,13 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 		video.Rating = basicInfo.rating
 		video.AuthorName = basicInfo.authorName
 		video.Views = basicInfo.views
-		video.ThumbnailLoc = fmt.Sprintf("%s/%d.jpg", cdnURL, video.VideoID)
+
+		// FIXME: nothing is quite as dumb as this
+		// Need to remove the absolute path from mpd loc
+		spl := strings.Split(mpdLoc, "/")
+		mpdLoc = spl[len(spl)-1]
+
+		video.ThumbnailLoc = strings.Replace(mpdLoc, ".mpd", ".png", 1)
 
 		// TODO: could alloc in advance
 		results = append(results, &video)
