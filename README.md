@@ -1,5 +1,5 @@
 # Horahora
-Horahora is a microservice-based video hosting website with additional functionality for group content archival from Niconico, Bilibili, and Youtube. Users can upload their own content, or schedule categories of content from other websites to be archived (e.g. a given channel on Niconico, a tag on Youtube, or a playlist from Bilibili). Content archived from other websites will be accessible in the same manner as user-uploaded videos, and will be organized under the same metadata (author, tags) associated with the original video.
+Horahora is a microservice-based video hosting website with additional functionality for content archival from Niconico, Bilibili, and Youtube. Users can upload their own content, or schedule categories of content from other websites to be archived (e.g. a given channel on Niconico, a tag on Youtube, or a playlist from Bilibili). Content archived from other websites will be accessible in the same manner as user-uploaded videos, and will be organized under the same metadata (author, tags) associated with the original video.
 
 This project is a WIP, and under active development. Contributions and suggestions are always welcome! If you have any questions regarding this project, feel free to contact me either via discord or email.
 
@@ -27,9 +27,10 @@ To run Horahora locally, follow these steps:
   - Docker
   - Kubernetes
 
-2. Start minikube, and use `./run-local.sh` in the Kubernetes directory. If the database migrations fail to apply, keep running run-local.sh until they succeed.
-3. Run `./build.all.sh` to build all Docker images and send to the Docker daemon within minikube
+2. Start minikube with `minikube start --memory=3072`
+3. Run `./build.all.sh` (in the Kubernetes directory) to build all Docker images and send to the Docker daemon within minikube
 4. `./run-tests.sh` will run local integration tests.
+5. Navigate to `localhost:8080` to view the current state of the website.
 
 ## Designs
 Designs are listed here:
