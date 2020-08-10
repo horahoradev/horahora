@@ -29,8 +29,9 @@ To run Horahora locally, follow these steps:
 
 2. Start minikube with `minikube start --memory=3072`
 3. Run `./build.all.sh` (in the Kubernetes directory) to build all Docker images and send to the Docker daemon within minikube
-4. `./run-tests.sh` will run local integration tests.
-5. Navigate to `localhost:8080` to view the current state of the website.
+4. `./run-local.sh` to create Kubernetes deployments/services and apply database migrations. Keep running run-local.sh until migrations succeed.
+5. `./run-tests.sh` will run local integration tests.
+6. Navigate to `localhost:8080` to view the current state of the website.
 
 ## Designs
 Designs are listed here:
