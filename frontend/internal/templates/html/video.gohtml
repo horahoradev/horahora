@@ -10,7 +10,7 @@
                         <span class="float-right">{{.Views}} views </span>
                         <p></p>
                         {{.UploadDate}}
-                        <span class="float-right">Rating: {{.Rating}}</span>
+                        <span class="float-right"><div id="rateYo"></div></span>
                     </div>
                 </div>
                 <div class="profile-section bottom-border">
@@ -44,13 +44,31 @@
                 </div>
             </div>
         </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+                integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+                crossorigin="anonymous"></script>
         <script src="http://cdn.dashjs.org/v3.1.2/dash.all.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
         <script>
             (function(){
                 var url = "http://localhost:8080/staticfiles/{{.MPDLoc}}";
                 var player = dashjs.MediaPlayer().create();
                 player.initialize(document.querySelector("#videoPlayer"), url, true);
+
+                $("#rateYo").rateYo({
+                    rating: {{.Rating}}
+                });
+
+                $("#rateYo").rateYo()
+                    .on("rateyo.set", function (e, data) {
+
+                        alert("The rating is set to " + data.rating + "!");
+                    });
+
             })();
+
+
         </script>
     </body>
     </html>

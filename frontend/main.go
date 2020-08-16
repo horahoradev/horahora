@@ -10,8 +10,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"math"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -292,6 +294,19 @@ func NewVideoHandler(v videoproto.VideoServiceClient, u userproto.UserServiceCli
 func (v *VideoHandler) getVideo(c echo.Context) error {
 	id := c.Param("id")
 
+	// Dumb
+	idInt, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	// Increment views first
+	viewReq := videoproto.VideoViewing{VideoID: idInt}
+	_, err = v.v.ViewVideo(context.Background(), &viewReq)
+	if err != nil {
+		return err
+	}
+
 	videoReq := videoproto.VideoRequest{
 		VideoID: id,
 	}
@@ -303,12 +318,19 @@ func (v *VideoHandler) getVideo(c echo.Context) error {
 
 	spl := strings.Split(videoInfo.VideoLoc, "/")
 
+	rating := videoInfo.Rating
+
+	// lol
+	if math.IsNaN(rating) {
+		rating = 0.00
+	}
+
 	data := VideoDetail{
 		L:               LoggedInUserData{},
 		Title:           videoInfo.VideoTitle,
 		MPDLoc:          spl[len(spl)-1], // FIXME: fix this in videoservice LOL this is embarrassing
 		Views:           videoInfo.Views,
-		Rating:          videoInfo.Rating,
+		Rating:          rating,
 		AuthorID:        videoInfo.AuthorID, // TODO
 		Username:        videoInfo.AuthorName,
 		UserDescription: "", // TODO: not implemented yet
