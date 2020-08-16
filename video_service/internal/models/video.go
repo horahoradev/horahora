@@ -261,6 +261,7 @@ func (v *VideoModel) GetVideoInfo(videoID string) (*videoproto.VideoMetadata, er
 	video.Rating = basicInfo.rating
 	video.AuthorName = basicInfo.authorName
 	video.Views = basicInfo.views
+	video.AuthorID = authorID
 
 	return &video, nil
 }

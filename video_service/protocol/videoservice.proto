@@ -18,11 +18,13 @@ message videoMetadata {
     string videoLoc = 1; // The location of the DASH manifest
     string videoTitle = 2;
     double rating = 3;
-    string authorName = 4;
+    string authorName = 4; // Do I need this? probably not
     uint64 views = 5;
     int64 videoID = 6;
     string uploadDate = 7;
     string description = 8;
+    int64 authorID = 9;
+
 }
 
 message VideoList {
