@@ -59,7 +59,16 @@ h2 {
     height: 128px;
     width: 128px;
     vertical-align: top;
-    top: 50px;
+    top: 0px;
+    display: inline-block;
+}
+
+.pfp-small {
+    height: 32px;
+    width: 32px;
+    vertical-align: top;
+    top: 0px;
+    display: inline-block;
 }
 
 .bodydiv {
@@ -92,4 +101,70 @@ p {
     margin: 0px;
     vertical-align: top;
 
+}
+
+.profile-picture {
+    display: inline-block;
+    height: 80%;
+}
+
+
+.float-right {
+    float: right;
+}
+
+.video-player-section {
+    width: calc(100% - 400px);
+}
+
+video {
+    width: 100%;
+}
+
+.video-player-section > div {
+    width: 100%;
+    margin: 0px;
+    border-left: 1px solid #CBD5E0;
+    border-right: 1px solid #CBD5E0;
+    background-color: #FFFFFF;
+}
+
+.bottom-border {
+    border-bottom: 1px solid #CBD5E0;
+}
+
+
+.description-section {
+}
+
+.inner-description {
+    padding:15px;
+}
+
+.user-content {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.user-content :nth-child(2){
+    line-height: 30px;
+}
+
+
+.user-content :nth-child(3){
+    line-height: 30px;
+}
+
+.comment-content {
+    display: inline-block;
+    vertical-align: top;
+    padding-left: 15px;
+}
+
+.comment-section {
+    vertical-align: top;
+}
+
+.inner-comment-section {
+    padding-left: 10px;
 }

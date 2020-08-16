@@ -1,0 +1,57 @@
+{{define "video"}}
+    <html>
+        {{ template "header" .L }}
+        <div class="bodydiv">
+            <div class="video-player-section bottom-border">
+                <video id="videoPlayer" controls></video>
+                <div class="description-section bottom-border">
+                    <div class="inner-description">
+                        <b>{{.Title}}</b>
+                        <span class="float-right">{{.Views}} views </span>
+                        <p></p>
+                        {{.UploadDate}}
+                        <span class="float-right">Rating: {{.Rating}}</span>
+                    </div>
+                </div>
+                <div class="profile-section bottom-border">
+                    <div class="user-content">
+                    <img class="pfp" src="{{.ProfilePicture}}">
+                        </div>
+                    <div class="user-content">
+                        <b>{{.Username}}</b>
+                        <p></p>
+                        <i>{{.UserSubscribers}} subscribers</i>
+                        <p></p>
+                        {{.UserDescription}}
+                    </div>
+                    <button class="float-right">Subscribe</button>
+                </div>
+                <div class="comment-section">
+                    <div class="inner-comment-section">
+                    <h4>Comments ({{len .Comments}})</h4>
+                {{range .Comments}}
+                    <div class="comment">
+                        <div class="user-content">
+                            <img class="pfp-small" src="{{.ProfilePicture}}">
+                            </div>
+                            <div class="comment-content">
+                                <b>{{.Username}}</b>
+                                <p>{{.Comment}}</p>
+                            </div>
+                    </div>
+                    </div>
+                {{end}}
+                </div>
+            </div>
+        </div>
+        <script src="http://cdn.dashjs.org/v3.1.2/dash.all.min.js"></script>
+        <script>
+            (function(){
+                var url = "http://localhost:8080/staticfiles/{{.MPDLoc}}";
+                var player = dashjs.MediaPlayer().create();
+                player.initialize(document.querySelector("#videoPlayer"), url, true);
+            })();
+        </script>
+    </body>
+    </html>
+{{end}}

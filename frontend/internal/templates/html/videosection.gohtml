@@ -3,7 +3,7 @@
     <!-- Maybe use flexbox here? Need to adapt to different resolutions -->
     {{range .}}
         <div class="video-container">
-            <img src="http://localhost:8083/{{.ThumbnailLoc}}" class="video-thumb">
+            <img src="http://localhost:8080/staticfiles/{{.ThumbnailLoc}}" class="video-thumb">
             <p><a href="/videos/{{.VideoID}}">{{.Title}}</a></p>
             Views: {{.Views}} Rating: {{.Rating}}
         </div>

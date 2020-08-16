@@ -5,11 +5,14 @@ import (
 	"github.com/horahoradev/horahora/frontend/internal/config"
 	custommiddleware "github.com/horahoradev/horahora/frontend/internal/middleware"
 	"github.com/horahoradev/horahora/frontend/internal/templates"
+	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 func main() {
@@ -25,6 +28,19 @@ func main() {
 	e.Static("/static", "assets")
 	e.Use(middleware.Logger())
 
+	url1, err := url.Parse("http://nginx:86")
+	if err != nil {
+		e.Logger.Fatal(err)
+	}
+
+	targets := []*middleware.ProxyTarget{
+		{
+			URL: url1,
+		},
+	}
+	g := e.Group("/staticfiles")
+	g.Use(middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
+
 	setupRoutes(e, cfg)
 
 	t := templates.New()
@@ -39,7 +55,9 @@ func setupRoutes(e *echo.Echo, cfg *config.Config) {
 	h := NewHomeHandler(cfg.VideoClient)
 	e.GET("/", h.getHome)
 	e.GET("/users/:id", getUser)
-	e.GET("/videos/:id", getVideo)
+
+	v := NewVideoHandler(cfg.VideoClient, cfg.UserClient)
+	e.GET("/videos/:id", v.getVideo)
 	e.GET("/login", getLogin)
 	e.POST("/login", handleLogin)
 
@@ -55,6 +73,27 @@ type Video struct {
 	AuthorName   string
 	ThumbnailLoc string
 	Rating       float64
+}
+
+type Comment struct {
+	ProfilePicture string
+	Username       string
+	Comment        string
+}
+
+type VideoDetail struct {
+	L               LoggedInUserData
+	Title           string
+	MPDLoc          string
+	Views           uint64
+	Rating          float64
+	AuthorID        int64
+	Username        string
+	UserDescription string
+	UserSubscribers uint64
+	ProfilePicture  string
+	UploadDate      string // should be a datetime
+	Comments        []Comment
 }
 
 type LoggedInUserData struct {
@@ -238,11 +277,68 @@ func getUser(c echo.Context) error {
 	return c.Render(http.StatusOK, "profile", data)
 }
 
-func getVideo(c echo.Context) error {
-	// TODO
+type VideoHandler struct {
+	v videoproto.VideoServiceClient
+	u userproto.UserServiceClient
+}
+
+func NewVideoHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient) *VideoHandler {
+	return &VideoHandler{
+		v: v,
+		u: u,
+	}
+}
+
+func (v *VideoHandler) getVideo(c echo.Context) error {
 	id := c.Param("id")
 
-	return c.String(http.StatusOK, id)
+	videoReq := videoproto.VideoRequest{
+		VideoID: id,
+	}
+
+	videoInfo, err := v.v.GetVideo(context.Background(), &videoReq)
+	if err != nil {
+		return err
+	}
+
+	spl := strings.Split(videoInfo.VideoLoc, "/")
+
+	data := VideoDetail{
+		L:               LoggedInUserData{},
+		Title:           videoInfo.VideoTitle,
+		MPDLoc:          spl[len(spl)-1], // FIXME: fix this in videoservice LOL this is embarrassing
+		Views:           videoInfo.Views,
+		Rating:          videoInfo.Rating,
+		AuthorID:        videoInfo.AuthorID, // TODO
+		Username:        videoInfo.AuthorName,
+		UserDescription: "", // TODO: not implemented yet
+		UserSubscribers: 0,  // TODO: not implemented yet
+		ProfilePicture:  "/static/images/placeholder1.jpg",
+		UploadDate:      videoInfo.UploadDate,
+		Comments:        nil,
+	}
+
+	//data := VideoDetail{
+	//	Title:           "My cool video",
+	//	MPDLoc:          "",
+	//	Views:           100,
+	//	Rating:          10.0,
+	//	AuthorID:        4,
+	//	Username:        "testuser",
+	//	UserDescription: "we did it reddit",
+	//	ProfilePicture:  "/static/images/placeholder1.jpg",
+	//	UploadDate:      time.Now(),
+	//	UserSubscribers: 100,
+	//	Comments: []Comment{
+	//		{
+	//			ProfilePicture: "/static/images/placeholder1.jpg",
+	//			Username:       "testuser2",
+	//			Comment:        "WOW",
+	//		},
+	//	},
+	//}
+
+	return c.Render(http.StatusOK, "video", data)
 }
 
 type HomeHandler struct {

@@ -72,7 +72,7 @@ spec:
             - containerPort: 80
           volumeMounts:
             - name: shared-data
-              mountPath: /usr/share/nginx/html
+              mountPath: /usr/share/nginx/html/staticfiles
 
         - name: videoservice
           image: videoservice:latest
