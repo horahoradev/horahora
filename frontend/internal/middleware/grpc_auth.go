@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"github.com/horahoradev/horahora/frontend/internal/config"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
@@ -29,9 +30,15 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 			return next(c)
 		}
 
-		jwt := c.Cookies()[0].String()
+		jwt := c.Cookies()[0].Value
 
-		uid, err := j.authenticate(jwt)
+		jwtDecoded, err := base64.StdEncoding.DecodeString(jwt)
+		if err != nil {
+			log.Errorf("Failed to decode jwt. Err: %s", err)
+			return next(c)
+		}
+
+		uid, err := j.authenticate(string(jwtDecoded))
 		if err != nil {
 			log.Errorf("Error while authenticating: %s", err)
 			return next(c)
@@ -43,7 +50,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 	}
 }
 
-func (j *JWTGRPCAuthenticator) authenticate(jwt string) (*int64, error) {
+func (j *JWTGRPCAuthenticator) authenticate(jwt string) (int64, error) {
 	jwtValidationRequest := &userproto.ValidateJWTRequest{
 		Jwt: jwt,
 	}
@@ -51,12 +58,12 @@ func (j *JWTGRPCAuthenticator) authenticate(jwt string) (*int64, error) {
 	// TODO: maybe add timeout
 	validationResp, err := j.config.UserClient.ValidateJWT(context.Background(), jwtValidationRequest)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
 	if !validationResp.IsValid {
-		return nil, errors.New("invalid jwt")
+		return 0, errors.New("invalid jwt")
 	}
 
-	return &validationResp.Uid, nil
+	return validationResp.Uid, nil
 }

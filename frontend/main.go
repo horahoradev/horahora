@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
+	"errors"
 	"github.com/horahoradev/horahora/frontend/internal/config"
 	custommiddleware "github.com/horahoradev/horahora/frontend/internal/middleware"
 	"github.com/horahoradev/horahora/frontend/internal/templates"
@@ -15,6 +17,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -53,18 +56,21 @@ func main() {
 }
 
 func setupRoutes(e *echo.Echo, cfg *config.Config) {
-
-	h := NewHomeHandler(cfg.VideoClient)
+	h := NewHomeHandler(cfg.VideoClient, cfg.UserClient)
 	e.GET("/", h.getHome)
 	e.GET("/users/:id", getUser)
 
 	v := NewVideoHandler(cfg.VideoClient, cfg.UserClient)
 	e.GET("/videos/:id", v.getVideo)
+	e.POST("/rate/:id", v.handleRating)
+
+	l := NewAuthHandler(cfg.UserClient)
 	e.GET("/login", getLogin)
-	e.POST("/login", handleLogin)
+	e.POST("/login", l.handleLogin)
 
 	e.GET("/register", getRegister)
-	e.POST("/register", handleRegistration)
+	e.POST("/register", l.handleRegister)
+
 }
 
 type Video struct {
@@ -89,6 +95,7 @@ type VideoDetail struct {
 	MPDLoc          string
 	Views           uint64
 	Rating          float64
+	VideoID         int64
 	AuthorID        int64
 	Username        string
 	UserDescription string
@@ -116,6 +123,12 @@ type HomePageData struct {
 	Videos []Video
 }
 
+func NewAuthHandler(u userproto.UserServiceClient) AuthHandler {
+	return AuthHandler{
+		u: u,
+	}
+}
+
 func getLogin(c echo.Context) error {
 	return c.Render(http.StatusOK, "login", nil)
 }
@@ -124,32 +137,62 @@ func getRegister(c echo.Context) error {
 	return c.Render(http.StatusOK, "register", nil)
 }
 
-func handleLogin(c echo.Context) error {
-	//username := c.FormValue("username")
-	//password := c.FormValue("password")
+type AuthHandler struct {
+	u userproto.UserServiceClient
+}
+
+func (a AuthHandler) handleRegister(c echo.Context) error {
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+	email := c.FormValue("email")
+
+	registrationReq := userproto.RegisterRequest{
+		Password: password,
+		Username: username,
+		Email:    email,
+	}
+
+	regisResp, err := a.u.Register(context.Background(), &registrationReq)
+	if err != nil {
+		return err
+	}
+
+	// TODO: use registration JWT to auth
+
+	return setCookie(c, regisResp.Jwt)
+}
+
+func (a AuthHandler) handleLogin(c echo.Context) error {
+	username := c.FormValue("username")
+	password := c.FormValue("password")
 
 	// TODO: grpc auth goes here
+	loginReq := &userproto.LoginRequest{
+		Username: username,
+		Password: password,
+	}
 
+	loginResp, err := a.u.Login(context.Background(), loginReq)
+	if err != nil {
+		return err
+	}
+
+	return setCookie(c, loginResp.Jwt)
+}
+
+func setCookie(c echo.Context, jwt string) error {
 	cookie := new(http.Cookie)
 	cookie.Name = "jwt"
-	cookie.Value = "jwt" // JWT will go here after grpc logins are added
-	//cookie.Expires = time.Now().Add(24 * time.Hour)
+
+	cookie.Value = base64.StdEncoding.EncodeToString([]byte(jwt)) //
+	cookie.Expires = time.Now().Add(24 * time.Hour)
 
 	cookie.SameSite = http.SameSiteStrictMode
-	cookie.Secure = true
+	//cookie.Secure = true // set this later
 
 	c.SetCookie(cookie)
 
 	return c.String(http.StatusOK, "Login successful.")
-
-}
-
-func handleRegistration(c echo.Context) error {
-	//username := c.FormValue("username")
-	//email := c.FormValue("email")
-	//password := c.FormValue("password")
-
-	return c.String(http.StatusOK, "Registration successful.")
 }
 
 func getUser(c echo.Context) error {
@@ -270,10 +313,7 @@ func getUser(c echo.Context) error {
 		},
 	}
 
-	id, ok := c.Get(custommiddleware.UserIDKey).(*int64)
-	if ok && id != nil {
-		data.L.UserID = *id
-	}
+	// addUserProfileInfo(c, &data.L, )
 	// TODO: get the rest of data
 
 	return c.Render(http.StatusOK, "profile", data)
@@ -337,8 +377,11 @@ func (v *VideoHandler) getVideo(c echo.Context) error {
 		UserSubscribers: 0,  // TODO: not implemented yet
 		ProfilePicture:  "/static/images/placeholder1.jpg",
 		UploadDate:      videoInfo.UploadDate,
+		VideoID:         videoInfo.VideoID,
 		Comments:        nil,
 	}
+
+	addUserProfileInfo(c, &data.L, v.u)
 
 	//data := VideoDetail{
 	//	Title:           "My cool video",
@@ -363,15 +406,53 @@ func (v *VideoHandler) getVideo(c echo.Context) error {
 	return c.Render(http.StatusOK, "video", data)
 }
 
-type HomeHandler struct {
-	videoClient videoproto.VideoServiceClient
+func (v VideoHandler) handleRating(c echo.Context) error {
+	videoID := c.Param("id")
+	videoIDInt, err := strconv.ParseInt(videoID, 10, 64)
+	if err != nil {
+		log.Error("Could not assert videoID to int64")
+		return errors.New("could not assert videoID to int64")
+	}
+
+	ratings, ok := c.QueryParams()["rating"]
+	if !ok {
+		return errors.New("no rating in query string")
+	}
+
+	rating, err := strconv.ParseFloat(ratings[0], 64)
+	if err != nil {
+		return err
+	}
+
+	userID := c.Get(custommiddleware.UserIDKey)
+	UserIDInt, ok := userID.(int64)
+	if !ok {
+		log.Error("Could not assert userid to int64")
+		return errors.New("could not assert userid to int64")
+	}
+
+	rateReq := videoproto.VideoRating{
+		UserID:  string(UserIDInt),
+		VideoID: videoIDInt,
+		Rating:  float32(rating),
+	}
+
+	_, err = v.v.RateVideo(context.TODO(), &rateReq)
+	return err
 }
 
-func NewHomeHandler(v videoproto.VideoServiceClient) HomeHandler {
-	return HomeHandler{videoClient: v}
+type HomeHandler struct {
+	videoClient videoproto.VideoServiceClient
+	userClient  userproto.UserServiceClient
+}
+
+func NewHomeHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient) HomeHandler {
+	return HomeHandler{videoClient: v,
+		userClient: u}
 }
 
 func (h *HomeHandler) getHome(c echo.Context) error {
+
 	// TODO: if request times out, maybe provide a default list of good videos
 	req := videoproto.VideoQueryConfig{
 		OrderBy:    videoproto.OrderCategory_upload_date,
@@ -386,6 +467,8 @@ func (h *HomeHandler) getHome(c echo.Context) error {
 	}
 
 	data := HomePageData{}
+
+	addUserProfileInfo(c, &data.L, h.userClient)
 	for _, video := range videoList.Videos {
 		data.Videos = append(data.Videos, Video{
 			Title:        video.VideoTitle,
@@ -399,4 +482,32 @@ func (h *HomeHandler) getHome(c echo.Context) error {
 	}
 
 	return c.Render(http.StatusOK, "home", data)
+}
+
+func addUserProfileInfo(c echo.Context, l *LoggedInUserData, client userproto.UserServiceClient) {
+	id := c.Get(custommiddleware.UserIDKey)
+
+	idInt, ok := id.(int64)
+	if !ok {
+		log.Error("Could not assert id to int64")
+		return
+	}
+
+	if idInt == 0 {
+		return // User isn't logged in
+	}
+
+	getUserReq := userproto.GetUserFromIDRequest{
+		UserID: idInt,
+	}
+
+	userResp, err := client.GetUserFromID(context.TODO(), &getUserReq)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	l.Username = userResp.Username
+	// l.ProfilePictureURL = userResp. // TODO
+	l.UserID = idInt
 }

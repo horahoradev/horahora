@@ -64,10 +64,11 @@
                     .on("rateyo.set", function (e, data) {
 
                         alert("The rating is set to " + data.rating + "!");
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.open("POST", "/rate/{{.VideoID}}?rating=" + data.rating, true);
+                        xhttp.send();
                     });
-
             })();
-
 
         </script>
     </body>
