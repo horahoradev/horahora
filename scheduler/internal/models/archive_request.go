@@ -1,10 +1,8 @@
 package models
 
 import (
-	"fmt"
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/jmoiron/sqlx"
-	"log"
 )
 
 type contentType string
@@ -28,9 +26,9 @@ func NewArchiveRequest(db *sqlx.DB) *ArchiveRequestModel {
 }
 
 type ContentArchivalRequest struct {
-	Website      Website     `db:"website"`
-	ContentType  contentType `db:"attribute_type"`  // "channel", "tag", or "playlist"
-	ContentValue string      `db:"attribute_value"` // either the channel ID or the tag string
+	Website      proto.SupportedSite `db:"website"`
+	ContentType  contentType         `db:"attribute_type"`  // "channel", "tag", or "playlist"
+	ContentValue string              `db:"attribute_value"` // either the channel ID or the tag string
 }
 
 func (m *ArchiveRequestModel) GetContentArchivalRequests(userID int64) ([]ContentArchivalRequest, error) {
@@ -46,49 +44,8 @@ func (m *ArchiveRequestModel) GetContentArchivalRequests(userID int64) ([]Conten
 }
 
 func (m *ArchiveRequestModel) New(contentType contentType, contentValue string, website proto.SupportedSite, userID int64) error {
-	websiteVal, err := getWebsiteStringFromEnum(website)
-	if err != nil {
-		return err
-	}
 
-	_, err = m.Db.Exec("INSERT INTO downloads(date_created, website, attribute_type, attribute_value, userID) "+
-		"VALUES (Now(), $1, $2, $3, $4)", websiteVal, contentType, contentValue, userID)
+	_, err := m.Db.Exec("INSERT INTO downloads(date_created, website, attribute_type, attribute_value, userID) "+
+		"VALUES (Now(), $1, $2, $3, $4)", website, contentType, contentValue, userID)
 	return err
-}
-
-type Website string
-
-const (
-	Niconico Website = "niconico"
-	Bilibili Website = "bilibili"
-	Youtube  Website = "youtube"
-)
-
-func (w Website) ToProtoSupportedSite() proto.SupportedSite {
-	switch w {
-	case Niconico:
-		return proto.SupportedSite_niconico
-	case Bilibili:
-		return proto.SupportedSite_bilibili
-	case Youtube:
-		return proto.SupportedSite_youtube
-	}
-
-	// FIXME: will be removed once I get rid of all of these dumb types
-	log.Fatalf("unsupported site %s", w)
-	return proto.SupportedSite_niconico
-}
-
-// this is dumb but I don't know what's to be done about it...
-func getWebsiteStringFromEnum(enumVal proto.SupportedSite) (Website, error) {
-	switch enumVal {
-	case proto.SupportedSite_niconico:
-		return Niconico, nil
-	case proto.SupportedSite_bilibili:
-		return Bilibili, nil
-	case proto.SupportedSite_youtube:
-		return Youtube, nil
-	default:
-		return "", fmt.Errorf("could not find specified website for enum %d", enumVal)
-	}
 }

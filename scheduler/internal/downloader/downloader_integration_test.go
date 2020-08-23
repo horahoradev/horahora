@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/horahoradev/horahora/scheduler/internal/config"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
+	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	log "github.com/sirupsen/logrus"
 	"sync"
 	"testing"
@@ -36,7 +37,7 @@ func TestConcurrentVideoDownloads(t *testing.T) {
 		wg.Done()
 	}()
 
-	dlChan <- models.NewVideoDlRequest(models.Niconico, models.Tag, "Oldest_Video", "1", conf.Conn, conf.Redlock)
+	dlChan <- models.NewVideoDlRequest(proto.SupportedSite_niconico, models.Tag, "Oldest_Video", "1", conf.Conn, conf.Redlock)
 
 	timeoutTicker := time.Tick(5 * time.Minute)
 

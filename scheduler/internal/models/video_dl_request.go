@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redsync/redsync"
+	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/jmoiron/sqlx"
 	"time"
 )
@@ -15,7 +16,7 @@ type VideoDlRequest struct {
 	Redsync *redsync.Redsync
 }
 
-func NewVideoDlRequest(website Website, contentType contentType, contentValue, id string, Db *sqlx.DB, redsync2 *redsync.Redsync) *VideoDlRequest {
+func NewVideoDlRequest(website proto.SupportedSite, contentType contentType, contentValue, id string, Db *sqlx.DB, redsync2 *redsync.Redsync) *VideoDlRequest {
 	return &VideoDlRequest{
 		ContentArchivalRequest: ContentArchivalRequest{
 			Website:      website,
@@ -38,7 +39,7 @@ var NeverDownloaded error = errors.New("no video for category")
 
 // Only relevant for tags
 func (v *VideoDlRequest) GetLatestVideoForRequest() (*string, error) {
-	curs, err := v.Db.Query("SELECT video_ID from previous_downloads WHERE content_ID=$1 AND website=$2 ORDER BY upload_time desc LIMIT 1", v.ContentValue, v.Website)
+	curs, err := v.Db.Query("SELECT video_ID from previous_downloads WHERE content_ID=$1 AND website=$2 ORDER BY upload_time desc LIMIT 1", v.ContentValue, v.Website.String())
 	if err != nil {
 		return nil, err
 	}

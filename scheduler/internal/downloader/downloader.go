@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
+	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"io"
 	"os"
@@ -90,23 +91,9 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 				log.Infof("Attempting to download %s, attempt %d of %d", video.URL, currentRetryNum, d.numberOfRetries)
 			}
 
-			// LOL
-			var videoWebsite videoproto.Website
-			switch dlReq.Website {
-			case models.Niconico:
-				videoWebsite = videoproto.Website_niconico
-			case models.Bilibili:
-				videoWebsite = videoproto.Website_bilibili
-			case models.Youtube:
-				videoWebsite = videoproto.Website_youtube
-			default:
-				log.Errorf("unknown website: %s", dlReq.Website)
-				break currVideoLoop
-			}
-
 			videoReq := videoproto.ForeignVideoCheck{
 				ForeignVideoID: video.ID,
-				ForeignWebsite: videoWebsite, // LMAO FIXME
+				ForeignWebsite: ToVideoSite(dlReq.Website), // LMAO FIXME
 			}
 
 			videoExists, err := d.videoClient.ForeignVideoExists(context.TODO(), &videoReq)
@@ -251,7 +238,7 @@ func (d *downloader) downloadVideo(video Video) (*YTDLMetadata, error) {
 }
 
 // FIXME: this function is quite long and complicated
-func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video Video, website models.Website) error {
+func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video Video, website proto.SupportedSite) error {
 	stream, err := d.videoClient.UploadVideo(ctx)
 	if err != nil {
 		return fmt.Errorf("could not start video upload stream. Err: %s", err)
@@ -266,18 +253,8 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return fmt.Errorf("unexpected number of matched files: %d", len(generatedFiles))
 	}
 
-	var site videoproto.Website
 	// FIXME: this is dumb
-	switch website {
-	case models.Niconico:
-		site = videoproto.Website_niconico
-	case models.Bilibili:
-		site = videoproto.Website_bilibili
-	case models.Youtube:
-		site = videoproto.Website_youtube
-	default:
-		return fmt.Errorf("unknown video URL: %s", video.URL)
-	}
+	site := ToVideoSite(website)
 
 	// Send metadata
 	metaPayload := videoproto.InputVideoChunk{
@@ -357,7 +334,7 @@ func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 	// WOW that's a lot of switch statements, should probably flatten or refactor this out into separate functions so
 	// that I can actually read this
 	switch dlReq.Website {
-	case models.Niconico:
+	case proto.SupportedSite_niconico:
 		switch dlReq.ContentType {
 		case models.Tag:
 			latestVideo, err := dlReq.GetLatestVideoForRequest()
@@ -380,7 +357,7 @@ func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 			return nil, err
 		}
 
-	case models.Bilibili:
+	case proto.SupportedSite_bilibili:
 		switch dlReq.ContentType {
 		case models.Tag:
 			args = append(args, fmt.Sprintf("bilisearch%s:%s", downloadPreference, dlReq.ContentValue))
@@ -397,7 +374,7 @@ func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 			return nil, err
 		}
 
-	case models.Youtube:
+	case proto.SupportedSite_youtube:
 		switch dlReq.ContentType {
 		case models.Tag:
 			args = append(args, fmt.Sprintf("ytsearch%s:%s", downloadPreference, dlReq.ContentValue))
@@ -616,4 +593,9 @@ type YTDLMetadata struct {
 	} `json:"http_headers"`
 	Fulltitle string `json:"fulltitle"`
 	Filename  string `json:"_filename"`
+}
+
+// TODO: remove in future
+func ToVideoSite(website proto.SupportedSite) videoproto.Website {
+	return videoproto.Website(videoproto.Website_value[website.String()])
 }

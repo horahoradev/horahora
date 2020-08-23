@@ -5,6 +5,7 @@
     <div class="navbar">
         <div><h1>Horahora</h1></div>
         <div><textarea cols="1" rows="1">Search for videos</textarea></div>
+        {{if .Username}}<div> <a href="/archiverequests">Archive Requests</a> </div>{{end}}
         <div>{{if .Username}} <a href="/users/{{.UserID}}">{{.Username}} </a> {{else}}<div><a href="/login">Login</a></div> {{end}}</div>
     </div>
 </head>

@@ -76,7 +76,7 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 	for _, request := range requests {
 		entry := proto.ContentArchivalEntry{
 			UserID:       0, // In the future, will be expanded to allow queries for different users archival requests
-			Website:      request.Website.ToProtoSupportedSite(),
+			Website:      request.Website,
 			ContentType:  string(request.ContentType),
 			ContentValue: request.ContentValue,
 		}

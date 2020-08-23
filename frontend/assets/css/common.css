@@ -25,6 +25,15 @@ body {
     top: 50%;
     transform: translateY(-50%);
     left: 50%;
+    width: 200px;
+    display: inline-block;
+}
+
+.navbar > div:nth-child(4) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 95%;
     display: inline-block;
 }
 
@@ -32,7 +41,7 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    left: 95%;
+    left: 70%;
     display: inline-block;
 }
 
@@ -114,7 +123,7 @@ p {
 }
 
 .video-player-section {
-    width: calc(100% - 400px);
+    width: calc(100% - 600px);
 }
 
 video {
@@ -167,4 +176,8 @@ video {
 
 .inner-comment-section {
     padding-left: 10px;
+}
+
+textarea {
+    width: 100%;
 }

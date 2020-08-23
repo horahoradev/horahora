@@ -1,4 +1,4 @@
-create type website_t as enum('niconico', 'bilibili', 'youtube');
+-- create type website_t as enum('niconico', 'bilibili', 'youtube');
 create type content_type_t as enum('tag', 'channel', 'playlist');
 
 
@@ -6,7 +6,7 @@ CREATE TABLE downloads (
     id SERIAL primary key,
     date_created timestamp,
     last_polled timestamp,
-    website website_t,
+    website int, /* this should be an enum in the future, need to write a custom scanner to read into protobuf enums */
     attribute_type content_type_t, /* tag, channel, or playlist */
     attribute_value varchar(255), /* tag id, channel id, or playlist id*/
     userID int, /* user who requested this category of content to be downloaded */

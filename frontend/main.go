@@ -153,7 +153,7 @@ func (r RouteHandler) getArchiveRequests(c echo.Context) error {
 }
 
 func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
-	//website := c.FormValue("website")
+	website := c.FormValue("website")
 	contentType := c.FormValue("contentType")
 	contentValue := c.FormValue("contentValue")
 
@@ -164,12 +164,19 @@ func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
 		return errors.New("could not assert userid to int64")
 	}
 
+	websiteEnumVal, ok := schedulerproto.SupportedSite_value[website]
+	if !ok {
+		return errors.New("site not found")
+	}
+
+	supportedWebsite := schedulerproto.SupportedSite(websiteEnumVal)
+
 	// FIXME: this is dumb. Fix this to use schedulerproto consts after switching to string instead of enum
 	switch contentType {
 	case "tag":
 		req := schedulerproto.TagRequest{
 			UserID:   UserIDInt,
-			Website:  schedulerproto.SupportedSite_niconico, // FIXME: placeholder, see above
+			Website:  supportedWebsite, // FIXME: placeholder, see above
 			TagValue: contentValue,
 		}
 
@@ -179,7 +186,7 @@ func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
 		}
 	case "channel":
 		req := schedulerproto.ChannelRequest{
-			Website:   schedulerproto.SupportedSite_niconico,
+			Website:   supportedWebsite,
 			ChannelID: contentValue,
 		}
 
@@ -189,7 +196,7 @@ func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
 		}
 	case "playlist":
 		req := schedulerproto.PlaylistRequest{
-			Website:    schedulerproto.SupportedSite_niconico,
+			Website:    supportedWebsite,
 			PlaylistID: contentValue,
 		}
 		_, err := r.s.DlPlaylist(context.TODO(), &req)
