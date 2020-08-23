@@ -84,9 +84,150 @@ func (m *Empty) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Empty proto.InternalMessageInfo
 
+type ListArchivalEntriesRequest struct {
+	UserID               int64    `protobuf:"varint,1,opt,name=UserID,proto3" json:"UserID,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ListArchivalEntriesRequest) Reset()         { *m = ListArchivalEntriesRequest{} }
+func (m *ListArchivalEntriesRequest) String() string { return proto.CompactTextString(m) }
+func (*ListArchivalEntriesRequest) ProtoMessage()    {}
+func (*ListArchivalEntriesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2b3fc28395a6d9c5, []int{1}
+}
+
+func (m *ListArchivalEntriesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListArchivalEntriesRequest.Unmarshal(m, b)
+}
+func (m *ListArchivalEntriesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListArchivalEntriesRequest.Marshal(b, m, deterministic)
+}
+func (m *ListArchivalEntriesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListArchivalEntriesRequest.Merge(m, src)
+}
+func (m *ListArchivalEntriesRequest) XXX_Size() int {
+	return xxx_messageInfo_ListArchivalEntriesRequest.Size(m)
+}
+func (m *ListArchivalEntriesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListArchivalEntriesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListArchivalEntriesRequest proto.InternalMessageInfo
+
+func (m *ListArchivalEntriesRequest) GetUserID() int64 {
+	if m != nil {
+		return m.UserID
+	}
+	return 0
+}
+
+type ListArchivalEntriesResponse struct {
+	Entries              []*ContentArchivalEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
+}
+
+func (m *ListArchivalEntriesResponse) Reset()         { *m = ListArchivalEntriesResponse{} }
+func (m *ListArchivalEntriesResponse) String() string { return proto.CompactTextString(m) }
+func (*ListArchivalEntriesResponse) ProtoMessage()    {}
+func (*ListArchivalEntriesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2b3fc28395a6d9c5, []int{2}
+}
+
+func (m *ListArchivalEntriesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListArchivalEntriesResponse.Unmarshal(m, b)
+}
+func (m *ListArchivalEntriesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListArchivalEntriesResponse.Marshal(b, m, deterministic)
+}
+func (m *ListArchivalEntriesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListArchivalEntriesResponse.Merge(m, src)
+}
+func (m *ListArchivalEntriesResponse) XXX_Size() int {
+	return xxx_messageInfo_ListArchivalEntriesResponse.Size(m)
+}
+func (m *ListArchivalEntriesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListArchivalEntriesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListArchivalEntriesResponse proto.InternalMessageInfo
+
+func (m *ListArchivalEntriesResponse) GetEntries() []*ContentArchivalEntry {
+	if m != nil {
+		return m.Entries
+	}
+	return nil
+}
+
+type ContentArchivalEntry struct {
+	UserID               int64         `protobuf:"varint,1,opt,name=UserID,proto3" json:"UserID,omitempty"`
+	Website              SupportedSite `protobuf:"varint,2,opt,name=website,proto3,enum=proto.SupportedSite" json:"website,omitempty"`
+	ContentType          string        `protobuf:"bytes,3,opt,name=contentType,proto3" json:"contentType,omitempty"`
+	ContentValue         string        `protobuf:"bytes,4,opt,name=contentValue,proto3" json:"contentValue,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *ContentArchivalEntry) Reset()         { *m = ContentArchivalEntry{} }
+func (m *ContentArchivalEntry) String() string { return proto.CompactTextString(m) }
+func (*ContentArchivalEntry) ProtoMessage()    {}
+func (*ContentArchivalEntry) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2b3fc28395a6d9c5, []int{3}
+}
+
+func (m *ContentArchivalEntry) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ContentArchivalEntry.Unmarshal(m, b)
+}
+func (m *ContentArchivalEntry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ContentArchivalEntry.Marshal(b, m, deterministic)
+}
+func (m *ContentArchivalEntry) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ContentArchivalEntry.Merge(m, src)
+}
+func (m *ContentArchivalEntry) XXX_Size() int {
+	return xxx_messageInfo_ContentArchivalEntry.Size(m)
+}
+func (m *ContentArchivalEntry) XXX_DiscardUnknown() {
+	xxx_messageInfo_ContentArchivalEntry.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ContentArchivalEntry proto.InternalMessageInfo
+
+func (m *ContentArchivalEntry) GetUserID() int64 {
+	if m != nil {
+		return m.UserID
+	}
+	return 0
+}
+
+func (m *ContentArchivalEntry) GetWebsite() SupportedSite {
+	if m != nil {
+		return m.Website
+	}
+	return SupportedSite_niconico
+}
+
+func (m *ContentArchivalEntry) GetContentType() string {
+	if m != nil {
+		return m.ContentType
+	}
+	return ""
+}
+
+func (m *ContentArchivalEntry) GetContentValue() string {
+	if m != nil {
+		return m.ContentValue
+	}
+	return ""
+}
+
 type ChannelRequest struct {
 	Website              SupportedSite `protobuf:"varint,1,opt,name=website,proto3,enum=proto.SupportedSite" json:"website,omitempty"`
-	UserID               string        `protobuf:"bytes,2,opt,name=userID,proto3" json:"userID,omitempty"`
+	UserID               int64         `protobuf:"varint,2,opt,name=userID,proto3" json:"userID,omitempty"`
 	ChannelID            string        `protobuf:"bytes,3,opt,name=channelID,proto3" json:"channelID,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
@@ -97,7 +238,7 @@ func (m *ChannelRequest) Reset()         { *m = ChannelRequest{} }
 func (m *ChannelRequest) String() string { return proto.CompactTextString(m) }
 func (*ChannelRequest) ProtoMessage()    {}
 func (*ChannelRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2b3fc28395a6d9c5, []int{1}
+	return fileDescriptor_2b3fc28395a6d9c5, []int{4}
 }
 
 func (m *ChannelRequest) XXX_Unmarshal(b []byte) error {
@@ -125,11 +266,11 @@ func (m *ChannelRequest) GetWebsite() SupportedSite {
 	return SupportedSite_niconico
 }
 
-func (m *ChannelRequest) GetUserID() string {
+func (m *ChannelRequest) GetUserID() int64 {
 	if m != nil {
 		return m.UserID
 	}
-	return ""
+	return 0
 }
 
 func (m *ChannelRequest) GetChannelID() string {
@@ -141,7 +282,7 @@ func (m *ChannelRequest) GetChannelID() string {
 
 type PlaylistRequest struct {
 	Website              SupportedSite `protobuf:"varint,1,opt,name=website,proto3,enum=proto.SupportedSite" json:"website,omitempty"`
-	UserID               string        `protobuf:"bytes,2,opt,name=userID,proto3" json:"userID,omitempty"`
+	UserID               int64         `protobuf:"varint,2,opt,name=userID,proto3" json:"userID,omitempty"`
 	PlaylistID           string        `protobuf:"bytes,3,opt,name=playlistID,proto3" json:"playlistID,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
@@ -152,7 +293,7 @@ func (m *PlaylistRequest) Reset()         { *m = PlaylistRequest{} }
 func (m *PlaylistRequest) String() string { return proto.CompactTextString(m) }
 func (*PlaylistRequest) ProtoMessage()    {}
 func (*PlaylistRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2b3fc28395a6d9c5, []int{2}
+	return fileDescriptor_2b3fc28395a6d9c5, []int{5}
 }
 
 func (m *PlaylistRequest) XXX_Unmarshal(b []byte) error {
@@ -180,11 +321,11 @@ func (m *PlaylistRequest) GetWebsite() SupportedSite {
 	return SupportedSite_niconico
 }
 
-func (m *PlaylistRequest) GetUserID() string {
+func (m *PlaylistRequest) GetUserID() int64 {
 	if m != nil {
 		return m.UserID
 	}
-	return ""
+	return 0
 }
 
 func (m *PlaylistRequest) GetPlaylistID() string {
@@ -196,7 +337,7 @@ func (m *PlaylistRequest) GetPlaylistID() string {
 
 type TagRequest struct {
 	Website              SupportedSite `protobuf:"varint,1,opt,name=website,proto3,enum=proto.SupportedSite" json:"website,omitempty"`
-	UserID               string        `protobuf:"bytes,2,opt,name=userID,proto3" json:"userID,omitempty"`
+	UserID               int64         `protobuf:"varint,2,opt,name=userID,proto3" json:"userID,omitempty"`
 	TagValue             string        `protobuf:"bytes,3,opt,name=tagValue,proto3" json:"tagValue,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
@@ -207,7 +348,7 @@ func (m *TagRequest) Reset()         { *m = TagRequest{} }
 func (m *TagRequest) String() string { return proto.CompactTextString(m) }
 func (*TagRequest) ProtoMessage()    {}
 func (*TagRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2b3fc28395a6d9c5, []int{3}
+	return fileDescriptor_2b3fc28395a6d9c5, []int{6}
 }
 
 func (m *TagRequest) XXX_Unmarshal(b []byte) error {
@@ -235,11 +376,11 @@ func (m *TagRequest) GetWebsite() SupportedSite {
 	return SupportedSite_niconico
 }
 
-func (m *TagRequest) GetUserID() string {
+func (m *TagRequest) GetUserID() int64 {
 	if m != nil {
 		return m.UserID
 	}
-	return ""
+	return 0
 }
 
 func (m *TagRequest) GetTagValue() string {
@@ -252,6 +393,9 @@ func (m *TagRequest) GetTagValue() string {
 func init() {
 	proto.RegisterEnum("proto.SupportedSite", SupportedSite_name, SupportedSite_value)
 	proto.RegisterType((*Empty)(nil), "proto.Empty")
+	proto.RegisterType((*ListArchivalEntriesRequest)(nil), "proto.listArchivalEntriesRequest")
+	proto.RegisterType((*ListArchivalEntriesResponse)(nil), "proto.listArchivalEntriesResponse")
+	proto.RegisterType((*ContentArchivalEntry)(nil), "proto.contentArchivalEntry")
 	proto.RegisterType((*ChannelRequest)(nil), "proto.ChannelRequest")
 	proto.RegisterType((*PlaylistRequest)(nil), "proto.PlaylistRequest")
 	proto.RegisterType((*TagRequest)(nil), "proto.TagRequest")
@@ -260,26 +404,34 @@ func init() {
 func init() { proto.RegisterFile("scheduler.proto", fileDescriptor_2b3fc28395a6d9c5) }
 
 var fileDescriptor_2b3fc28395a6d9c5 = []byte{
-	// 292 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x51, 0x4d, 0x4b, 0xc3, 0x40,
-	0x10, 0x6d, 0x2a, 0xfd, 0xc8, 0x58, 0xd2, 0x38, 0x60, 0x09, 0x45, 0xa4, 0xe4, 0x54, 0x7a, 0xa8,
-	0x10, 0xbd, 0x78, 0xb6, 0x1e, 0x7a, 0x93, 0x58, 0xbc, 0xca, 0x26, 0x19, 0xd2, 0xc0, 0x9a, 0xa4,
-	0xd9, 0x5d, 0x4a, 0xfc, 0x37, 0xfe, 0x53, 0x49, 0xb2, 0x69, 0x6d, 0xbd, 0xf6, 0x30, 0x2c, 0x6f,
-	0xde, 0xcc, 0xbc, 0xe5, 0x3d, 0x18, 0x8b, 0x70, 0x4b, 0x91, 0xe2, 0x54, 0x2c, 0xf3, 0x22, 0x93,
-	0x19, 0xf6, 0xea, 0xc7, 0x1d, 0x40, 0xef, 0xf5, 0x2b, 0x97, 0xa5, 0xbb, 0x07, 0xeb, 0x65, 0xcb,
-	0xd2, 0x94, 0xb8, 0x4f, 0x3b, 0x45, 0x42, 0xe2, 0x03, 0x0c, 0xf6, 0x14, 0x88, 0x44, 0x92, 0x63,
-	0xcc, 0x8c, 0xb9, 0xe5, 0xdd, 0x36, 0xab, 0x4b, 0xa1, 0xf2, 0x3c, 0x2b, 0x24, 0x45, 0x9f, 0x15,
-	0xe9, 0xb7, 0x53, 0x38, 0x81, 0xbe, 0x12, 0x54, 0xac, 0x57, 0x4e, 0x77, 0x66, 0xcc, 0x4d, 0x5f,
-	0x23, 0xbc, 0x03, 0x33, 0x6c, 0x4e, 0xaf, 0x57, 0xce, 0x55, 0x4d, 0x1d, 0x1b, 0xee, 0x37, 0x8c,
-	0xdf, 0x38, 0x2b, 0x79, 0x22, 0xe4, 0xc5, 0x95, 0xef, 0x01, 0x72, 0x7d, 0xfb, 0x20, 0xfd, 0xa7,
-	0xe3, 0xee, 0x00, 0x36, 0x2c, 0xbe, 0xb8, 0xec, 0x14, 0x86, 0x92, 0xc5, 0x1f, 0x8c, 0x2b, 0xd2,
-	0xa2, 0x07, 0xbc, 0x78, 0x06, 0xeb, 0xf4, 0x1c, 0x8e, 0x60, 0x98, 0x26, 0x61, 0x56, 0x95, 0xdd,
-	0xa9, 0x50, 0x90, 0xf0, 0xa4, 0x2a, 0xdb, 0xc0, 0x6b, 0x18, 0x94, 0x99, 0x92, 0x2a, 0x20, 0xbb,
-	0xeb, 0xfd, 0x18, 0x60, 0xbe, 0xb7, 0x31, 0xa2, 0x07, 0x66, 0xc4, 0x75, 0x64, 0xd8, 0xfe, 0xf4,
-	0x34, 0xc2, 0xe9, 0x48, 0xb7, 0x9b, 0x88, 0x3b, 0xf8, 0x04, 0x10, 0xf1, 0xd6, 0x6d, 0x9c, 0x68,
-	0xf6, 0xcc, 0xfe, 0x7f, 0x5b, 0x0b, 0xe8, 0x45, 0x7c, 0xc3, 0x62, 0xbc, 0xd1, 0xc4, 0xd1, 0xb3,
-	0xf3, 0xd9, 0xa0, 0x5f, 0xc3, 0xc7, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x7b, 0x86, 0x6a, 0x3c,
-	0x70, 0x02, 0x00, 0x00,
+	// 422 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x53, 0x4d, 0x6f, 0xd3, 0x40,
+	0x10, 0xcd, 0x3a, 0x24, 0xae, 0x27, 0x51, 0x1a, 0x16, 0x88, 0x2c, 0x17, 0x21, 0xb3, 0x27, 0xab,
+	0x87, 0x22, 0x99, 0x72, 0xe0, 0x88, 0x68, 0x0f, 0xbd, 0x21, 0x63, 0x38, 0x82, 0xfc, 0x31, 0x4a,
+	0x2c, 0x2d, 0xb6, 0xeb, 0x5d, 0x53, 0x99, 0x1b, 0x3f, 0x86, 0xff, 0x89, 0x9c, 0x5d, 0x27, 0x31,
+	0x49, 0x50, 0x0f, 0x39, 0xac, 0xac, 0x79, 0xf3, 0x66, 0xde, 0xec, 0x5b, 0x0f, 0x9c, 0x8b, 0x64,
+	0x85, 0x69, 0xcd, 0xb1, 0xba, 0x2a, 0xab, 0x42, 0x16, 0x74, 0xb4, 0xfe, 0x30, 0x13, 0x46, 0xb7,
+	0x3f, 0x4a, 0xd9, 0xb0, 0x6b, 0x70, 0x78, 0x26, 0xe4, 0x87, 0x2a, 0x59, 0x65, 0x3f, 0x23, 0x7e,
+	0x9b, 0xcb, 0x2a, 0x43, 0x11, 0xe0, 0x7d, 0x8d, 0x42, 0xd2, 0x05, 0x8c, 0xbf, 0x08, 0xac, 0xee,
+	0x6e, 0x6c, 0xe2, 0x12, 0x6f, 0x18, 0xe8, 0x88, 0x85, 0x70, 0x71, 0xb0, 0x4a, 0x94, 0x45, 0x2e,
+	0x90, 0xbe, 0x03, 0x13, 0x15, 0x64, 0x13, 0x77, 0xe8, 0x4d, 0xfc, 0x0b, 0xa5, 0x7e, 0x95, 0x14,
+	0xb9, 0xc4, 0xbc, 0x57, 0xd7, 0x04, 0x1d, 0x97, 0xfd, 0x21, 0xf0, 0xfc, 0x10, 0xe3, 0xd8, 0x18,
+	0xf4, 0x0d, 0x98, 0x0f, 0x18, 0x8b, 0x4c, 0xa2, 0x6d, 0xb8, 0xc4, 0x9b, 0xf9, 0x2f, 0xb4, 0x8e,
+	0xa8, 0xcb, 0xb2, 0xa8, 0x24, 0xa6, 0xdf, 0xdb, 0x64, 0xd0, 0xb1, 0xa8, 0x0b, 0x13, 0x2d, 0x10,
+	0x36, 0x25, 0xda, 0x43, 0x97, 0x78, 0x56, 0xb0, 0x0b, 0x51, 0x06, 0x53, 0x1d, 0x7e, 0x8d, 0x78,
+	0x8d, 0xf6, 0x93, 0x35, 0xa5, 0x87, 0xb1, 0x07, 0x98, 0x7d, 0x5c, 0x45, 0x79, 0x8e, 0xbc, 0xf3,
+	0x69, 0x67, 0x10, 0xf2, 0xa8, 0x41, 0x16, 0x30, 0xae, 0xd5, 0x8d, 0x0c, 0x75, 0x23, 0x15, 0xd1,
+	0x97, 0x60, 0x25, 0xaa, 0xf5, 0xdd, 0x8d, 0x1e, 0x6f, 0x0b, 0xb0, 0x5f, 0x70, 0xfe, 0x89, 0x47,
+	0x4d, 0x6b, 0xfd, 0xc9, 0x95, 0x5f, 0x01, 0x94, 0xba, 0xf7, 0x46, 0x7a, 0x07, 0x61, 0xf7, 0x00,
+	0x61, 0xb4, 0x3c, 0xb9, 0xac, 0x03, 0x67, 0x32, 0x5a, 0x2a, 0xaf, 0x95, 0xe8, 0x26, 0xbe, 0x7c,
+	0x0f, 0xb3, 0x7e, 0x3b, 0x3a, 0x85, 0xb3, 0x3c, 0x4b, 0x8a, 0xf6, 0xcc, 0x07, 0x6d, 0x14, 0x67,
+	0x3c, 0x6b, 0xcf, 0x9c, 0xd0, 0x09, 0x98, 0x4d, 0x51, 0xcb, 0x3a, 0xc6, 0xb9, 0xe1, 0xff, 0x36,
+	0xc0, 0xfa, 0xdc, 0xfd, 0xfa, 0xd4, 0x07, 0x2b, 0xe5, 0xfa, 0xc9, 0x68, 0x37, 0x69, 0xff, 0x09,
+	0x9d, 0xa9, 0x86, 0xd5, 0x5a, 0x0c, 0xe8, 0x35, 0x40, 0xca, 0x3b, 0xb7, 0xe9, 0x42, 0x67, 0xff,
+	0xb1, 0x7f, 0xaf, 0xea, 0x12, 0x46, 0x29, 0x0f, 0xa3, 0x25, 0x7d, 0xaa, 0x13, 0x5b, 0xcf, 0xf6,
+	0xb8, 0xdf, 0xe0, 0xd9, 0x81, 0x25, 0xa2, 0xaf, 0x35, 0xed, 0xf8, 0x5a, 0x3a, 0xec, 0x7f, 0x14,
+	0xb5, 0x83, 0x6c, 0x10, 0x8f, 0xd7, 0xa4, 0xb7, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0xcd, 0xd0,
+	0xde, 0xe6, 0x04, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -297,6 +449,7 @@ type SchedulerClient interface {
 	DlChannel(ctx context.Context, in *ChannelRequest, opts ...grpc.CallOption) (*Empty, error)
 	DlPlaylist(ctx context.Context, in *PlaylistRequest, opts ...grpc.CallOption) (*Empty, error)
 	DlTag(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*Empty, error)
+	ListArchivalEntries(ctx context.Context, in *ListArchivalEntriesRequest, opts ...grpc.CallOption) (*ListArchivalEntriesResponse, error)
 }
 
 type schedulerClient struct {
@@ -334,11 +487,21 @@ func (c *schedulerClient) DlTag(ctx context.Context, in *TagRequest, opts ...grp
 	return out, nil
 }
 
+func (c *schedulerClient) ListArchivalEntries(ctx context.Context, in *ListArchivalEntriesRequest, opts ...grpc.CallOption) (*ListArchivalEntriesResponse, error) {
+	out := new(ListArchivalEntriesResponse)
+	err := c.cc.Invoke(ctx, "/proto.Scheduler/listArchivalEntries", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SchedulerServer is the server API for Scheduler service.
 type SchedulerServer interface {
 	DlChannel(context.Context, *ChannelRequest) (*Empty, error)
 	DlPlaylist(context.Context, *PlaylistRequest) (*Empty, error)
 	DlTag(context.Context, *TagRequest) (*Empty, error)
+	ListArchivalEntries(context.Context, *ListArchivalEntriesRequest) (*ListArchivalEntriesResponse, error)
 }
 
 // UnimplementedSchedulerServer can be embedded to have forward compatible implementations.
@@ -353,6 +516,9 @@ func (*UnimplementedSchedulerServer) DlPlaylist(ctx context.Context, req *Playli
 }
 func (*UnimplementedSchedulerServer) DlTag(ctx context.Context, req *TagRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DlTag not implemented")
+}
+func (*UnimplementedSchedulerServer) ListArchivalEntries(ctx context.Context, req *ListArchivalEntriesRequest) (*ListArchivalEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListArchivalEntries not implemented")
 }
 
 func RegisterSchedulerServer(s *grpc.Server, srv SchedulerServer) {
@@ -413,6 +579,24 @@ func _Scheduler_DlTag_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Scheduler_ListArchivalEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListArchivalEntriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchedulerServer).ListArchivalEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Scheduler/ListArchivalEntries",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchedulerServer).ListArchivalEntries(ctx, req.(*ListArchivalEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Scheduler_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "proto.Scheduler",
 	HandlerType: (*SchedulerServer)(nil),
@@ -428,6 +612,10 @@ var _Scheduler_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "dlTag",
 			Handler:    _Scheduler_DlTag_Handler,
+		},
+		{
+			MethodName: "listArchivalEntries",
+			Handler:    _Scheduler_ListArchivalEntries_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

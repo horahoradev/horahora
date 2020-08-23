@@ -9,6 +9,7 @@ CREATE TABLE downloads (
     website website_t,
     attribute_type content_type_t, /* tag, channel, or playlist */
     attribute_value varchar(255), /* tag id, channel id, or playlist id*/
+    userID int, /* user who requested this category of content to be downloaded */
     lock timestamp, /* timestamp indicating category in use by worker, expires in 30 mins */
     UNIQUE(website, attribute_type, attribute_value)
 );

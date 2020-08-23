@@ -9,22 +9,22 @@ import (
 )
 
 type VideoDlRequest struct {
-	Website      Website
-	ContentType  contentType // "channel", "tag", or "playlist"
-	ContentValue string      // either the channel ID or the tag string
-	Id           string
-	Db           *sqlx.DB
-	Redsync      *redsync.Redsync
+	ContentArchivalRequest
+	Id      string
+	Db      *sqlx.DB
+	Redsync *redsync.Redsync
 }
 
 func NewVideoDlRequest(website Website, contentType contentType, contentValue, id string, Db *sqlx.DB, redsync2 *redsync.Redsync) *VideoDlRequest {
 	return &VideoDlRequest{
-		Website:      website,
-		ContentType:  contentType,
-		ContentValue: contentValue,
-		Id:           id,
-		Db:           Db,
-		Redsync:      redsync2,
+		ContentArchivalRequest: ContentArchivalRequest{
+			Website:      website,
+			ContentType:  contentType,
+			ContentValue: contentValue,
+		},
+		Id:      id,
+		Db:      Db,
+		Redsync: redsync2,
 	}
 }
 
