@@ -49,6 +49,8 @@ github.com/horahoradev/horahora/scheduler v0.0.0-20200801192659-89009690f8e2 h1:
 github.com/horahoradev/horahora/scheduler v0.0.0-20200801192659-89009690f8e2/go.mod h1:/4jl/OX90buthG2DWVn7FfAluilN3Mh9dqGFI6ce2iY=
 github.com/horahoradev/horahora/scheduler v0.0.0-20200802001503-d7cd7705b4f8 h1:bsSPPhugwVDrR113PbHVZWssNgH5bhzRaYQbtQhHyhM=
 github.com/horahoradev/horahora/scheduler v0.0.0-20200802001503-d7cd7705b4f8/go.mod h1:/4jl/OX90buthG2DWVn7FfAluilN3Mh9dqGFI6ce2iY=
+github.com/horahoradev/horahora/scheduler v0.0.0-20200823010907-db67efcf7d8c h1:VCW9207NbrLshEv5hyIErDV++Q1oor6BYAz+oGQtlAo=
+github.com/horahoradev/horahora/scheduler v0.0.0-20200823010907-db67efcf7d8c/go.mod h1:/4jl/OX90buthG2DWVn7FfAluilN3Mh9dqGFI6ce2iY=
 github.com/horahoradev/horahora/user_service v0.0.0-20200526031340-64e1705d00d7/go.mod h1:d4TrdXtBZiQh6O522vZl4cpoTTtlcXo945PajeWVyKA=
 github.com/horahoradev/horahora/user_service v0.0.0-20200801192659-89009690f8e2 h1:dXjBziFntAzVLnrh6Zm6I/bsU7aPuaZ7QFgXz1xansg=
 github.com/horahoradev/horahora/user_service v0.0.0-20200801192659-89009690f8e2/go.mod h1:d4TrdXtBZiQh6O522vZl4cpoTTtlcXo945PajeWVyKA=

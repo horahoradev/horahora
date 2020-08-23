@@ -1,0 +1,37 @@
+{{define "archiveRequests"}}
+    <html>
+    {{ template "header" .L }}
+    <body>
+        <div class="bodydiv">
+            <form action="/archiverequests" method="post">
+                <select name="website">
+                    <option value="niconico">niconico</option>
+                    <option value="bilibili">bilibili</option>
+                    <option value="youtube">youtube</option>
+                </select>
+                <p></p>
+                Content Type
+                <select name="contentType">
+                    <option value="playlist">playlist</option>
+                    <option value="channel">channel</option>
+                    <option value="tag">tag</option>
+                </select>
+                <p></p>
+                <label>Content value</label><input type="text" name="contentValue" required>
+                <p></p>
+                <button type="submit">Submit</button>
+            </form>
+
+            {{range .ArchivalRequests}}
+                <div class="panel">
+                    Website: {{.Website}}
+                    <p></p>
+                    Content Type: {{.ContentType}}
+                    <p></p>
+                    Content Value: {{.ContentValue}}
+                </div>
+            {{end}}
+        </div>
+    </body>
+    </html>
+{{end}}

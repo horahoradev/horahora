@@ -7,6 +7,7 @@ import (
 	"github.com/horahoradev/horahora/frontend/internal/config"
 	custommiddleware "github.com/horahoradev/horahora/frontend/internal/middleware"
 	"github.com/horahoradev/horahora/frontend/internal/templates"
+	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
@@ -56,20 +57,22 @@ func main() {
 }
 
 func setupRoutes(e *echo.Echo, cfg *config.Config) {
-	h := NewHomeHandler(cfg.VideoClient, cfg.UserClient)
-	e.GET("/", h.getHome)
+	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient)
+
+	e.GET("/", r.getHome)
 	e.GET("/users/:id", getUser)
 
-	v := NewVideoHandler(cfg.VideoClient, cfg.UserClient)
-	e.GET("/videos/:id", v.getVideo)
-	e.POST("/rate/:id", v.handleRating)
+	e.GET("/videos/:id", r.getVideo)
+	e.POST("/rate/:id", r.handleRating)
 
-	l := NewAuthHandler(cfg.UserClient)
 	e.GET("/login", getLogin)
-	e.POST("/login", l.handleLogin)
+	e.POST("/login", r.handleLogin)
 
 	e.GET("/register", getRegister)
-	e.POST("/register", l.handleRegister)
+	e.POST("/register", r.handleRegister)
+
+	e.GET("/archiverequests", r.getArchiveRequests)
+	e.POST("/archiverequests", r.handleArchiveRequest)
 
 }
 
@@ -123,10 +126,82 @@ type HomePageData struct {
 	Videos []Video
 }
 
-func NewAuthHandler(u userproto.UserServiceClient) AuthHandler {
-	return AuthHandler{
-		u: u,
+type ArchiveRequestsPageData struct {
+	L                LoggedInUserData
+	ArchivalRequests []*schedulerproto.ContentArchivalEntry
+}
+
+func (r RouteHandler) getArchiveRequests(c echo.Context) error {
+	data := ArchiveRequestsPageData{}
+
+	addUserProfileInfo(c, &data.L, r.u)
+
+	if data.L.UserID == 0 {
+		// User isn't logged in
+		// TODO: move this to a middleware somehow
+		return c.String(http.StatusForbidden, "Must be logged in")
 	}
+
+	resp, err := r.s.ListArchivalEntries(context.TODO(), &schedulerproto.ListArchivalEntriesRequest{UserID: data.L.UserID})
+	if err != nil {
+		return err
+	}
+
+	data.ArchivalRequests = resp.Entries
+
+	return c.Render(http.StatusOK, "archiveRequests", data)
+}
+
+func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
+	//website := c.FormValue("website")
+	contentType := c.FormValue("contentType")
+	contentValue := c.FormValue("contentValue")
+
+	userID := c.Get(custommiddleware.UserIDKey)
+	UserIDInt, ok := userID.(int64)
+	if !ok {
+		log.Error("Could not assert userid to int64")
+		return errors.New("could not assert userid to int64")
+	}
+
+	// FIXME: this is dumb. Fix this to use schedulerproto consts after switching to string instead of enum
+	switch contentType {
+	case "tag":
+		req := schedulerproto.TagRequest{
+			UserID:   UserIDInt,
+			Website:  schedulerproto.SupportedSite_niconico, // FIXME: placeholder, see above
+			TagValue: contentValue,
+		}
+
+		_, err := r.s.DlTag(context.TODO(), &req)
+		if err != nil {
+			return err
+		}
+	case "channel":
+		req := schedulerproto.ChannelRequest{
+			Website:   schedulerproto.SupportedSite_niconico,
+			ChannelID: contentValue,
+		}
+
+		_, err := r.s.DlChannel(context.TODO(), &req)
+		if err != nil {
+			return err
+		}
+	case "playlist":
+		req := schedulerproto.PlaylistRequest{
+			Website:    schedulerproto.SupportedSite_niconico,
+			PlaylistID: contentValue,
+		}
+		_, err := r.s.DlPlaylist(context.TODO(), &req)
+		if err != nil {
+			return err
+		}
+
+	default:
+		return errors.New("invalid content type")
+	}
+
+	return c.String(http.StatusOK, "Archive request submitted successfully")
 }
 
 func getLogin(c echo.Context) error {
@@ -137,11 +212,7 @@ func getRegister(c echo.Context) error {
 	return c.Render(http.StatusOK, "register", nil)
 }
 
-type AuthHandler struct {
-	u userproto.UserServiceClient
-}
-
-func (a AuthHandler) handleRegister(c echo.Context) error {
+func (r RouteHandler) handleRegister(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 	email := c.FormValue("email")
@@ -152,7 +223,7 @@ func (a AuthHandler) handleRegister(c echo.Context) error {
 		Email:    email,
 	}
 
-	regisResp, err := a.u.Register(context.Background(), &registrationReq)
+	regisResp, err := r.u.Register(context.Background(), &registrationReq)
 	if err != nil {
 		return err
 	}
@@ -162,7 +233,7 @@ func (a AuthHandler) handleRegister(c echo.Context) error {
 	return setCookie(c, regisResp.Jwt)
 }
 
-func (a AuthHandler) handleLogin(c echo.Context) error {
+func (r RouteHandler) handleLogin(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
@@ -172,7 +243,7 @@ func (a AuthHandler) handleLogin(c echo.Context) error {
 		Password: password,
 	}
 
-	loginResp, err := a.u.Login(context.Background(), loginReq)
+	loginResp, err := r.u.Login(context.Background(), loginReq)
 	if err != nil {
 		return err
 	}
@@ -319,19 +390,21 @@ func getUser(c echo.Context) error {
 	return c.Render(http.StatusOK, "profile", data)
 }
 
-type VideoHandler struct {
+type RouteHandler struct {
 	v videoproto.VideoServiceClient
 	u userproto.UserServiceClient
+	s schedulerproto.SchedulerClient
 }
 
-func NewVideoHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient) *VideoHandler {
-	return &VideoHandler{
+func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient, s schedulerproto.SchedulerClient) *RouteHandler {
+	return &RouteHandler{
 		v: v,
 		u: u,
+		s: s,
 	}
 }
 
-func (v *VideoHandler) getVideo(c echo.Context) error {
+func (v *RouteHandler) getVideo(c echo.Context) error {
 	id := c.Param("id")
 
 	// Dumb
@@ -406,7 +479,7 @@ func (v *VideoHandler) getVideo(c echo.Context) error {
 	return c.Render(http.StatusOK, "video", data)
 }
 
-func (v VideoHandler) handleRating(c echo.Context) error {
+func (v RouteHandler) handleRating(c echo.Context) error {
 	videoID := c.Param("id")
 	videoIDInt, err := strconv.ParseInt(videoID, 10, 64)
 	if err != nil {
@@ -446,13 +519,7 @@ type HomeHandler struct {
 	userClient  userproto.UserServiceClient
 }
 
-func NewHomeHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient) HomeHandler {
-	return HomeHandler{videoClient: v,
-		userClient: u}
-}
-
-func (h *HomeHandler) getHome(c echo.Context) error {
-
+func (h *RouteHandler) getHome(c echo.Context) error {
 	// TODO: if request times out, maybe provide a default list of good videos
 	req := videoproto.VideoQueryConfig{
 		OrderBy:    videoproto.OrderCategory_upload_date,
@@ -460,7 +527,7 @@ func (h *HomeHandler) getHome(c echo.Context) error {
 		PageNumber: 0,
 	}
 
-	videoList, err := h.videoClient.GetVideoList(context.TODO(), &req)
+	videoList, err := h.v.GetVideoList(context.TODO(), &req)
 	if err != nil {
 		log.Errorf("Could not retrieve video list. Err: %s", err)
 		return c.String(http.StatusInternalServerError, "Could not retrieve video list")
@@ -468,7 +535,7 @@ func (h *HomeHandler) getHome(c echo.Context) error {
 
 	data := HomePageData{}
 
-	addUserProfileInfo(c, &data.L, h.userClient)
+	addUserProfileInfo(c, &data.L, h.u)
 	for _, video := range videoList.Videos {
 		data.Videos = append(data.Videos, Video{
 			Title:        video.VideoTitle,
