@@ -39,7 +39,7 @@ resource "aws_subnet" "subnet_3" {
 
 // Origin bucket for video files
 module "video_origin" {
-  source                 = "git::https://github.com/cloudposse/terraform-aws-s3-bucket.git?ref=master"
+  source                 = "git::https://github.com/cloudposse/terraform-aws-s3-bucket?ref=0.17.1"
   enabled                = true
   versioning_enabled     = true
   allowed_bucket_actions = ["s3:GetObject", "s3:ListBucket", "s3:GetBucketLocation", "s3:PutObject"]
@@ -47,4 +47,15 @@ module "video_origin" {
   namespace              = "horahora"
   stage                  = var.environment
   region                 = var.region
+  block_public_acls = false
+  block_public_policy = false
+  ignore_public_acls = false
+
+  cors_rule_inputs = list({
+    allowed_headers = ["*"]
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+    expose_headers  = []
+    max_age_seconds = 300 // not sure what this is
+  })
 }

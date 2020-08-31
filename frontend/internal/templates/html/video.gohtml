@@ -52,7 +52,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
         <script>
             (function(){
-                var url = "http://localhost:8080/staticfiles/{{.MPDLoc}}";
+                var url = "https://horahora-dev-otomads.s3-us-west-1.amazonaws.com/{{.MPDLoc}}";
                 var player = dashjs.MediaPlayer().create();
                 player.initialize(document.querySelector("#videoPlayer"), url, true);
 

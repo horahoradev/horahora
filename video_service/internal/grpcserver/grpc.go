@@ -67,7 +67,6 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 	if err != nil {
 		return nil, err
 	}
-	cfg.Region = "us-west-2"
 
 	s3Client := s3.New(cfg)
 
@@ -100,6 +99,7 @@ func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) 
 	// UUID for tmp filename and all uploads provides probabilistic guarantee of uniqueness
 	id, err := uuid.NewUUID()
 	if err != nil {
+		log.Error("Could not generate uuid. Err: %s", err)
 		return err
 	}
 
@@ -148,14 +148,18 @@ loop:
 
 	transcodeResults, err := dashutils.TranscodeAndGenerateManifest(video.FileData.Name(), g.Local)
 	if err != nil {
-		return fmt.Errorf("failed to transcode and chunk. Err: %s", err)
+		err := fmt.Errorf("failed to transcode and chunk. Err: %s", err)
+		log.Error(err)
+		return err
 	}
 
 	// S3? Nginx? Who knows...
 	if !g.Local {
 		err = g.UploadMPDSet(transcodeResults)
 		if err != nil {
-			return fmt.Errorf("failed to upload to origin. Err: %s", err)
+			err := fmt.Errorf("failed to upload to origin. Err: %s", err)
+			log.Error(err)
+			return err
 		}
 	}
 
@@ -165,7 +169,8 @@ loop:
 		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, userproto.Site(video.Meta.Meta.OriginalSite),
 		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, transcodeResults.ManifestPath, nil, video.Meta.Meta.DomesticAuthorID)
 	if err != nil {
-		return fmt.Errorf("failed to save video to postgres. Err: %s", err)
+		err := fmt.Errorf("failed to save video to postgres. Err: %s", err)
+		log.Error(err)
 		return err
 	}
 
@@ -216,7 +221,7 @@ func (g GRPCServer) SendToOriginServer(path, desiredFilename string) error {
 	}
 
 	putObjInp := s3.PutObjectInput{
-		ACL:                       "public-read",
+		ACL:                       s3.ObjectCannedACLPublicRead,
 		Body:                      data,
 		Bucket:                    &g.BucketName,
 		CacheControl:              nil,

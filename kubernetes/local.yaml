@@ -99,13 +99,28 @@ spec:
             - name: BucketName
               value: "horahora-dev-otomads"
             - name: Local
-              value: "true"
+              value: "false"
             - name: redis_host
               value: "videoredis"
             - name: redis_port
               value: "6379"
             - name: redis_pass
               value: ""
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-key-id
+                  key: aws_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-secret-key
+                  key: aws_secret_access_key
+            - name: AWS_DEFAULT_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: aws-region
+                  key: aws_region
           volumeMounts:
             - name: shared-data
               mountPath: /videoservice/test_files

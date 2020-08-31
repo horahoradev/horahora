@@ -2,6 +2,8 @@
 set -e -x -o pipefail
 # This script will run the service locally
 
+./create_secrets.sh || true
+
 # 1. create services/deployments
 kubectl apply -f local.yaml
 

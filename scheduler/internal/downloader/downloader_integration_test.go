@@ -39,7 +39,7 @@ func TestConcurrentVideoDownloads(t *testing.T) {
 
 	dlChan <- models.NewVideoDlRequest(proto.SupportedSite_niconico, models.Tag, "Oldest_Video", "1", conf.Conn, conf.Redlock)
 
-	timeoutTicker := time.Tick(5 * time.Minute)
+	timeoutTicker := time.Tick(30 * time.Minute)
 
 	select {
 	case <-timeoutTicker:
