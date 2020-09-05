@@ -15,10 +15,10 @@
                 </div>
                 <div class="profile-section bottom-border">
                     <div class="user-content">
-                    <img class="pfp" src="{{.ProfilePicture}}">
-                        </div>
+                        <img class="pfp" src="{{.ProfilePicture}}">
+                    </div>
                     <div class="user-content">
-                        <b>{{.Username}}</b>
+                        <a href="/users/{{.AuthorID}}">{{.Username}}</a>
                         <p></p>
                         <i>{{.UserSubscribers}} subscribers</i>
                         <p></p>
@@ -52,7 +52,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
         <script>
             (function(){
-                var url = "https://horahora-dev-otomads.s3-us-west-1.amazonaws.com/{{.MPDLoc}}";
+                var url = "{{.MPDLoc}}";
                 var player = dashjs.MediaPlayer().create();
                 player.initialize(document.querySelector("#videoPlayer"), url, true);
 

@@ -24,7 +24,7 @@ message videoMetadata {
     string uploadDate = 7;
     string description = 8;
     int64 authorID = 9;
-
+    repeated string tags = 10;
 }
 
 message VideoList {
@@ -55,6 +55,8 @@ message VideoQueryConfig {
     orderCategory orderBy = 1;
     sortDirection direction = 2;
     int64 pageNumber = 3;
+    string containsTag = 4;
+    int64 fromUserID = 5; // domestic user ID
 }
 
 

@@ -106,6 +106,8 @@ spec:
               value: "6379"
             - name: redis_pass
               value: ""
+            - name: OriginFQDN
+              value: "https://horahora-dev-otomads.s3-us-west-1.amazonaws.com"
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:

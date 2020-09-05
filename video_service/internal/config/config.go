@@ -33,6 +33,7 @@ type config struct {
 	BucketName             string `env:"BucketName,required"`
 	Local                  bool   `env:"Local,required"` // If running locally, no s3 uploads
 	// (this is a workaround for getting IAM permissions into pods running on minikube)
+	OriginFQDN string `env:"OriginFQDN,required"`
 	UserClient userproto.UserServiceClient
 	SqlClient  *sqlx.DB
 }

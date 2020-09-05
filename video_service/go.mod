@@ -6,6 +6,8 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/aws/aws-sdk-go-v2 v0.20.0
 	github.com/caarlos0/env v3.5.0+incompatible
+	github.com/doug-martin/goqu v5.0.0+incompatible // indirect
+	github.com/doug-martin/goqu/v9 v9.9.0
 	github.com/go-redis/redis v6.15.8+incompatible
 	github.com/golang/mock v1.4.3
 	github.com/golang/protobuf v1.3.4

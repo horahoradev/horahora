@@ -47,7 +47,7 @@ func TestGRPCUpload(t *testing.T) {
 	cfg, err := config.New()
 	assert.NoError(t, err)
 
-	g, err := initGRPCServer(bucketName, sqlxMock, mockClient, true, cfg.RedisConn)
+	g, err := initGRPCServer(bucketName, sqlxMock, mockClient, true, cfg.RedisConn, "http://localhost")
 	assert.NoError(t, err)
 
 	file, err := os.Open("../../test_files/NO.mp4")

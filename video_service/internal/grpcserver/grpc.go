@@ -42,11 +42,12 @@ type GRPCServer struct {
 	S3Client   s3.Client
 	BucketName string
 	Local      bool
+	OriginFQDN string
 }
 
-func NewGRPCServer(bucketName string, db *sqlx.DB, port int, userGRPCAddress string, local bool,
+func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
 	redisClient *redis.Client, client userproto.UserServiceClient) error {
-	g, err := initGRPCServer(bucketName, db, client, local, redisClient)
+	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN)
 	if err != nil {
 		return err
 	}
@@ -62,7 +63,7 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, userGRPCAddress str
 }
 
 func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
-	redisClient *redis.Client) (*GRPCServer, error) {
+	redisClient *redis.Client, originFQDN string) (*GRPCServer, error) {
 	cfg, err := external.LoadDefaultAWSConfig()
 	if err != nil {
 		return nil, err
@@ -74,6 +75,7 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 		S3Client:   *s3Client,
 		BucketName: bucketName,
 		Local:      local,
+		OriginFQDN: originFQDN,
 	}
 
 	g.VideoModel, err = models.NewVideoModel(db, client, redisClient)
@@ -165,9 +167,11 @@ loop:
 
 	// This is MESSY
 	// TODO: switch to struct for args
+	manifestLoc := fmt.Sprintf("%s/%s", g.OriginFQDN, filepath.Base(transcodeResults.ManifestPath))
+
 	videoID, err := g.VideoModel.SaveForeignVideo(context.TODO(), video.Meta.Meta.Title, video.Meta.Meta.Description,
 		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, userproto.Site(video.Meta.Meta.OriginalSite),
-		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, transcodeResults.ManifestPath, nil, video.Meta.Meta.DomesticAuthorID)
+		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, manifestLoc, nil, video.Meta.Meta.DomesticAuthorID)
 	if err != nil {
 		err := fmt.Errorf("failed to save video to postgres. Err: %s", err)
 		log.Error(err)
@@ -273,7 +277,8 @@ func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQu
 	case proto.OrderCategory_upload_date:
 		switch queryConfig.Direction {
 		case proto.SortDirection_asc, proto.SortDirection_desc:
-			videos, err := g.VideoModel.GetVideoList(queryConfig.Direction, queryConfig.PageNumber)
+			videos, err := g.VideoModel.GetVideoList(queryConfig.Direction, queryConfig.PageNumber,
+				queryConfig.FromUserID, queryConfig.ContainsTag)
 			if err != nil {
 				return nil, err
 			}

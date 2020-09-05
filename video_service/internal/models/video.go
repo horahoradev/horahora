@@ -17,6 +17,8 @@ import (
 	proto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 
+	"github.com/doug-martin/goqu/v9"
+	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	_ "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/jmoiron/sqlx"
 )
@@ -184,16 +186,12 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue f
 	return boolCmd.Err()
 }
 
-func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64) ([]*videoproto.Video, error) {
-	minResultNum := pageNum * numResultsPerPage
-	maxResultNum := minResultNum + numResultsPerPage
-
-	sql := "SELECT id, title, userID, newLink FROM videos ORDER BY upload_date %s OFFSET %d LIMIT %d"
-	switch direction {
-	case videoproto.SortDirection_asc:
-		sql = fmt.Sprintf(sql, "asc", minResultNum, maxResultNum-minResultNum)
-	case videoproto.SortDirection_desc:
-		sql = fmt.Sprintf(sql, "desc", minResultNum, maxResultNum-minResultNum)
+// For now, this only supports either fromUserID or withTag. Can support both in future, need to switch to
+// goqu and write better tests
+func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, withTag string) ([]*videoproto.Video, error) {
+	sql, err := generateVideoListSQL(direction, pageNum, fromUserID, withTag)
+	if err != nil {
+		return nil, err
 	}
 
 	var results []*videoproto.Video
@@ -223,9 +221,6 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 
 		// FIXME: nothing is quite as dumb as this
 		// Need to remove the absolute path from mpd loc
-		spl := strings.Split(mpdLoc, "/")
-		mpdLoc = spl[len(spl)-1]
-
 		video.ThumbnailLoc = strings.Replace(mpdLoc, ".mpd", ".png", 1)
 
 		// TODO: could alloc in advance
@@ -233,6 +228,42 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 	}
 
 	return results, nil
+}
+
+func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, withTag string) (string, error) {
+	minResultNum := pageNum * numResultsPerPage
+
+	ds := goqu.
+		Select("id", "title", "userID", "newLink").
+		From(
+			goqu.T("videos"),
+		).
+		Offset(uint(minResultNum)).
+		Limit(numResultsPerPage)
+
+	switch direction {
+	case videoproto.SortDirection_asc:
+		ds = ds.Order(goqu.I("upload_date").Asc())
+	case videoproto.SortDirection_desc:
+		ds = ds.Order(goqu.I("upload_date").Desc())
+	}
+
+	// Mutually exclusive for now, can change later if desired
+	switch {
+	case fromUserID != 0:
+		ds = ds.
+			Where(goqu.C("userID").Eq(fromUserID))
+	case withTag != "":
+		ds = ds.NaturalJoin(goqu.T("tags")).
+			Where(goqu.C("tag").Eq(withTag))
+	}
+
+	// TODO: ensure that this is safe from sql injection
+	// Maybe use prepared mode?
+	sql, _, err := ds.ToSQL()
+
+	return sql, err
+
 }
 
 type basicVideoInfo struct {
@@ -263,7 +294,36 @@ func (v *VideoModel) GetVideoInfo(videoID string) (*videoproto.VideoMetadata, er
 	video.Views = basicInfo.views
 	video.AuthorID = authorID
 
+	tags, err := v.getVideoTags(videoID)
+	if err != nil {
+		return nil, err
+	}
+
+	video.Tags = tags
+
 	return &video, nil
+}
+
+type Tag struct {
+	Tag string `db:"tag"`
+}
+
+func (v *VideoModel) getVideoTags(videoID string) ([]string, error) {
+	sql := "SELECT tag from tags WHERE video_id = %s"
+	var tags []Tag
+
+	if err := v.db.Select(&tags, sql, videoID); err != nil {
+		log.Errorf("Failed to retrieve video tags. Err: %s", err)
+		return nil, err
+	}
+
+	var ret []string
+	// FIXME
+	for _, val := range tags {
+		ret = append(ret, val.Tag)
+	}
+
+	return ret, nil
 }
 
 func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID string) (*basicVideoInfo, error) {

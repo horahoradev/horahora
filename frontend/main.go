@@ -17,7 +17,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -106,6 +105,7 @@ type VideoDetail struct {
 	ProfilePicture  string
 	UploadDate      string // should be a datetime
 	Comments        []Comment
+	Tags            []string
 }
 
 type LoggedInUserData struct {
@@ -436,8 +436,6 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		return err
 	}
 
-	spl := strings.Split(videoInfo.VideoLoc, "/")
-
 	rating := videoInfo.Rating
 
 	// lol
@@ -448,7 +446,7 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 	data := VideoDetail{
 		L:               LoggedInUserData{},
 		Title:           videoInfo.VideoTitle,
-		MPDLoc:          spl[len(spl)-1], // FIXME: fix this in videoservice LOL this is embarrassing
+		MPDLoc:          videoInfo.VideoLoc, // FIXME: fix this in videoservice LOL this is embarrassing
 		Views:           videoInfo.Views,
 		Rating:          rating,
 		AuthorID:        videoInfo.AuthorID, // TODO
@@ -459,6 +457,7 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		UploadDate:      videoInfo.UploadDate,
 		VideoID:         videoInfo.VideoID,
 		Comments:        nil,
+		Tags: videoInfo.
 	}
 
 	addUserProfileInfo(c, &data.L, v.u)
