@@ -59,7 +59,7 @@ func setupRoutes(e *echo.Echo, cfg *config.Config) {
 	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient)
 
 	e.GET("/", r.getHome)
-	e.GET("/users/:id", getUser)
+	e.GET("/users/:id", r.getUser)
 
 	e.GET("/videos/:id", r.getVideo)
 	e.POST("/rate/:id", r.handleRating)
@@ -273,126 +273,55 @@ func setCookie(c echo.Context, jwt string) error {
 	return c.String(http.StatusOK, "Login successful.")
 }
 
-func getUser(c echo.Context) error {
-	// TODO
-	// User ID from path `users/:id`
-	//id := c.Param("id")
+func (v RouteHandler) getUser(c echo.Context) error {
+	id := c.Param("id")
 
-	// This is just sample data to make sure everything renders correctly
-	data := ProfileData{
-		Username:          "testuser",
-		UserID:            1,
-		ProfilePictureURL: "/static/images/placeholder1.jpg",
-		Videos: []Video{
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-			{
-				Title:        "testvideo",
-				Views:        5,
-				AuthorID:     1,
-				AuthorName:   "testuser",
-				ThumbnailLoc: "/static/images/placeholder1.jpg",
-				Rating:       10.0,
-			},
-		},
+	idInt, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
 	}
 
-	// addUserProfileInfo(c, &data.L, )
-	// TODO: get the rest of data
+	videoQueryConfig := videoproto.VideoQueryConfig{
+		OrderBy:     videoproto.OrderCategory_upload_date,
+		Direction:   videoproto.SortDirection_desc,
+		PageNumber:  0, // TODO,
+		ContainsTag: "",
+		FromUserID:  idInt,
+	}
+
+	videoList, err := v.v.GetVideoList(context.TODO(), &videoQueryConfig)
+	if err != nil {
+		return err
+	}
+
+	getUserReq := userproto.GetUserFromIDRequest{UserID: idInt}
+
+	user, err := v.u.GetUserFromID(context.TODO(), &getUserReq)
+	if err != nil {
+		return err
+	}
+
+	data := ProfileData{
+		UserID:            idInt,
+		Username:          user.Username,
+		ProfilePictureURL: "/static/images/placeholder1.jpg",
+	}
+
+	for _, video := range videoList.Videos {
+		v := Video{
+			Title:        video.VideoTitle,
+			VideoID:      video.VideoID,
+			Views:        video.Views,
+			AuthorID:     0, // TODO
+			AuthorName:   video.AuthorName,
+			ThumbnailLoc: video.ThumbnailLoc,
+			Rating:       video.Rating,
+		}
+
+		data.Videos = append(data.Videos, v)
+	}
+
+	addUserProfileInfo(c, &data.L, v.u)
 
 	return c.Render(http.StatusOK, "profile", data)
 }
@@ -457,7 +386,7 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		UploadDate:      videoInfo.UploadDate,
 		VideoID:         videoInfo.VideoID,
 		Comments:        nil,
-		Tags: videoInfo.
+		Tags:            videoInfo.Tags,
 	}
 
 	addUserProfileInfo(c, &data.L, v.u)

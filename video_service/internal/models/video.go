@@ -232,9 +232,10 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 
 func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, withTag string) (string, error) {
 	minResultNum := pageNum * numResultsPerPage
+	dialect := goqu.Dialect("postgres")
 
-	ds := goqu.
-		Select("id", "title", "userID", "newLink").
+	ds := dialect.
+		Select("id", "title", "userid", "newlink").
 		From(
 			goqu.T("videos"),
 		).
@@ -252,7 +253,7 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	switch {
 	case fromUserID != 0:
 		ds = ds.
-			Where(goqu.C("userID").Eq(fromUserID))
+			Where(goqu.C("userid").Eq(fromUserID))
 	case withTag != "":
 		ds = ds.NaturalJoin(goqu.T("tags")).
 			Where(goqu.C("tag").Eq(withTag))
@@ -309,7 +310,7 @@ type Tag struct {
 }
 
 func (v *VideoModel) getVideoTags(videoID string) ([]string, error) {
-	sql := "SELECT tag from tags WHERE video_id = %s"
+	sql := "SELECT tag from tags WHERE video_id = $1"
 	var tags []Tag
 
 	if err := v.db.Select(&tags, sql, videoID); err != nil {
