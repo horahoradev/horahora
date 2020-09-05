@@ -101,6 +101,7 @@ message InputFileMetadata {
     website originalSite = 6; // If reupload
     string originalID = 7; // If reupload // this is a little dumb
     int64 domesticAuthorID = 8;
+    repeated string Tags = 9;
 }
 
 // For now, these two are the same, but may deviate in future
