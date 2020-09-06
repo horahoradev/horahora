@@ -61,6 +61,8 @@ func setupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.GET("/", r.getHome)
 	e.GET("/users/:id", r.getUser)
 
+	e.GET("/tag/:tag", r.getTag)
+
 	e.GET("/videos/:id", r.getVideo)
 	e.POST("/rate/:id", r.handleRating)
 
@@ -271,6 +273,44 @@ func setCookie(c echo.Context, jwt string) error {
 	c.SetCookie(cookie)
 
 	return c.String(http.StatusOK, "Login successful.")
+}
+
+func (v RouteHandler) getTag(c echo.Context) error {
+	tag, err := url.QueryUnescape(c.Param("tag"))
+	if err != nil {
+		return err
+	}
+
+	log.Infof("tag: %s", tag)
+
+	videoQueryConfig := videoproto.VideoQueryConfig{
+		OrderBy:     videoproto.OrderCategory_upload_date,
+		Direction:   videoproto.SortDirection_desc,
+		PageNumber:  0, // TODO,
+		ContainsTag: tag,
+	}
+
+	videoList, err := v.v.GetVideoList(context.TODO(), &videoQueryConfig)
+	if err != nil {
+		return err
+	}
+
+	// TODO: copy pasta is bad
+	data := HomePageData{}
+	for _, video := range videoList.Videos {
+		data.Videos = append(data.Videos, Video{
+			Title:        video.VideoTitle,
+			VideoID:      video.VideoID,
+			Views:        video.Views,
+			AuthorID:     0, // TODO
+			AuthorName:   video.AuthorName,
+			ThumbnailLoc: video.ThumbnailLoc,
+			Rating:       video.Rating,
+		})
+	}
+
+	addUserProfileInfo(c, &data.L, v.u)
+	return c.Render(http.StatusOK, "home", data)
 }
 
 func (v RouteHandler) getUser(c echo.Context) error {

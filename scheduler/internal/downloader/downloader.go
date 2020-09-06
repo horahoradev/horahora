@@ -267,9 +267,12 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 				AuthorUsername:    metadata.Uploader,
 				OriginalSite:      site,
 				OriginalID:        metadata.ID,
+				Tags:              metadata.Tags,
 			},
 		},
 	}
+
+	log.Infof("Tags: %s", metadata.Tags)
 
 	err = stream.Send(&metaPayload)
 	if err != nil {

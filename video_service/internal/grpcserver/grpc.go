@@ -171,7 +171,7 @@ loop:
 
 	videoID, err := g.VideoModel.SaveForeignVideo(context.TODO(), video.Meta.Meta.Title, video.Meta.Meta.Description,
 		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, userproto.Site(video.Meta.Meta.OriginalSite),
-		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, manifestLoc, nil, video.Meta.Meta.DomesticAuthorID)
+		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, manifestLoc, video.Meta.Meta.Tags, video.Meta.Meta.DomesticAuthorID)
 	if err != nil {
 		err := fmt.Errorf("failed to save video to postgres. Err: %s", err)
 		log.Error(err)

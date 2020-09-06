@@ -11,8 +11,9 @@
                         <p></p>
                         {{.UploadDate}}
                         <span class="float-right"><div id="rateYo"></div></span>
+                        <p></p>
                         {{ range $tag := .Tags }}
-                            <a href="/tags/{{ $tag }}">{{ $tag }}</a>
+                            <a href="/tag/{{ $tag }}">{{ $tag }}</a>
                         {{ end }}
                     </div>
                 </div>

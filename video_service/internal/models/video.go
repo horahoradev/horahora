@@ -235,7 +235,7 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	dialect := goqu.Dialect("postgres")
 
 	ds := dialect.
-		Select("id", "title", "userid", "newlink").
+		Select("videos.id", "title", "userid", "newlink").
 		From(
 			goqu.T("videos"),
 		).
@@ -255,7 +255,9 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 		ds = ds.
 			Where(goqu.C("userid").Eq(fromUserID))
 	case withTag != "":
-		ds = ds.NaturalJoin(goqu.T("tags")).
+		ds = ds.Join(
+			goqu.T("tags"),
+			goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
 			Where(goqu.C("tag").Eq(withTag))
 	}
 
