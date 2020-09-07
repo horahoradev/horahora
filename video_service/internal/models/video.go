@@ -25,7 +25,7 @@ import (
 
 const (
 	maxRating         = 10.00
-	numResultsPerPage = 50
+	NumResultsPerPage = 50
 	cdnURL            = "images.horahora.org"
 )
 
@@ -230,8 +230,37 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 	return results, nil
 }
 
+// FIXME: optimization: move to redis once I figure out what types of queries are necessary
+func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, withTag string) (int64, error) {
+	var sql string
+	var args []interface{}
+	switch {
+	case fromUserID != 0:
+		sql = "SELECT COUNT(*) FROM videos WHERE userID = $1"
+		args = []interface{}{fromUserID}
+	case withTag != "":
+		sql = "SELECT COUNT(DISTINCT video_id) FROM tags WHERE tag = $1"
+		args = []interface{}{withTag}
+	}
+
+	rows, err := v.db.Query(sql, args)
+	if err != nil {
+		return 0, err
+	}
+
+	var l int64
+	for rows.Next() {
+		err = rows.Scan(&l)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return l, nil
+}
+
 func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, withTag string) (string, error) {
-	minResultNum := pageNum * numResultsPerPage
+	minResultNum := pageNum * NumResultsPerPage
 	dialect := goqu.Dialect("postgres")
 
 	ds := dialect.
@@ -240,7 +269,7 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 			goqu.T("videos"),
 		).
 		Offset(uint(minResultNum)).
-		Limit(numResultsPerPage)
+		Limit(NumResultsPerPage)
 
 	switch direction {
 	case videoproto.SortDirection_asc:

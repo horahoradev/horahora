@@ -29,6 +29,7 @@ message videoMetadata {
 
 message VideoList {
     repeated Video videos = 1;
+    int64 numberOfVideos = 2;
 }
 
 message Video {
