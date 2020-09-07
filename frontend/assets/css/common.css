@@ -7,10 +7,9 @@ body {
 .navbar {
     background-color: #ffffff;
     filter: drop-shadow(0px 2px 1px #000000);
-    /*display: flex;*/
-    /*justify-content: space-between;*/
     height: 40px;
     margin: 0px;
+    margin-bottom: 50px;
     padding: 0px;
     padding-left: 10px;
     padding-right: 10px;
@@ -56,7 +55,6 @@ body {
 .panel {
     background-color: #ffffff;
     filter: drop-shadow(0px 2px 4px #000000);
-    top: 50px;
     position: relative;
 }
 
@@ -93,12 +91,11 @@ h2 {
 }
 
 .video-thumb {
-    height: 80%;
     width: 100%;
 }
 
 .video-section {
-    top: 50px;
+    margin: 0px;
     position: relative;
     display: flex;
     flex-direction: row;
@@ -106,11 +103,12 @@ h2 {
 }
 
 .video-container {
-    height: 150px;
-    width: 135px;
+    /*height: 170px;*/
+    /*width: 145px;*/
     display: inline-block;
     margin: 10px;
     vertical-align: top;
+    font-size: 14px;
 }
 
 p {
@@ -153,7 +151,6 @@ video {
     border-bottom: 1px solid #CBD5E0;
 }
 
-
 .description-section {
 }
 
@@ -191,4 +188,15 @@ video {
 
 textarea {
     width: 200px;
+}
+
+.pageSection {
+    top: 0px;
+    display: block;
+    position: static;
+}
+
+.currentPage {
+    text-decoration: underline;
+    font-weight: bolder;
 }

@@ -241,9 +241,12 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, withTag 
 	case withTag != "":
 		sql = "SELECT COUNT(DISTINCT video_id) FROM tags WHERE tag = $1"
 		args = []interface{}{withTag}
+	default:
+		sql = "SELECT COUNT(*) FROM videos"
+		args = []interface{}{}
 	}
 
-	rows, err := v.db.Query(sql, args)
+	rows, err := v.db.Query(sql, args...)
 	if err != nil {
 		return 0, err
 	}

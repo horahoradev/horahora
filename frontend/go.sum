@@ -70,6 +70,10 @@ github.com/horahoradev/horahora/video_service v0.0.0-20200816012446-0d85b8a2b992
 github.com/horahoradev/horahora/video_service v0.0.0-20200816012446-0d85b8a2b992/go.mod h1:XYxMS6uPVFULtwrhq2urBijZDNy3n0vL4xnwd3Lo8sw=
 github.com/horahoradev/horahora/video_service v0.0.0-20200905042557-68fe39a1a2fe h1:DVnvGZQIMiX9jskk7sOg48Kt3QYRQvVn3pWBqFdgfdg=
 github.com/horahoradev/horahora/video_service v0.0.0-20200905042557-68fe39a1a2fe/go.mod h1:Dj0Euekkeyk0VCGRlZJiWN/nR4YU2iY0BI+cAdoUuGg=
+github.com/horahoradev/horahora/video_service v0.0.0-20200907004734-310338de9993 h1:4CLw9GXKWYMlC5UuG19izNFe9FaCt95UKo2kYvc+N/g=
+github.com/horahoradev/horahora/video_service v0.0.0-20200907004734-310338de9993/go.mod h1:Dj0Euekkeyk0VCGRlZJiWN/nR4YU2iY0BI+cAdoUuGg=
+github.com/horahoradev/horahora/video_service v0.0.0-20200907021225-6586b901bde1 h1:rs/lUIX8d+BxtnDLhncZP/pZDyCbex45VLT0yOrl8Xw=
+github.com/horahoradev/horahora/video_service v0.0.0-20200907021225-6586b901bde1/go.mod h1:Dj0Euekkeyk0VCGRlZJiWN/nR4YU2iY0BI+cAdoUuGg=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af h1:pmfjZENx5imkbgOkpRUYLnmbU7UEFbjtDA2hxJ1ichM=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=

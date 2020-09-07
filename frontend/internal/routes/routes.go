@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"github.com/horahoradev/horahora/frontend/internal/config"
 	custommiddleware "github.com/horahoradev/horahora/frontend/internal/middleware"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -80,14 +81,22 @@ type LoggedInUserData struct {
 
 type ProfileData struct {
 	L                 LoggedInUserData
+	PaginationData    PaginationData
 	UserID            int64
 	Username          string
 	ProfilePictureURL string
 	Videos            []Video
 }
 type HomePageData struct {
-	L      LoggedInUserData
-	Videos []Video
+	L              LoggedInUserData
+	PaginationData PaginationData
+	Videos         []Video
+}
+
+type PaginationData struct {
+	CurrentPath string // TODO: easier way to do this?
+	Pages       []int
+	CurrentPage int
 }
 
 type ArchiveRequestsPageData struct {
@@ -243,6 +252,17 @@ func (v RouteHandler) getTag(c echo.Context) error {
 		return err
 	}
 
+	pageNumber := c.QueryParam("page")
+	var pageNumberInt int64 = 1
+
+	if pageNumber != "" {
+		num, err := strconv.ParseInt(pageNumber, 10, 64)
+		if err != nil {
+			log.Errorf("Invalid page number %s, defaulting to 1", pageNumber)
+		}
+		pageNumberInt = num
+	}
+
 	videoQueryConfig := videoproto.VideoQueryConfig{
 		OrderBy:     videoproto.OrderCategory_upload_date,
 		Direction:   videoproto.SortDirection_desc,
@@ -255,8 +275,22 @@ func (v RouteHandler) getTag(c echo.Context) error {
 		return err
 	}
 
-	// TODO: copy pasta is bad
-	data := HomePageData{}
+	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumberInt))
+	if err != nil {
+		err1 := fmt.Errorf("failed to calculate page range. Err: %s", err)
+		log.Error(err1)
+		pageRange = []int{1}
+	}
+
+	// TODO: copy pasta is very bad
+	data := HomePageData{
+		PaginationData: PaginationData{
+			CurrentPath: c.Path(),
+			Pages:       pageRange,
+			CurrentPage: int(pageNumberInt),
+		},
+	}
+
 	for _, video := range videoList.Videos {
 		data.Videos = append(data.Videos, Video{
 			Title:        video.VideoTitle,
@@ -281,6 +315,18 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		return err
 	}
 
+	// TODO: reduce copy pasta
+	pageNumber := c.QueryParam("page")
+	var pageNumberInt int64 = 1
+
+	if pageNumber != "" {
+		num, err := strconv.ParseInt(pageNumber, 10, 64)
+		if err != nil {
+			log.Errorf("Invalid page number %s, defaulting to 1", pageNumber)
+		}
+		pageNumberInt = num
+	}
+
 	videoQueryConfig := videoproto.VideoQueryConfig{
 		OrderBy:     videoproto.OrderCategory_upload_date,
 		Direction:   videoproto.SortDirection_desc,
@@ -301,10 +347,22 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		return err
 	}
 
+	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumberInt))
+	if err != nil {
+		err1 := fmt.Errorf("failed to calculate page range. Err: %s", err)
+		log.Error(err1)
+		pageRange = []int{1}
+	}
+
 	data := ProfileData{
 		UserID:            idInt,
 		Username:          user.Username,
 		ProfilePictureURL: "/static/images/placeholder1.jpg",
+		PaginationData: PaginationData{
+			CurrentPath: c.Path(),
+			Pages:       pageRange,
+			CurrentPage: int(pageNumberInt),
+		},
 	}
 
 	for _, video := range videoList.Videos {
@@ -455,6 +513,17 @@ type HomeHandler struct {
 }
 
 func (h *RouteHandler) getHome(c echo.Context) error {
+	pageNumber := c.QueryParam("page")
+	var pageNumberInt int64 = 1
+
+	if pageNumber != "" {
+		num, err := strconv.ParseInt(pageNumber, 10, 64)
+		if err != nil {
+			log.Errorf("Invalid page number %s, defaulting to 1", pageNumber)
+		}
+		pageNumberInt = num
+	}
+
 	// TODO: if request times out, maybe provide a default list of good videos
 	req := videoproto.VideoQueryConfig{
 		OrderBy:    videoproto.OrderCategory_upload_date,
@@ -468,7 +537,20 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Could not retrieve video list")
 	}
 
-	data := HomePageData{}
+	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumberInt))
+	if err != nil {
+		err1 := fmt.Errorf("failed to calculate page range. Err: %s", err)
+		log.Error(err1)
+		pageRange = []int{1}
+	}
+
+	data := HomePageData{
+		PaginationData: PaginationData{
+			CurrentPath: c.Path(),
+			Pages:       pageRange,
+			CurrentPage: int(pageNumberInt),
+		},
+	}
 
 	addUserProfileInfo(c, &data.L, h.u)
 	for _, video := range videoList.Videos {

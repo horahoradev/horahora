@@ -14,9 +14,14 @@ func SetupTestRoutes(e *echo.Echo) {
 func getTestHome(c echo.Context) error {
 	data := HomePageData{
 		L: LoggedInUserData{},
+		PaginationData: PaginationData{
+			Pages:       []int{1, 2, 3, 4, 5},
+			CurrentPage: 3,
+			CurrentPath: "/",
+		},
 		Videos: []Video{
 			{
-				Title:        "test",
+				Title:        "[MAD] Barack Obama x スカイハイ",
 				VideoID:      1,
 				Views:        2,
 				AuthorID:     1,
