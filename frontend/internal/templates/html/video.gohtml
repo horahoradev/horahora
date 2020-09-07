@@ -12,12 +12,14 @@
                         {{.UploadDate}}
                         <span class="float-right"><div id="rateYo"></div></span>
                         <p></p>
+                        Tags:
                         {{ range $tag := .Tags }}
                             <a href="/tag/{{ $tag }}">{{ $tag }}</a>
                         {{ end }}
                     </div>
                 </div>
                 <div class="profile-section bottom-border">
+                    <div class="inner-profile-section">
                     <div class="user-content">
                         <img class="pfp" src="{{.ProfilePicture}}">
                     </div>
@@ -29,6 +31,7 @@
                         {{.UserDescription}}
                     </div>
                     <button class="float-right">Subscribe</button>
+                    </div>
                 </div>
                 <div class="comment-section">
                     <div class="inner-comment-section">
@@ -61,7 +64,8 @@
                 player.initialize(document.querySelector("#videoPlayer"), url, true);
 
                 $("#rateYo").rateYo({
-                    rating: {{.Rating}}
+                    rating: {{.Rating}},
+                    starWidth: "19px"
                 });
 
                 $("#rateYo").rateYo()

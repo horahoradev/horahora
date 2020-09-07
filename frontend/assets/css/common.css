@@ -7,42 +7,51 @@ body {
 .navbar {
     background-color: #ffffff;
     filter: drop-shadow(0px 2px 1px #000000);
+    /*display: flex;*/
+    /*justify-content: space-between;*/
     height: 40px;
     margin: 0px;
     padding: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
+.navbar > div {
+    /*margin: auto;*/
+    display: inline-block;
+
+}
+/*.navbar > div > * {*/
+/*    margin: 0px 0px 0px 0px;*/
+/*    position: relative;*/
+/*    display: inline-block;*/
+/*    top: 50%;*/
+/*    transform: translateY(-50%);*/
+/*}*/
+
 .navbar > div:nth-child(1) {
-    position: absolute;
-    left: 0%;
+    position: relative;
     top: 50%;
     transform: translateY(-50%);
-    display: inline-block;
 }
 
 .navbar > div:nth-child(2) {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 50%;
-    width: 200px;
+    margin: auto;
     display: inline-block;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
 }
 
-.navbar > div:nth-child(4) {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 95%;
-    display: inline-block;
-}
 
 .navbar > div:nth-child(3) {
-    position: absolute;
+    position: relative;
+    display: inline-block;
     top: 50%;
     transform: translateY(-50%);
-    left: 70%;
-    display: inline-block;
+    float: right;
+    text-align: right;
 }
 
 .panel {
@@ -117,6 +126,9 @@ p {
     height: 80%;
 }
 
+.inner-profile-section {
+    padding: 30px;
+}
 
 .float-right {
     float: right;
@@ -179,5 +191,5 @@ video {
 }
 
 textarea {
-    width: 100%;
+    width: 200px;
 }
