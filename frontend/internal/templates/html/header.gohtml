@@ -4,8 +4,29 @@
 
     <div class="navbar">
         <div><h1>Horahora</h1></div>
-        <div><textarea cols="1" rows="1">Search for videos</textarea></div>
-        <div>{{if .Username}} <a href="/archiverequests">Archive Requests</a><a href="/users/{{.UserID}}">{{.Username}} </a> {{else}}<a href="/login">Login</a> {{end}}</div>
+        <div><textarea cols="1" rows="1">Search for videos</textarea>
+            <div class="search-modal">
+            <form action="/">
+                 Order by
+                <select name="category">
+                    <option value="upload_date">upload date</option>
+                    <option value="rating">rating</option>
+                    <option value="views">views</option>
+                </select>
+                <br>
+                <input type="radio" id="desc" name="order" value="desc">
+                <label for="desc">Desc</label>
+                <input type="radio" id="asc" name="order" value="asc">
+                <label for="asc">Asc</label>
+                <br>
+                Tag
+                <input type="text" id="tag" name="tag">
+                <br>
+                <button type="submit">Search</button>
+            </form>
+            </div>
+        </div>
+        <div>{{if .Username}} <a href="/archiverequests">Archive Requests</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/users/{{.UserID}}">{{.Username}} </a> {{else}}<a href="/login">Login</a> {{end}}</div>
     </div>
 </head>
 {{end}}

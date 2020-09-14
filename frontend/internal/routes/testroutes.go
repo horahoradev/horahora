@@ -16,7 +16,7 @@ func getTestHome(c echo.Context) error {
 		L: LoggedInUserData{},
 		PaginationData: PaginationData{
 			Pages:       []int{1, 2, 3, 4, 5},
-			CurrentPage: 3,
+			CurrentPage: 1,
 			CurrentPath: "/",
 		},
 		Videos: []Video{

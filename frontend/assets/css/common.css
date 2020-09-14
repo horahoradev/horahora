@@ -52,6 +52,18 @@ body {
     text-align: right;
 }
 
+
+.search-modal {
+    position: absolute;
+    z-index: 1;
+    background-color: grey;
+    width: 100%;
+}
+
+#tag {
+    width: 100px;
+}
+
 .panel {
     background-color: #ffffff;
     filter: drop-shadow(0px 2px 4px #000000);
@@ -87,7 +99,8 @@ h2 {
 }
 
 .bodydiv {
-    padding: 50px;
+    padding-left: 50px;
+    padding-right: 50px;
 }
 
 .video-thumb {
@@ -100,11 +113,12 @@ h2 {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    z-index: -1;
 }
 
 .video-container {
     /*height: 170px;*/
-    /*width: 145px;*/
+    width: 145px;
     display: inline-block;
     margin: 10px;
     vertical-align: top;

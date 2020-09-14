@@ -173,6 +173,36 @@ func (v *VideoModel) GetViewsForVideo(videoID string) (uint64, error) {
 	return uint64(floatCmd.Val()), floatCmd.Err()
 }
 
+const (
+	ViewNamespace   = "videos:views"
+	RatingNamespace = "videos:ratings"
+)
+
+func (v *VideoModel) GetVideosByViewsOrRatings(startNumber, endNumber int64, order videoproto.SortDirection, category videoproto.OrderCategory) ([]string, error) {
+	var namespace string
+	switch category {
+	case videoproto.OrderCategory_views:
+		namespace = ViewNamespace
+	case videoproto.OrderCategory_rating:
+		namespace = RatingNamespace
+	default:
+		return nil, fmt.Errorf("unsupported category: %s", category.String())
+	}
+
+	switch order {
+	case videoproto.SortDirection_asc:
+		res := v.redisClient.ZRange(namespace, startNumber, endNumber)
+		return res.Result()
+
+	case videoproto.SortDirection_desc:
+		// 0 to 50 would become -1 to -50
+		res := v.redisClient.ZRange(namespace, -1*startNumber, -1*endNumber)
+		return res.Result()
+	}
+
+	return nil, nil
+}
+
 func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue float64) error {
 	// hash table for each video with key being user ID
 	// really easy
@@ -183,7 +213,17 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue f
 	videoKey := fmt.Sprintf("ratings:%s", videoID)
 
 	boolCmd := v.redisClient.HSet(videoKey, ratingUID, ratingValue)
-	return boolCmd.Err()
+
+	if err := boolCmd.Err(); err != nil {
+		return err
+	}
+
+	// BIG FIXME
+	if err := v.UpdateVideoRatingRankingsForAllViewedVideos(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // For now, this only supports either fromUserID or withTag. Can support both in future, need to switch to
@@ -263,7 +303,7 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, withTag 
 }
 
 func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, withTag string) (string, error) {
-	minResultNum := pageNum * NumResultsPerPage
+	minResultNum := (pageNum - 1) * NumResultsPerPage
 	dialect := goqu.Dialect("postgres")
 
 	ds := dialect.
@@ -298,7 +338,6 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	sql, _, err := ds.ToSQL()
 
 	return sql, err
-
 }
 
 type basicVideoInfo struct {
@@ -396,6 +435,86 @@ func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID string) (*basicVi
 	}
 
 	return &videoInfo, nil
+}
+
+// FIXME: check for stupidity on a better day
+func (v *VideoModel) UpdateVideoRatingRankingsForAllViewedVideos() error {
+	videos, err := v.GetVideosByViewsOrRatings(1, -1, videoproto.SortDirection_asc, videoproto.OrderCategory_views)
+	if err != nil {
+		return err
+	}
+
+	return v.UpdateVideoRatingRankings(videos)
+}
+
+// This is expensive and should only be done every so often
+func (v *VideoModel) UpdateVideoRatingRankings(videoIDs []string) error {
+	for _, videoID := range videoIDs {
+		rating, err := v.GetAverageRatingForVideoID(videoID)
+		if err != nil {
+			return err
+		}
+
+		cmd := v.redisClient.ZAdd(RatingNamespace, redis.Z{Score: rating, Member: videoID})
+		if err := cmd.Err(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (v *VideoModel) GetBasicSQLInfoForVideo(videoID string) (string, string, int64, error) {
+	// newlink, title, userid
+	var newlink, title string
+	var authorID int64
+	curs := v.db.QueryRow("select newlink, title, userID FROM videos WHERE id=$1", videoID)
+
+	if err := curs.Scan(&newlink, &title, &authorID); err != nil {
+		return "", "", 0, err
+	}
+
+	return newlink, title, authorID, nil
+}
+
+func (v *VideoModel) GetTopVideos(category videoproto.OrderCategory, order videoproto.SortDirection, startInd, endIndex int64) ([]*videoproto.Video, error) {
+	var retList []*videoproto.Video
+
+	videoIDs, err := v.GetVideosByViewsOrRatings(startInd, endIndex, order, category)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, videoID := range videoIDs {
+		idInt, err := strconv.ParseInt(videoID, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		newlink, title, authorID, err := v.GetBasicSQLInfoForVideo(videoID)
+		if err != nil {
+			return nil, err
+		}
+
+		redisInfo, err := v.getBasicVideoInfo(authorID, videoID)
+		if err != nil {
+			return nil, err
+		}
+
+		v := videoproto.Video{
+			VideoTitle: title,
+			Views:      redisInfo.views,
+			Rating:     redisInfo.rating,
+			// FIXME: I did it again...
+			ThumbnailLoc: strings.Replace(newlink, ".mpd", ".png", 1),
+			VideoID:      idInt,
+			AuthorName:   redisInfo.authorName,
+		}
+
+		retList = append(retList, &v)
+	}
+
+	return retList, nil
 }
 
 func (v *VideoModel) GetAverageRatingForVideoID(videoID string) (float64, error) {

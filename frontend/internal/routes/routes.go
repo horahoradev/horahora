@@ -513,6 +513,24 @@ type HomeHandler struct {
 }
 
 func (h *RouteHandler) getHome(c echo.Context) error {
+	// TODO: verify no sql injection lol
+	tag, err := url.QueryUnescape(c.QueryParam("tag"))
+	if err != nil {
+		return err
+	}
+
+	orderByVal, err := url.QueryUnescape(c.QueryParam("category"))
+	if err != nil {
+		return err
+	}
+	orderBy := videoproto.OrderCategory(videoproto.OrderCategory_value[orderByVal])
+
+	orderVal, err := url.QueryUnescape(c.QueryParam("order"))
+	if err != nil {
+		return err
+	}
+	order := videoproto.SortDirection(videoproto.SortDirection_value[orderVal])
+
 	pageNumber := c.QueryParam("page")
 	var pageNumberInt int64 = 1
 
@@ -526,9 +544,10 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	// TODO: if request times out, maybe provide a default list of good videos
 	req := videoproto.VideoQueryConfig{
-		OrderBy:    videoproto.OrderCategory_upload_date,
-		Direction:  videoproto.SortDirection_desc,
-		PageNumber: 0,
+		OrderBy:     orderBy,
+		Direction:   order,
+		ContainsTag: tag,
+		PageNumber:  pageNumberInt,
 	}
 
 	videoList, err := h.v.GetVideoList(context.TODO(), &req)
@@ -546,7 +565,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	data := HomePageData{
 		PaginationData: PaginationData{
-			CurrentPath: c.Path(),
+			CurrentPath: c.Path() + c.QueryString(),
 			Pages:       pageRange,
 			CurrentPage: int(pageNumberInt),
 		},

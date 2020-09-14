@@ -11,6 +11,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 
@@ -270,39 +271,44 @@ func (g GRPCServer) DownloadVideo(req *proto.VideoRequest, outputStream proto.Vi
 
 func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQueryConfig) (*proto.VideoList, error) {
 	switch queryConfig.OrderBy {
-	case proto.OrderCategory_rating:
-		st := status.New(codes.Unimplemented, "unimplemented")
-		return nil, st.Err()
+	case proto.OrderCategory_rating, proto.OrderCategory_views:
+		// FIXME: simplify pagination API here
+		startInd := (queryConfig.PageNumber - 1) * models.NumResultsPerPage
+		endInd := startInd + models.NumResultsPerPage
 
-	case proto.OrderCategory_upload_date:
-		switch queryConfig.Direction {
-		case proto.SortDirection_asc, proto.SortDirection_desc:
-			videos, err := g.VideoModel.GetVideoList(queryConfig.Direction, queryConfig.PageNumber,
-				queryConfig.FromUserID, queryConfig.ContainsTag)
-			if err != nil {
-				log.Errorf("Could not get video list. Err: %s", err)
-				return nil, err
-			}
-
-			numberOfVideos, err := g.VideoModel.GetNumberOfSearchResultsForQuery(queryConfig.FromUserID, queryConfig.ContainsTag)
-			if err != nil {
-				log.Errorf("Could not get count of entries for query. Err: %s", err)
-				return nil, err
-			}
-
-			return &proto.VideoList{
-				Videos:         videos,
-				NumberOfVideos: numberOfVideos,
-			}, nil
-
-		default:
-			st := status.New(codes.InvalidArgument, "bad sort order")
-			return nil, st.Err()
+		videos, err := g.VideoModel.GetTopVideos(queryConfig.OrderBy, queryConfig.Direction, startInd, endInd)
+		if err != nil {
+			return nil, err
 		}
 
-	case proto.OrderCategory_views:
-		st := status.New(codes.Unimplemented, "unimplemented")
-		return nil, st.Err()
+		numberOfVideos, err := g.VideoModel.GetNumberOfSearchResultsForQuery(queryConfig.FromUserID, queryConfig.ContainsTag)
+		if err != nil {
+			log.Errorf("Could not get count of entries for query. Err: %s", err)
+			return nil, err
+		}
+
+		return &proto.VideoList{
+			Videos:         videos,
+			NumberOfVideos: numberOfVideos,
+		}, nil
+	case proto.OrderCategory_upload_date:
+		videos, err := g.VideoModel.GetVideoList(queryConfig.Direction, queryConfig.PageNumber,
+			queryConfig.FromUserID, queryConfig.ContainsTag)
+		if err != nil {
+			log.Errorf("Could not get video list. Err: %s", err)
+			return nil, err
+		}
+
+		numberOfVideos, err := g.VideoModel.GetNumberOfSearchResultsForQuery(queryConfig.FromUserID, queryConfig.ContainsTag)
+		if err != nil {
+			log.Errorf("Could not get count of entries for query. Err: %s", err)
+			return nil, err
+		}
+
+		return &proto.VideoList{
+			Videos:         videos,
+			NumberOfVideos: numberOfVideos,
+		}, nil
 
 	default:
 		st := status.New(codes.InvalidArgument, "invalid order category")
@@ -311,7 +317,7 @@ func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQu
 }
 
 func (g GRPCServer) RateVideo(ctx context.Context, rating *proto.VideoRating) (*proto.Nothing, error) {
-	err := g.VideoModel.AddRatingToVideoID(rating.UserID, string(rating.VideoID), float64(rating.Rating))
+	err := g.VideoModel.AddRatingToVideoID(rating.UserID, strconv.Itoa(int(rating.VideoID)), float64(rating.Rating))
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +326,8 @@ func (g GRPCServer) RateVideo(ctx context.Context, rating *proto.VideoRating) (*
 }
 
 func (g GRPCServer) ViewVideo(ctx context.Context, videoInp *proto.VideoViewing) (*proto.Nothing, error) {
-	err := g.VideoModel.IncrementViewsForVideo(string(videoInp.VideoID))
+
+	err := g.VideoModel.IncrementViewsForVideo(strconv.Itoa(int(videoInp.VideoID)))
 	if err != nil {
 		return nil, err
 	}
