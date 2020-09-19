@@ -174,17 +174,33 @@ loop:
 		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, userproto.Site(video.Meta.Meta.OriginalSite),
 		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, manifestLoc, video.Meta.Meta.Tags, video.Meta.Meta.DomesticAuthorID)
 	if err != nil {
-		err := fmt.Errorf("failed to save video to postgres. Err: %s", err)
-		log.Error(err)
-		return err
+		return LogAndRetErr("failed to save video to postgres. Err: %s", err)
 	}
 
 	uploadResp := proto.UploadResponse{
 		VideoID: videoID,
 	}
 
+	// Must be done after file has been saved
+	// FIXME: atomicity issues
+	err = g.VideoModel.AssertViewsZero(strconv.Itoa(int(videoID)))
+	if err != nil {
+		return LogAndRetErr("failed to assert video views to zero. Err: %s", err)
+	}
+
+	err = g.VideoModel.AssertRatingsZero(strconv.Itoa(int(videoID)))
+	if err != nil {
+		return LogAndRetErr("failed to assert video views to zero. Err: %s", err)
+	}
+
 	log.Infof("Finished handling video %s", video.Meta.Meta.Title)
 	return inpStream.SendAndClose(&uploadResp)
+}
+
+func LogAndRetErr(fmtStr string, err error) error {
+	errWithMsg := fmt.Errorf(fmtStr, err)
+	log.Error(errWithMsg)
+	return errWithMsg
 }
 
 func (g GRPCServer) ForeignVideoExists(ctx context.Context, foreignVideoCheck *proto.ForeignVideoCheck) (*proto.VideoExistenceResponse, error) {
@@ -274,7 +290,7 @@ func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQu
 	case proto.OrderCategory_rating, proto.OrderCategory_views:
 		// FIXME: simplify pagination API here
 		startInd := (queryConfig.PageNumber - 1) * models.NumResultsPerPage
-		endInd := startInd + models.NumResultsPerPage
+		endInd := startInd + models.NumResultsPerPage - 1
 
 		videos, err := g.VideoModel.GetTopVideos(queryConfig.OrderBy, queryConfig.Direction, startInd, endInd)
 		if err != nil {
@@ -326,7 +342,6 @@ func (g GRPCServer) RateVideo(ctx context.Context, rating *proto.VideoRating) (*
 }
 
 func (g GRPCServer) ViewVideo(ctx context.Context, videoInp *proto.VideoViewing) (*proto.Nothing, error) {
-
 	err := g.VideoModel.IncrementViewsForVideo(strconv.Itoa(int(videoInp.VideoID)))
 	if err != nil {
 		return nil, err

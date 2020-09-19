@@ -99,7 +99,7 @@ spec:
             - name: BucketName
               value: "horahora-dev-otomads"
             - name: Local
-              value: "false"
+              value: "true"
             - name: redis_host
               value: "videoredis"
             - name: redis_port

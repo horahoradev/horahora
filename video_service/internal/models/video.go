@@ -5,6 +5,7 @@ import (
 	sql2 "database/sql"
 	"fmt"
 	"github.com/go-redis/redis"
+	"math"
 	"strconv"
 	"strings"
 
@@ -161,15 +162,34 @@ func (v *VideoModel) ForeignVideoExists(foreignVideoID string, website videoprot
 }
 
 func (v *VideoModel) IncrementViewsForVideo(videoID string) error {
-	// Sorted set with atomic incremenetation
+	// Sorted set with atomic incrementation
 	// Every single command is atomic: https://www.slideshare.net/RedisLabs/atomicity-in-redis-thomas-hunter
-	floatCmd := v.redisClient.ZIncrBy("videos:views", 1.00, videoID)
+	floatCmd := v.redisClient.ZIncrBy(ViewNamespace, 1.00, videoID)
 	return floatCmd.Err()
 }
 
+// FIXME: clean up and document all of the crazy redis stuff I'm doing, maybe put into a single file
+// Ensures that the video has been added to the views list in redis (starting at 0 views)
+func (v *VideoModel) AssertViewsZero(videoID string) error {
+	floatCmd := v.redisClient.ZAdd(ViewNamespace, redis.Z{
+		Score:  0.00,
+		Member: videoID,
+	})
+	return floatCmd.Err()
+}
+
+func (v *VideoModel) AssertRatingsZero(videoID string) error {
+	floatCmd := v.redisClient.ZAdd(RatingNamespace, redis.Z{
+		Score:  0.00,
+		Member: videoID,
+	})
+	return floatCmd.Err()
+}
+
+// FIXME: optimization. Switch to hash table for single video view fetches?
 func (v *VideoModel) GetViewsForVideo(videoID string) (uint64, error) {
 	// just fetch from sorted set
-	floatCmd := v.redisClient.ZScore("videos:views", videoID)
+	floatCmd := v.redisClient.ZScore(ViewNamespace, videoID)
 	return uint64(floatCmd.Val()), floatCmd.Err()
 }
 
@@ -195,8 +215,7 @@ func (v *VideoModel) GetVideosByViewsOrRatings(startNumber, endNumber int64, ord
 		return res.Result()
 
 	case videoproto.SortDirection_desc:
-		// 0 to 50 would become -1 to -50
-		res := v.redisClient.ZRange(namespace, -1*startNumber, -1*endNumber)
+		res := v.redisClient.ZRevRange(namespace, startNumber, endNumber)
 		return res.Result()
 	}
 
@@ -453,6 +472,11 @@ func (v *VideoModel) UpdateVideoRatingRankings(videoIDs []string) error {
 		rating, err := v.GetAverageRatingForVideoID(videoID)
 		if err != nil {
 			return err
+		}
+
+		// Default to 0.00 if no ratings
+		if math.IsNaN(rating) {
+			rating = 0.00
 		}
 
 		cmd := v.redisClient.ZAdd(RatingNamespace, redis.Z{Score: rating, Member: videoID})

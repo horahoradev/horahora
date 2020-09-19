@@ -58,6 +58,7 @@ body {
     z-index: 1;
     background-color: grey;
     width: 100%;
+    visibility: hidden;
 }
 
 #tag {

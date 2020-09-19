@@ -4,8 +4,8 @@
 
     <div class="navbar">
         <div><h1>Horahora</h1></div>
-        <div><textarea cols="1" rows="1">Search for videos</textarea>
-            <div class="search-modal">
+        <div onmouseenter="document.getElementById('search-modal').style.visibility = 'visible';" onmouseleave="document.getElementById('search-modal').style.visibility = 'hidden';"><textarea cols="1" rows="1" >Search for videos</textarea>
+            <div class="search-modal" id="search-modal">
             <form action="/">
                  Order by
                 <select name="category">
