@@ -5,11 +5,14 @@ package proto;
 service VideoService {
     rpc uploadVideo(stream InputVideoChunk) returns (uploadResponse) {}
     rpc downloadVideo(VideoRequest) returns (stream ResponseVideoChunk) {}
+
     rpc foreignVideoExists(ForeignVideoCheck) returns (VideoExistenceResponse) {}
     rpc getVideoList(VideoQueryConfig) returns (VideoList) {}
     rpc getVideo(VideoRequest) returns (videoMetadata) {}
+
     rpc rateVideo(videoRating) returns (Nothing) {}
     rpc viewVideo(videoViewing) returns (Nothing) {}
+    rpc ApproveVideo(videoApproval) returns (Nothing) {}
 }
 
 message Nothing{}
@@ -52,12 +55,18 @@ message videoViewing {
     int64 videoID = 1;
 }
 
+message videoApproval {
+    int64 userID = 1;
+    int64 videoID = 2;
+}
+
 message VideoQueryConfig {
     orderCategory orderBy = 1;
     sortDirection direction = 2;
     int64 pageNumber = 3;
     string containsTag = 4;
     int64 fromUserID = 5; // domestic user ID
+    bool showUnapproved = 6;
 }
 
 

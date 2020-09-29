@@ -48,10 +48,3 @@ Missing features are tracked using Trello.
 
 Our Trello board is:
 https://trello.com/b/Rm5TPR4Q/horahora
-
-0. insert files into bucket public restricted by defualt, whitelits of IPs. see: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html#example-bucket-policies-use-case-3
-1. Create new table approvals for video_service db with {(trusted) user_id, video_id}
-2. on insertion of approval, check for approvals
-3. mark videos with at least n approvals as approved, publicize in s3 bucket
-4. 
- 

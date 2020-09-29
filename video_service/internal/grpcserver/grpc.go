@@ -187,10 +187,10 @@ loop:
 		return LogAndRetErr("failed to assert video views to zero. Err: %s", err)
 	}
 
-	err = g.VideoModel.AssertRatingsZero(strconv.Itoa(int(videoID)))
-	if err != nil {
-		return LogAndRetErr("failed to assert video views to zero. Err: %s", err)
-	}
+	//err = g.VideoModel.AssertRatingsZero(strconv.Itoa(int(videoID)))
+	//if err != nil {
+	//	return LogAndRetErr("failed to assert video views to zero. Err: %s", err)
+	//}
 
 	log.Infof("Finished handling video %s", video.Meta.Meta.Title)
 	return inpStream.SendAndClose(&uploadResp)
@@ -322,7 +322,7 @@ func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQu
 		}, nil
 	case proto.OrderCategory_upload_date:
 		videos, err := g.VideoModel.GetVideoList(queryConfig.Direction, queryConfig.PageNumber,
-			queryConfig.FromUserID, queryConfig.ContainsTag)
+			queryConfig.FromUserID, queryConfig.ContainsTag, queryConfig.ShowUnapproved)
 		if err != nil {
 			log.Errorf("Could not get video list. Err: %s", err)
 			return nil, err
@@ -370,4 +370,12 @@ func (g GRPCServer) GetVideo(ctx context.Context, req *proto.VideoRequest) (*pro
 	}
 
 	return videoMetadata, nil
+}
+
+func (g GRPCServer) ApproveVideo(ctx context.Context, req *proto.VideoApproval) (*proto.Nothing, error) {
+	if err := g.VideoModel.ApproveVideo(int(req.UserID), int(req.VideoID)); err != nil {
+		return nil, err
+	}
+
+	return &proto.Nothing{}, nil
 }
