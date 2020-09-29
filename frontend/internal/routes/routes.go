@@ -519,6 +519,9 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		return err
 	}
 
+	_, _ = c.Get(custommiddleware.UserRank).(int)
+	// doesn't matter if it fails, 0 is a fine default rank
+
 	orderByVal, err := url.QueryUnescape(c.QueryParam("category"))
 	if err != nil {
 		return err

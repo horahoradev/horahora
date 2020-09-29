@@ -21,6 +21,7 @@ func NewGRPCAuth(config *config.Config) *JWTGRPCAuthenticator {
 }
 
 const UserIDKey = "userid"
+const UserRank = "userrank"
 
 func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -45,7 +46,17 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 		}
 
 		c.Set(UserIDKey, uid)
+
 		// TODO: add other stuff in here like username, profile picture location, etc
+		// If user is authenticated, get other metadata
+		resp, err := j.config.UserClient.GetUserFromID(context.Background(), &userproto.GetUserFromIDRequest{UserID: uid})
+		if err != nil {
+			log.Errorf("Could not retrieve authenticated users metadata. Err: %s", err)
+			return next(c)
+		}
+
+		c.Set(UserRank, resp.Rank)
+
 		return next(c)
 	}
 }

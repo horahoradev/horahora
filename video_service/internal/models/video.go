@@ -164,45 +164,63 @@ func (v *VideoModel) ForeignVideoExists(foreignVideoID string, website videoprot
 func (v *VideoModel) IncrementViewsForVideo(videoID string) error {
 	// Sorted set with atomic incrementation
 	// Every single command is atomic: https://www.slideshare.net/RedisLabs/atomicity-in-redis-thomas-hunter
-	floatCmd := v.redisClient.ZIncrBy(ViewNamespace, 1.00, videoID)
-	return floatCmd.Err()
+	floatCmd := v.redisClient.HIncrBy(ViewHashNamespace, videoID, 1.00)
+	if err := floatCmd.Err(); err != nil {
+		return err
+	}
+
+	if err := v.ConstructSortedViewList(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // FIXME: clean up and document all of the crazy redis stuff I'm doing, maybe put into a single file
 // Ensures that the video has been added to the views list in redis (starting at 0 views)
+// To be used on video approval only
 func (v *VideoModel) AssertViewsZero(videoID string) error {
-	floatCmd := v.redisClient.ZAdd(ViewNamespace, redis.Z{
-		Score:  0.00,
-		Member: videoID,
-	})
+	floatCmd := v.redisClient.HSet(ViewRankingNamespace, videoID, 0.00)
 	return floatCmd.Err()
 }
 
-func (v *VideoModel) AssertRatingsZero(videoID string) error {
-	floatCmd := v.redisClient.ZAdd(RatingNamespace, redis.Z{
-		Score:  0.00,
-		Member: videoID,
-	})
-	return floatCmd.Err()
-}
+//func (v *VideoModel) AssertRatingsZero(videoID string) error {
+//	floatCmd := v.redisClient.ZAdd(RatingNamespace, redis.Z{
+//		Score:  0.00,
+//		Member: videoID,
+//	})
+//	return floatCmd.Err()
+//}
 
 // FIXME: optimization. Switch to hash table for single video view fetches?
 func (v *VideoModel) GetViewsForVideo(videoID string) (uint64, error) {
 	// just fetch from sorted set
-	floatCmd := v.redisClient.ZScore(ViewNamespace, videoID)
-	return uint64(floatCmd.Val()), floatCmd.Err()
+	floatCmd := v.redisClient.HGet(ViewHashNamespace, videoID)
+	if floatCmd.Err() != nil {
+		return 0, floatCmd.Err()
+	}
+
+	n, err := strconv.ParseInt(floatCmd.Val(), 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(n), nil
 }
 
+// Ranking namespaces are for approved videos ONLY
 const (
-	ViewNamespace   = "videos:views"
-	RatingNamespace = "videos:ratings"
+	ViewHashNamespace    = "videos:views"
+	ViewRankingNamespace = "videos:viewranking"
+	RatingNamespace      = "videos:ratings"
+	ApprovalNamespace    = "videos:approvals"
 )
 
 func (v *VideoModel) GetVideosByViewsOrRatings(startNumber, endNumber int64, order videoproto.SortDirection, category videoproto.OrderCategory) ([]string, error) {
 	var namespace string
 	switch category {
 	case videoproto.OrderCategory_views:
-		namespace = ViewNamespace
+		namespace = ViewRankingNamespace
 	case videoproto.OrderCategory_rating:
 		namespace = RatingNamespace
 	default:
@@ -247,8 +265,8 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue f
 
 // For now, this only supports either fromUserID or withTag. Can support both in future, need to switch to
 // goqu and write better tests
-func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, withTag string) ([]*videoproto.Video, error) {
-	sql, err := generateVideoListSQL(direction, pageNum, fromUserID, withTag)
+func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, withTag string, showUnapproved bool) ([]*videoproto.Video, error) {
+	sql, err := generateVideoListSQL(direction, pageNum, fromUserID, withTag, showUnapproved)
 	if err != nil {
 		return nil, err
 	}
@@ -321,7 +339,7 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, withTag 
 	return l, nil
 }
 
-func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, withTag string) (string, error) {
+func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, withTag string, showUnapproved bool) (string, error) {
 	minResultNum := (pageNum - 1) * NumResultsPerPage
 	dialect := goqu.Dialect("postgres")
 
@@ -352,11 +370,14 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 			Where(goqu.C("tag").Eq(withTag))
 	}
 
+	if !showUnapproved {
+		// only show approved
+		ds = ds.Where(goqu.C("is_approved").Eq(true))
+	}
+
 	// TODO: ensure that this is safe from sql injection
 	// Maybe use prepared mode?
 	sql, _, err := ds.ToSQL()
-
-	log.Infof("SQL: %s", sql)
 
 	return sql, err
 }
@@ -459,6 +480,7 @@ func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID string) (*basicVi
 }
 
 // FIXME: check for stupidity on a better day
+// this is wonky but if an unapproved video isn't in the view ordered list, it wont be in the ranked list either
 func (v *VideoModel) UpdateVideoRatingRankingsForAllViewedVideos() error {
 	videos, err := v.GetVideosByViewsOrRatings(1, -1, videoproto.SortDirection_asc, videoproto.OrderCategory_views)
 	if err != nil {
@@ -481,6 +503,7 @@ func (v *VideoModel) UpdateVideoRatingRankings(videoIDs []string) error {
 			rating = 0.00
 		}
 
+		// zadd sounds wrong but documentation says it's correct
 		cmd := v.redisClient.ZAdd(RatingNamespace, redis.Z{Score: rating, Member: videoID})
 		if err := cmd.Err(); err != nil {
 			return err
@@ -571,6 +594,16 @@ func (v *VideoModel) GetAverageRatingForVideoID(videoID string) (float64, error)
 		}
 		i++
 
+		approved, err := v.IsVideoApproved(videoID)
+		if err != nil {
+			return 0.00, err
+		}
+
+		if !approved {
+			// Don't add it to the list
+			continue
+		}
+
 		rating, err := strconv.ParseFloat(scanIterator.Val(), 64)
 		if err != nil {
 			return 0.00, err
@@ -581,4 +614,111 @@ func (v *VideoModel) GetAverageRatingForVideoID(videoID string) (float64, error)
 	}
 
 	return ratingTotalNum / ratingTotalDenom, nil
+}
+
+// TODO: removing videos after approval. Maybe have an expiration?
+// TODO: copy pasta
+func (v *VideoModel) ConstructSortedViewList() error {
+	// according to docs, cursor value starts at 0, and server returns next value to pass in
+	var cursorVal uint64 = 0
+
+	scanIterator := v.redisClient.HScan(ViewHashNamespace, cursorVal, "", 0).Iterator()
+
+	// Every second element is a view
+	i := 0
+	var videoID string
+	for scanIterator.Next() {
+		log.Info(scanIterator.Val())
+		if i%2 == 0 {
+			videoID = scanIterator.Val()
+			i++
+			continue
+		}
+		i++
+
+		// TODO: check if video approved
+		approved, err := v.IsVideoApproved(videoID)
+		if err != nil {
+			return err
+		}
+
+		if !approved {
+			// Don't add it to the list
+			continue
+		}
+
+		view, err := strconv.ParseFloat(scanIterator.Val(), 64)
+		if err != nil {
+			return err
+		}
+
+		cmd := v.redisClient.ZAdd(ViewRankingNamespace, redis.Z{Score: view, Member: videoID})
+		if err := cmd.Err(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (v *VideoModel) MarkVideoApproved(videoID string) error {
+	cmd := v.redisClient.HSet(ApprovalNamespace, videoID, 1)
+	if err := cmd.Err(); err != nil {
+		return err
+	}
+
+	sql := "UPDATE videos SET is_approved = TRUE WHERE id = $1"
+	_, err := v.db.Exec(sql, videoID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (v *VideoModel) IsVideoApproved(videoID string) (bool, error) {
+	cmd := v.redisClient.HExists(ApprovalNamespace, videoID)
+	return cmd.Val(), cmd.Err()
+}
+
+// TODO: refactor into separate models by concern
+// e.g. approvalsmodel, viewmodel, etc
+
+// Individual trusted user approves of the video
+func (v *VideoModel) ApproveVideo(userID, videoID int) error {
+	sql := "INSERT INTO approvals (user_id, video_id) VALUES ($1, $2)"
+	_, err := v.db.Exec(sql, userID, videoID)
+	if err != nil {
+		return err
+	}
+
+	if err = v.MarkApprovals(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type Approval struct {
+	videoID string `db:"video_id"`
+}
+
+func (v *VideoModel) MarkApprovals() error {
+	var approvals []Approval
+	sql := "SELECT video_id FROM approvals GROUP BY video_id HAVING count(*) > 3"
+
+	if err := v.db.Select(&approvals, sql); err != nil {
+		log.Errorf("Failed to retrieve video approvals. Err: %s", err)
+		return err
+	}
+
+	for _, approval := range approvals {
+		err := v.MarkVideoApproved(approval.videoID)
+		if err != nil {
+			// Log and move on
+			log.Errorf("Could not mark video %s as approved. Err: %s", approval.videoID, err)
+		}
+	}
+
+	return nil
 }
