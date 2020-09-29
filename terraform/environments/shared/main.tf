@@ -9,3 +9,7 @@ resource "aws_ecr_repository" "videoservice_repo" {
 resource "aws_ecr_repository" "userservice_repo" {
   name = "userservice"
 }
+
+resource "aws_ecr_repository" "frontend_repo" {
+  name = "frontend"
+}

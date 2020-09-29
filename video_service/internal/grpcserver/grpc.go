@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis"
+	"github.com/jmoiron/sqlx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"io"
@@ -12,8 +13,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-
-	"github.com/jmoiron/sqlx"
 
 	"github.com/google/uuid"
 
@@ -232,6 +231,19 @@ func (g GRPCServer) UploadMPDSet(d *dashutils.DASHVideo) error {
 		}
 	}
 
+	// Upload thumbnail
+	// FIXME did it again...
+	err = g.SendToOriginServer(d.ThumbnailPath, filepath.Base(d.ThumbnailPath))
+	if err != nil {
+		return err
+	}
+
+	// Upload the original video
+	err = g.SendToOriginServer(d.OriginalFilePath, filepath.Base(d.OriginalFilePath))
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -294,6 +306,7 @@ func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQu
 
 		videos, err := g.VideoModel.GetTopVideos(queryConfig.OrderBy, queryConfig.Direction, startInd, endInd)
 		if err != nil {
+			log.Errorf("Could not get top videos for query. Err: %s", err)
 			return nil, err
 		}
 

@@ -47,8 +47,9 @@ func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
 		case r := <-d.downloadQueue:
 			err := d.downloadRequest(ctx, r)
 			if err != nil {
+				log.Errorf("Encountered error in downloader. Err: %s", err)
 				// FIXME: increase robustness
-				return err
+				//return err
 			}
 		}
 	}

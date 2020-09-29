@@ -517,12 +517,14 @@ func (v *VideoModel) GetTopVideos(category videoproto.OrderCategory, order video
 
 		newlink, title, authorID, err := v.GetBasicSQLInfoForVideo(videoID)
 		if err != nil {
-			return nil, err
+			log.Errorf("Could not obtain basic SQL info for video. Err: %s. Continuing...", err)
+			continue
 		}
 
 		redisInfo, err := v.getBasicVideoInfo(authorID, videoID)
 		if err != nil {
-			return nil, err
+			log.Errorf("Could not obtain basic video info for video. Err: %s. Continuing...", err)
+			continue
 		}
 
 		v := videoproto.Video{
