@@ -5,8 +5,9 @@ package proto;
 service UserService {
     rpc Register(RegisterRequest) returns (RegisterResponse){}
     rpc Login(LoginRequest) returns (LoginResponse){}
-    rpc GetUserFromID(GetUserFromIDRequest) returns (UserResponse){}
     rpc ValidateJWT(validateJWTRequest) returns (validateJWTResponse){}
+
+    rpc GetUserFromID(GetUserFromIDRequest) returns (UserResponse){}
     rpc GetUserForForeignUID(GetForeignUserRequest) returns (GetForeignUserResponse){}
 }
 
@@ -44,7 +45,6 @@ enum site {
   youtube = 2;
 }
 
-
 message LoginRequest {
     string username = 1;
     string password = 2;
@@ -62,7 +62,14 @@ message GetUserFromIDRequest {
     int64 userID = 1;
 }
 
+enum user_rank {
+    regular = 0;
+    trusted = 1;
+    admin = 2;
+}
+
 message UserResponse {
     string username = 1;
     string email = 2;
+    user_rank rank = 3;
 }

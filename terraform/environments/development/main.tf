@@ -92,7 +92,7 @@ module "eks_workers" {
   subnet_ids = module.vpc_subnets.public_subnet_ids
   vpc_id     = aws_vpc.horahora_vpc.id
 
-  instance_type                          = "t2.small"
+  instance_type                          = "c5.large"
   min_size                               = 1
   max_size                               = 2
   cpu_utilization_high_threshold_percent = 60

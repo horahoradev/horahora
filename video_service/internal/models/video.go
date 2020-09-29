@@ -356,6 +356,8 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	// Maybe use prepared mode?
 	sql, _, err := ds.ToSQL()
 
+	log.Infof("SQL: %s", sql)
+
 	return sql, err
 }
 
