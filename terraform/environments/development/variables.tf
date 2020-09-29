@@ -8,5 +8,11 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "videodb_password" {}
+
+variable "schedulerdb_password" {}
+
+variable "userdb_password" {}
+
 
 

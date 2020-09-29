@@ -42,6 +42,7 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 			}
 
 			for _, item := range itemsToSchedule {
+				log.Infof("Sending %s %s %s to be processed", item.Website, item.ContentType, item.ContentValue)
 				videoQueue <- item
 			}
 		}

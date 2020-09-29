@@ -9,8 +9,10 @@ import (
 )
 
 type DASHVideo struct {
-	ManifestPath string
-	QualityMap   []string
+	ManifestPath     string
+	ThumbnailPath    string
+	QualityMap       []string
+	OriginalFilePath string
 }
 
 func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
@@ -18,7 +20,7 @@ func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
 	switch local {
 	case true:
 		// make the encoding really fast so we don't have to wait 90 minutes for integration tests
-		// I don't really understand the difference between the  speed and deadline args, but the documentation implies
+		// I don't really understand the difference between the speed and deadline args, but the documentation implies
 		// they're separate
 		encodeArgs = []string{path, "-speed 16 -deadline realtime -r 1 -crf 63 -t 10"}
 	case false:
@@ -51,7 +53,9 @@ func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
 	}
 
 	return &DASHVideo{
-		ManifestPath: fmt.Sprintf("%s.mpd", path),
-		QualityMap:   fileList,
+		ManifestPath:     fmt.Sprintf("%s.mpd", path),
+		QualityMap:       fileList,
+		OriginalFilePath: path,
+		ThumbnailPath:    path + ".png",
 	}, nil
 }
