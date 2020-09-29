@@ -54,10 +54,11 @@ type User struct {
 	ID       int64  `db:"id"`
 	Username string `db:"username"`
 	Email    string `db:"email"`
+	Rank     int    `db:"rank"`
 }
 
 func (m *UserModel) GetUserWithID(userID int64) (*User, error) {
-	sql := "SELECT id, username, email FROM users WHERE id=$1"
+	sql := "SELECT id, username, email, rank FROM users WHERE id=$1"
 	var user []User
 
 	err := m.Conn.Select(&user, sql, userID)

@@ -90,6 +90,7 @@ func (g GRPCServer) GetUserFromID(ctx context.Context, req *proto.GetUserFromIDR
 	return &proto.UserResponse{
 		Username: user.Username,
 		Email:    user.Email,
+		Rank:     proto.UserRank(user.Rank),
 	}, nil
 }
 

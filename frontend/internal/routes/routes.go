@@ -266,7 +266,7 @@ func (v RouteHandler) getTag(c echo.Context) error {
 	videoQueryConfig := videoproto.VideoQueryConfig{
 		OrderBy:     videoproto.OrderCategory_upload_date,
 		Direction:   videoproto.SortDirection_desc,
-		PageNumber:  0, // TODO,
+		PageNumber:  pageNumberInt,
 		ContainsTag: tag,
 	}
 
@@ -330,7 +330,7 @@ func (v RouteHandler) getUser(c echo.Context) error {
 	videoQueryConfig := videoproto.VideoQueryConfig{
 		OrderBy:     videoproto.OrderCategory_upload_date,
 		Direction:   videoproto.SortDirection_desc,
-		PageNumber:  0, // TODO,
+		PageNumber:  pageNumberInt,
 		ContainsTag: "",
 		FromUserID:  idInt,
 	}

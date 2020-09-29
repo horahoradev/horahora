@@ -28,11 +28,11 @@ ffmpeg -i ${1} -c:v libvpx-vp9 -s 320x180 -b:v 500k ${COMMON_VIDEO_ARGS} ${VP9_D
 
 ffmpeg -i ${1} -c:v libvpx-vp9 -s 640x360 -b:v 750k ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_640x360_750k.webm
 
-
-ffmpeg -i ${1} -c:v libvpx-vp9 -s 640x360 -b:v 1000k ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_640x360_1000k.webm
-
-
-ffmpeg -i ${1} -c:v libvpx-vp9 -s 1280x720 -b:v 1500k ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_1280x720_500k.webm
+#
+#ffmpeg -i ${1} -c:v libvpx-vp9 -s 640x360 -b:v 1000k ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_640x360_1000k.webm
+#
+#
+#ffmpeg -i ${1} -c:v libvpx-vp9 -s 1280x720 -b:v 1500k ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_1280x720_500k.webm
 
 
 ffmpeg -i ${1} -c:a libopus -b:a 128k -vn -f webm -dash 1 ${1}_audio_128k.webm
