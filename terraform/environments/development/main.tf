@@ -118,7 +118,7 @@ resource "aws_security_group" "rds_whitelist" {
     protocol    = "tcp"
     cidr_blocks = ["10.0.0.0/8",
       "172.16.0.0/12",
-    "217.138.252.220/32"] // lol bruh moment FIXME
+    "217.138.252.0/24"] // lol bruh moment FIXME
   }
 }
 
@@ -212,6 +212,6 @@ module "video_redis" {
   cluster_mode_num_node_groups         = 1
   cluster_mode_replicas_per_node_group = 0
   automatic_failover_enabled           = false
-  allowed_cidr_blocks                  = ["10.0.0.0/8", "172.16.0.0/12"]
+  allowed_cidr_blocks                  = ["10.0.0.0/8", "172.16.0.0/12", "217.138.252.0/24"]
   transit_encryption_enabled           = false
 }

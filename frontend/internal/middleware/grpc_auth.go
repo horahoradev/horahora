@@ -55,8 +55,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 			return next(c)
 		}
 
-		c.Set(UserRank, resp.Rank)
-
+		c.Set(UserRank, int32(resp.Rank))
 		return next(c)
 	}
 }

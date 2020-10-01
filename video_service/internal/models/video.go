@@ -180,11 +180,11 @@ func (v *VideoModel) IncrementViewsForVideo(videoID string) error {
 // Ensures that the video has been added to the views list in redis (starting at 0 views)
 // To be used on video approval only
 func (v *VideoModel) AssertViewsZero(videoID string) error {
-	floatCmd := v.redisClient.HSet(ViewRankingNamespace, videoID, 0.00)
+	floatCmd := v.redisClient.HSet(ViewHashNamespace, videoID, 0.00)
 	return floatCmd.Err()
 }
 
-//func (v *VideoModel) AssertRatingsZero(videoID string) error {
+//func (v *VideoModel) AssertRatingsZero(videoID stri	ng) error {
 //	floatCmd := v.redisClient.ZAdd(RatingNamespace, redis.Z{
 //		Score:  0.00,
 //		Member: videoID,
@@ -195,14 +195,15 @@ func (v *VideoModel) AssertViewsZero(videoID string) error {
 // FIXME: optimization. Switch to hash table for single video view fetches?
 func (v *VideoModel) GetViewsForVideo(videoID string) (uint64, error) {
 	// just fetch from sorted set
-	floatCmd := v.redisClient.HGet(ViewHashNamespace, videoID)
-	if floatCmd.Err() != nil {
-		return 0, floatCmd.Err()
+
+	strCmd := v.redisClient.HGet(ViewHashNamespace, videoID)
+	if err := strCmd.Err(); err != nil {
+		return 0, err
 	}
 
-	n, err := strconv.ParseInt(floatCmd.Val(), 10, 64)
+	n, err := strconv.ParseInt(strCmd.Val(), 10, 64)
 	if err != nil {
-		return 0, err
+		return 0.00, err
 	}
 
 	return uint64(n), nil
@@ -287,7 +288,7 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 			return nil, err
 		}
 
-		basicInfo, err := v.getBasicVideoInfo(authorID, string(video.VideoID))
+		basicInfo, err := v.getBasicVideoInfo(authorID, strconv.Itoa(int(video.VideoID)))
 		if err != nil {
 			return nil, err
 		}
@@ -400,7 +401,7 @@ func (v *VideoModel) GetVideoInfo(videoID string) (*videoproto.VideoMetadata, er
 		return nil, err
 	}
 
-	basicInfo, err := v.getBasicVideoInfo(authorID, string(video.VideoID))
+	basicInfo, err := v.getBasicVideoInfo(authorID, strconv.Itoa(int(video.VideoID)))
 	if err != nil {
 		return nil, err
 	}
@@ -460,10 +461,7 @@ func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID string) (*basicVi
 
 	// Look up views from redis
 	videoInfo.views, err = v.GetViewsForVideo(videoID)
-	switch {
-	case err != nil && err.Error() == "redis: nil":
-		break
-	case err != nil:
+	if err != nil {
 		return nil, err
 	}
 
@@ -496,6 +494,16 @@ func (v *VideoModel) UpdateVideoRatingRankings(videoIDs []string) error {
 		rating, err := v.GetAverageRatingForVideoID(videoID)
 		if err != nil {
 			return err
+		}
+
+		approved, err := v.IsVideoApproved(videoID)
+		if err != nil {
+			return err
+		}
+
+		if !approved {
+			// Don't add it to the list
+			continue
 		}
 
 		// Default to 0.00 if no ratings
@@ -587,22 +595,11 @@ func (v *VideoModel) GetAverageRatingForVideoID(videoID string) (float64, error)
 	// Every second element is a rating
 	i := 0
 	for scanIterator.Next() {
-		log.Info(scanIterator.Val())
 		if i%2 == 0 {
 			i++
 			continue
 		}
 		i++
-
-		approved, err := v.IsVideoApproved(videoID)
-		if err != nil {
-			return 0.00, err
-		}
-
-		if !approved {
-			// Don't add it to the list
-			continue
-		}
 
 		rating, err := strconv.ParseFloat(scanIterator.Val(), 64)
 		if err != nil {
@@ -628,7 +625,6 @@ func (v *VideoModel) ConstructSortedViewList() error {
 	i := 0
 	var videoID string
 	for scanIterator.Next() {
-		log.Info(scanIterator.Val())
 		if i%2 == 0 {
 			videoID = scanIterator.Val()
 			i++
