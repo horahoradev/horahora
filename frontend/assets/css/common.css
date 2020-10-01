@@ -13,6 +13,8 @@ body {
     padding: 0px;
     padding-left: 10px;
     padding-right: 10px;
+    position: relative;
+    z-index: 100;
 }
 
 .navbar > div {
