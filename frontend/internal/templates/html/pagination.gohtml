@@ -1,9 +1,9 @@
 {{define "pagination"}}
     {{ $currentPage := .CurrentPage }}
-    {{ $currentPath := .CurrentPath }}
+        {{ $PathsAndQueryStrings := .PathsAndQueryStrings }}
     <div class="pageSection">
-        {{ range $pageNumber := .Pages }}
-            {{ if eq $pageNumber $currentPage }} <a class="pageLink currentPage" href="{{ $currentPath }}{{ $pageNumber }}"> {{ $pageNumber }}</a> {{else}} <a class="pageLink" href="{{ $currentPath }}?page={{ $pageNumber }}"> {{ $pageNumber }}</a> {{end}}
+        {{ range $index, $pageNumber := .Pages }}
+            {{ if eq $pageNumber $currentPage }} <a class="pageLink currentPage" href="{{ index $PathsAndQueryStrings $index }}"> {{ $pageNumber }}</a> {{else}} <a class="pageLink" href="{{ index $PathsAndQueryStrings $index }}"> {{ $pageNumber }}</a> {{end}}
         {{end}}
     </div>
 {{end}}

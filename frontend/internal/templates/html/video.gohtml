@@ -30,7 +30,7 @@
                         <p></p>
                         {{.UserDescription}}
                     </div>
-                    <button class="float-right">Subscribe</button>
+                        <button class="float-right" onclick="approve()">Approve</button>
                     </div>
                 </div>
                 <div class="comment-section">
@@ -77,6 +77,12 @@
                         xhttp.send();
                     });
             })();
+
+            function approve() {
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("POST", "/approve/{{.VideoID}}", true);
+                xhttp.send();
+            }
 
         </script>
     </body>

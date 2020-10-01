@@ -29,6 +29,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 
 	e.GET("/videos/:id", r.getVideo)
 	e.POST("/rate/:id", r.handleRating)
+	e.POST("/approve/:id", r.handleApproval)
 
 	e.GET("/login", getLogin)
 	e.POST("/login", r.handleLogin)
@@ -94,9 +95,9 @@ type HomePageData struct {
 }
 
 type PaginationData struct {
-	CurrentPath string // TODO: easier way to do this?
-	Pages       []int
-	CurrentPage int
+	PathsAndQueryStrings []string
+	Pages                []int
+	CurrentPage          int
 }
 
 type ArchiveRequestsPageData struct {
@@ -263,11 +264,23 @@ func (v RouteHandler) getTag(c echo.Context) error {
 		pageNumberInt = num
 	}
 
+	rank, ok := c.Get(custommiddleware.UserRank).(int32)
+	if !ok {
+		log.Error("Failed to assert user rank to an int (this should not happen)")
+	}
+	// doesn't matter if it fails, 0 is a fine default rank
+	showUnapproved := false
+	if rank > 0 {
+		// privileged user, can show unapproved videos
+		showUnapproved = true
+	}
+
 	videoQueryConfig := videoproto.VideoQueryConfig{
-		OrderBy:     videoproto.OrderCategory_upload_date,
-		Direction:   videoproto.SortDirection_desc,
-		PageNumber:  pageNumberInt,
-		ContainsTag: tag,
+		OrderBy:        videoproto.OrderCategory_upload_date,
+		Direction:      videoproto.SortDirection_desc,
+		PageNumber:     pageNumberInt,
+		ContainsTag:    tag,
+		ShowUnapproved: showUnapproved,
 	}
 
 	videoList, err := v.v.GetVideoList(context.TODO(), &videoQueryConfig)
@@ -283,11 +296,14 @@ func (v RouteHandler) getTag(c echo.Context) error {
 	}
 
 	// TODO: copy pasta is very bad
+
+	queryStrings := generateQueryParams(pageRange, c)
+
 	data := HomePageData{
 		PaginationData: PaginationData{
-			CurrentPath: c.Path(),
-			Pages:       pageRange,
-			CurrentPage: int(pageNumberInt),
+			Pages:                pageRange,
+			PathsAndQueryStrings: queryStrings,
+			CurrentPage:          int(pageNumberInt),
 		},
 	}
 
@@ -327,12 +343,24 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		pageNumberInt = num
 	}
 
+	rank, ok := c.Get(custommiddleware.UserRank).(int32)
+	if !ok {
+		log.Error("Failed to assert user rank to an int (this should not happen)")
+	}
+	// doesn't matter if it fails, 0 is a fine default rank
+	showUnapproved := false
+	if rank > 0 {
+		// privileged user, can show unapproved videos
+		showUnapproved = true
+	}
+
 	videoQueryConfig := videoproto.VideoQueryConfig{
-		OrderBy:     videoproto.OrderCategory_upload_date,
-		Direction:   videoproto.SortDirection_desc,
-		PageNumber:  pageNumberInt,
-		ContainsTag: "",
-		FromUserID:  idInt,
+		OrderBy:        videoproto.OrderCategory_upload_date,
+		Direction:      videoproto.SortDirection_desc,
+		PageNumber:     pageNumberInt,
+		ContainsTag:    "",
+		FromUserID:     idInt,
+		ShowUnapproved: showUnapproved,
 	}
 
 	videoList, err := v.v.GetVideoList(context.TODO(), &videoQueryConfig)
@@ -354,14 +382,15 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		pageRange = []int{1}
 	}
 
+	queryStrings := generateQueryParams(pageRange, c)
 	data := ProfileData{
 		UserID:            idInt,
 		Username:          user.Username,
 		ProfilePictureURL: "/static/images/placeholder1.jpg",
 		PaginationData: PaginationData{
-			CurrentPath: c.Path(),
-			Pages:       pageRange,
-			CurrentPage: int(pageNumberInt),
+			Pages:                pageRange,
+			PathsAndQueryStrings: queryStrings,
+			CurrentPage:          int(pageNumberInt),
 		},
 	}
 
@@ -396,6 +425,19 @@ func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceCli
 		u: u,
 		s: s,
 	}
+}
+
+func generateQueryParams(pageRange []int, c echo.Context) []string {
+	// This is ugly
+	var queryStrings []string
+	for _, page := range pageRange {
+		p := strconv.FormatInt(int64(page), 10)
+
+		c.QueryParams().Set("page", p) // FIXME
+		queryStrings = append(queryStrings, c.Request().URL.Path+"?"+c.QueryParams().Encode())
+	}
+
+	return queryStrings
 }
 
 func (v *RouteHandler) getVideo(c echo.Context) error {
@@ -534,6 +576,11 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	// Default
+	if orderByVal == "" {
+		orderByVal = "upload_date"
+	}
 	orderBy := videoproto.OrderCategory(videoproto.OrderCategory_value[orderByVal])
 
 	orderVal, err := url.QueryUnescape(c.QueryParam("order"))
@@ -575,11 +622,13 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		pageRange = []int{1}
 	}
 
+	queryStrings := generateQueryParams(pageRange, c)
+
 	data := HomePageData{
 		PaginationData: PaginationData{
-			CurrentPath: c.Path() + c.QueryString(),
-			Pages:       pageRange,
-			CurrentPage: int(pageNumberInt),
+			Pages:                pageRange,
+			PathsAndQueryStrings: queryStrings,
+			CurrentPage:          int(pageNumberInt),
 		},
 	}
 
@@ -625,4 +674,37 @@ func addUserProfileInfo(c echo.Context, l *LoggedInUserData, client userproto.Us
 	l.Username = userResp.Username
 	// l.ProfilePictureURL = userResp. // TODO
 	l.UserID = idInt
+}
+
+func (v RouteHandler) handleApproval(c echo.Context) error {
+	id := c.Param("id")
+	idInt, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	rank, ok := c.Get(custommiddleware.UserRank).(int32)
+	if !ok {
+		log.Error("Failed to assert user rank to an int (this should not happen)")
+	}
+
+	if rank < 1 {
+		// privileged user, can show unapproved videos
+		return c.String(http.StatusForbidden, "Insufficient user status")
+	}
+
+	// THERE IS TOO MUCH COPY PASTA HERE!
+	userID := c.Get(custommiddleware.UserIDKey)
+	UserIDInt, ok := userID.(int64)
+	if !ok {
+		log.Error("Could not assert userid to int64")
+		return errors.New("could not assert userid to int64")
+	}
+
+	_, err = v.v.ApproveVideo(context.Background(), &videoproto.VideoApproval{VideoID: idInt, UserID: UserIDInt})
+	if err != nil {
+		return err
+	}
+
+	return c.String(http.StatusOK, "Video approved")
 }
