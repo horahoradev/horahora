@@ -6,7 +6,7 @@ require (
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/horahoradev/horahora/scheduler v0.0.0-20200823010907-db67efcf7d8c
 	github.com/horahoradev/horahora/user_service v0.0.0-20200929200329-a2cc6bce4184
-	github.com/horahoradev/horahora/video_service v0.0.0-20200929200329-a2cc6bce4184
+	github.com/horahoradev/horahora/video_service v0.0.0-20200929235532-12df1091a8e6
 	github.com/labstack/echo/v4 v4.1.16
 	github.com/labstack/gommon v0.3.0
 	github.com/stretchr/testify v1.5.1

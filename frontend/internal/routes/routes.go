@@ -519,8 +519,16 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		return err
 	}
 
-	_, _ = c.Get(custommiddleware.UserRank).(int)
+	rank, ok := c.Get(custommiddleware.UserRank).(int32)
+	if !ok {
+		log.Error("Failed to assert user rank to an int (this should not happen)")
+	}
 	// doesn't matter if it fails, 0 is a fine default rank
+	showUnapproved := false
+	if rank > 0 {
+		// privileged user, can show unapproved videos
+		showUnapproved = true
+	}
 
 	orderByVal, err := url.QueryUnescape(c.QueryParam("category"))
 	if err != nil {
@@ -547,10 +555,11 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	// TODO: if request times out, maybe provide a default list of good videos
 	req := videoproto.VideoQueryConfig{
-		OrderBy:     orderBy,
-		Direction:   order,
-		ContainsTag: tag,
-		PageNumber:  pageNumberInt,
+		OrderBy:        orderBy,
+		Direction:      order,
+		ContainsTag:    tag,
+		PageNumber:     pageNumberInt,
+		ShowUnapproved: showUnapproved,
 	}
 
 	videoList, err := h.v.GetVideoList(context.TODO(), &req)
