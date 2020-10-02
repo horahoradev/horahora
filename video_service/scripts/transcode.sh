@@ -26,7 +26,7 @@ ffmpeg -i ${1} -c:v libvpx-vp9 -s 160x90 -b:v 250k ${COMMON_VIDEO_ARGS} ${VP9_DA
 ffmpeg -i ${1} -c:v libvpx-vp9 -s 320x180 -b:v 500k ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_320x180_500k.webm
 
 
-ffmpeg -i ${1} -c:v libvpx-vp9 -s 640x360 -b:v 750k ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_640x360_750k.webm
+ffmpeg -i ${1} -c:v libvpx-vp9 -s 640x360 -b:v 1000k ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_640x360_1000k.webm
 
 #
 #ffmpeg -i ${1} -c:v libvpx-vp9 -s 640x360 -b:v 1000k ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_640x360_1000k.webm

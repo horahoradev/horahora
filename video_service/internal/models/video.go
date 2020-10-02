@@ -692,16 +692,25 @@ func (v *VideoModel) ApproveVideo(userID, videoID int) error {
 		return err
 	}
 
+	// BIG FIXME
+	if err := v.UpdateVideoRatingRankingsForAllViewedVideos(); err != nil {
+		return err
+	}
+
+	if err := v.ConstructSortedViewList(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 type Approval struct {
-	videoID string `db:"video_id"`
+	VideoID string `db:"video_id"`
 }
 
 func (v *VideoModel) MarkApprovals() error {
 	var approvals []Approval
-	sql := "SELECT video_id FROM approvals GROUP BY video_id HAVING count(*) > 3"
+	sql := "SELECT video_id FROM approvals GROUP BY video_id HAVING count(*) >= 1"
 
 	if err := v.db.Select(&approvals, sql); err != nil {
 		log.Errorf("Failed to retrieve video approvals. Err: %s", err)
@@ -709,10 +718,10 @@ func (v *VideoModel) MarkApprovals() error {
 	}
 
 	for _, approval := range approvals {
-		err := v.MarkVideoApproved(approval.videoID)
+		err := v.MarkVideoApproved(approval.VideoID)
 		if err != nil {
 			// Log and move on
-			log.Errorf("Could not mark video %s as approved. Err: %s", approval.videoID, err)
+			log.Errorf("Could not mark video %s as approved. Err: %s", approval.VideoID, err)
 		}
 	}
 
