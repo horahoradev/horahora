@@ -6,7 +6,7 @@ set -e -x -o pipefail
 ffmpeg \
  -f webm_dash_manifest -i ${1}_160x90_250k.webm \
  -f webm_dash_manifest -i ${1}_320x180_500k.webm \
- -f webm_dash_manifest -i ${1}_640x360_750k.webm \
+ -f webm_dash_manifest -i ${1}_640x360_1000k.webm \
  -f webm_dash_manifest -i ${1}_audio_128k.webm \
  -c copy -map 0 -map 1 -map 2 -map 3 \
  -f webm_dash_manifest \
