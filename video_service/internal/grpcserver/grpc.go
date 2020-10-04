@@ -4,7 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/jmoiron/sqlx"
+	"github.com/opentracing/opentracing-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"io"
@@ -46,7 +49,7 @@ type GRPCServer struct {
 }
 
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
-	redisClient *redis.Client, client userproto.UserServiceClient) error {
+	redisClient *redis.Client, client userproto.UserServiceClient, tracer opentracing.Tracer) error {
 	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN)
 	if err != nil {
 		return err
@@ -57,7 +60,8 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+		otgrpc.OpenTracingServerInterceptor(tracer))))
 	proto.RegisterVideoServiceServer(grpcServer, g)
 	return grpcServer.Serve(lis)
 }

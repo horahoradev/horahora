@@ -106,6 +106,8 @@ spec:
               value: "https://horahora-dev-otomads.s3-us-west-1.amazonaws.com"
             - name: AWS_DEFAULT_REGION
               value: "us-west-1"
+            - name: JaegerAddress
+              value: "simplest-agent"
       serviceAccountName: videoservice
 ---
 apiVersion: v1
