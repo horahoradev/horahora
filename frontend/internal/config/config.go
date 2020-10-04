@@ -2,6 +2,8 @@ package config
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"net"
 	"time"
 
 	"github.com/caarlos0/env"
@@ -27,6 +29,26 @@ type Config struct {
 	SchedulerClient schedulerproto.SchedulerClient
 }
 
+type jaegerLogger struct {
+	logger logrus.FieldLogger
+}
+
+func NewJaegerLogger() jaegerLogger {
+	return jaegerLogger{logger: logrus.New()}
+}
+
+func (j jaegerLogger) Error(message string) {
+	j.logger.Error(message)
+}
+
+func (j jaegerLogger) Infof(msg string, args ...interface{}) {
+	j.logger.Infof(msg, args...)
+}
+
+func (j jaegerLogger) Debugf(msg string, args ...interface{}) {
+	j.logger.Infof(msg, args...)
+}
+
 func New() (*Config, error) {
 	config := Config{}
 
@@ -36,7 +58,8 @@ func New() (*Config, error) {
 	}
 
 	// 4096 is an okay max packet size I guess?
-	transport, err := jaeger.NewUDPTransport(fmt.Sprintf("%s:6832", config.JaegerAddress), 4096)
+	transport, err := jaeger.NewUDPTransport(net.JoinHostPort(config.JaegerAddress, "6831"),
+		4096)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +68,8 @@ func New() (*Config, error) {
 	tracer, _ := jaeger.NewTracer("frontend",
 		jaeger.NewConstSampler(true),
 		jaeger.NewRemoteReporter(transport),
-		jaeger.TracerOptions.Logger(jaeger.StdLogger),
+		//jaeger.NewLoggingReporter(jaeger.StdLogger),
+		jaeger.TracerOptions.Logger(NewJaegerLogger()),
 	)
 
 	opts := []grpc_retry.CallOption{
