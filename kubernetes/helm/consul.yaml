@@ -1,0 +1,32 @@
+global:
+  image: "consul:1.8.4"
+
+server:
+  replicas: 1
+  bootstrapExpect: 1
+  connect: true
+
+client:
+  enabled: true
+  grpc: true
+
+# https://discuss.hashicorp.com/t/consul-connect-integration-of-jaeger-in-kubernetes/4394/5
+connectInject:
+  enabled: true
+  image: null
+  default: false
+
+  centralConfig:
+    enabled: "true"
+    defaultProtocol: "grpc"
+    proxyDefaults: |
+      {
+        "envoy_extra_static_clusters_json": "{\"connect_timeout\": \"3.000s\", \"dns_lookup_family\": \"V4_ONLY\", \"lb_policy\": \"ROUND_ROBIN\", \"load_assignment\": { \"cluster_name\": \"jaeger_9411\",\"endpoints\": [{\"lb_endpoints\": [{\"endpoint\": {\"address\": {\"socket_address\": {\"address\": \"simplest-collector\",\"port_value\": 9411,\"protocol\": \"TCP\"}}}}]}]},\"name\": \"jaeger_9411\",\"type\": \"STRICT_DNS\"}",
+        "envoy_tracing_json": "{\"http\":{\"name\":\"envoy.zipkin\",\"config\":{\"collector_cluster\":\"jaeger_9411\",\"collector_endpoint\":\"/api/v1/spans\",\"shared_span_context\":false}}}"
+      }
+
+ui:
+  service:
+    type: LoadBalancer
+    loadBalancerSourceRanges:
+      - "217.138.0.0/16"
