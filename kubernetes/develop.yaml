@@ -242,6 +242,8 @@ spec:
               value: "127.0.0.1:7778"
             - name: SchedulerServiceGRPCAddress
               value: "scheduler:7777"
+            - name: JaegerAddress
+              value: "simplest-collector"
       serviceAccountName: frontend
 ---
 apiVersion: v1
