@@ -13,7 +13,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = grpcserver.NewGRPCServer(conf.BucketName, conf.SqlClient, conf.GRPCPort, conf.OriginFQDN, conf.Local, conf.RedisConn, conf.UserClient)
+	err = grpcserver.NewGRPCServer(conf.BucketName, conf.SqlClient, conf.GRPCPort, conf.OriginFQDN, conf.Local,
+		conf.RedisConn, conf.UserClient, conf.Tracer)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -4,10 +4,17 @@ import (
 	"fmt"
 	"github.com/caarlos0/env"
 	"github.com/go-redis/redis"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"github.com/opentracing/opentracing-go"
+	"github.com/uber/jaeger-client-go"
 	"google.golang.org/grpc"
+	"net"
+	"time"
 )
 
 type PostgresInfo struct {
@@ -33,9 +40,11 @@ type config struct {
 	BucketName             string `env:"BucketName,required"`
 	Local                  bool   `env:"Local,required"` // If running locally, no s3 uploads
 	// (this is a workaround for getting IAM permissions into pods running on minikube)
-	OriginFQDN string `env:"OriginFQDN,required"`
-	UserClient userproto.UserServiceClient
-	SqlClient  *sqlx.DB
+	OriginFQDN    string `env:"OriginFQDN,required"`
+	JaegerAddress string `env:"JaegerAddress,required"`
+	UserClient    userproto.UserServiceClient
+	SqlClient     *sqlx.DB
+	Tracer        opentracing.Tracer
 }
 
 func New() (*config, error) {
@@ -66,12 +75,33 @@ func New() (*config, error) {
 		return nil, fmt.Errorf("Could not connect to postgres. Err: %s", err)
 	}
 
-	conn, err := grpc.Dial(config.UserServiceGRPCAddress, grpc.WithInsecure())
+	transport, err := jaeger.NewUDPTransport(net.JoinHostPort(config.JaegerAddress, "6831"),
+		4096)
+	if err != nil {
+		return nil, err
+	}
+
+	tracer, _ := jaeger.NewTracer("videoservice",
+		jaeger.NewConstSampler(true),
+		jaeger.NewRemoteReporter(transport),
+	)
+
+	opts := []grpc_retry.CallOption{
+		grpc_retry.WithBackoff(grpc_retry.BackoffExponential(100 * time.Millisecond)),
+		grpc_retry.WithMax(5),
+	}
+
+	conn, err := grpc.Dial(config.UserServiceGRPCAddress, grpc.WithInsecure(),
+		grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
+		grpc.WithUnaryInterceptor(grpc_middleware.ChainUnaryClient(
+			otgrpc.OpenTracingClientInterceptor(tracer),
+			grpc_retry.UnaryClientInterceptor(opts...))))
 	if err != nil {
 		return nil, err
 	}
 
 	config.UserClient = userproto.NewUserServiceClient(conn)
+	config.Tracer = tracer
 
 	return &config, err
 }
