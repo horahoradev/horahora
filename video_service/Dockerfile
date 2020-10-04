@@ -1,4 +1,4 @@
-FROM golang:1.14.6-alpine3.12
+FROM golang:1.15.2-alpine3.12
 
 COPY . /videoservice
 

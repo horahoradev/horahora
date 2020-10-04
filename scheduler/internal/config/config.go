@@ -2,16 +2,16 @@ package config
 
 import (
 	"fmt"
+	"github.com/caarlos0/env"
 	"github.com/go-redsync/redsync"
+	"github.com/gomodule/redigo/redis"
+	"github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	proto "github.com/horahoradev/horahora/video_service/protocol"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	"log"
 	"time"
-
-	"github.com/caarlos0/env"
-	"github.com/gomodule/redigo/redis"
-	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
 )
 
 type PostgresInfo struct {
@@ -82,7 +82,14 @@ func New() (*config, error) {
 
 	config.Redlock = redsync.New([]redsync.Pool{config.RedisPool})
 
-	config.GRPCConn, err = grpc.Dial(config.VideoServiceGRPCAddress, grpc.WithInsecure())
+	opts := []grpc_retry.CallOption{
+		grpc_retry.WithBackoff(grpc_retry.BackoffExponential(100 * time.Millisecond)),
+		grpc_retry.WithMax(5),
+	}
+
+	config.GRPCConn, err = grpc.Dial(config.VideoServiceGRPCAddress, grpc.WithInsecure(),
+		grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
+		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(opts...)))
 	if err != nil {
 		log.Fatal(err)
 	}
