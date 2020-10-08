@@ -11,7 +11,7 @@ import (
 	"net/url"
 )
 
-const testData = false
+const testData = true
 
 func main() {
 	e := echo.New()
