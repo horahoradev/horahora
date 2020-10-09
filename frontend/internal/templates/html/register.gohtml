@@ -1,14 +1,17 @@
 {{define "register"}}
     {{ template "header" . }}
-    <div class="panel">
-        <form action="/register" method="post">
+    <div class="panel auth-form">
+        <form action="/register" class="form" method="post">
+            <div>
             <label>Username</label><input type="text" name="username" required>
-            <p></p>
+            </div>
+            <div>
             <label>Email</label><input type="text" name="email" required>
-            <p></p>
+            </div>
+            <div>
             <label>Password</label><input type="password" name="password" required>
-            <p></p>
-            <button type="submit">Login</button>
+            </div>
+            <button type="submit" class="horahora-button">Register</button>
 
         </form>
     </div>
