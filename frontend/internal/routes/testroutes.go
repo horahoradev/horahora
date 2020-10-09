@@ -9,6 +9,9 @@ import (
 func SetupTestRoutes(e *echo.Echo) {
 	e.GET("/", getTestHome)
 	e.GET("/videos/:id", getTestVideo)
+	e.GET("/login", getLogin)
+	e.GET("/register", getRegister)
+
 }
 
 func getTestHome(c echo.Context) error {

@@ -1,12 +1,19 @@
 {{define "login"}}
     {{ template "header" . }}
-    <div class="panel">
-        <form action="/login" method="post">
-            <label>Username</label><input type="text" name="username" required>
+    <div class="panel auth-form">
+        <a class="register" href="/register">Register</a>
+        <form action="/login" class="form" method="post">
+            {{/* lol something is messed up here. What did I do? FIXME later*/}}
+            <h1 class="welcome">Welcome back!</h1>
             <p></p>
+            <div>
+                <label>Username</label></span>
+                <input type="text" name="username" required>
+            </div>
+            <div>
             <label>Password</label><input type="password" name="password" required>
-            <p></p>
-            <button type="submit">Login</button>
+            </div>
+            <button class="horahora-button" type="submit">Login</button>
 
         </form>
     </div>
