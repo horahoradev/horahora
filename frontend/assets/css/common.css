@@ -190,6 +190,11 @@ p {
     height: 80%;
 }
 
+/* something about not repeating yourself? */
+.user-content > a, .user-content > a:visited, .user-content > a:hover {
+    color: #319795;
+}
+
 .inner-profile-section {
     padding: 30px;
 }
@@ -274,11 +279,6 @@ video {
     position: static;
 }
 
-.currentPage {
-    text-decoration: underline;
-    font-weight: bolder;
-}
-
 .video-title {
     font-weight: bold;
     font-size: 12px;
@@ -290,7 +290,7 @@ video {
     color: #718096;
 }
 
-a, a:visited, a:hover {
+.navbar > a, .navbar > a:visited, .navbar > a:hover {
     color: #319795;
 }
 
@@ -362,6 +362,10 @@ a, a:visited, a:hover {
     margin: 0px 0px 10px 0px;
 }
 
+.tags-container > a, .tags-container > a:visited, .tags-container > a:hover {
+    color: #319795;
+}
+
 .tags-container {
     margin: 20px 0px 0px 0px;
     border: 1px #CBD5E0 solid;
@@ -382,4 +386,15 @@ a, a:visited, a:hover {
     font-weight: bold;
     font-size: 12px;
     padding: 5px;
+    color: #FFFFFF;
+    padding: 5px;
+}
+
+.pageLink {
+    position: relative;
+    padding: 8px;
+    display: inline-block;
+    /* applied to every element, need to look more into CSS application order in determining original element position*/
+    left: 5%;
+    top: 3px;
 }
