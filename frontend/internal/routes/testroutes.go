@@ -18,8 +18,9 @@ func getTestHome(c echo.Context) error {
 	data := HomePageData{
 		L: LoggedInUserData{},
 		PaginationData: PaginationData{
-			//Pages:       []int{1, 2, 3, 4, 5}, // FIXME
-			CurrentPage: 1,
+			Pages:                []int{1, 2, 3, 4, 5}, // FIXME
+			CurrentPage:          1,
+			PathsAndQueryStrings: []string{"/", "/", "/", "/", "/"},
 		},
 		Videos: []Video{
 			{

@@ -15,7 +15,7 @@
                         <div class="tags-container">
                             <h5>Tags</h5>
                             {{ range $tag := .Tags }}
-                                <a class="tag" href="/tag/{{ $tag }}">{{ $tag }}</a>
+                                <a class="tag plain-link" href="/tag/{{ $tag }}">{{ $tag }}</a>
                             {{ end }}
                         </div>
                         <p></p>
