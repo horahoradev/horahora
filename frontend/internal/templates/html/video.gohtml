@@ -12,10 +12,15 @@
                         <span class="upload_date">{{.UploadDate}}</span>
                         <div class="float-right video-rating" id="rateYo"></div>
                         <p></p>
-                        Tags:
-                        {{ range $tag := .Tags }}
-                            <a href="/tag/{{ $tag }}">{{ $tag }}</a>,
-                        {{ end }}
+                        <div class="tags-container">
+                            <h5>Tags</h5>
+                            {{ range $tag := .Tags }}
+                                <a class="tag" href="/tag/{{ $tag }}">{{ $tag }}</a>
+                            {{ end }}
+                        </div>
+                        <p></p>
+                        <button class="horahora-button" id="approve" onclick="approve()">Approve</button>
+
                     </div>
                 </div>
                 <div class="profile-section bottom-border">
@@ -30,7 +35,6 @@
                         <p></p>
                         {{.UserDescription}}
                     </div>
-                        <button class="float-right" onclick="approve()">Approve</button>
                     </div>
                 </div>
                 <div class="comment-section">
