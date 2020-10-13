@@ -170,8 +170,9 @@ func (v *VideoModel) IncrementViewsForVideo(videoID int64) error {
 }
 
 func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID int64, ratingValue float64) error {
-	sql := "INSERT INTO ratings (user_id, video_id, rating) VALUES ($1, $2, $3)"
-	_, err := v.db.Exec(sql, ratingUID, videoID, ratingValue)
+	sql := "INSERT INTO ratings (user_id, video_id, rating) VALUES ($1, $2, $3)" +
+		"ON CONFLICT (user_id, video_id) DO update SET rating = $4"
+	_, err := v.db.Exec(sql, ratingUID, videoID, ratingValue, ratingValue)
 	if err != nil {
 		return err
 	}
@@ -207,9 +208,9 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 
 	for rows.Next() {
 		var video videoproto.Video
-		var authorID int64
+		var authorID, views int64
 		var mpdLoc string
-		err = rows.Scan(&video.VideoID, &video.VideoTitle, &authorID, &mpdLoc)
+		err = rows.Scan(&video.VideoID, &video.VideoTitle, &authorID, &mpdLoc, &views)
 		if err != nil {
 			return nil, err
 		}
@@ -221,6 +222,7 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 
 		video.Rating = basicInfo.rating
 		video.AuthorName = basicInfo.authorName
+		video.Views = uint64(views)
 
 		// FIXME: nothing is quite as dumb as this
 		// Need to remove the absolute path from mpd loc
@@ -270,7 +272,7 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	dialect := goqu.Dialect("postgres")
 
 	ds := dialect.
-		Select("videos.id", "title", "userid", "newlink").
+		Select("videos.id", "title", "userid", "newlink", "views").
 		From(
 			goqu.T("videos"),
 		).

@@ -540,7 +540,7 @@ func (v RouteHandler) handleRating(c echo.Context) error {
 	}
 
 	rateReq := videoproto.VideoRating{
-		UserID:  string(UserIDInt),
+		UserID:  UserIDInt,
 		VideoID: videoIDInt,
 		Rating:  float32(rating),
 	}
