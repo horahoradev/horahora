@@ -421,7 +421,8 @@ func (v *VideoModel) GetAverageRatingForVideoID(videoID int64) (float64, error) 
 	sql := "SELECT sum(rating)/count(*) FROM ratings WHERE video_id = $1"
 	res := v.db.QueryRow(sql, videoID)
 	if err := res.Scan(&rating); err != nil {
-		return 0.00, err
+		// LMAO FIXME
+		return 0.00, nil
 	}
 
 	return rating, nil
