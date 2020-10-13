@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis"
+	"github.com/google/uuid"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/jmoiron/sqlx"
@@ -15,9 +16,6 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"strconv"
-
-	"github.com/google/uuid"
 
 	"github.com/horahoradev/horahora/video_service/internal/dashutils"
 
@@ -338,12 +336,7 @@ func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQu
 }
 
 func (g GRPCServer) RateVideo(ctx context.Context, rating *proto.VideoRating) (*proto.Nothing, error) {
-	userIDInt, err := strconv.ParseInt(rating.UserID, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	err = g.VideoModel.AddRatingToVideoID(userIDInt, rating.VideoID, float64(rating.Rating))
+	err := g.VideoModel.AddRatingToVideoID(rating.UserID, rating.VideoID, float64(rating.Rating))
 	if err != nil {
 		return nil, err
 	}

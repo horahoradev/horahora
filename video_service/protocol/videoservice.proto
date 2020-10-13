@@ -46,7 +46,7 @@ message Video {
 }
 
 message videoRating {
-    string userID = 1;
+    int64 userID = 1;
     int64 videoID = 2;
     float rating = 3;
 }
