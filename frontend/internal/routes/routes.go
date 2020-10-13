@@ -182,7 +182,7 @@ func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
 		return errors.New("invalid content type")
 	}
 
-	return c.String(http.StatusOK, "Archive request submitted successfully")
+	return c.Redirect(http.StatusMovedPermanently, "/archiverequests")
 }
 
 func getLogin(c echo.Context) error {
@@ -244,7 +244,7 @@ func setCookie(c echo.Context, jwt string) error {
 
 	c.SetCookie(cookie)
 
-	return c.String(http.StatusOK, "Login successful.")
+	return c.Redirect(http.StatusMovedPermanently, "/")
 }
 
 func (v RouteHandler) getTag(c echo.Context) error {

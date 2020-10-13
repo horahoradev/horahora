@@ -5,8 +5,6 @@ import (
 	sql2 "database/sql"
 	"fmt"
 	"github.com/go-redis/redis"
-	"math"
-	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -31,15 +29,15 @@ const (
 )
 
 type VideoModel struct {
-	db          *sqlx.DB
-	grpcClient  proto.UserServiceClient
-	redisClient *redis.Client
+	db         *sqlx.DB
+	grpcClient proto.UserServiceClient
+	//redisClient *redis.Client
 }
 
 func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *redis.Client) (*VideoModel, error) {
 	return &VideoModel{db: db,
-		grpcClient:  client,
-		redisClient: redisClient}, nil
+		grpcClient: client,
+	}, nil
 }
 
 // check if user has been created
@@ -161,103 +159,30 @@ func (v *VideoModel) ForeignVideoExists(foreignVideoID string, website videoprot
 	}
 }
 
-func (v *VideoModel) IncrementViewsForVideo(videoID string) error {
-	// Sorted set with atomic incrementation
-	// Every single command is atomic: https://www.slideshare.net/RedisLabs/atomicity-in-redis-thomas-hunter
-	floatCmd := v.redisClient.HIncrBy(ViewHashNamespace, videoID, 1.00)
-	if err := floatCmd.Err(); err != nil {
-		return err
-	}
-
-	if err := v.ConstructSortedViewList(); err != nil {
+func (v *VideoModel) IncrementViewsForVideo(videoID int64) error {
+	sql := "UPDATE videos SET views = views + 1 WHERE id = $1"
+	_, err := v.db.Exec(sql, videoID)
+	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// FIXME: clean up and document all of the crazy redis stuff I'm doing, maybe put into a single file
-// Ensures that the video has been added to the views list in redis (starting at 0 views)
-// To be used on video approval only
-func (v *VideoModel) AssertViewsZero(videoID string) error {
-	floatCmd := v.redisClient.HSet(ViewHashNamespace, videoID, 0.00)
-	return floatCmd.Err()
-}
-
-//func (v *VideoModel) AssertRatingsZero(videoID stri	ng) error {
-//	floatCmd := v.redisClient.ZAdd(RatingNamespace, redis.Z{
-//		Score:  0.00,
-//		Member: videoID,
-//	})
-//	return floatCmd.Err()
-//}
-
-// FIXME: optimization. Switch to hash table for single video view fetches?
-func (v *VideoModel) GetViewsForVideo(videoID string) (uint64, error) {
-	// just fetch from sorted set
-
-	strCmd := v.redisClient.HGet(ViewHashNamespace, videoID)
-	if err := strCmd.Err(); err != nil {
-		return 0, err
-	}
-
-	n, err := strconv.ParseInt(strCmd.Val(), 10, 64)
+func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID int64, ratingValue float64) error {
+	sql := "INSERT INTO ratings (user_id, video_id, rating) VALUES ($1, $2, $3)"
+	_, err := v.db.Exec(sql, ratingUID, videoID, ratingValue)
 	if err != nil {
-		return 0.00, err
-	}
-
-	return uint64(n), nil
-}
-
-// Ranking namespaces are for approved videos ONLY
-const (
-	ViewHashNamespace    = "videos:views"
-	ViewRankingNamespace = "videos:viewranking"
-	RatingNamespace      = "videos:ratings"
-	ApprovalNamespace    = "videos:approvals"
-)
-
-func (v *VideoModel) GetVideosByViewsOrRatings(startNumber, endNumber int64, order videoproto.SortDirection, category videoproto.OrderCategory) ([]string, error) {
-	var namespace string
-	switch category {
-	case videoproto.OrderCategory_views:
-		namespace = ViewRankingNamespace
-	case videoproto.OrderCategory_rating:
-		namespace = RatingNamespace
-	default:
-		return nil, fmt.Errorf("unsupported category: %s", category.String())
-	}
-
-	switch order {
-	case videoproto.SortDirection_asc:
-		res := v.redisClient.ZRange(namespace, startNumber, endNumber)
-		return res.Result()
-
-	case videoproto.SortDirection_desc:
-		res := v.redisClient.ZRevRange(namespace, startNumber, endNumber)
-		return res.Result()
-	}
-
-	return nil, nil
-}
-
-func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue float64) error {
-	// hash table for each video with key being user ID
-	// really easy
-	if ratingValue > 10.0 || ratingValue < 0.00 {
-		return fmt.Errorf("invalid rating value: %f. Video ratings must be real numbers between 0 and 10.", ratingValue)
-	}
-
-	videoKey := fmt.Sprintf("ratings:%s", videoID)
-
-	boolCmd := v.redisClient.HSet(videoKey, ratingUID, ratingValue)
-
-	if err := boolCmd.Err(); err != nil {
 		return err
 	}
 
-	// BIG FIXME
-	if err := v.UpdateVideoRatingRankingsForAllViewedVideos(); err != nil {
+	rating, err := v.GetAverageRatingForVideoID(videoID)
+	if err != nil {
+		return err
+	}
+
+	_, err = v.db.Exec("UPDATE videos SET rating = $1 WHERE id = $2", rating, videoID)
+	if err != nil {
 		return err
 	}
 
@@ -266,8 +191,9 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID string, ratingValue f
 
 // For now, this only supports either fromUserID or withTag. Can support both in future, need to switch to
 // goqu and write better tests
-func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, withTag string, showUnapproved bool) ([]*videoproto.Video, error) {
-	sql, err := generateVideoListSQL(direction, pageNum, fromUserID, withTag, showUnapproved)
+func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, withTag string, showUnapproved bool,
+	category videoproto.OrderCategory) ([]*videoproto.Video, error) {
+	sql, err := generateVideoListSQL(direction, pageNum, fromUserID, withTag, showUnapproved, category)
 	if err != nil {
 		return nil, err
 	}
@@ -288,14 +214,13 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 			return nil, err
 		}
 
-		basicInfo, err := v.getBasicVideoInfo(authorID, strconv.Itoa(int(video.VideoID)))
+		basicInfo, err := v.getBasicVideoInfo(authorID, video.VideoID)
 		if err != nil {
 			return nil, err
 		}
 
 		video.Rating = basicInfo.rating
 		video.AuthorName = basicInfo.authorName
-		video.Views = basicInfo.views
 
 		// FIXME: nothing is quite as dumb as this
 		// Need to remove the absolute path from mpd loc
@@ -340,7 +265,7 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, withTag 
 	return l, nil
 }
 
-func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, withTag string, showUnapproved bool) (string, error) {
+func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, withTag string, showUnapproved bool, orderCategory videoproto.OrderCategory) (string, error) {
 	minResultNum := (pageNum - 1) * NumResultsPerPage
 	dialect := goqu.Dialect("postgres")
 
@@ -352,11 +277,31 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 		Offset(uint(minResultNum)).
 		Limit(NumResultsPerPage)
 
-	switch direction {
-	case videoproto.SortDirection_asc:
-		ds = ds.Order(goqu.I("upload_date").Asc())
-	case videoproto.SortDirection_desc:
-		ds = ds.Order(goqu.I("upload_date").Desc())
+	switch orderCategory {
+	case videoproto.OrderCategory_upload_date:
+		switch direction {
+		case videoproto.SortDirection_asc:
+			ds = ds.Order(goqu.I("upload_date").Asc())
+		case videoproto.SortDirection_desc:
+			ds = ds.Order(goqu.I("upload_date").Desc())
+		}
+
+	case videoproto.OrderCategory_views:
+		switch direction {
+		case videoproto.SortDirection_asc:
+			ds = ds.Order(goqu.I("views").Asc())
+		case videoproto.SortDirection_desc:
+			ds = ds.Order(goqu.I("views").Desc())
+		}
+
+	case videoproto.OrderCategory_rating:
+		// could've done a WITH and inner join onto ratings table... but whatever, this is fine
+		switch direction {
+		case videoproto.SortDirection_asc:
+			ds = ds.Order(goqu.I("rating").Asc())
+		case videoproto.SortDirection_desc:
+			ds = ds.Order(goqu.I("rating").Desc())
+		}
 	}
 
 	// Mutually exclusive for now, can change later if desired
@@ -384,31 +329,31 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 }
 
 type basicVideoInfo struct {
-	views      uint64
 	authorName string
 	rating     float64
 }
 
+// Information that isn't super straightforward to query for
 func (v *VideoModel) GetVideoInfo(videoID string) (*videoproto.VideoMetadata, error) {
-	sql := "SELECT id, title, description, upload_date, userID, newLink FROM videos WHERE id=$1"
+	sql := "SELECT id, title, description, upload_date, userID, newLink, views FROM videos WHERE id=$1"
 	var video videoproto.VideoMetadata
-	var authorID int64
+	var authorID, views int64
 
 	row := v.db.QueryRow(sql, videoID)
 
-	err := row.Scan(&video.VideoID, &video.VideoTitle, &video.Description, &video.UploadDate, &authorID, &video.VideoLoc)
+	err := row.Scan(&video.VideoID, &video.VideoTitle, &video.Description, &video.UploadDate, &authorID, &video.VideoLoc, &views)
 	if err != nil {
 		return nil, err
 	}
 
-	basicInfo, err := v.getBasicVideoInfo(authorID, strconv.Itoa(int(video.VideoID)))
+	basicInfo, err := v.getBasicVideoInfo(authorID, video.VideoID)
 	if err != nil {
 		return nil, err
 	}
 
 	video.Rating = basicInfo.rating
 	video.AuthorName = basicInfo.authorName
-	video.Views = basicInfo.views
+	video.Views = uint64(views)
 	video.AuthorID = authorID
 
 	tags, err := v.getVideoTags(videoID)
@@ -443,7 +388,7 @@ func (v *VideoModel) getVideoTags(videoID string) ([]string, error) {
 	return ret, nil
 }
 
-func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID string) (*basicVideoInfo, error) {
+func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID int64) (*basicVideoInfo, error) {
 	var videoInfo basicVideoInfo
 
 	// Given user id, look up author name
@@ -459,12 +404,6 @@ func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID string) (*basicVi
 
 	videoInfo.authorName = userResp.Username
 
-	// Look up views from redis
-	videoInfo.views, err = v.GetViewsForVideo(videoID)
-	if err != nil {
-		return nil, err
-	}
-
 	// Look up ratings from redis
 	videoInfo.rating, err = v.GetAverageRatingForVideoID(videoID)
 	switch {
@@ -477,192 +416,18 @@ func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID string) (*basicVi
 	return &videoInfo, nil
 }
 
-// FIXME: check for stupidity on a better day
-// this is wonky but if an unapproved video isn't in the view ordered list, it wont be in the ranked list either
-func (v *VideoModel) UpdateVideoRatingRankingsForAllViewedVideos() error {
-	videos, err := v.GetVideosByViewsOrRatings(1, -1, videoproto.SortDirection_asc, videoproto.OrderCategory_views)
-	if err != nil {
-		return err
+func (v *VideoModel) GetAverageRatingForVideoID(videoID int64) (float64, error) {
+	var rating float64
+	sql := "SELECT sum(rating)/count(*) FROM ratings WHERE video_id = $1"
+	res := v.db.QueryRow(sql, videoID)
+	if err := res.Scan(&rating); err != nil {
+		return 0.00, err
 	}
 
-	return v.UpdateVideoRatingRankings(videos)
-}
-
-// This is expensive and should only be done every so often
-func (v *VideoModel) UpdateVideoRatingRankings(videoIDs []string) error {
-	for _, videoID := range videoIDs {
-		rating, err := v.GetAverageRatingForVideoID(videoID)
-		if err != nil {
-			return err
-		}
-
-		approved, err := v.IsVideoApproved(videoID)
-		if err != nil {
-			return err
-		}
-
-		if !approved {
-			// Don't add it to the list
-			continue
-		}
-
-		// Default to 0.00 if no ratings
-		if math.IsNaN(rating) {
-			rating = 0.00
-		}
-
-		// zadd sounds wrong but documentation says it's correct
-		cmd := v.redisClient.ZAdd(RatingNamespace, redis.Z{Score: rating, Member: videoID})
-		if err := cmd.Err(); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (v *VideoModel) GetBasicSQLInfoForVideo(videoID string) (string, string, int64, error) {
-	// newlink, title, userid
-	var newlink, title string
-	var authorID int64
-	curs := v.db.QueryRow("select newlink, title, userID FROM videos WHERE id=$1", videoID)
-
-	if err := curs.Scan(&newlink, &title, &authorID); err != nil {
-		return "", "", 0, err
-	}
-
-	return newlink, title, authorID, nil
-}
-
-func (v *VideoModel) GetTopVideos(category videoproto.OrderCategory, order videoproto.SortDirection, startInd, endIndex int64) ([]*videoproto.Video, error) {
-	var retList []*videoproto.Video
-
-	videoIDs, err := v.GetVideosByViewsOrRatings(startInd, endIndex, order, category)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, videoID := range videoIDs {
-		idInt, err := strconv.ParseInt(videoID, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-
-		newlink, title, authorID, err := v.GetBasicSQLInfoForVideo(videoID)
-		if err != nil {
-			log.Errorf("Could not obtain basic SQL info for video. Err: %s. Continuing...", err)
-			continue
-		}
-
-		redisInfo, err := v.getBasicVideoInfo(authorID, videoID)
-		if err != nil {
-			log.Errorf("Could not obtain basic video info for video. Err: %s. Continuing...", err)
-			continue
-		}
-
-		v := videoproto.Video{
-			VideoTitle: title,
-			Views:      redisInfo.views,
-			Rating:     redisInfo.rating,
-			// FIXME: I did it again...
-			ThumbnailLoc: strings.Replace(newlink, ".mpd", ".png", 1),
-			VideoID:      idInt,
-			AuthorName:   redisInfo.authorName,
-		}
-
-		retList = append(retList, &v)
-	}
-
-	return retList, nil
-}
-
-func (v *VideoModel) GetAverageRatingForVideoID(videoID string) (float64, error) {
-	// iterate through elements of hash table and compute the average
-	// this is probably too expensive to do every time, so if it gets to be
-	// an issue we can compute every ~30 mins and cache the result
-	// alternatively could keep running total, probably doesn't matter
-	// Idea: cache in sorted set with expiration time of 30 mins? can use to return sorted list to frontend
-	ratingTotalNum := 0.00
-	ratingTotalDenom := 0.00
-
-	videoKey := fmt.Sprintf("ratings:%s", videoID)
-
-	// according to docs, cursor value starts at 0, and server returns next value to pass in
-	var cursorVal uint64 = 0
-
-	scanIterator := v.redisClient.HScan(videoKey, cursorVal, "", 0).Iterator()
-
-	// Every second element is a rating
-	i := 0
-	for scanIterator.Next() {
-		if i%2 == 0 {
-			i++
-			continue
-		}
-		i++
-
-		rating, err := strconv.ParseFloat(scanIterator.Val(), 64)
-		if err != nil {
-			return 0.00, err
-		}
-
-		ratingTotalNum += rating
-		ratingTotalDenom++
-	}
-
-	return ratingTotalNum / ratingTotalDenom, nil
-}
-
-// TODO: removing videos after approval. Maybe have an expiration?
-// TODO: copy pasta
-func (v *VideoModel) ConstructSortedViewList() error {
-	// according to docs, cursor value starts at 0, and server returns next value to pass in
-	var cursorVal uint64 = 0
-
-	scanIterator := v.redisClient.HScan(ViewHashNamespace, cursorVal, "", 0).Iterator()
-
-	// Every second element is a view
-	i := 0
-	var videoID string
-	for scanIterator.Next() {
-		if i%2 == 0 {
-			videoID = scanIterator.Val()
-			i++
-			continue
-		}
-		i++
-
-		// TODO: check if video approved
-		approved, err := v.IsVideoApproved(videoID)
-		if err != nil {
-			return err
-		}
-
-		if !approved {
-			// Don't add it to the list
-			continue
-		}
-
-		view, err := strconv.ParseFloat(scanIterator.Val(), 64)
-		if err != nil {
-			return err
-		}
-
-		cmd := v.redisClient.ZAdd(ViewRankingNamespace, redis.Z{Score: view, Member: videoID})
-		if err := cmd.Err(); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return rating, nil
 }
 
 func (v *VideoModel) MarkVideoApproved(videoID string) error {
-	cmd := v.redisClient.HSet(ApprovalNamespace, videoID, 1)
-	if err := cmd.Err(); err != nil {
-		return err
-	}
-
 	sql := "UPDATE videos SET is_approved = TRUE WHERE id = $1"
 	_, err := v.db.Exec(sql, videoID)
 	if err != nil {
@@ -670,11 +435,6 @@ func (v *VideoModel) MarkVideoApproved(videoID string) error {
 	}
 
 	return nil
-}
-
-func (v *VideoModel) IsVideoApproved(videoID string) (bool, error) {
-	cmd := v.redisClient.HExists(ApprovalNamespace, videoID)
-	return cmd.Val(), cmd.Err()
 }
 
 // TODO: refactor into separate models by concern
@@ -689,15 +449,6 @@ func (v *VideoModel) ApproveVideo(userID, videoID int) error {
 	}
 
 	if err = v.MarkApprovals(); err != nil {
-		return err
-	}
-
-	// BIG FIXME
-	if err := v.UpdateVideoRatingRankingsForAllViewedVideos(); err != nil {
-		return err
-	}
-
-	if err := v.ConstructSortedViewList(); err != nil {
 		return err
 	}
 
