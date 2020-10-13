@@ -236,7 +236,7 @@ spec:
           #        args: ["--listen=:39003",  "--headless=true", "--api-version=2", "exec", "./userservice"]
           # "--continue", "--accept-multiclient", to avoid waiting for debugger
           ports:
-            - containerPort: 8081
+            - containerPort: 8082
           env:
             - name: UserServiceGRPCAddress
               value: "userservice:7777"
@@ -314,11 +314,10 @@ spec:
     app: frontend
   ports:
     - protocol: TCP
-      port: 8081
-      targetPort: 8081
+      port: 8082
+      targetPort: 8082
   loadBalancerSourceRanges:
   - "217.138.0.0/16"
-  - "110.140.134.202/32"
 
 # https://aws.amazon.com/premiumsupport/knowledge-center/eks-cidr-ip-address-loadbalancer/
 #---
