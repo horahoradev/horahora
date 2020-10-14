@@ -246,8 +246,8 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return fmt.Errorf("could not start video upload stream. Err: %s", err)
 	}
 
-	// FIXME: don't think we can actually transcode swf? not sure
-	generatedVideoFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.@(flv|mp4|webm|swf)", d.outputLoc, video.ID))
+	// FIXME: extend to multiple file extensions, this is bad
+	generatedVideoFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.mp4", d.outputLoc, video.ID))
 	if err != nil {
 		return err
 	}
@@ -256,7 +256,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return fmt.Errorf("unexpected number of matched files: %d", len(generatedVideoFiles))
 	}
 
-	generatedThumbnailFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.@(jpg|png)", d.outputLoc, video.ID))
+	generatedThumbnailFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.jpg", d.outputLoc, video.ID))
 	if err != nil {
 		return err
 	}
