@@ -148,6 +148,11 @@ loop:
 		}
 	}
 
+	err = ioutil.WriteFile(video.FileData.Name()+".jpg", video.Meta.Meta.Thumbnail, 0644)
+	if err != nil {
+		return LogAndRetErr("could not write thumbnail. Err: %s", err)
+	}
+
 	log.Infof("Finished receiving file data for %s", video.Meta.Meta.Title)
 
 	transcodeResults, err := dashutils.TranscodeAndGenerateManifest(video.FileData.Name(), g.Local)

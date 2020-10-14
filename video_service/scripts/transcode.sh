@@ -36,6 +36,3 @@ ffmpeg -i ${1} -c:v libvpx-vp9 -s 640x360 -b:v 1000k ${COMMON_VIDEO_ARGS} ${VP9_
 
 
 ffmpeg -i ${1} -c:a libopus -b:a 128k -vn -f webm -dash 1 ${1}_audio_128k.webm
-
-# Generate thumbnail
-ffmpeg -i ${1} -vframes 1 ${1}.png

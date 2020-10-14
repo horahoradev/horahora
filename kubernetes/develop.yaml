@@ -36,7 +36,7 @@ spec:
           - name: GRPCPort
             value: "7777"
           - name: VideoServiceGRPCAddress
-            value: "videoservice:7777"
+            value: "videoproxy:7777"
           - name: NumberOfRetries
             value: "5"
           - name: redis_host
@@ -61,8 +61,8 @@ spec:
     metadata:
       labels:
         app: videoservice
-      annotations:
-        'consul.hashicorp.com/connect-inject': 'true'
+#      annotations:
+#        'consul.hashicorp.com/connect-inject': 'true'
     spec:
       volumes:
         - name: shared-data
@@ -225,9 +225,9 @@ spec:
     metadata:
       labels:
         app: frontend
-      annotations:
-        'consul.hashicorp.com/connect-inject': 'true'
-        'consul.hashicorp.com/connect-service-upstreams': 'videoservice:7778'
+#      annotations:
+#        'consul.hashicorp.com/connect-inject': 'true'
+#        'consul.hashicorp.com/connect-service-upstreams': 'videoservice:7778'
     spec:
       containers:
         - name: frontend
@@ -241,7 +241,7 @@ spec:
             - name: UserServiceGRPCAddress
               value: "userservice:7777"
             - name: VideoServiceGRPCAddress
-              value: "127.0.0.1:7778"
+              value: "videoproxy:7777"
             - name: SchedulerServiceGRPCAddress
               value: "scheduler:7777"
             - name: JaegerAddress
@@ -280,18 +280,18 @@ spec:
       port: 7777
       targetPort: 7777
 ---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: videoservice
-#spec:
-#  selector:
-#    app: videoservice
-#  ports:
-#    - protocol: TCP
-#      port: 7777
-#      targetPort: 7777
-#---
+apiVersion: v1
+kind: Service
+metadata:
+  name: videoproxy
+spec:
+  selector:
+    app: videoservice
+  ports:
+    - protocol: TCP
+      port: 7777
+      targetPort: 7777
+---
 apiVersion: v1
 kind: Service
 metadata:
