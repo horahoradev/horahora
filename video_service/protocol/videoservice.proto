@@ -112,6 +112,7 @@ message InputFileMetadata {
     string originalID = 7; // If reupload // this is a little dumb
     int64 domesticAuthorID = 8;
     repeated string Tags = 9;
+    bytes thumbnail = 10; // lol good enough, I could stream this but this is easier
 }
 
 // For now, these two are the same, but may deviate in future
