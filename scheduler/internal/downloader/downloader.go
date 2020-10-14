@@ -9,6 +9,7 @@ import (
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -99,7 +100,7 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 
 			videoExists, err := d.videoClient.ForeignVideoExists(context.TODO(), &videoReq)
 			if err != nil {
-				err := fmt.Errorf("could not check whether video exists for video ID %s", video.ID)
+				err := fmt.Errorf("could not check whether video exists for video ID %s. Err: %s", video.ID, err)
 				log.Error(err)
 				break currVideoLoop
 			}
@@ -245,17 +246,38 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return fmt.Errorf("could not start video upload stream. Err: %s", err)
 	}
 
-	generatedFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.*", d.outputLoc, video.ID))
+	// FIXME: don't think we can actually transcode swf? not sure
+	generatedVideoFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.@(flv|mp4|webm|swf)", d.outputLoc, video.ID))
 	if err != nil {
 		return err
 	}
 
-	if len(generatedFiles) != 1 {
-		return fmt.Errorf("unexpected number of matched files: %d", len(generatedFiles))
+	if len(generatedVideoFiles) != 1 {
+		return fmt.Errorf("unexpected number of matched files: %d", len(generatedVideoFiles))
+	}
+
+	generatedThumbnailFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.@(jpg|png)", d.outputLoc, video.ID))
+	if err != nil {
+		return err
+	}
+
+	if len(generatedThumbnailFiles) != 1 {
+		return fmt.Errorf("unexpected number of matched thumbnail files: %d", len(generatedThumbnailFiles))
 	}
 
 	// FIXME: this is dumb
 	site := ToVideoSite(website)
+
+	thumb, err := os.Open(generatedThumbnailFiles[0])
+	if err != nil {
+		return fmt.Errorf("could not open thumbnail. Err: %s", err)
+	}
+	defer thumb.Close()
+
+	thumbnailContents, err := ioutil.ReadAll(thumb)
+	if err != nil {
+		return err
+	}
 
 	// Send metadata
 	metaPayload := videoproto.InputVideoChunk{
@@ -269,18 +291,17 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 				OriginalSite:      site,
 				OriginalID:        metadata.ID,
 				Tags:              metadata.Tags,
+				Thumbnail:         thumbnailContents, // nothing to see here...
 			},
 		},
 	}
-
-	log.Infof("Tags: %s", metadata.Tags)
 
 	err = stream.Send(&metaPayload)
 	if err != nil {
 		return fmt.Errorf("could not send metadata. Err: %s", err)
 	}
 
-	file, err := os.Open(generatedFiles[0])
+	file, err := os.Open(generatedVideoFiles[0])
 	if err != nil {
 		return fmt.Errorf("could not open globbed file. Err: %s", err)
 	}
@@ -407,6 +428,7 @@ func (d *downloader) getVideoDownloadArgs(video *Video) ([]string, error) {
 		"/scheduler/youtube-dl/youtube_dl/__main__.py",
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
+		"--write-thumbnail",
 		"-o",
 		fmt.Sprintf("%s/%s", d.outputLoc, "%(id)s.%(ext)s"),
 	}

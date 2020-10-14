@@ -56,6 +56,6 @@ func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
 		ManifestPath:     fmt.Sprintf("%s.mpd", path),
 		QualityMap:       fileList,
 		OriginalFilePath: path,
-		ThumbnailPath:    path + ".png",
+		ThumbnailPath:    path + ".jpg",
 	}, nil
 }
