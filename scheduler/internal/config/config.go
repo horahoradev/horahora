@@ -88,7 +88,7 @@ func New() (*config, error) {
 	}
 
 	config.GRPCConn, err = grpc.Dial(config.VideoServiceGRPCAddress, grpc.WithInsecure(),
-		grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
+		//grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
 		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(opts...)))
 	if err != nil {
 		log.Fatal(err)
