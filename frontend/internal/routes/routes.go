@@ -708,3 +708,13 @@ func (v RouteHandler) handleApproval(c echo.Context) error {
 
 	return c.String(http.StatusOK, "Video approved")
 }
+
+type CommentData struct {
+	ID                 int    `json:"id"`
+	CreationDate       string `json:"created"`
+	Content            string `json:"content"`
+	Username           string `json:"fullname"`
+	ProfileImage       string `json:"profile_picture_url"`
+	VoteScore          int    `json:"upvote_count"`
+	CurrUserHasUpvoted bool   `json:"user_has_upvoted"`
+}
