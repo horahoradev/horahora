@@ -11,6 +11,7 @@ func SetupTestRoutes(e *echo.Echo) {
 	e.GET("/videos/:id", getTestVideo)
 	e.GET("/login", getLogin)
 	e.GET("/register", getRegister)
+	e.GET("/comments/:id", getComments) // TODO: web client grpc
 
 }
 
@@ -79,4 +80,29 @@ func getTestVideo(c echo.Context) error {
 
 	return c.Render(http.StatusOK, "video", data)
 
+}
+
+func getComments(c echo.Context) error {
+	testComments := []CommentData{
+		{
+			1,
+			"10-17-2020",
+			"WOW",
+			"testuser",
+			"/static/images/placeholder1.jpg",
+			2,
+			true,
+		},
+		{
+			2,
+			"10-17-2020",
+			"nice video.........",
+			"testuser2",
+			"/static/images/placeholder1.jpg",
+			2,
+			false,
+		},
+	}
+
+	return c.JSON(http.StatusOK, &testComments)
 }
