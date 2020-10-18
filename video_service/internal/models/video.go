@@ -13,12 +13,12 @@ import (
 
 	"google.golang.org/grpc/status"
 
-	proto "github.com/horahoradev/horahora/user_service/protocol"
-	videoproto "github.com/horahoradev/horahora/video_service/protocol"
-
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	_ "github.com/horahoradev/horahora/user_service/protocol"
+	proto "github.com/horahoradev/horahora/user_service/protocol"
+	userproto "github.com/horahoradev/horahora/user_service/protocol"
+	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -390,9 +390,7 @@ func (v *VideoModel) getVideoTags(videoID string) ([]string, error) {
 	return ret, nil
 }
 
-func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID int64) (*basicVideoInfo, error) {
-	var videoInfo basicVideoInfo
-
+func (v *VideoModel) getUserInfo(authorID int64) (*userproto.UserResponse, error) {
 	// Given user id, look up author name
 	userReq := proto.GetUserFromIDRequest{
 		UserID: authorID,
@@ -404,7 +402,20 @@ func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID int64) (*basicVid
 		return nil, err
 	}
 
-	videoInfo.authorName = userResp.Username
+	return userResp, nil
+}
+
+func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID int64) (*basicVideoInfo, error) {
+	var videoInfo basicVideoInfo
+
+	var err error
+
+	resp, err := v.getUserInfo(authorID)
+	if err != nil {
+		return nil, err
+	}
+
+	videoInfo.authorName = resp.Username
 
 	// Look up ratings from redis
 	videoInfo.rating, err = v.GetAverageRatingForVideoID(videoID)
@@ -480,4 +491,75 @@ func (v *VideoModel) MarkApprovals() error {
 	}
 
 	return nil
+}
+
+// Comment stuff
+func (v *VideoModel) MakeComment(userID, videoID, parentID int64, content string) error {
+	sql := "INSERT INTO comments (user_id, video_id, parent_comment, content) VALUES ($1, $2, $3, $4)"
+	_, err := v.db.Exec(sql, userID, videoID, parentID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
+	var voteScore = -1
+	if isUpvote {
+		voteScore = 1
+	}
+
+	sql := "INSERT INTO comment_upvotes (user_id, comment_id, vote_score) VALUES ($1, $2, $3)" +
+		"ON CONFLICT (user_id, comment_id) DO update SET vote_score = $4"
+	_, err := v.db.Exec(sql, userID, commentID, voteScore, voteScore)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//id SERIAL primary key,
+//user_id int,
+//video_id int REFERENCES videos(id),
+//creation_date timestamp,
+//comment varchar(4096),
+
+//parent_comment int REFERENCES comments(id),
+//CREATE TABLE comment_upvotes (
+//user_id int,
+//comment_id int REFERENCES comments(id),
+//vote_score int,
+//PRIMARY KEY(user_id, comment_id),
+//);
+
+func (v *VideoModel) GetComments(videoID int64) ([]*videoproto.Comment, error) {
+	var comments []*videoproto.Comment
+	sql := "SELECT id, sum(vote_score) as upvote_score, comments.user_id," +
+		" creation_date, comment " +
+		"FROM comments INNER JOIN comment_upvotes ON id = comment_id GROUP BY id,comment_upvotes.comment_id HAVING video_id = $1"
+	rows, err := v.db.Query(sql, videoID)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var comment videoproto.Comment
+
+		err = rows.Scan(&comment.CommentId, &comment.VoteScore, &comment.AuthorId,
+			&comment.CreationDate, &comment.Content)
+
+		resp, err := v.getUserInfo(comment.AuthorId)
+		if err != nil {
+			log.Errorf("Failed to retrieve username for comment. Err: %s", err)
+			continue
+		}
+
+		comment.AuthorUsername = resp.Username
+		comment.AuthorProfileImageUrl = "/static/images/placeholder1.jpg"
+
+		comments = append(comments, &comment)
+	}
+
+	return comments, nil
 }
