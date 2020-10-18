@@ -67,7 +67,7 @@ func (m *UserModel) GetUserWithID(userID int64) (*User, error) {
 	}
 
 	if len(user) < 1 {
-		return nil, fmt.Errorf("No user with that name")
+		return nil, fmt.Errorf("No user with that id")
 	}
 
 	return &user[0], nil

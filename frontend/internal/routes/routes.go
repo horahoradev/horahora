@@ -39,6 +39,9 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 
 	e.GET("/archiverequests", r.getArchiveRequests)
 	e.POST("/archiverequests", r.handleArchiveRequest)
+
+	e.GET("/comments/:id", r.getComments)
+	e.POST("/comments/", r.handleComment)
 }
 
 type Video struct {
@@ -709,12 +712,107 @@ func (v RouteHandler) handleApproval(c echo.Context) error {
 	return c.String(http.StatusOK, "Video approved")
 }
 
+func (r RouteHandler) getComments(c echo.Context) error {
+	videoID, err := url.QueryUnescape(c.Param("id"))
+	if err != nil {
+		return err
+	}
+
+	videoIDInt, err := strconv.ParseInt(videoID, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	log.Infof("Video ID: %d", videoIDInt)
+
+	resp, err := r.v.GetCommentsForVideo(context.Background(), &videoproto.CommentRequest{VideoID: videoIDInt})
+	if err != nil {
+		return err
+	}
+
+	log.Info(resp.Comments)
+
+	var commentList []CommentData
+
+	for _, comment := range resp.Comments {
+		commentData := CommentData{
+			ID:                 comment.CommentId,
+			CreationDate:       comment.CreationDate,
+			Content:            comment.Content,
+			Username:           comment.AuthorUsername,
+			ProfileImage:       comment.AuthorProfileImageUrl,
+			VoteScore:          comment.VoteScore,
+			CurrUserHasUpvoted: comment.CurrentUserHasUpvoted,
+		}
+
+		commentList = append(commentList, commentData)
+	}
+
+	return c.JSON(http.StatusOK, &commentList)
+}
+
+func (r RouteHandler) handleComment(c echo.Context) error {
+	err := c.Request().ParseForm()
+	if err != nil {
+		return err
+	}
+
+	data := c.Request().PostForm
+	videoID, err := url.QueryUnescape(data.Get("video_id"))
+	if err != nil {
+		return err
+	}
+
+	userID, err := url.QueryUnescape(data.Get("user_id"))
+	if err != nil {
+		return err
+	}
+
+	content, err := url.QueryUnescape(data.Get("content"))
+	if err != nil {
+		return err
+	}
+
+	//parent, err := url.QueryUnescape(data.Get("parent"))
+	//if err != nil {
+	//	return err
+	//}
+
+	videoIDInt, err := strconv.ParseInt(videoID, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	userIDInt, err := strconv.ParseInt(userID, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	//parentIDInt, err := strconv.ParseInt(parent, 10, 64)
+	//if err != nil {
+	//	return err
+	//}
+
+	_, err = r.v.MakeComment(context.Background(), &videoproto.VideoComment{
+		UserId:        userIDInt,
+		VideoId:       videoIDInt,
+		Comment:       content,
+		ParentComment: 0,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type CommentData struct {
-	ID                 int    `json:"id"`
+	ID                 int64  `json:"id"`
 	CreationDate       string `json:"created"`
 	Content            string `json:"content"`
 	Username           string `json:"fullname"`
 	ProfileImage       string `json:"profile_picture_url"`
-	VoteScore          int    `json:"upvote_count"`
+	VoteScore          int64  `json:"upvote_count"`
 	CurrUserHasUpvoted bool   `json:"user_has_upvoted"`
 }

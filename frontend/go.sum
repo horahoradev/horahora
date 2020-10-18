@@ -54,6 +54,7 @@ github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5a
 github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=
 github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/grpc-ecosystem/go-grpc-middleware v1.2.2 h1:FlFbCRLd5Jr4iYXZufAvgWN6Ao0JrI5chLINnUXDDr0=
 github.com/grpc-ecosystem/go-grpc-middleware v1.2.2/go.mod h1:EaizFBKfUKtMIF5iaDEhniwNedqGo9FuLFzppDr3uwI=
 github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 h1:MJG/KsmcqMwFAkh8mTnAwhyKoB+sTAnY4CACC110tbU=
@@ -65,6 +66,7 @@ github.com/hashicorp/go-multierror v1.0.0/go.mod h1:dHtQlpGsu+cZNNAkkCN/P3hoUDHh
 github.com/horahoradev/horahora v0.0.0-20200530195308-bb3e1a8e5cce h1:RNJ2yyy/TkJnX6X2ig9mvLU70Jg8JTFjvZZYTS+lT3A=
 github.com/horahoradev/horahora v0.0.0-20200530195308-bb3e1a8e5cce/go.mod h1:fX9CJ8gr+I3y/60r87rgkBnjwZnSBGnzwQ0BoQM69a4=
 github.com/horahoradev/horahora v0.0.0-20200801192659-89009690f8e2 h1:+lN0SYOgA62YvzGlUPKIyEO5zdJfVR+Q6rG3s3FtvDE=
+github.com/horahoradev/horahora v0.0.0-20201018005851-9d0633c71ed2 h1:zDzlQK7w2SgOiGh2Zw5PR1jpi0jqdVvSExgbAxvcmbc=
 github.com/horahoradev/horahora/scheduler v0.0.0-20200801192659-89009690f8e2 h1:rA7zS9HpnThvP4Lpp5nO4OnWh+VaUOC0jY/1+v+Ch04=
 github.com/horahoradev/horahora/scheduler v0.0.0-20200801192659-89009690f8e2/go.mod h1:/4jl/OX90buthG2DWVn7FfAluilN3Mh9dqGFI6ce2iY=
 github.com/horahoradev/horahora/scheduler v0.0.0-20200802001503-d7cd7705b4f8 h1:bsSPPhugwVDrR113PbHVZWssNgH5bhzRaYQbtQhHyhM=
@@ -93,6 +95,8 @@ github.com/horahoradev/horahora/video_service v0.0.0-20200929235532-12df1091a8e6
 github.com/horahoradev/horahora/video_service v0.0.0-20200929235532-12df1091a8e6/go.mod h1:Dj0Euekkeyk0VCGRlZJiWN/nR4YU2iY0BI+cAdoUuGg=
 github.com/horahoradev/horahora/video_service v0.0.0-20201013063349-f64a24aff540 h1:qGsZi9bbogKeoYsxGwPHU+R/dLjiuHC9O4yaJOiIoQE=
 github.com/horahoradev/horahora/video_service v0.0.0-20201013063349-f64a24aff540/go.mod h1:NmkwWK0PdGFGzp4XromGlfX2njZJCwQ2kYeiZcXCwQc=
+github.com/horahoradev/horahora/video_service v0.0.0-20201018005851-9d0633c71ed2 h1:l0KqR60/2XypVvP1cYwb0/96VepD9t7qB773/TgGbGA=
+github.com/horahoradev/horahora/video_service v0.0.0-20201018005851-9d0633c71ed2/go.mod h1:w8rWVkgB+SS8j4m7JZm5CaTCobEDbKtFp2EN6eAs24g=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af h1:pmfjZENx5imkbgOkpRUYLnmbU7UEFbjtDA2hxJ1ichM=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
@@ -252,6 +256,8 @@ google.golang.org/grpc v1.29.1 h1:EC2SB8S04d2r73uptxphDSUG+kTKVgjRPF+N3xpxRB4=
 google.golang.org/grpc v1.29.1/go.mod h1:itym6AZVZYACWQqET3MqgPpjcuV5QH3BxFS3IjizoKk=
 google.golang.org/grpc v1.32.0 h1:zWTV+LMdc3kaiJMSTOFz2UgSBgx8RNQoTGiZu3fR9S0=
 google.golang.org/grpc v1.32.0/go.mod h1:N36X2cJ7JwdamYAgDz+s+rVMFjt3numwzf/HckM8pak=
+google.golang.org/grpc v1.33.0 h1:IBKSUNL2uBS2DkJBncPP+TwT0sp9tgA8A75NjHt6umg=
+google.golang.org/grpc v1.33.0/go.mod h1:fr5YgcSWrqhRRxogOsw7RzIpsmvOZ6IcH4kBYTpR3n0=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/fsnotify.v1 v1.4.7/go.mod h1:Tz8NjZHkW78fSQdbUxIjBTcgA1z1m8ZHf0WmKUhAMys=
