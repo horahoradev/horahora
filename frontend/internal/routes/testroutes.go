@@ -90,7 +90,7 @@ func getComments(c echo.Context) error {
 			"WOW",
 			"testuser",
 			"/static/images/placeholder1.jpg",
-			2,
+			5,
 			true,
 		},
 		{

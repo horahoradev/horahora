@@ -294,27 +294,6 @@ func (g GRPCServer) DownloadVideo(req *proto.VideoRequest, outputStream proto.Vi
 
 func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQueryConfig) (*proto.VideoList, error) {
 	switch queryConfig.OrderBy {
-	//case proto.OrderCategory_rating, proto.OrderCategory_views:
-	//	// FIXME: simplify pagination API here
-	//	startInd := (queryConfig.PageNumber - 1) * models.NumResultsPerPage
-	//	endInd := startInd + models.NumResultsPerPage - 1
-	//
-	//	videos, err := g.VideoModel.GetTopVideos(queryConfig.OrderBy, queryConfig.Direction, startInd, endInd)
-	//	if err != nil {
-	//		log.Errorf("Could not get top videos for query. Err: %s", err)
-	//		return nil, err
-	//	}
-	//
-	//	numberOfVideos, err := g.VideoModel.GetNumberOfSearchResultsForQuery(queryConfig.FromUserID, queryConfig.ContainsTag)
-	//	if err != nil {
-	//		log.Errorf("Could not get count of entries for query. Err: %s", err)
-	//		return nil, err
-	//	}
-	//
-	//	return &proto.VideoList{
-	//		Videos:         videos,
-	//		NumberOfVideos: numberOfVideos,
-	//	}, nil
 	case proto.OrderCategory_rating, proto.OrderCategory_views, proto.OrderCategory_upload_date:
 		videos, err := g.VideoModel.GetVideoList(queryConfig.Direction, queryConfig.PageNumber,
 			queryConfig.FromUserID, queryConfig.ContainsTag, queryConfig.ShowUnapproved, queryConfig.OrderBy)
@@ -373,4 +352,24 @@ func (g GRPCServer) ApproveVideo(ctx context.Context, req *proto.VideoApproval) 
 	}
 
 	return &proto.Nothing{}, nil
+}
+
+func (g GRPCServer) MakeComment(ctx context.Context, commentReq *proto.VideoComment) (*proto.Nothing, error) {
+	return &proto.Nothing{},
+		g.VideoModel.MakeComment(commentReq.UserId, commentReq.VideoId,
+			commentReq.ParentComment, commentReq.Comment)
+
+}
+
+func (g GRPCServer) MakeCommentUpvote(ctx context.Context, upvoteReq *proto.CommentUpvote) (*proto.Nothing, error) {
+	return &proto.Nothing{}, g.VideoModel.MakeUpvote(upvoteReq.UserId, upvoteReq.CommentId,
+		upvoteReq.IsUpvote)
+}
+
+func (g GRPCServer) GetCommentsForVideo(ctx context.Context, commentListReq *proto.CommentRequest) (*proto.CommentListResponse, error) {
+	list, err := g.VideoModel.GetComments(commentListReq.VideoID)
+
+	return &proto.CommentListResponse{
+		Comments: list,
+	}, err
 }

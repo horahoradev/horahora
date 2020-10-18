@@ -6,7 +6,7 @@ function loadComments(videoID) {
         dataType: 'json',
         success: function (response) {
             $('#comment-section').comments({
-                profilePictureURL: 'https://app.viima.com/static/media/user_profiles/user-icon.png',
+                profilePictureURL: '/static/images/placeholder1.jpg',
                 getComments: function(success, error) {
                     success(response);
                 }
