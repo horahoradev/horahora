@@ -495,11 +495,24 @@ func (v *VideoModel) MarkApprovals() error {
 
 // Comment stuff
 func (v *VideoModel) MakeComment(userID, videoID, parentID int64, content string) error {
-	sql := "INSERT INTO comments (user_id, video_id, parent_comment, content) VALUES ($1, $2, $3, $4)"
-	_, err := v.db.Exec(sql, userID, videoID, parentID)
-	if err != nil {
-		return err
+	switch parentID {
+	case 0:
+		sql := "INSERT INTO comments (user_id, video_id, comment, creation_date)" +
+			" VALUES ($1, $2, $3, Now())"
+		_, err := v.db.Exec(sql, userID, videoID, content)
+		if err != nil {
+			return err
+		}
+
+	default:
+		sql := "INSERT INTO comments (user_id, video_id, parent_comment, comment, creation_date)" +
+			" VALUES ($1, $2, $3, $4, Now())"
+		_, err := v.db.Exec(sql, userID, videoID, parentID, content)
+		if err != nil {
+			return err
+		}
 	}
+
 	return nil
 }
 
@@ -519,25 +532,11 @@ func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
 	return nil
 }
 
-//id SERIAL primary key,
-//user_id int,
-//video_id int REFERENCES videos(id),
-//creation_date timestamp,
-//comment varchar(4096),
-
-//parent_comment int REFERENCES comments(id),
-//CREATE TABLE comment_upvotes (
-//user_id int,
-//comment_id int REFERENCES comments(id),
-//vote_score int,
-//PRIMARY KEY(user_id, comment_id),
-//);
-
 func (v *VideoModel) GetComments(videoID int64) ([]*videoproto.Comment, error) {
 	var comments []*videoproto.Comment
-	sql := "SELECT id, sum(vote_score) as upvote_score, comments.user_id," +
+	sql := "SELECT id, sum(COALESCE(vote_score, 0)) as upvote_score, comments.user_id," +
 		" creation_date, comment " +
-		"FROM comments INNER JOIN comment_upvotes ON id = comment_id GROUP BY id,comment_upvotes.comment_id HAVING video_id = $1"
+		"FROM comments LEFT JOIN comment_upvotes ON id = comment_id GROUP BY id,comment_upvotes.comment_id HAVING video_id = $1"
 	rows, err := v.db.Query(sql, videoID)
 	if err != nil {
 		return nil, err
@@ -548,10 +547,14 @@ func (v *VideoModel) GetComments(videoID int64) ([]*videoproto.Comment, error) {
 
 		err = rows.Scan(&comment.CommentId, &comment.VoteScore, &comment.AuthorId,
 			&comment.CreationDate, &comment.Content)
-
+		if err != nil {
+			log.Errorf("Failed to scan. Err: %s", err)
+			continue
+		}
 		resp, err := v.getUserInfo(comment.AuthorId)
 		if err != nil {
-			log.Errorf("Failed to retrieve username for comment. Err: %s", err)
+			log.Errorf("Failed to retrieve username for comment with author id %d. Err: %s",
+				comment.AuthorId, err)
 			continue
 		}
 

@@ -318,6 +318,7 @@ spec:
       targetPort: 8082
   loadBalancerSourceRanges:
   - "217.138.0.0/16"
+  - "0.0.0.0/0"
 
 # https://aws.amazon.com/premiumsupport/knowledge-center/eks-cidr-ip-address-loadbalancer/
 #---
