@@ -367,7 +367,7 @@ func (g GRPCServer) MakeCommentUpvote(ctx context.Context, upvoteReq *proto.Comm
 }
 
 func (g GRPCServer) GetCommentsForVideo(ctx context.Context, commentListReq *proto.CommentRequest) (*proto.CommentListResponse, error) {
-	list, err := g.VideoModel.GetComments(commentListReq.VideoID)
+	list, err := g.VideoModel.GetComments(commentListReq.VideoID, commentListReq.CurrUserID)
 
 	return &proto.CommentListResponse{
 		Comments: list,
