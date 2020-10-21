@@ -562,7 +562,15 @@ func (v *VideoModel) GetComments(videoID, currUserID int64) ([]*videoproto.Comme
 
 		comment.AuthorUsername = resp.Username
 		comment.AuthorProfileImageUrl = "/static/images/placeholder1.jpg"
-		comment.CurrentUserHasUpvoted = currUserID == comment.AuthorId
+
+		var score uint64
+		sqlTwo := "SELECT vote_score FROM comment_upvotes WHERE user_id = $1 AND comment_id = $2"
+
+		res := v.db.QueryRow(sqlTwo, currUserID, comment.CommentId)
+		err = res.Scan(&score)
+		if err == nil && score > 0 {
+			comment.CurrentUserHasUpvoted = true
+		}
 
 		comments = append(comments, &comment)
 	}
