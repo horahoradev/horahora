@@ -92,6 +92,7 @@ func getComments(c echo.Context) error {
 			"/static/images/placeholder1.jpg",
 			5,
 			true,
+			0,
 		},
 		{
 			2,
@@ -101,6 +102,7 @@ func getComments(c echo.Context) error {
 			"/static/images/placeholder1.jpg",
 			2,
 			false,
+			0,
 		},
 	}
 

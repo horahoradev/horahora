@@ -748,7 +748,9 @@ func (r RouteHandler) getComments(c echo.Context) error {
 			ProfileImage:       comment.AuthorProfileImageUrl,
 			VoteScore:          comment.VoteScore,
 			CurrUserHasUpvoted: comment.CurrentUserHasUpvoted,
-			ParentID: comment.
+		}
+		if comment.ParentId != 0 {
+			commentData.ParentID = comment.ParentId
 		}
 
 		commentList = append(commentList, commentData)
@@ -779,11 +781,6 @@ func (r RouteHandler) handleComment(c echo.Context) error {
 		return err
 	}
 
-	//parent, err := url.QueryUnescape(data.Get("parent"))
-	//if err != nil {
-	//	return err
-	//}
-
 	videoIDInt, err := strconv.ParseInt(videoID, 10, 64)
 	if err != nil {
 		return err
@@ -794,16 +791,16 @@ func (r RouteHandler) handleComment(c echo.Context) error {
 		return err
 	}
 
-	//parentIDInt, err := strconv.ParseInt(parent, 10, 64)
+	parentIDInt, _ := getAsInt64(data, "parent")
 	//if err != nil {
-	//	return err
+	//	// nothing
 	//}
 
 	_, err = r.v.MakeComment(context.Background(), &videoproto.VideoComment{
 		UserId:        userIDInt,
 		VideoId:       videoIDInt,
 		Comment:       content,
-		ParentComment: 0,
+		ParentComment: parentIDInt,
 	})
 
 	if err != nil {
@@ -821,7 +818,7 @@ type CommentData struct {
 	ProfileImage       string `json:"profile_picture_url"`
 	VoteScore          int64  `json:"upvote_count"`
 	CurrUserHasUpvoted bool   `json:"user_has_upvoted"`
-	ParentID           int64  `json:"parent"`
+	ParentID           int64  `json:"parent,omitempty"`
 }
 
 func (r RouteHandler) handleUpvote(c echo.Context) error {
