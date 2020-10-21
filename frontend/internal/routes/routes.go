@@ -748,6 +748,7 @@ func (r RouteHandler) getComments(c echo.Context) error {
 			ProfileImage:       comment.AuthorProfileImageUrl,
 			VoteScore:          comment.VoteScore,
 			CurrUserHasUpvoted: comment.CurrentUserHasUpvoted,
+			ParentID: comment.
 		}
 
 		commentList = append(commentList, commentData)
@@ -820,6 +821,7 @@ type CommentData struct {
 	ProfileImage       string `json:"profile_picture_url"`
 	VoteScore          int64  `json:"upvote_count"`
 	CurrUserHasUpvoted bool   `json:"user_has_upvoted"`
+	ParentID           int64  `json:"parent"`
 }
 
 func (r RouteHandler) handleUpvote(c echo.Context) error {

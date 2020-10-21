@@ -54,6 +54,7 @@ message Comment {
     int64 vote_score = 6;
     bool current_user_has_upvoted = 7;
     int64 author_id = 8;
+    int64 parent_id = 9;
 }
 
 
