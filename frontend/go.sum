@@ -68,6 +68,7 @@ github.com/horahoradev/horahora v0.0.0-20200530195308-bb3e1a8e5cce/go.mod h1:fX9
 github.com/horahoradev/horahora v0.0.0-20200801192659-89009690f8e2 h1:+lN0SYOgA62YvzGlUPKIyEO5zdJfVR+Q6rG3s3FtvDE=
 github.com/horahoradev/horahora v0.0.0-20201018005851-9d0633c71ed2 h1:zDzlQK7w2SgOiGh2Zw5PR1jpi0jqdVvSExgbAxvcmbc=
 github.com/horahoradev/horahora v0.0.0-20201021042822-1c9502589e85 h1:uYJdEyp4DCOM7jihkYevvBz6VSIKv1kHWos6swwZwHE=
+github.com/horahoradev/horahora v0.0.0-20201021050454-3ee20d8e2d87 h1:tXxgZKbDmRUwXs2t9OIswlXRh/dNsnvwsOvDz83ScQg=
 github.com/horahoradev/horahora/scheduler v0.0.0-20200801192659-89009690f8e2 h1:rA7zS9HpnThvP4Lpp5nO4OnWh+VaUOC0jY/1+v+Ch04=
 github.com/horahoradev/horahora/scheduler v0.0.0-20200801192659-89009690f8e2/go.mod h1:/4jl/OX90buthG2DWVn7FfAluilN3Mh9dqGFI6ce2iY=
 github.com/horahoradev/horahora/scheduler v0.0.0-20200802001503-d7cd7705b4f8 h1:bsSPPhugwVDrR113PbHVZWssNgH5bhzRaYQbtQhHyhM=
@@ -100,6 +101,8 @@ github.com/horahoradev/horahora/video_service v0.0.0-20201018005851-9d0633c71ed2
 github.com/horahoradev/horahora/video_service v0.0.0-20201018005851-9d0633c71ed2/go.mod h1:w8rWVkgB+SS8j4m7JZm5CaTCobEDbKtFp2EN6eAs24g=
 github.com/horahoradev/horahora/video_service v0.0.0-20201021042822-1c9502589e85 h1:HuxOaSje3rwNn/S0EoRbx1e2FqQ5YKWRymtbKYgDCIE=
 github.com/horahoradev/horahora/video_service v0.0.0-20201021042822-1c9502589e85/go.mod h1:w8rWVkgB+SS8j4m7JZm5CaTCobEDbKtFp2EN6eAs24g=
+github.com/horahoradev/horahora/video_service v0.0.0-20201021050454-3ee20d8e2d87 h1:UpNFgWKQy5dszkuP9oAoDJ/30GjAZE9SbNWUz3aEnkg=
+github.com/horahoradev/horahora/video_service v0.0.0-20201021050454-3ee20d8e2d87/go.mod h1:w8rWVkgB+SS8j4m7JZm5CaTCobEDbKtFp2EN6eAs24g=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af h1:pmfjZENx5imkbgOkpRUYLnmbU7UEFbjtDA2hxJ1ichM=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
