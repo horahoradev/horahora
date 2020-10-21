@@ -725,7 +725,14 @@ func (r RouteHandler) getComments(c echo.Context) error {
 		return err
 	}
 
-	resp, err := r.v.GetCommentsForVideo(context.Background(), &videoproto.CommentRequest{VideoID: videoIDInt})
+	// FIX LATER
+	userID := c.Get(custommiddleware.UserIDKey)
+	UserIDInt, ok := userID.(int64)
+	if !ok {
+		log.Error("Could not assert userid to int64 for getComments")
+	}
+
+	resp, err := r.v.GetCommentsForVideo(context.Background(), &videoproto.CommentRequest{VideoID: videoIDInt, CurrUserID: UserIDInt})
 	if err != nil {
 		return err
 	}
