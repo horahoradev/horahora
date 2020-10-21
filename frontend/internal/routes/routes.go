@@ -42,6 +42,8 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 
 	e.GET("/comments/:id", r.getComments)
 	e.POST("/comments/", r.handleComment)
+
+	e.POST("/comment_upvotes/", r.handleUpvote)
 }
 
 type Video struct {
@@ -723,14 +725,10 @@ func (r RouteHandler) getComments(c echo.Context) error {
 		return err
 	}
 
-	log.Infof("Video ID: %d", videoIDInt)
-
 	resp, err := r.v.GetCommentsForVideo(context.Background(), &videoproto.CommentRequest{VideoID: videoIDInt})
 	if err != nil {
 		return err
 	}
-
-	log.Info(resp.Comments)
 
 	var commentList []CommentData
 
@@ -815,4 +813,65 @@ type CommentData struct {
 	ProfileImage       string `json:"profile_picture_url"`
 	VoteScore          int64  `json:"upvote_count"`
 	CurrUserHasUpvoted bool   `json:"user_has_upvoted"`
+}
+
+func (r RouteHandler) handleUpvote(c echo.Context) error {
+	// DUMB!
+	err := c.Request().ParseForm()
+	if err != nil {
+		return err
+	}
+
+	data := c.Request().PostForm
+
+	commentID, err := getAsInt64(data, "comment_id")
+	if err != nil {
+		return err
+	}
+
+	userID, err := getAsInt64(data, "user_id")
+	if err != nil {
+		return err
+	}
+
+	hasUpvoted, err := getAsBool(data, "user_has_upvoted")
+	if err != nil {
+		return err
+	}
+
+	_, err = r.v.MakeCommentUpvote(context.Background(), &videoproto.CommentUpvote{
+		CommentId: commentID,
+		UserId:    userID,
+		IsUpvote:  hasUpvoted,
+	})
+
+	return err
+}
+
+func getAsInt64(data url.Values, key string) (int64, error) {
+	val, err := url.QueryUnescape(data.Get(key))
+	if err != nil {
+		return 0, err
+	}
+
+	valInt, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return valInt, nil
+}
+
+func getAsBool(data url.Values, key string) (bool, error) {
+	val, err := url.QueryUnescape(data.Get(key))
+	if err != nil {
+		return false, err
+	}
+
+	valBool, err := strconv.ParseBool(val)
+	if err != nil {
+		return false, err
+	}
+
+	return valBool, nil
 }

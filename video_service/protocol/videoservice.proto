@@ -32,6 +32,7 @@ message videoComment {
 // Can add pagination in the future if needed (probably fine without it)
 message commentRequest {
     int64 videoID = 1;
+    int64 currUserID = 2;
 }
 
 message commentUpvote {

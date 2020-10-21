@@ -517,7 +517,9 @@ func (v *VideoModel) MakeComment(userID, videoID, parentID int64, content string
 }
 
 func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
-	var voteScore = -1
+	// lol bruh moment
+	// this is a hack... I'll probably keep it this way until we have actual downvotes though
+	var voteScore = 0
 	if isUpvote {
 		voteScore = 1
 	}
@@ -532,7 +534,7 @@ func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
 	return nil
 }
 
-func (v *VideoModel) GetComments(videoID int64) ([]*videoproto.Comment, error) {
+func (v *VideoModel) GetComments(videoID, currUserID int64) ([]*videoproto.Comment, error) {
 	var comments []*videoproto.Comment
 	sql := "SELECT id, sum(COALESCE(vote_score, 0)) as upvote_score, comments.user_id," +
 		" creation_date, comment " +
@@ -560,6 +562,7 @@ func (v *VideoModel) GetComments(videoID int64) ([]*videoproto.Comment, error) {
 
 		comment.AuthorUsername = resp.Username
 		comment.AuthorProfileImageUrl = "/static/images/placeholder1.jpg"
+		comment.CurrentUserHasUpvoted = currUserID == comment.AuthorId
 
 		comments = append(comments, &comment)
 	}
