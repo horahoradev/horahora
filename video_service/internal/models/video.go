@@ -537,7 +537,7 @@ func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
 func (v *VideoModel) GetComments(videoID, currUserID int64) ([]*videoproto.Comment, error) {
 	var comments []*videoproto.Comment
 	sql := "SELECT id, sum(COALESCE(vote_score, 0)) as upvote_score, comments.user_id," +
-		" creation_date, comment, parent_comment " +
+		" creation_date, comment, COALESCE(parent_comment, 0) " +
 		"FROM comments LEFT JOIN comment_upvotes ON id = comment_id GROUP BY id,comment_upvotes.comment_id HAVING video_id = $1"
 	rows, err := v.db.Query(sql, videoID)
 	if err != nil {
