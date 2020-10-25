@@ -1,0 +1,26 @@
+{{define "upload"}}
+    {{ template "header" . }}
+    <link rel="stylesheet" type="text/css" href="/static/css/dropzone.css">
+        <div class="upload-container ">
+        <span class="upload-section">
+            <h2>Upload video</h2>
+            <span class="dropzone upload" id="videoUpload"></span>
+        </span>
+        <span class="upload-section">
+            <p></p>
+            Title <input type="text" id="title" name="title" required>
+            <p></p>
+            Description <input type="text" id="description" name="description" required>
+            <p></p>
+            Tags <input type="text" id="tags" name="title" required>
+            <button class="horahora-button" id="upload" type="submit">Upload</button>
+        </span>
+        </div>
+
+
+    <script src="/static/js/upload.js" type="text/javascript"></script>
+    <script>
+            setupUpload();
+    </script>
+
+{{end}}
