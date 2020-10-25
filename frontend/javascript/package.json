@@ -9,6 +9,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@flowcrypt/fine-uploader": "^5.16.4",
+    "blueimp-file-upload": "^10.31.0",
+    "dropzone": "^5.7.2",
     "jquery-comments": "^1.0.1"
   }
 }

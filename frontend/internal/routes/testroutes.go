@@ -12,6 +12,7 @@ func SetupTestRoutes(e *echo.Echo) {
 	e.GET("/login", getLogin)
 	e.GET("/register", getRegister)
 	e.GET("/comments/:id", getComments) // TODO: web client grpc
+	e.GET("/upload", getUpload)
 
 }
 
@@ -107,4 +108,9 @@ func getComments(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, &testComments)
+}
+
+func getUpload(c echo.Context) error {
+
+	return c.Render(http.StatusOK, "upload", nil)
 }
