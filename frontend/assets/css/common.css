@@ -406,13 +406,14 @@ video {
 .upload-section {
     position: relative;
     width: 49%;
-    height: 100%;
+    height: calc(100% - 29px);
     display: inline-block;
     vertical-align: top;
+    padding: 0%;
 }
 
 .upload-container {
-    margin-top: 20px;
+    margin-top: 0px;
     margin-left: 5%;
     margin-right: 5%;
     padding: 6px;
@@ -421,7 +422,12 @@ video {
     border: 1px #CBD5E0 solid;
     background: #FFFFFF;
     border-radius: 4px;
-    min-height: 80%;
+    height: 80%;
+}
+
+.upload-title {
+    vertical-align: top;
+    display: inline;
 }
 
 .upload {
