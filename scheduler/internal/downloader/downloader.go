@@ -38,13 +38,23 @@ func New(dlQueue chan *models.VideoDlRequest, outputLoc string, client videoprot
 }
 
 // SubscribeAndDownload reads from the download queue
+// FIXME: should provide slightly better graceful shutdown behavior here
 func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
+	// This is pretty awkward, but guarantees a return on the next iteration,
+	// and guarantees that the function will return if it was waiting on a download
+	// request.
 	for {
 		select {
 		case <-ctx.Done():
 			log.Info("Context done, downloader returning")
 			return nil
+		default:
+		}
 
+		select {
+		case <-ctx.Done():
+			log.Info("Context done, downloader returning")
+			return nil
 		case r := <-d.downloadQueue:
 			err := d.downloadRequest(ctx, r)
 			if err != nil {
@@ -66,6 +76,7 @@ type Video struct {
 
 // Deals with a particular download request
 func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlRequest) error {
+	// TODO: caching download list, lol
 	videos, err := d.getDownloadList(dlReq)
 	if err != nil {
 		return err

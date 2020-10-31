@@ -19,7 +19,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 var dropzone = require('dropzone');
 
+let tagSet = new Set(); // duplicates are invalid
+
 function setupUpload() {
+    setupTags();
     dropzone.autoDiscover = false;
 
     var uploadZone = new dropzone("#videoUpload", {
@@ -45,13 +48,25 @@ function setupUpload() {
     uploadZone.on("sending", function(file, xhr, formData) {
         var title = $("#title").val();
         var description = $("#description").val();
-        var tags = $("#tags").val(); // will likely need to change
+        var tags = JSON.stringify(Array.from(tagSet));
 
         formData.append("title", title);
         formData.append("description", description);
         formData.append("tags", tags);
+    });
+}
 
-        console.log(formData);
+function setupTags() {
+    $("#tags").on('keypress', function(e) {
+       if (e.which == 13) {
+           // Add a new tag on enter
+           // Could warn the user if they're giving some invalid input
+           var tagVal = $("#tags").val();
+           if (!tagSet.has(tagVal)) {
+               $("#tags-cont").prepend(`<a class="tag plain-link">` +  tagVal + `</a>`);
+               tagSet.add(tagVal);
+           }
+       }
     });
 }
 
