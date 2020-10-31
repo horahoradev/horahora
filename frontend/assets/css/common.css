@@ -375,6 +375,9 @@ video {
     border: 1px #CBD5E0 solid;
     padding: 5px;
     position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .tags-container > h5 {
@@ -391,7 +394,7 @@ video {
     font-size: 12px;
     padding: 5px;
     color: #FFFFFF;
-    padding: 5px;
+    margin: 0px 3px 3px 0px;
 }
 
 .pageLink {
@@ -405,11 +408,11 @@ video {
 
 .upload-section {
     position: relative;
-    width: 49%;
-    height: calc(100% - 29px);
+    width: 39%;
+    height: calc(100% - 49px);
     display: inline-block;
     vertical-align: top;
-    padding: 0%;
+    padding: 20px 5% 0%;
 }
 
 .upload-container {
@@ -428,10 +431,18 @@ video {
 .upload-title {
     vertical-align: top;
     display: inline;
+    left: 5%;
+    position: relative;
+    top: 20px;
 }
 
 .upload {
     display: inline-block;
     width: 100%;
     height: 100%;
+}
+
+/* lol */
+.dropzone {
+    border: 2px dashed rgba(0, 0, 0, 0.3) !important;
 }
