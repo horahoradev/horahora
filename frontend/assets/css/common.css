@@ -366,12 +366,20 @@ video {
     margin: 0px 0px 10px 0px;
 }
 
+.container-title {
+    position: relative;
+    font-size: 10px;
+    font-weight: bold;
+    display: block;
+    margin: 0px;
+}
+
 .tags-container > a, .tags-container > a:visited, .tags-container > a:hover {
     color: #319795;
 }
 
 .tags-container {
-    margin: 20px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
     border: 1px #CBD5E0 solid;
     padding: 5px;
     position: relative;
@@ -415,6 +423,10 @@ video {
     padding: 20px 5% 0%;
 }
 
+.upload-section > input {
+    margin: 0px 0px 10% 0px;
+}
+
 .upload-container {
     margin-top: 0px;
     margin-left: 5%;
@@ -426,6 +438,15 @@ video {
     background: #FFFFFF;
     border-radius: 4px;
     height: 80%;
+}
+
+.upload-section > button {
+    position: absolute;
+    bottom: 0;
+    right: 10%;
+    width: 100px;
+    height: 40px;
+    font-size: 18px;
 }
 
 .upload-title {
@@ -446,3 +467,9 @@ video {
 .dropzone {
     border: 2px dashed rgba(0, 0, 0, 0.3) !important;
 }
+
+.input-desc {
+    width: 100%;
+    height: 100px;
+}
+
