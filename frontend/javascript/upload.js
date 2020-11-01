@@ -28,12 +28,21 @@ function setupUpload() {
     var uploadZone = new dropzone("#videoUpload", {
         url: "/upload",
         autoProcessQueue: false,
-        uploadMultiple: false,
-        maxFiles: 1,
+        uploadMultiple: true,
+        maxFiles: 2,
 
         // The setting up of the dropzone
         init: function() {
             var myDropzone = this;
+
+            this.on("addedfile", function() {
+                if (!this.files[0].name.endsWith(".mp4")) {
+                    this.removeFile(this.files[0]);
+                }
+                if (this.files.length > 1 && !this.files[1].name.endsWith(".png")) {
+                    this.removeFile(this.files[1]);
+                }
+            });
 
             // First change the button to actually tell Dropzone to process the queue.
             $("#upload").on("click", function(e) {
@@ -71,3 +80,5 @@ function setupTags() {
 }
 
 window.setupUpload = setupUpload;
+
+
