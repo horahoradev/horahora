@@ -109,8 +109,3 @@ func getComments(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, &testComments)
 }
-
-func getUpload(c echo.Context) error {
-
-	return c.Render(http.StatusOK, "upload", nil)
-}
