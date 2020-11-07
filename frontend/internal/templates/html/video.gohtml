@@ -14,8 +14,8 @@
                     <span class="upload_date">{{.UploadDate}}</span>
                     <div class="float-right video-rating" id="rateYo"></div>
                     <p></p>
+                    <h5 class="container-title">Tags</h5>
                     <div class="tags-container">
-                        <h5>Tags</h5>
                         {{ range $tag := .Tags }}
                             <a class="tag plain-link" href="/tag/{{ $tag }}">{{ $tag }}</a>
                         {{ end }}

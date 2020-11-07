@@ -30,6 +30,7 @@ function setupUpload() {
         autoProcessQueue: false,
         uploadMultiple: true,
         maxFiles: 2,
+        timeout: 1000 * 300, // 5 mins, bit of a hack
 
         // The setting up of the dropzone
         init: function() {

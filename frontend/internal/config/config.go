@@ -78,7 +78,7 @@ func New() (*Config, error) {
 
 	// TODO: am I doing this right?
 	videoGRPCConn, err := grpc.Dial(config.VideoServiceGRPCAddress, grpc.WithInsecure(),
-		grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
+		//grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
 		grpc.WithUnaryInterceptor(grpc_middleware.ChainUnaryClient(
 			otgrpc.OpenTracingClientInterceptor(tracer),
 			grpc_retry.UnaryClientInterceptor(opts...)),
@@ -88,7 +88,7 @@ func New() (*Config, error) {
 	}
 
 	userGRPCConn, err := grpc.Dial(config.UserServiceGRPCAddress, grpc.WithInsecure(),
-		grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
+		//grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
 		grpc.WithUnaryInterceptor(grpc_middleware.ChainUnaryClient(
 			otgrpc.OpenTracingClientInterceptor(tracer),
 			grpc_retry.UnaryClientInterceptor(opts...)),
@@ -98,7 +98,7 @@ func New() (*Config, error) {
 	}
 
 	schedulerGRPCConn, err := grpc.Dial(config.SchedulerServiceGRPCAddress, grpc.WithInsecure(),
-		grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
+		//grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(opts...)),
 		grpc.WithUnaryInterceptor(grpc_middleware.ChainUnaryClient(
 			otgrpc.OpenTracingClientInterceptor(tracer),
 			grpc_retry.UnaryClientInterceptor(opts...)),
