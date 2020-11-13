@@ -516,6 +516,37 @@ func (v *VideoModel) MakeComment(userID, videoID, parentID int64, content string
 	return nil
 }
 
+type UnencodedVideo struct {
+	ID      uint32 `db:"id"`
+	NewLink string `db:"newLink"`
+}
+
+func (v UnencodedVideo) GetMPDUUID() string {
+	spl := strings.Split(v.NewLink, "/")
+	return spl[len(spl)-1]
+}
+
+func (v *VideoModel) GetUnencodedVideos() ([]UnencodedVideo, error) {
+	sql := "SELECT id, newLink FROM videos WHERE transcoded = false"
+	var videos []UnencodedVideo
+	err := v.db.Select(&videos, sql)
+	if err != nil {
+		return nil, err
+	}
+
+	return videos, nil
+}
+
+func (v *VideoModel) MarkVideoAsEncoded(uv UnencodedVideo) error {
+	sql := "UPDATE videos SET transcoded = true WHERE id = $1"
+	_, err := v.db.Exec(sql, uv.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
 	// lol bruh moment
 	// this is a hack... I'll probably keep it this way until we have actual downvotes though

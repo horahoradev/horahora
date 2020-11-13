@@ -36,6 +36,8 @@ import (
 	_ "github.com/google/uuid"
 )
 
+const uploadDir = "/videoservice/test_files/"
+
 var _ proto.VideoServiceServer = (*GRPCServer)(nil)
 
 type GRPCServer struct {
@@ -57,6 +59,9 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	// TODO: context and return
+	go g.transcodeAndUploadVideos()
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 		otgrpc.OpenTracingServerInterceptor(tracer))))
@@ -97,8 +102,6 @@ func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) 
 	log.Info("Handling video upload")
 
 	var video VideoUpload
-
-	uploadDir := "/videoservice/test_files/"
 
 	// UUID for tmp filename and all uploads provides probabilistic guarantee of uniqueness
 	id, err := uuid.NewUUID()
@@ -155,26 +158,27 @@ loop:
 
 	log.Infof("Finished receiving file data for %s", video.Meta.Meta.Title)
 
-	transcodeResults, err := dashutils.TranscodeAndGenerateManifest(video.FileData.Name(), g.Local)
-	if err != nil {
-		err := fmt.Errorf("failed to transcode and chunk. Err: %s", err)
-		log.Error(err)
-		return err
-	}
-
-	// S3? Nginx? Who knows...
+	// If not local, upload the thumbnail and original video before returning
 	if !g.Local {
-		err = g.UploadMPDSet(transcodeResults)
+		// FIXME did it again...
+		err = g.SendToOriginServer(video.FileData.Name()+".jpg", filepath.Base(video.FileData.Name()+".jpg"))
 		if err != nil {
-			err := fmt.Errorf("failed to upload to origin. Err: %s", err)
-			log.Error(err)
+			return err
+		}
+
+		// Upload the original video
+		err = g.SendToOriginServer(video.FileData.Name(), filepath.Base(video.FileData.Name()))
+		if err != nil {
 			return err
 		}
 	}
 
 	// This is MESSY
+	// thumbnail and original video locations are inferred from the mpd location (which is dumb), so it's written even though
+	// the video hasn't been transcoded/chunked and the mpd hasn't been uploaded yet
+	// a better solution will be provided in the future... I will fix this... (I'm keeping it backwards compatible for now)
 	// TODO: switch to struct for args
-	manifestLoc := fmt.Sprintf("%s/%s", g.OriginFQDN, filepath.Base(transcodeResults.ManifestPath))
+	manifestLoc := fmt.Sprintf("%s/%s", g.OriginFQDN, filepath.Base(video.FileData.Name()+".mpd"))
 
 	videoID, err := g.VideoModel.SaveForeignVideo(context.TODO(), video.Meta.Meta.Title, video.Meta.Meta.Description,
 		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, userproto.Site(video.Meta.Meta.OriginalSite),
@@ -208,6 +212,46 @@ func (g GRPCServer) ForeignVideoExists(ctx context.Context, foreignVideoCheck *p
 	return &resp, nil
 }
 
+// TODO: graceful shutdown or something, lock video acquisition
+func (g GRPCServer) transcodeAndUploadVideos() {
+	for {
+		videos, err := g.VideoModel.GetUnencodedVideos()
+		if err != nil {
+			log.Error("could not fetch unencoded videos. Err: %s", err)
+			continue
+		}
+
+		for _, video := range videos {
+			// distributed lock goes here
+
+			vid, err := g.fetchFromS3(video.GetMPDUUID())
+			if err != nil {
+				log.Error("could not fetch unencoded video id %d from s3. Err: %s", video.ID, err)
+				continue
+			}
+
+			transcodeResults, err := dashutils.TranscodeAndGenerateManifest(vid.Name(), g.Local)
+			if err != nil {
+				err := fmt.Errorf("failed to transcode and chunk. Err: %s", err)
+				log.Error(err)
+				continue
+			}
+
+			err = g.UploadMPDSet(transcodeResults)
+			if err != nil {
+				log.Error("failed to upload mpd set. Err: %s", err)
+				continue
+			}
+
+			err = g.VideoModel.MarkVideoAsEncoded(video)
+			if err != nil {
+				log.Error("failed to mark video as encoded. Err: %s", err)
+				continue
+			}
+		}
+	}
+}
+
 // UploadMPDSet uploads the files to S3. Files may be overwritten (but they're versioned so they're safe).
 // Need to ensure as a precondition that the video hasn't been uploaded before and the temp file ID hasn't been
 // used.
@@ -226,20 +270,38 @@ func (g GRPCServer) UploadMPDSet(d *dashutils.DASHVideo) error {
 		}
 	}
 
-	// Upload thumbnail
-	// FIXME did it again...
-	err = g.SendToOriginServer(d.ThumbnailPath, filepath.Base(d.ThumbnailPath))
-	if err != nil {
-		return err
-	}
-
-	// Upload the original video
-	err = g.SendToOriginServer(d.OriginalFilePath, filepath.Base(d.OriginalFilePath))
-	if err != nil {
-		return err
-	}
-
 	return nil
+}
+
+func (g GRPCServer) fetchFromS3(id string) (*os.File, error) {
+	getReq := &s3.GetObjectInput{
+		Bucket: &g.BucketName,
+		Key:    &id,
+	}
+
+	getObjReq := g.S3Client.GetObjectRequest(getReq)
+	res, err := getObjReq.Send(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	// TODO: close body?
+
+	vid, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	f, err := ioutil.TempFile(uploadDir, "*")
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = f.Write(vid)
+	if err != nil {
+		return nil, err
+	}
+
+	return f, nil
 }
 
 func (g GRPCServer) SendToOriginServer(path, desiredFilename string) error {
