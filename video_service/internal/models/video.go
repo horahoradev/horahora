@@ -518,12 +518,13 @@ func (v *VideoModel) MakeComment(userID, videoID, parentID int64, content string
 
 type UnencodedVideo struct {
 	ID      uint32 `db:"id"`
-	NewLink string `db:"newLink"`
+	NewLink string `db:"newlink"`
 }
 
 func (v UnencodedVideo) GetMPDUUID() string {
 	spl := strings.Split(v.NewLink, "/")
-	return spl[len(spl)-1]
+	r := spl[len(spl)-1]
+	return r[:len(r)-4]
 }
 
 func (v *VideoModel) GetUnencodedVideos() ([]UnencodedVideo, error) {

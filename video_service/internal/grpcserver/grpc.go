@@ -16,6 +16,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/horahoradev/horahora/video_service/internal/dashutils"
 
@@ -215,18 +216,24 @@ func (g GRPCServer) ForeignVideoExists(ctx context.Context, foreignVideoCheck *p
 // TODO: graceful shutdown or something, lock video acquisition
 func (g GRPCServer) transcodeAndUploadVideos() {
 	for {
+		time.Sleep(time.Second * 10)
 		videos, err := g.VideoModel.GetUnencodedVideos()
 		if err != nil {
-			log.Error("could not fetch unencoded videos. Err: %s", err)
+			log.Errorf("could not fetch unencoded videos. Err: %s", err)
 			continue
 		}
 
 		for _, video := range videos {
+			time.Sleep(time.Second * 10)
+
 			// distributed lock goes here
 
-			vid, err := g.fetchFromS3(video.GetMPDUUID())
+			log.Infof("Transcoding/chunking video id %d uuid %s", video.ID, video.GetMPDUUID())
+			var vid *os.File
+
+			vid, err = g.fetchFromS3(video.GetMPDUUID())
 			if err != nil {
-				log.Error("could not fetch unencoded video id %d from s3. Err: %s", video.ID, err)
+				log.Errorf("could not fetch unencoded video id %d from s3. Err: %s", video.ID, err)
 				continue
 			}
 
@@ -239,15 +246,17 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 
 			err = g.UploadMPDSet(transcodeResults)
 			if err != nil {
-				log.Error("failed to upload mpd set. Err: %s", err)
+				log.Errorf("failed to upload mpd set. Err: %s", err)
 				continue
 			}
 
 			err = g.VideoModel.MarkVideoAsEncoded(video)
 			if err != nil {
-				log.Error("failed to mark video as encoded. Err: %s", err)
+				log.Errorf("failed to mark video as encoded. Err: %s", err)
 				continue
 			}
+
+			log.Infof("Video %d has been successfully encoded", video.ID)
 		}
 	}
 }
@@ -284,19 +293,19 @@ func (g GRPCServer) fetchFromS3(id string) (*os.File, error) {
 	if err != nil {
 		return nil, err
 	}
-	// TODO: close body?
+	defer res.Body.Close()
 
-	vid, err := ioutil.ReadAll(res.Body)
+	vidData, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	f, err := ioutil.TempFile(uploadDir, "*")
+	f, err := os.OpenFile(uploadDir+id, os.O_APPEND|os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = f.Write(vid)
+	_, err = f.Write(vidData)
 	if err != nil {
 		return nil, err
 	}
