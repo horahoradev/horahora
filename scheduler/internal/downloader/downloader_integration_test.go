@@ -20,7 +20,7 @@ func TestConcurrentVideoDownloads(t *testing.T) {
 
 	dlChan := make(chan *models.VideoDlRequest, 10)
 
-	dlSuccessChannel := make(chan Video, 5)
+	dlSuccessChannel := make(chan VideoJSON, 5)
 	downloader := New(dlChan, "./", conf.Client, 5, dlSuccessChannel)
 
 	ctx, cancel := context.WithCancel(context.Background())
