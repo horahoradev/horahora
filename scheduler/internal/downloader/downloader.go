@@ -82,6 +82,7 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 
 	// refresh cache if backoff period is up
 	if !isBackingOff {
+		log.Infof("Backoff period expired for download request %s, syncing all", dlReq.Id)
 		itemsAdded, err := d.syncDownloadList(dlReq)
 		if err != nil {
 			return err
@@ -98,6 +99,8 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 				return err
 			}
 		}
+	} else {
+		log.Infof("Content archival request %s is backing off, using cached video list", dlReq.Id)
 	}
 
 	videos, err := dlReq.FetchVideoList()
@@ -140,7 +143,7 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 			}
 
 			if videoExists.Exists {
-				log.Errorf("VideoJSON ID %s (%s) already exists", video.ID)
+				log.Errorf("Video ID %s already exists", video.ID)
 				break currVideoLoop
 			}
 
@@ -189,7 +192,7 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 func (d *downloader) syncDownloadList(dlReq *models.VideoDlRequest) (bool, error) {
 	videos, err := d.getDownloadList(dlReq)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("could not fetch download list. Err: %s", err)
 	}
 
 	var newItemsAdded bool
@@ -198,7 +201,7 @@ func (d *downloader) syncDownloadList(dlReq *models.VideoDlRequest) (bool, error
 		// TODO: batch?
 		itemsAdded, err := dlReq.AddVideo(video.ID, video.URL)
 		if err != nil {
-			return false, err
+			return false, fmt.Errorf("could not add video. Err: %s", err)
 		}
 
 		if itemsAdded {
@@ -228,7 +231,6 @@ func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]VideoJSON,
 	// I assume that the list provided by youtube-dl will be in descending order by upload date.
 	// Download by upload date asc so that we can resume at newest download.
 	spl := strings.Split(string(payload), "\n")
-	log.Infof("For category %s payload (Len %d): %s", dlReq.ContentValue, len(spl), spl)
 	for i := len(spl) - 2; i >= 0; i-- {
 		line := spl[i]
 		var video VideoJSON

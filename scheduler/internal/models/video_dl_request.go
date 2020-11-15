@@ -42,9 +42,9 @@ var NeverDownloaded error = errors.New("no video for category")
 func (v *VideoDlRequest) GetLatestVideoForRequest() (*string, error) {
 
 	curs, err := v.Db.Query("SELECT videos.id from videos INNER JOIN downloads ON videos.download_id = downloads.id "+
-		"WHERE attribute_type=$1 AND attribute_value=$2 AND downloads.website=$3 AND videos.upload_time IS NOT NULL"+
+		"WHERE attribute_type=$1 AND attribute_value=$2 AND downloads.website=$3 AND videos.upload_time IS NOT NULL "+
 		"ORDER BY upload_time desc LIMIT 1",
-		v.ContentType, v.ContentValue, v.Website.String())
+		v.ContentType, v.ContentValue, v.Website)
 	if err != nil {
 		return nil, err
 	}
@@ -79,18 +79,14 @@ func (v *VideoDlRequest) IsBackingOff() (bool, error) {
 	var backoffFactor int
 	sql := "SELECT last_synced, backoff_factor FROM downloads WHERE id = $1"
 
-	rows, err := v.Db.Query(sql, v.Id)
-	if err != nil {
-		return false, err
-	}
-
-	err = rows.Scan(&lastSynced, &backoffFactor)
+	rows := v.Db.QueryRow(sql, v.Id)
+	err := rows.Scan(&lastSynced, &backoffFactor)
 	if err != nil {
 		return false, err
 	}
 
 	// I did what I had to do...
-	return time.Now().Sub(lastSynced.Add(MINIMUM_BACKOFF_TIME*time.Duration(backoffFactor))) >= 0, nil
+	return time.Now().Sub(lastSynced.Add(MINIMUM_BACKOFF_TIME*time.Duration(backoffFactor))) < 0, nil
 }
 
 func (v *VideoDlRequest) ReportSyncHit() error {
@@ -117,7 +113,7 @@ func (v *VideoDlRequest) ReportSyncMiss() error {
 		return err
 	}
 
-	sql := "UPDATE downloads SET backoff_factor = $1 WHERE id = $$2"
+	sql := "UPDATE downloads SET backoff_factor = $1 WHERE id = $2"
 	_, err = v.Db.Exec(sql, min(MAXIMUM_BACKOFF_FACTOR, backoff_factor*2), v.Id)
 	if err != nil {
 		tx.Rollback()
@@ -133,8 +129,9 @@ func (v *VideoDlRequest) ReportSyncMiss() error {
 }
 
 func (v *VideoDlRequest) SetDownloaded(videoID string) error {
-	sql := "UPDATE videos SET download_id = $1, upload_time =  Now() WHERE video_ID = $2 AND id IN (select videos.id FROM videos INNER JOIN downloads " +
-		"WHERE website = $3)"
+	sql := "UPDATE videos SET download_id = $1, upload_time =  Now() WHERE video_ID = $2 AND id IN (select videos.id FROM videos " +
+		"INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id INNER JOIN downloads ON downloads_to_videos.download_id = downloads.id " +
+		"WHERE videos.website = $3)"
 	_, err := v.Db.Exec(sql, v.Id, videoID, v.Website)
 	return err
 }
@@ -153,7 +150,7 @@ func (v *VideoDlRequest) AddVideo(videoID, url string) (bool, error) {
 	}
 
 	var id uint32
-	sql := "INSERT INTO videos (video_ID, website, url) VALUES ($1, $2, $3)" +
+	sql := "INSERT INTO videos (video_ID, website, url) VALUES ($1, $2, $3) " +
 		"ON CONFLICT (video_ID, website) DO UPDATE set website = EXCLUDED.website RETURNING id"
 	row := tx.QueryRow(sql, videoID, v.Website, url)
 	err = row.Scan(&id)
@@ -164,11 +161,19 @@ func (v *VideoDlRequest) AddVideo(videoID, url string) (bool, error) {
 	sql = "INSERT INTO downloads_to_videos (download_id, video_id) VALUES ($1, $2) ON CONFLICT DO NOTHING"
 	res, err := tx.Exec(sql, v.Id, id)
 	if err != nil {
+		tx.Rollback()
 		return false, err
 	}
 
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
+		tx.Rollback()
+		return false, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
 		return false, err
 	}
 
@@ -176,14 +181,14 @@ func (v *VideoDlRequest) AddVideo(videoID, url string) (bool, error) {
 }
 
 type Video struct {
-	ID  string `db:"id"`
+	ID  string `db:"video_id"`
 	URL string `db:"url"`
 }
 
 func (v *VideoDlRequest) FetchVideoList() ([]Video, error) {
 	var videos []Video
-	sql := "SELECT video_id, url FROM videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id" +
-		"WHERE download_id = $1"
+	sql := "SELECT videos.video_id, url FROM videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id " +
+		"WHERE downloads_to_videos.download_id = $1"
 	err := v.Db.Select(&videos, sql, v.Id)
 	if err != nil {
 		return nil, err
