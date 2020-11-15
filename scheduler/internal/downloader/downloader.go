@@ -8,15 +8,13 @@ import (
 	"github.com/horahoradev/horahora/scheduler/internal/models"
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type downloader struct {
@@ -24,10 +22,10 @@ type downloader struct {
 	outputLoc           string
 	videoClient         videoproto.VideoServiceClient
 	numberOfRetries     int
-	successfulDownloads chan Video
+	successfulDownloads chan models.Video
 }
 
-func New(dlQueue chan *models.VideoDlRequest, outputLoc string, client videoproto.VideoServiceClient, numberOfRetries int, successfulDownloads chan Video) downloader {
+func New(dlQueue chan *models.VideoDlRequest, outputLoc string, client videoproto.VideoServiceClient, numberOfRetries int, successfulDownloads chan models.Video) downloader {
 	return downloader{
 		downloadQueue:       dlQueue,
 		outputLoc:           outputLoc,
@@ -66,7 +64,7 @@ func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
 	}
 }
 
-type Video struct {
+type VideoJSON struct {
 	Type  string `json:"_type"`
 	URL   string `json:"url"`
 	IeKey string `json:"ie_key"`
@@ -77,7 +75,32 @@ type Video struct {
 // Deals with a particular download request
 func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlRequest) error {
 	// TODO: caching download list, lol
-	videos, err := d.getDownloadList(dlReq)
+	isBackingOff, err := dlReq.IsBackingOff()
+	if err != nil {
+		return err
+	}
+
+	// refresh cache if backoff period is up
+	if !isBackingOff {
+		itemsAdded, err := d.syncDownloadList(dlReq)
+		if err != nil {
+			return err
+		}
+
+		if itemsAdded {
+			err = dlReq.ReportSyncHit()
+			if err != nil {
+				return err
+			}
+		} else {
+			err = dlReq.ReportSyncMiss()
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	videos, err := dlReq.FetchVideoList()
 	if err != nil {
 		return err
 	}
@@ -117,11 +140,11 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 			}
 
 			if videoExists.Exists {
-				log.Errorf("Video ID %s (title %s) already exists", video.ID, video.Title)
+				log.Errorf("VideoJSON ID %s (%s) already exists", video.ID)
 				break currVideoLoop
 			}
 
-			// Video does not yet exist, try to acquire lock
+			// VideoJSON does not yet exist, try to acquire lock
 			err = dlReq.AcquireLockForVideo(video.ID)
 			if err != nil {
 				// If we can't get the lock, just skip the video in the current archive request
@@ -142,7 +165,7 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 					continue
 				}
 
-				err := dlReq.SetLatestVideo(video.ID, time.Now())
+				err := dlReq.SetDownloaded(video.ID)
 
 				// TODO: handle better? retry?
 				if err != nil {
@@ -163,7 +186,30 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 	return nil
 }
 
-func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]Video, error) {
+func (d *downloader) syncDownloadList(dlReq *models.VideoDlRequest) (bool, error) {
+	videos, err := d.getDownloadList(dlReq)
+	if err != nil {
+		return false, err
+	}
+
+	var newItemsAdded bool
+
+	for _, video := range videos {
+		// TODO: batch?
+		itemsAdded, err := dlReq.AddVideo(video.ID, video.URL)
+		if err != nil {
+			return false, err
+		}
+
+		if itemsAdded {
+			newItemsAdded = true
+		}
+	}
+
+	return newItemsAdded, nil
+}
+
+func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]VideoJSON, error) {
 	args, err := getVideoListString(dlReq)
 	if err != nil {
 		return nil, err
@@ -177,7 +223,7 @@ func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]Video, err
 		return nil, err
 	}
 
-	var videos []Video
+	var videos []VideoJSON
 	// The json isn't formatted as a list LMAO please FIXME
 	// I assume that the list provided by youtube-dl will be in descending order by upload date.
 	// Download by upload date asc so that we can resume at newest download.
@@ -185,7 +231,7 @@ func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]Video, err
 	log.Infof("For category %s payload (Len %d): %s", dlReq.ContentValue, len(spl), spl)
 	for i := len(spl) - 2; i >= 0; i-- {
 		line := spl[i]
-		var video Video
+		var video VideoJSON
 		err = json.Unmarshal([]byte(line), &video)
 
 		if err != nil {
@@ -204,7 +250,7 @@ func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]Video, err
 	return videos, nil
 }
 
-func (d *downloader) downloadVideo(video Video) (*YTDLMetadata, error) {
+func (d *downloader) downloadVideo(video models.Video) (*YTDLMetadata, error) {
 	log.Infof("Downloading %s", video)
 
 	args, err := d.getVideoDownloadArgs(&video)
@@ -251,7 +297,7 @@ func (d *downloader) downloadVideo(video Video) (*YTDLMetadata, error) {
 }
 
 // FIXME: this function is quite long and complicated
-func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video Video, website proto.SupportedSite) error {
+func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video models.Video, website proto.SupportedSite) error {
 	stream, err := d.videoClient.UploadVideo(ctx)
 	if err != nil {
 		return fmt.Errorf("could not start video upload stream. Err: %s", err)
@@ -354,7 +400,7 @@ loop:
 		return fmt.Errorf("received error after closing stream: %s", err)
 	}
 
-	log.Infof("Video %s has been uploaded as video ID %d", video.URL, resp.VideoID)
+	log.Infof("VideoJSON %s has been uploaded as video ID %d", video.URL, resp.VideoID)
 	return nil
 }
 
@@ -434,7 +480,7 @@ func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 	return args, nil
 }
 
-func (d *downloader) getVideoDownloadArgs(video *Video) ([]string, error) {
+func (d *downloader) getVideoDownloadArgs(video *models.Video) ([]string, error) {
 	args := []string{
 		"/scheduler/youtube-dl/youtube_dl/__main__.py",
 		video.URL,
