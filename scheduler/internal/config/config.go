@@ -62,6 +62,8 @@ func New() (*config, error) {
 		log.Fatalf("Could not connect to postgres. Err: %s", err)
 	}
 
+	config.Conn.SetMaxOpenConns(50)
+
 	err = env.Parse(&config.RedisInfo)
 	if err != nil {
 		return nil, err
