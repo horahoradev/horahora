@@ -3,6 +3,8 @@ Horahora is a microservice-based video hosting website with additional functiona
 
 This project is a WIP, and under active development. The MVP for local use is not yet complete, but nearly done. Contributions and suggestions are always welcome! If you have any questions regarding this project, feel free to contact me either via discord or email.
 
+Discord room: https://discord.gg/VqMtR4T
+
 ## Architecture
 ![](Architectural_Drawing.png)
 
