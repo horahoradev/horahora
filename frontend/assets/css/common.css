@@ -149,8 +149,13 @@ h5 {
 }
 
 .video-thumb {
-    width: 100%;
+    width: 145px;
+    height: 100px;
     border-radius: 4px;
+}
+
+.text-centered {
+    text-align: center;
 }
 
 .video-section {
@@ -233,6 +238,17 @@ video {
 .user-content {
     display: inline-block;
     vertical-align: top;
+    word-wrap: break-word;
+    widtH: 128px;
+}
+
+.user-description {
+    display: inline-block;
+    vertical-align: top;
+    word-wrap: break-word;
+    /*this is bad, i'll fix this later... */
+    width: calc(93% - 128px);
+    padding-left: 10px;
 }
 
 .user-content :nth-child(2){

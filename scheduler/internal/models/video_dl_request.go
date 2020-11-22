@@ -41,7 +41,7 @@ var NeverDownloaded error = errors.New("no video for category")
 // Only relevant for tags
 func (v *VideoDlRequest) GetLatestVideoForRequest() (*string, error) {
 
-	curs, err := v.Db.Query("SELECT videos.id from videos INNER JOIN downloads ON videos.download_id = downloads.id "+
+	curs, err := v.Db.Query("SELECT videos.video_id from videos INNER JOIN downloads ON videos.download_id = downloads.id "+
 		"WHERE attribute_type=$1 AND attribute_value=$2 AND downloads.website=$3 AND videos.upload_time IS NOT NULL "+
 		"ORDER BY upload_time desc LIMIT 1",
 		v.ContentType, v.ContentValue, v.Website)
@@ -52,7 +52,10 @@ func (v *VideoDlRequest) GetLatestVideoForRequest() (*string, error) {
 	var videoIDList []string
 	for curs.Next() {
 		var i string
-		curs.Scan(&i)
+		err := curs.Scan(&i)
+		if err != nil {
+			return nil, err
+		}
 		videoIDList = append(videoIDList, i)
 	}
 

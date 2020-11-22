@@ -94,20 +94,6 @@ func CreateJWT(payload JWTPayload, privateKey *rsa.PrivateKey) (string, error) {
 	serialized := object.FullSerialize()
 
 	return serialized, nil
-	// Parse the serialized, protected JWS object. An error would indicate that
-	// the given input did not represent a valid message.
-	//object, err = ParseSigned(serialized)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//// Now we can verify the signature on the payload. An error here would
-	//// indicate the the message failed to verify, e.g. because the signature was
-	//// broken or the message was tampered with.
-	//output, err := object.Verify(&privateKey.PublicKey)
-	//if err != nil {
-	//	panic(err)
-	//}
 }
 
 func ValidateJWT(jwt string, privateKey rsa.PrivateKey) (int64, error) {

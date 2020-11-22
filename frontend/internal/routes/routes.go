@@ -67,20 +67,21 @@ type Comment struct {
 }
 
 type VideoDetail struct {
-	L               LoggedInUserData
-	Title           string
-	MPDLoc          string
-	Views           uint64
-	Rating          float64
-	VideoID         int64
-	AuthorID        int64
-	Username        string
-	UserDescription string
-	UserSubscribers uint64
-	ProfilePicture  string
-	UploadDate      string // should be a datetime
-	Comments        []Comment
-	Tags            []string
+	L                LoggedInUserData
+	Title            string
+	MPDLoc           string
+	Views            uint64
+	Rating           float64
+	VideoID          int64
+	AuthorID         int64
+	Username         string
+	UserDescription  string
+	VideoDescription string
+	UserSubscribers  uint64
+	ProfilePicture   string
+	UploadDate       string // should be a datetime
+	Comments         []Comment
+	Tags             []string
 }
 
 type LoggedInUserData struct {
@@ -482,43 +483,24 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 	}
 
 	data := VideoDetail{
-		L:               LoggedInUserData{},
-		Title:           videoInfo.VideoTitle,
-		MPDLoc:          videoInfo.VideoLoc, // FIXME: fix this in videoservice LOL this is embarrassing
-		Views:           videoInfo.Views,
-		Rating:          rating,
-		AuthorID:        videoInfo.AuthorID, // TODO
-		Username:        videoInfo.AuthorName,
-		UserDescription: "", // TODO: not implemented yet
-		UserSubscribers: 0,  // TODO: not implemented yet
-		ProfilePicture:  "/static/images/placeholder1.jpg",
-		UploadDate:      videoInfo.UploadDate,
-		VideoID:         videoInfo.VideoID,
-		Comments:        nil,
-		Tags:            videoInfo.Tags,
+		L:                LoggedInUserData{},
+		Title:            videoInfo.VideoTitle,
+		MPDLoc:           videoInfo.VideoLoc, // FIXME: fix this in videoservice LOL this is embarrassing
+		Views:            videoInfo.Views,
+		Rating:           rating,
+		AuthorID:         videoInfo.AuthorID, // TODO
+		Username:         videoInfo.AuthorName,
+		UserDescription:  "", // TODO: not implemented yet
+		VideoDescription: videoInfo.Description,
+		UserSubscribers:  0, // TODO: not implemented yet
+		ProfilePicture:   "/static/images/placeholder1.jpg",
+		UploadDate:       videoInfo.UploadDate,
+		VideoID:          videoInfo.VideoID,
+		Comments:         nil,
+		Tags:             videoInfo.Tags,
 	}
 
 	addUserProfileInfo(c, &data.L, v.u)
-
-	//data := VideoDetail{
-	//	Title:           "My cool video",
-	//	MPDLoc:          "",
-	//	Views:           100,
-	//	Rating:          10.0,
-	//	AuthorID:        4,
-	//	Username:        "testuser",
-	//	UserDescription: "we did it reddit",
-	//	ProfilePicture:  "/static/images/placeholder1.jpg",
-	//	UploadDate:      time.Now(),
-	//	UserSubscribers: 100,
-	//	Comments: []Comment{
-	//		{
-	//			ProfilePicture: "/static/images/placeholder1.jpg",
-	//			Username:       "testuser2",
-	//			Comment:        "WOW",
-	//		},
-	//	},
-	//}
 
 	return c.Render(http.StatusOK, "video", data)
 }
@@ -753,7 +735,7 @@ func (r RouteHandler) getComments(c echo.Context) error {
 		return err
 	}
 
-	var commentList []CommentData
+	commentList := make([]CommentData, 0)
 
 	for _, comment := range resp.Comments {
 		commentData := CommentData{

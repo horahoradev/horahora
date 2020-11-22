@@ -56,7 +56,7 @@ func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
 		case r := <-d.downloadQueue:
 			err := d.downloadRequest(ctx, r)
 			if err != nil {
-				log.Errorf("Encountered error in downloader. Err: %s", err)
+				log.Errorf("Encountered error in downloader. Err: %s. Continuing...", err)
 				// FIXME: increase robustness
 				//return err
 			}
@@ -402,7 +402,7 @@ loop:
 		return fmt.Errorf("received error after closing stream: %s", err)
 	}
 
-	log.Infof("VideoJSON %s has been uploaded as video ID %d", video.URL, resp.VideoID)
+	log.Infof("Video %s has been uploaded as video ID %d", video.URL, resp.VideoID)
 	return nil
 }
 

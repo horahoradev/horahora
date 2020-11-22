@@ -94,7 +94,7 @@ module "eks_workers" {
 
   instance_type                          = "c5.large"
   min_size                               = 1
-  max_size                               = 2
+  max_size                               = 1
   cpu_utilization_high_threshold_percent = 60
   cpu_utilization_low_threshold_percent  = 20
 
@@ -103,6 +103,21 @@ module "eks_workers" {
   cluster_certificate_authority_data = module.eks_cluster.eks_cluster_certificate_authority_data
   cluster_name                       = "horahora-${var.environment}-cluster"
   associate_public_ip_address        = true
+
+  mixed_instances_policy = {
+    instances_distribution = {
+      on_demand_base_capacity                  = 0
+      on_demand_allocation_strategy            = "prioritized"
+      spot_allocation_strategy                 = "lowest-price"
+      spot_instance_pools                      = 2
+      on_demand_percentage_above_base_capacity = 0
+      spot_max_price                           = ""
+    }
+    override = [{
+      instance_type     = "c5.large"
+      weighted_capacity = 1
+    }]
+  }
 
   key_name = "bastion"
 }

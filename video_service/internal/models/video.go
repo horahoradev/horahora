@@ -323,6 +323,9 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 		ds = ds.Where(goqu.C("is_approved").Eq(true))
 	}
 
+	// Only show transcoded videos
+	ds = ds.Where(goqu.C("transcoded").Eq(true))
+
 	// TODO: ensure that this is safe from sql injection
 	// Maybe use prepared mode?
 	sql, _, err := ds.ToSQL()
