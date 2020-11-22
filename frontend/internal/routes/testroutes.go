@@ -64,14 +64,16 @@ func getTestVideo(c echo.Context) error {
 			Username: "testuser",
 			UserID:   1,
 		},
-		Title:           "[MAD] Barack Obama x スカイハイ",
-		MPDLoc:          "",
+		Title:  "[MAD] Barack Obama x スカイハイ",
+		MPDLoc: "",
+		VideoDescription: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+			"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
 		Views:           0,
 		Rating:          10.0,
 		AuthorID:        1, // TODO
 		Username:        "testuser",
-		UserDescription: "", // TODO: not implemented yet
-		UserSubscribers: 0,  // TODO: not implemented yet
+		UserDescription: "WOW this is my user description...", // TODO: not implemented yet
+		UserSubscribers: 0,                                    // TODO: not implemented yet
 		ProfilePicture:  "/static/images/placeholder1.jpg",
 		UploadDate:      time.Now().Format("2006-01-02"),
 		VideoID:         1,

@@ -28,14 +28,13 @@
             <div class="profile-section bottom-border">
                 <div class="inner-profile-section">
                     <div class="user-content">
-                        <img class="pfp" src="{{.ProfilePicture}}">
+                        <a class="horahora-link" href="/users/{{.AuthorID}}">
+                            <img class="pfp" src="{{.ProfilePicture}}">
+                            <p class="text-centered">{{.Username}}</p>
+                        </a>
                     </div>
-                    <div class="user-content">
-                        <a href="/users/{{.AuthorID}}">{{.Username}}</a>
-                        <p></p>
-                        <i>{{.UserSubscribers}} subscribers</i>
-                        <p></p>
-                        {{.UserDescription}}
+                    <div class="user-description">
+                        {{.VideoDescription}}
                     </div>
                 </div>
             </div>
