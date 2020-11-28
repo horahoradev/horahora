@@ -213,6 +213,8 @@ func (g GRPCServer) ForeignVideoExists(ctx context.Context, foreignVideoCheck *p
 	return &resp, nil
 }
 
+const NUM_TRANSCODING_WORKERS = 1
+
 // TODO: graceful shutdown or something, lock video acquisition
 func (g GRPCServer) transcodeAndUploadVideos() {
 	for {
@@ -223,40 +225,45 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 			continue
 		}
 
-		for _, video := range videos {
+		for _, v := range videos {
 			time.Sleep(time.Second * 10)
 
-			// distributed lock goes here
+			func(video models.UnencodedVideo) {
+				// TODO: distributed lock goes here
 
-			log.Infof("Transcoding/chunking video id %d uuid %s", video.ID, video.GetMPDUUID())
-			var vid *os.File
+				log.Infof("Transcoding/chunking video id %d uuid %s", video.ID, video.GetMPDUUID())
+				var vid *os.File
 
-			vid, err = g.fetchFromS3(video.GetMPDUUID())
-			if err != nil {
-				log.Errorf("could not fetch unencoded video id %d from s3. Err: %s", video.ID, err)
-				continue
-			}
+				vid, err = g.fetchFromS3(video.GetMPDUUID())
 
-			transcodeResults, err := dashutils.TranscodeAndGenerateManifest(vid.Name(), g.Local)
-			if err != nil {
-				err := fmt.Errorf("failed to transcode and chunk. Err: %s", err)
-				log.Error(err)
-				continue
-			}
+				if err != nil {
+					log.Errorf("could not fetch unencoded video id %d from s3. Err: %s", video.ID, err)
+					return
+				} else {
+					defer vid.Close()
+				}
 
-			err = g.UploadMPDSet(transcodeResults)
-			if err != nil {
-				log.Errorf("failed to upload mpd set. Err: %s", err)
-				continue
-			}
+				transcodeResults, err := dashutils.TranscodeAndGenerateManifest(vid.Name(), g.Local)
+				if err != nil {
+					err := fmt.Errorf("failed to transcode and chunk. Err: %s", err)
+					log.Error(err)
+					return
+				}
 
-			err = g.VideoModel.MarkVideoAsEncoded(video)
-			if err != nil {
-				log.Errorf("failed to mark video as encoded. Err: %s", err)
-				continue
-			}
+				err = g.UploadMPDSet(transcodeResults)
+				if err != nil {
+					log.Errorf("failed to upload mpd set. Err: %s", err)
+					return
+				}
 
-			log.Infof("Video %d has been successfully encoded", video.ID)
+				err = g.VideoModel.MarkVideoAsEncoded(video)
+				if err != nil {
+					log.Errorf("failed to mark video as encoded. Err: %s", err)
+					return
+				}
+
+				log.Infof("Video %d has been successfully encoded", video.ID)
+			}(v)
 		}
 	}
 }
@@ -295,19 +302,34 @@ func (g GRPCServer) fetchFromS3(id string) (*os.File, error) {
 	}
 	defer res.Body.Close()
 
-	vidData, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	f, err := os.OpenFile(uploadDir+id, os.O_APPEND|os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = f.Write(vidData)
-	if err != nil {
-		return nil, err
+loop:
+	for true {
+		buf := make([]byte, 1024*1024*1)
+		n, err := res.Body.Read(buf)
+
+		switch {
+		case n == 0 && err == io.EOF:
+			break loop
+		case err != io.EOF && err != nil:
+			err = fmt.Errorf("could not read from S3 for transcoding. Err: %s", err)
+			log.Error(err)
+			f.Close()
+			return nil, err
+		}
+
+		// Truncate
+		buf = buf[:n]
+
+		_, err = f.Write(buf)
+		if err != nil {
+			f.Close()
+			return nil, err
+		}
 	}
 
 	return f, nil

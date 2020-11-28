@@ -72,6 +72,11 @@ spec:
           image: 908221837281.dkr.ecr.us-west-1.amazonaws.com/videoservice:latest
 #          command: ["/go/bin/dlv"]
 #          args: ["--listen=:39002", "--headless=true", "--api-version=2", "exec", "./videoservice"]
+          resources:
+            limits:
+              memory: 3044Mi
+            requests:
+              memory: 256Mi
           ports:
             - containerPort: 7777
           env:
@@ -319,6 +324,23 @@ spec:
   loadBalancerSourceRanges:
   - "217.138.0.0/16"
   - "0.0.0.0/0"
+
+
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: frontend-svc
+#spec:
+#  type: NodePort
+#  selector:
+#    app: frontend
+#  ports:
+#    # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
+#    - port: 8082
+#      targetPort: 8082
+#      # Optional field
+#      # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+#      nodePort: 30007
 
 # https://aws.amazon.com/premiumsupport/knowledge-center/eks-cidr-ip-address-loadbalancer/
 #---

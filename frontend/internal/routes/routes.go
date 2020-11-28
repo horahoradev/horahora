@@ -895,6 +895,7 @@ func (r RouteHandler) upload(c echo.Context) error {
 		return err
 	}
 
+	// TODO: rewrite me, this isn't memory efficient
 	videoBytes, err := ioutil.ReadAll(videoFile)
 	if err != nil {
 		return err

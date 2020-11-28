@@ -372,12 +372,14 @@ loop:
 		n, err := file.Read(buf)
 
 		switch {
-		case err == io.EOF:
+		// I think it's fine to check for EOF and no n==0, but just in case...
+		case n == 0 && err == io.EOF:
 			break loop
-		case err != nil:
+		case err != io.EOF && err != nil:
 			return fmt.Errorf("could not read from file. Err: %s", err)
 		}
 
+		// Truncate
 		buf = buf[:n]
 
 		dataPayload := videoproto.InputVideoChunk{
