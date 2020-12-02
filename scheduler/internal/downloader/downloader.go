@@ -490,6 +490,7 @@ func (d *downloader) getVideoDownloadArgs(video *models.Video) ([]string, error)
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
+		""
 		"-o",
 		fmt.Sprintf("%s/%s", d.outputLoc, "%(id)s.%(ext)s"),
 	}
