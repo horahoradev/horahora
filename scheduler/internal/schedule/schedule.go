@@ -64,7 +64,7 @@ func (p *poller) dequeueFromDatabase(ctx context.Context, numItems int) ([]*mode
 	}
 
 	rows, err := tx.Query("SELECT id, website, attribute_type, attribute_value FROM downloads " +
-		"WHERE lock < NOW() - INTERVAL '30 minutes' OR lock IS NULL ORDER BY last_polled DESC limit 1")
+		"WHERE lock < NOW() - INTERVAL '10 minutes' OR lock IS NULL ORDER BY last_polled DESC limit 1")
 	if err != nil {
 		return nil, err
 	}

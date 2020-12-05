@@ -41,6 +41,7 @@ var NeverDownloaded error = errors.New("no video for category")
 // Only relevant for tags
 func (v *VideoDlRequest) GetLatestVideoForRequest() (*string, error) {
 
+	// Doesn't appear to be working
 	curs, err := v.Db.Query("SELECT videos.video_id from videos INNER JOIN downloads ON videos.download_id = downloads.id "+
 		"WHERE attribute_type=$1 AND attribute_value=$2 AND downloads.website=$3 AND videos.upload_time IS NOT NULL "+
 		"ORDER BY upload_time desc LIMIT 1",
@@ -191,7 +192,7 @@ type Video struct {
 func (v *VideoDlRequest) FetchVideoList() ([]Video, error) {
 	var videos []Video
 	sql := "SELECT videos.video_id, url FROM videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id " +
-		"WHERE downloads_to_videos.download_id = $1"
+		"WHERE downloads_to_videos.download_id = $1 ORDER BY CHAR_LENGTH(videos.video_ID) DESC, videos.video_ID desc"
 	err := v.Db.Select(&videos, sql, v.Id)
 	if err != nil {
 		return nil, err
