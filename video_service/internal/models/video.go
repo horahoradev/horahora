@@ -531,7 +531,8 @@ func (v UnencodedVideo) GetMPDUUID() string {
 }
 
 func (v *VideoModel) GetUnencodedVideos() ([]UnencodedVideo, error) {
-	sql := "SELECT id, newLink FROM videos WHERE transcoded = false"
+	// Newest videos first
+	sql := "SELECT id, newLink FROM videos WHERE transcoded = false ORDER BY upload_date desc LIMIT 100"
 	var videos []UnencodedVideo
 	err := v.db.Select(&videos, sql)
 	if err != nil {

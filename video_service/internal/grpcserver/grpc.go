@@ -95,8 +95,9 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 }
 
 type VideoUpload struct {
-	Meta     *proto.InputVideoChunk_Meta
-	FileData *os.File
+	Meta         *proto.InputVideoChunk_Meta
+	FileData     *os.File
+	MetaFileData *os.File
 }
 
 func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) error {
@@ -118,7 +119,24 @@ func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) 
 		return err
 	}
 
+	// This is awkward but it could be worse
+	metaTmp, err := ioutil.TempFile(uploadDir, id.String()+".json")
+	if err != nil {
+		err = fmt.Errorf("could not create meta tmp file. Err: %s", err)
+		log.Error(err)
+		return err
+	}
+
+	defer func() {
+		tmpFile.Close()
+		os.Remove(tmpFile.Name())
+
+		metaTmp.Close()
+		os.Remove(metaTmp.Name())
+	}()
+
 	video.FileData = tmpFile
+	video.MetaFileData = metaTmp
 loop:
 	for {
 		chunk, err := inpStream.Recv()
@@ -136,6 +154,15 @@ loop:
 			_, err := video.FileData.Write(r.Content.Data)
 			if err != nil {
 				err = fmt.Errorf("could not write video data to file, err: %s", err)
+				log.Error(err)
+				return err
+			}
+
+		case *proto.InputVideoChunk_Rawmeta:
+			// lol
+			_, err := video.MetaFileData.Write(r.Rawmeta.Data)
+			if err != nil {
+				err = fmt.Errorf("could not write metadata data to file, err: %s", err)
 				log.Error(err)
 				return err
 			}
@@ -167,6 +194,11 @@ loop:
 			return err
 		}
 
+		// Upload the raw metadata
+		err = g.SendToOriginServer(video.MetaFileData.Name(), filepath.Base(video.MetaFileData.Name()))
+		if err != nil {
+			return err
+		}
 		// Upload the original video
 		err = g.SendToOriginServer(video.FileData.Name(), filepath.Base(video.FileData.Name()))
 		if err != nil {
@@ -232,15 +264,17 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 				// TODO: distributed lock goes here
 
 				log.Infof("Transcoding/chunking video id %d uuid %s", video.ID, video.GetMPDUUID())
-				var vid *os.File
 
-				vid, err = g.fetchFromS3(video.GetMPDUUID())
+				vid, err := g.fetchFromS3(video.GetMPDUUID())
 
 				if err != nil {
 					log.Errorf("could not fetch unencoded video id %d from s3. Err: %s", video.ID, err)
 					return
 				} else {
-					defer vid.Close()
+					defer func() {
+						vid.Close()
+						os.Remove(vid.Name())
+					}()
 				}
 
 				transcodeResults, err := dashutils.TranscodeAndGenerateManifest(vid.Name(), g.Local)

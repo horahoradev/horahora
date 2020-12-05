@@ -364,7 +364,10 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	if err != nil {
 		return fmt.Errorf("could not open globbed file. Err: %s", err)
 	}
-	defer file.Close()
+	defer func() {
+		file.Close()
+		os.Remove(file.Name())
+	}()
 
 loop:
 	for {
@@ -490,7 +493,6 @@ func (d *downloader) getVideoDownloadArgs(video *models.Video) ([]string, error)
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
-		""
 		"-o",
 		fmt.Sprintf("%s/%s", d.outputLoc, "%(id)s.%(ext)s"),
 	}

@@ -128,6 +128,7 @@ message InputVideoChunk {
     oneof Payload {
         FileContent content = 1;
         InputFileMetadata meta = 2;
+        RawMetadata rawmeta = 3; // This was added after the above two fields, and is used for the metadata.json file for the video
     }
 }
 
@@ -139,6 +140,10 @@ message ResponseVideoChunk {
 }
 
 message FileContent {
+    bytes Data = 1;
+}
+
+message RawMetadata {
     bytes Data = 1;
 }
 
