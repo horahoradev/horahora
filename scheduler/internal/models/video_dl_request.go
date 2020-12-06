@@ -94,7 +94,7 @@ func (v *VideoDlRequest) IsBackingOff() (bool, error) {
 }
 
 func (v *VideoDlRequest) ReportSyncHit() error {
-	sql := "UPDATE downloads SET backoff_factor = 1 WHERE id = $1"
+	sql := "UPDATE downloads SET backoff_factor = 1, last_synced = Now() WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.Id)
 	if err != nil {
 		return err
@@ -117,7 +117,7 @@ func (v *VideoDlRequest) ReportSyncMiss() error {
 		return err
 	}
 
-	sql := "UPDATE downloads SET backoff_factor = $1 WHERE id = $2"
+	sql := "UPDATE downloads SET backoff_factor = $1, last_synced = Now() WHERE id = $2"
 	_, err = v.Db.Exec(sql, min(MAXIMUM_BACKOFF_FACTOR, backoff_factor*2), v.Id)
 	if err != nil {
 		tx.Rollback()

@@ -113,6 +113,11 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 	// At this point we have the list of videos to download
 	// Iterate over in reverse (ascending by upload date)
 	for _, video := range videos {
+		// So this is outrageously dumb, but I'll remove it later. Downloader keeps getting stuck on these bad videos!
+		if strings.HasPrefix(video.ID, "so") {
+			log.Info("Video ID has the bad prefix so, skipping...")
+			continue
+		}
 	currVideoLoop:
 		for currentRetryNum := 1; currentRetryNum <= d.numberOfRetries+1; currentRetryNum++ {
 			select {
@@ -156,13 +161,13 @@ func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlR
 				break currVideoLoop
 			}
 
-			metadata, err := d.downloadVideo(video)
+			metafile, metadata, err := d.downloadVideo(video)
 			if err == nil {
 				log.Infof("Download succeeded for video %s", video.ID)
 
 				// Background is used here to try to ensure that the service will deal with whatever it's currently
 				// downloading before shutting down.
-				err = d.uploadToVideoService(context.Background(), metadata, video, dlReq.Website)
+				err = d.uploadToVideoService(context.Background(), metadata, video, dlReq.Website, metafile)
 				if err != nil {
 					log.Infof("failed to upload to video service. Err: %s. Continuing...", err)
 					continue
@@ -252,32 +257,31 @@ func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]VideoJSON,
 	return videos, nil
 }
 
-func (d *downloader) downloadVideo(video models.Video) (*YTDLMetadata, error) {
+func (d *downloader) downloadVideo(video models.Video) (*os.File, *YTDLMetadata, error) {
 	log.Infof("Downloading %s", video)
 
 	args, err := d.getVideoDownloadArgs(&video)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	cmd := exec.Command("/usr/bin/python3", args...)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Errorf("Command %s failed with %s. Output: %s", cmd, err, string(output))
-		return nil, err
+		return nil, nil, err
 	}
 
-	// lol this is a FIXME
-	buf := make([]byte, 10*1024*1024)
+	// surely no video will have a metadata file in excess of 100mb??
+	buf := make([]byte, 100*1024*1024)
 	file, err := os.Open(fmt.Sprintf("%s/%s.info.json", d.outputLoc, video.ID))
-	defer file.Close()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	n, err := file.Read(buf)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Truncate
@@ -287,19 +291,15 @@ func (d *downloader) downloadVideo(video models.Video) (*YTDLMetadata, error) {
 
 	err = json.Unmarshal(buf, &metadata)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	err = os.Remove(fmt.Sprintf("%s/%s.info.json", d.outputLoc, video.ID))
-	if err != nil {
-		log.Errorf("Could not remove metadata file. Err: %s", err)
-	}
-
-	return &metadata, nil
+	return file, &metadata, nil
 }
 
 // FIXME: this function is quite long and complicated
-func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video models.Video, website proto.SupportedSite) error {
+func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video models.Video,
+	website proto.SupportedSite, metafile *os.File) error {
 	stream, err := d.videoClient.UploadVideo(ctx)
 	if err != nil {
 		return fmt.Errorf("could not start video upload stream. Err: %s", err)
@@ -315,6 +315,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return fmt.Errorf("unexpected number of matched files: %d", len(generatedVideoFiles))
 	}
 
+	// TODO: fix for other extensions?? this is dumb
 	generatedThumbnailFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.jpg", d.outputLoc, video.ID))
 	if err != nil {
 		return err
@@ -367,7 +368,34 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	defer func() {
 		file.Close()
 		os.Remove(file.Name())
+		metafile.Close()
+		os.Remove(metafile.Name())
 	}()
+
+	err = sendLoop(file, stream, false)
+	if err != nil {
+		return fmt.Errorf("Failed to send video data. Err: %s", err)
+	}
+
+	err = sendLoop(metafile, stream, false)
+	if err != nil {
+		return fmt.Errorf("Failed to send video raw metadata. Err: %s", err)
+	}
+
+	resp, err := stream.CloseAndRecv()
+	if err != nil {
+		return fmt.Errorf("received error after closing stream: %s", err)
+	}
+
+	log.Infof("Video %s has been uploaded as video ID %d", video.URL, resp.VideoID)
+	return nil
+}
+
+func sendLoop(file *os.File, stream videoproto.VideoService_UploadVideoClient, isMeta bool) error {
+	_, err := file.Seek(0, 0)
+	if err != nil {
+		return err
+	}
 
 loop:
 	for {
@@ -385,15 +413,29 @@ loop:
 		// Truncate
 		buf = buf[:n]
 
-		dataPayload := videoproto.InputVideoChunk{
-			Payload: &videoproto.InputVideoChunk_Content{
-				Content: &videoproto.FileContent{
-					Data: buf,
+		var chunkPayload videoproto.InputVideoChunk
+		switch isMeta {
+		case true:
+			chunkPayload = videoproto.InputVideoChunk{
+				Payload: &videoproto.InputVideoChunk_Rawmeta{
+					Rawmeta: &videoproto.RawMetadata{
+						Data: buf,
+					},
 				},
-			},
+			}
+
+		case false:
+			chunkPayload = videoproto.InputVideoChunk{
+				Payload: &videoproto.InputVideoChunk_Content{
+					Content: &videoproto.FileContent{
+						Data: buf,
+					},
+				},
+			}
+
 		}
 
-		err = stream.Send(&dataPayload)
+		err = stream.Send(&chunkPayload)
 		switch {
 		case err == io.EOF:
 			return fmt.Errorf("videoservice closed stream prematurely")
@@ -402,12 +444,6 @@ loop:
 		}
 	}
 
-	resp, err := stream.CloseAndRecv()
-	if err != nil {
-		return fmt.Errorf("received error after closing stream: %s", err)
-	}
-
-	log.Infof("Video %s has been uploaded as video ID %d", video.URL, resp.VideoID)
 	return nil
 }
 
@@ -493,6 +529,7 @@ func (d *downloader) getVideoDownloadArgs(video *models.Video) ([]string, error)
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
+		"--get-comments",
 		"-o",
 		fmt.Sprintf("%s/%s", d.outputLoc, "%(id)s.%(ext)s"),
 	}
