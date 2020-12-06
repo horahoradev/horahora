@@ -9,7 +9,7 @@ require (
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/horahoradev/horahora v0.0.0-20200530195308-bb3e1a8e5cce // indirect
-	github.com/horahoradev/horahora/video_service v0.0.0-20201014043228-6246cc48c316
+	github.com/horahoradev/horahora/video_service v0.0.0-20201205215129-690cef6cbea9
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.4.0
 	github.com/sirupsen/logrus v1.6.0
