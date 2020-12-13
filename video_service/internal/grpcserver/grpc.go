@@ -112,7 +112,7 @@ func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) 
 		return err
 	}
 
-	tmpFile, err := ioutil.TempFile(uploadDir, id.String())
+	tmpFile, err := os.Create(uploadDir + id.String())
 	if err != nil {
 		err = fmt.Errorf("could not create tmp file. Err: %s", err)
 		log.Error(err)
@@ -120,7 +120,7 @@ func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) 
 	}
 
 	// This is awkward but it could be worse
-	metaTmp, err := ioutil.TempFile(uploadDir, id.String()+".json")
+	metaTmp, err := os.Create(uploadDir + id.String() + ".json")
 	if err != nil {
 		err = fmt.Errorf("could not create meta tmp file. Err: %s", err)
 		log.Error(err)
@@ -189,17 +189,21 @@ loop:
 	// If not local, upload the thumbnail and original video before returning
 	if !g.Local {
 		// FIXME did it again...
+		log.Infof("Uploading thumbnail: %s", video.FileData.Name()+".jpg")
 		err = g.SendToOriginServer(video.FileData.Name()+".jpg", filepath.Base(video.FileData.Name()+".jpg"))
 		if err != nil {
 			return err
 		}
 
 		// Upload the raw metadata
+		log.Infof("Uploading metadata: %s", video.MetaFileData.Name())
 		err = g.SendToOriginServer(video.MetaFileData.Name(), filepath.Base(video.MetaFileData.Name()))
 		if err != nil {
 			return err
 		}
+
 		// Upload the original video
+		log.Infof("Uploading video: %s", video.FileData.Name())
 		err = g.SendToOriginServer(video.FileData.Name(), filepath.Base(video.FileData.Name()))
 		if err != nil {
 			return err
@@ -277,6 +281,23 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 					}()
 				}
 
+				s, err := vid.Stat()
+				if err != nil {
+					log.Errorf("Could not stat video to encode. Err: %s", err)
+					return
+				}
+
+				if s.Size() >= 1024*1024*200 {
+					log.Errorf("Video %d greater than 200mb, skipping", v.ID)
+					return
+				}
+
+				_, err = vid.Seek(0, 0)
+				if err != nil {
+					log.Errorf("Could not seek to 0 for video to encode. Err: %s", err)
+					return
+				}
+
 				transcodeResults, err := dashutils.TranscodeAndGenerateManifest(vid.Name(), g.Local)
 				if err != nil {
 					err := fmt.Errorf("failed to transcode and chunk. Err: %s", err)
@@ -318,6 +339,12 @@ func (g GRPCServer) UploadMPDSet(d *dashutils.DASHVideo) error {
 		if err != nil {
 			return err
 		}
+
+		err = os.Remove(path)
+		if err != nil {
+			log.Error(err)
+		}
+
 	}
 
 	return nil

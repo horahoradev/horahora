@@ -377,7 +377,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return fmt.Errorf("Failed to send video data. Err: %s", err)
 	}
 
-	err = sendLoop(metafile, stream, false)
+	err = sendLoop(metafile, stream, true)
 	if err != nil {
 		return fmt.Errorf("Failed to send video raw metadata. Err: %s", err)
 	}
