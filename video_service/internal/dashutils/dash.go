@@ -24,7 +24,8 @@ func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
 		// they're separate
 		encodeArgs = []string{path, "-speed 16 -deadline realtime -r 1 -crf 63 -t 10"}
 	case false:
-		encodeArgs = []string{path, "-speed 3 -deadline good -crf 30"}
+		// -r 24 -deadline realtime -cpu-used 1
+		encodeArgs = []string{path, "-r 24 -deadline good -cpu-used 2"}
 	}
 
 	cmd := exec.Command("/videoservice/scripts/transcode.sh", encodeArgs...)
@@ -38,7 +39,7 @@ func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
 	cmd = exec.Command("/videoservice/scripts/manifest.sh", path)
 	_, err = cmd.CombinedOutput()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to generate dash manifest. Err: %s", err)
 	}
 
 	var fileList []string
