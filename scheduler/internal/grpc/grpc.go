@@ -13,7 +13,7 @@ import (
 
 type schedulerServer struct {
 	proto.UnimplementedSchedulerServer
-	M *models.ArchiveRequestModel
+	M *models.ArchiveRequestRepo
 }
 
 func NewGRPCServer(ctx context.Context, conn *sqlx.DB, port int) error {

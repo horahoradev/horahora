@@ -72,48 +72,18 @@ type VideoJSON struct {
 	Title string `json:"title"`
 }
 
+type Video struct {
+	ID string
+}
+
 // Deals with a particular download request
-func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlRequest) error {
-	// TODO: caching download list, lol
-	isBackingOff, err := dlReq.IsBackingOff()
-	if err != nil {
-		return err
-	}
-
-	// refresh cache if backoff period is up
-	if !isBackingOff {
-		log.Infof("Backoff period expired for download request %s, syncing all", dlReq.Id)
-		itemsAdded, err := d.syncDownloadList(dlReq)
-		if err != nil {
-			return err
-		}
-
-		if itemsAdded {
-			err = dlReq.ReportSyncHit()
-			if err != nil {
-				return err
-			}
-		} else {
-			err = dlReq.ReportSyncMiss()
-			if err != nil {
-				return err
-			}
-		}
-	} else {
-		log.Infof("Content archival request %s is backing off, using cached video list", dlReq.Id)
-	}
-
-	videos, err := dlReq.FetchVideoList()
-	if err != nil {
-		return err
-	}
-
-	log.Infof("Downloading %d videos for content type %s content value %s", len(videos), dlReq.ContentType, dlReq.ContentValue)
+func (d *downloader) downloadVideos(ctx context.Context, videos chan Video) error {
 
 	// At this point we have the list of videos to download
 	// Iterate over in reverse (ascending by upload date)
-	for _, video := range videos {
+	for video := range videos {
 		// So this is outrageously dumb, but I'll remove it later. Downloader keeps getting stuck on these bad videos!
+		// FIXME
 		if strings.HasPrefix(video.ID, "so") {
 			log.Info("Video ID has the bad prefix so, skipping...")
 			continue
