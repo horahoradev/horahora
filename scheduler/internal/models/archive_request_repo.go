@@ -15,14 +15,14 @@ const (
 
 // ArchiveRequest is the model for the creation of new archive requests
 // It's very similar to video_dl_request, but video_dl_request has different utility.
-type ArchiveRequestModel struct {
+type ArchiveRequestRepo struct {
 	Db *sqlx.DB
 }
 
 // FIXME: this API feels a little dumb
 
-func NewArchiveRequest(db *sqlx.DB) *ArchiveRequestModel {
-	return &ArchiveRequestModel{Db: db}
+func NewArchiveRequest(db *sqlx.DB) *ArchiveRequestRepo {
+	return &ArchiveRequestRepo{Db: db}
 }
 
 type ContentArchivalRequest struct {
@@ -31,7 +31,7 @@ type ContentArchivalRequest struct {
 	ContentValue string              `db:"attribute_value"` // either the channel ID or the tag string
 }
 
-func (m *ArchiveRequestModel) GetContentArchivalRequests(userID int64) ([]ContentArchivalRequest, error) {
+func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]ContentArchivalRequest, error) {
 	sql := "SELECT website, attribute_type, attribute_value FROM downloads WHERE userID=$1"
 	var archivalRequests []ContentArchivalRequest
 
@@ -43,7 +43,7 @@ func (m *ArchiveRequestModel) GetContentArchivalRequests(userID int64) ([]Conten
 	return archivalRequests, nil
 }
 
-func (m *ArchiveRequestModel) New(contentType contentType, contentValue string, website proto.SupportedSite, userID int64) error {
+func (m *ArchiveRequestRepo) New(contentType contentType, contentValue string, website proto.SupportedSite, userID int64) error {
 
 	_, err := m.Db.Exec("INSERT INTO downloads(date_created, website, attribute_type, attribute_value, userID) "+
 		"VALUES (Now(), $1, $2, $3, $4)", website, contentType, contentValue, userID)
