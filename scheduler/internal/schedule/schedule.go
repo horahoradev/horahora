@@ -98,7 +98,7 @@ func (p *poller) getCategories() ([]models.Category, error) {
 		{
 			Website:      0,
 			ContentType:  "tag",
-			ContentValue: "音MAD",
+			ContentValue: "音 MAD",
 		},
 	}, nil
 }
