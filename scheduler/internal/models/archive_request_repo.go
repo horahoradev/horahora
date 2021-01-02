@@ -28,7 +28,7 @@ func NewArchiveRequest(db *sqlx.DB) *ArchiveRequestRepo {
 type ContentArchivalRequest struct {
 	Website      proto.SupportedSite `db:"website"`
 	ContentType  contentType         `db:"attribute_type"`  // "channel", "tag", or "playlist"
-	ContentValue string              `db:"attribute_value"` // either the channel ID or the tag string
+	ContentValue string              `db:"attribute_value"` // either the channel VideoID or the tag string
 }
 
 func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]ContentArchivalRequest, error) {
@@ -48,4 +48,9 @@ func (m *ArchiveRequestRepo) New(contentType contentType, contentValue string, w
 	_, err := m.Db.Exec("INSERT INTO downloads(date_created, website, attribute_type, attribute_value, userID) "+
 		"VALUES (Now(), $1, $2, $3, $4)", website, contentType, contentValue, userID)
 	return err
+}
+
+func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLRequest, error) {
+	// TODO
+	return nil, nil
 }

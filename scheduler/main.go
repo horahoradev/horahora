@@ -38,7 +38,7 @@ func main() {
 
 	wg := sync.WaitGroup{}
 
-	dlQueue := make(chan *models.VideoDlRequest, 100)
+	dlQueue := make(chan *models.VideoDLRequest, 100)
 
 	// Start one publisher goroutine to poll postgres and send download requests into the channel
 	// could potentially expand this to multiple publishers
@@ -62,7 +62,7 @@ func main() {
 	numOfSubscribers := 2
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
-		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, nil)
+		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries)
 		go func() {
 			err := dler.SubscribeAndDownload(ctx)
 			if err != nil {

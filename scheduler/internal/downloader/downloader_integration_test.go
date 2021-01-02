@@ -18,7 +18,7 @@ func TestConcurrentVideoDownloads(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	dlChan := make(chan *models.VideoDlRequest, 10)
+	dlChan := make(chan *models.CategoryDLRequest, 10)
 
 	dlSuccessChannel := make(chan VideoJSON, 5)
 	downloader := New(dlChan, "./", conf.Client, 5, dlSuccessChannel)

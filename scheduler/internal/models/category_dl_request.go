@@ -10,15 +10,15 @@ import (
 	"time"
 )
 
-type VideoDlRequest struct {
+type CategoryDLRequest struct {
 	ContentArchivalRequest
 	Id      string
 	Db      *sqlx.DB
 	Redsync *redsync.Redsync
 }
 
-func NewVideoDlRequest(website proto.SupportedSite, contentType contentType, contentValue, id string, Db *sqlx.DB, redsync2 *redsync.Redsync) *VideoDlRequest {
-	return &VideoDlRequest{
+func NewVideoDlRequest(website proto.SupportedSite, contentType contentType, contentValue, id string, Db *sqlx.DB, redsync2 *redsync.Redsync) *CategoryDLRequest {
+	return &CategoryDLRequest{
 		ContentArchivalRequest: ContentArchivalRequest{
 			Website:      website,
 			ContentType:  contentType,
@@ -31,7 +31,7 @@ func NewVideoDlRequest(website proto.SupportedSite, contentType contentType, con
 }
 
 // RefreshLock refreshes the lock for this download request, preventing it from being acquired by another scheduler.
-func (v *VideoDlRequest) RefreshLock() error {
+func (v *CategoryDLRequest) RefreshLock() error {
 	_, err := v.Db.Exec("UPDATE downloads SET lock = Now() WHERE id = $1", v.Id)
 	return err
 }
@@ -39,7 +39,7 @@ func (v *VideoDlRequest) RefreshLock() error {
 var NeverDownloaded error = errors.New("no video for category")
 
 // Only relevant for tags
-func (v *VideoDlRequest) GetLatestVideoForRequest() (*string, error) {
+func (v *CategoryDLRequest) GetLatestVideoForRequest() (*string, error) {
 
 	// Doesn't appear to be working
 	curs, err := v.Db.Query("SELECT videos.video_id from videos INNER JOIN downloads ON videos.download_id = downloads.id "+
@@ -78,7 +78,7 @@ const (
 // Context: videos can be added to a category of content at any time; some categories are updated frequently, and some
 // tend to be stagnant. We should vary the rate at which we fully sync content from a given category based on how
 // frequently it's updated. Exponential backoff is used as the backoff strategy.
-func (v *VideoDlRequest) IsBackingOff() (bool, error) {
+func (v *CategoryDLRequest) IsBackingOff() (bool, error) {
 	var lastSynced time.Time
 	var backoffFactor int
 	sql := "SELECT last_synced, backoff_factor FROM downloads WHERE id = $1"
@@ -93,7 +93,7 @@ func (v *VideoDlRequest) IsBackingOff() (bool, error) {
 	return time.Now().Sub(lastSynced.Add(MINIMUM_BACKOFF_TIME*time.Duration(backoffFactor))) < 0, nil
 }
 
-func (v *VideoDlRequest) ReportSyncHit() error {
+func (v *CategoryDLRequest) ReportSyncHit() error {
 	sql := "UPDATE downloads SET backoff_factor = 1, last_synced = Now() WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.Id)
 	if err != nil {
@@ -103,7 +103,7 @@ func (v *VideoDlRequest) ReportSyncHit() error {
 	return nil
 }
 
-func (v *VideoDlRequest) ReportSyncMiss() error {
+func (v *CategoryDLRequest) ReportSyncMiss() error {
 	// maybe there's an easier way to do this? It doesn't really matter though
 	tx, err := v.Db.BeginTx(context.Background(), nil)
 	if err != nil {
@@ -134,7 +134,7 @@ func (v *VideoDlRequest) ReportSyncMiss() error {
 
 // Idempotent, ensures that videos are added and correct associations are created
 // returns bool indicating whether something was added
-func (v *VideoDlRequest) AddVideo(videoID, url string) (bool, error) {
+func (v *CategoryDLRequest) AddVideo(videoID, url string) (bool, error) {
 	tx, err := v.Db.BeginTx(context.Background(), nil)
 	if err != nil {
 		return false, err
@@ -169,23 +169,6 @@ func (v *VideoDlRequest) AddVideo(videoID, url string) (bool, error) {
 	}
 
 	return rowsAffected >= 1, nil
-}
-
-type Video struct {
-	ID  string `db:"video_id"`
-	URL string `db:"url"`
-}
-
-func (v *VideoDlRequest) FetchVideoList() ([]Video, error) {
-	var videos []Video
-	sql := "SELECT videos.video_id, url FROM videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id " +
-		"WHERE downloads_to_videos.download_id = $1 ORDER BY CHAR_LENGTH(videos.video_ID) DESC, videos.video_ID desc"
-	err := v.Db.Select(&videos, sql, v.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	return videos, nil
 }
 
 func min(a, b uint32) uint32 {
