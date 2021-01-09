@@ -224,7 +224,7 @@ func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]VideoJSON,
 	}
 
 	// get the list of videos to download
-	cmd := exec.Command("/usr/bin/python3", args...)
+	cmd := exec.Command("/usr/local/bin/youtube-dl", args...)
 	payload, err := cmd.Output()
 	if err != nil {
 		log.Errorf("Command `%s` finished with err %s", cmd, err)
@@ -265,7 +265,7 @@ func (d *downloader) downloadVideo(video models.Video) (*os.File, *YTDLMetadata,
 		return nil, nil, err
 	}
 
-	cmd := exec.Command("/usr/bin/python3", args...)
+	cmd := exec.Command("/usr/local/bin/youtube-dl", args...)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Errorf("Command %s failed with %s. Output: %s", cmd, err, string(output))
@@ -449,7 +449,7 @@ loop:
 
 func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 	// TODO: type safety, switch to enum?
-	args := []string{"/scheduler/youtube-dl/youtube_dl/__main__.py", "-j", "--flat-playlist"}
+	args := []string{"-j", "--flat-playlist"}
 	downloadPreference := "all"
 
 	// If it's a tag we're downloading from, then there may be a large number of videos.
@@ -525,7 +525,6 @@ func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
 
 func (d *downloader) getVideoDownloadArgs(video *models.Video) ([]string, error) {
 	args := []string{
-		"/scheduler/youtube-dl/youtube_dl/__main__.py",
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
