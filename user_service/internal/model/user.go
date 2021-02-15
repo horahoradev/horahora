@@ -32,6 +32,7 @@ func (m *UserModel) NewUser(username, email string, passHash []byte, foreignUser
 	var res *sql.Row
 	var err error
 
+	// FIXME: I've never noticed an issue here... but this RETURNING clause looks funky, no ON CONFLICT
 	switch foreignUser {
 	case true:
 		res = m.Conn.QueryRow("INSERT INTO users (username, email, pass_hash, foreign_user_ID, foreign_website) "+

@@ -14,6 +14,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 )
 
 type downloader struct {
@@ -34,7 +36,7 @@ func New(dlQueue chan *models.VideoDLRequest, outputLoc string, client videoprot
 
 // SubscribeAndDownload reads from the download queue
 // FIXME: should provide slightly better graceful shutdown behavior here
-func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
+func (d *downloader) SubscribeAndDownload(ctx context.Context, m *sync.Mutex) error {
 	// This is pretty awkward, but guarantees a return on the next iteration,
 	// and guarantees that the function will return if it was waiting on a download
 	// request.
@@ -51,7 +53,7 @@ func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
 			log.Info("Context done, downloader returning")
 			return nil
 		case r := <-d.downloadQueue:
-			err := d.downloadVideoReq(ctx, r)
+			err := d.downloadVideoReq(ctx, r, m)
 			if err != nil {
 				log.Errorf("Encountered error in downloader. Err: %s. Continuing...", err)
 				// FIXME: increase robustness
@@ -62,12 +64,54 @@ func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
 }
 
 // Deals with a particular video download request
-func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDLRequest) error {
-
+func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDLRequest, m *sync.Mutex) error {
 	if strings.HasPrefix(video.VideoID, "so") {
+		err := video.SetDownloadFailed()
+		if err != nil {
+			log.Errorf("Could not set download failed for video %s. Err: %s", video.VideoID, err)
+		}
 		log.Info("Video VideoID has the bad prefix so, skipping...")
 		return nil
 	}
+
+	// VideoJSON does not yet exist, try to acquire lock
+	err := video.AcquireLockForVideo()
+	if err != nil {
+		// If we can't get the lock, just skip the video in the current archive request
+		log.Errorf("Could not acquire redis lock for video VideoID %s during download of content type %s value %s, err: %s", video.VideoID,
+			video.C.ContentType, video.C.ContentValue, err)
+		return nil
+	}
+
+	videoReq := videoproto.ForeignVideoCheck{
+		ForeignVideoID: video.VideoID,
+		ForeignWebsite: videoproto.Website(video.C.Website), // lol FIXME
+	}
+
+	videoExists, err := d.videoClient.ForeignVideoExists(context.TODO(), &videoReq)
+	if err != nil {
+		err := fmt.Errorf("could not check whether video exists for video VideoID %s. Err: %s", video.VideoID, err)
+		log.Error(err)
+		return nil
+	}
+
+	if videoExists.Exists {
+		log.Errorf("Video VideoID %s already exists", video.VideoID)
+		err = video.SetDownloadSucceeded()
+		if err != nil {
+			log.Errorf("Could not set download succeeded for video %s. Err: %s", video.VideoID, err)
+		}
+		return nil
+	}
+
+	// LOL
+	// there's a race condition in which ffprobe can stall indefinitely if its cookies are invalidated before its stream metadata
+	// request succeeds. This is my attempt to lower the likelihood of this issue occurring.
+	m.Lock()
+	go func() {
+		time.Sleep(time.Second * 10)
+		m.Unlock()
+	}()
 
 currVideoLoop:
 	for currentRetryNum := 1; currentRetryNum <= d.numberOfRetries+1; currentRetryNum++ {
@@ -90,36 +134,6 @@ currVideoLoop:
 			log.Infof("Attempting to download %s, attempt %d of %d", video.URL, currentRetryNum, d.numberOfRetries)
 		}
 
-		videoReq := videoproto.ForeignVideoCheck{
-			ForeignVideoID: video.VideoID,
-			ForeignWebsite: videoproto.Website(video.C.Website), // lol FIXME
-		}
-
-		videoExists, err := d.videoClient.ForeignVideoExists(context.TODO(), &videoReq)
-		if err != nil {
-			err := fmt.Errorf("could not check whether video exists for video VideoID %s. Err: %s", video.VideoID, err)
-			log.Error(err)
-			break currVideoLoop
-		}
-
-		if videoExists.Exists {
-			log.Errorf("Video VideoID %s already exists", video.VideoID)
-			err = video.SetDownloadSucceeded()
-			if err != nil {
-				log.Errorf("Could not set download succeeded for video %s. Err: %s", video.VideoID, err)
-			}
-			break currVideoLoop
-		}
-
-		// VideoJSON does not yet exist, try to acquire lock
-		err = video.AcquireLockForVideo()
-		if err != nil {
-			// If we can't get the lock, just skip the video in the current archive request
-			log.Errorf("Could not acquire redis lock for video VideoID %s during download of content type %s value %s, err: %s", video.VideoID,
-				video.C.ContentType, video.C.ContentValue, err)
-			break currVideoLoop
-		}
-
 		metafile, metadata, err := d.downloadVideo(video)
 		if err == nil {
 			log.Infof("Download succeeded for video %s", video.VideoID)
@@ -130,6 +144,11 @@ currVideoLoop:
 			if err != nil {
 				log.Infof("failed to upload to video service. Err: %s. Continuing...", err)
 				continue
+			}
+
+			err = video.SetDownloadSucceeded()
+			if err != nil {
+				log.Errorf("Could not set download succeeded for video %s. Err: %s", video.VideoID, err)
 			}
 
 			err := video.SetDownloaded()
@@ -156,10 +175,19 @@ func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTD
 		return nil, nil, err
 	}
 
-	cmd := exec.Command("/usr/bin/python3", args...)
-	output, err := cmd.CombinedOutput()
+	ytdlLog, err := os.Create(fmt.Sprintf("%s/%s.ytdl", d.outputLoc, video.VideoID))
 	if err != nil {
-		log.Errorf("Command %s failed with %s. Output: %s", cmd, err, string(output))
+		return nil, nil, err
+	}
+	defer ytdlLog.Close()
+
+	cmd := exec.Command("/usr/local/bin/youtube-dl", args...)
+	cmd.Stdout = ytdlLog
+	cmd.Stderr = ytdlLog
+
+	err = cmd.Run()
+	if err != nil {
+		log.Errorf("Command %s failed with %s.", cmd, err)
 		return nil, nil, err
 	}
 
@@ -337,11 +365,18 @@ loop:
 
 func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]string, error) {
 	args := []string{
-		"/scheduler/youtube-dl/youtube_dl/__main__.py",
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
 		"--get-comments",
+		"--max-filesize",
+		"100m",
+		// "Why do we need this?"
+		// Previously ffprobe would stall indefinitely if nico's cookies were invalidated by the time it made a request
+		// (or something like that).
+		"--socket-timeout",
+		"1800",
+		"--verbose",
 		"-o",
 		fmt.Sprintf("%s/%s", d.outputLoc, "%(id)s.%(ext)s"),
 	}

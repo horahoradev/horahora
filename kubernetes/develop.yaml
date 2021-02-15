@@ -38,7 +38,7 @@ spec:
           - name: VideoServiceGRPCAddress
             value: "videoproxy:7777"
           - name: NumberOfRetries
-            value: "5"
+            value: "2"
           - name: redis_host
             value: "videoredis-dev.c7ow2j.ng.0001.usw1.cache.amazonaws.com"
           - name: redis_port

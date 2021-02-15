@@ -1,4 +1,4 @@
-package sync
+package syncmanager
 
 import (
 	"encoding/json"
@@ -9,59 +9,52 @@ import (
 	log "github.com/sirupsen/logrus"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 type SyncWorker struct {
-	R models.ArchiveRequestRepo
+	R *models.ArchiveRequestRepo
 }
 
-func NewWorker() {
-
+func NewWorker(r *models.ArchiveRequestRepo) (*SyncWorker, error) {
+	return &SyncWorker{R: r}, nil
 }
 
 func (s *SyncWorker) Sync() error {
 	for {
+
 		dlReqs, err := s.R.GetUnsyncedCategoryDLRequests()
 		if err != nil {
 			return err
 		}
 
 		for _, dlReq := range dlReqs {
-			isBackingOff, err := dlReq.IsBackingOff()
-			if err != nil {
-				return err
-			}
+			// Distributed lock goes here!
 
 			// refresh cache if backoff period is up
-			if !isBackingOff {
-				log.Infof("Backoff period expired for download request %s, syncing all", dlReq.Id)
-				itemsAdded, err := d.syncDownloadList(dlReq)
-				if err != nil {
-					return err
-				}
-
-				if itemsAdded {
-					err = dlReq.ReportSyncHit()
-					if err != nil {
-						return err
-					}
-				} else {
-					err = dlReq.ReportSyncMiss()
-					if err != nil {
-						return err
-					}
-				}
-			} else {
-				log.Infof("Content archival request %s is backing off, using cached video list", dlReq.Id)
+			log.Infof("Backoff period expired for download request %s, syncing all", dlReq.Id)
+			itemsAdded, err := s.syncDownloadList(&dlReq)
+			if err != nil {
+				log.Errorf("Sync worker dl list: %s", err)
+				continue
 			}
 
-			//videos, err := dlReq.FetchVideoList()
-			//if err != nil {
-			//	return err
-			//}
-			//
-			//log.Infof("Downloading %d videos for content type %s content value %s", len(videos), dlReq.ContentType, dlReq.ContentValue)
+			if itemsAdded {
+				err = dlReq.ReportSyncHit()
+				if err != nil {
+					log.Errorf("sync worker report sync hit: %s", err)
+					continue
+				}
+			} else {
+				err = dlReq.ReportSyncMiss()
+				if err != nil {
+					log.Errorf("Sync worker report sync miss: %s", err)
+					continue
+				}
+			}
 		}
+
+		time.Sleep(time.Minute * 30)
 	}
 }
 
