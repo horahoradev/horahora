@@ -64,7 +64,7 @@ func main() {
 	numOfSubscribers := 3
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
-		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries)
+		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, cfg.SocksConnStr)
 		go func() {
 			err := dler.SubscribeAndDownload(ctx, m)
 			if err != nil {
@@ -80,7 +80,7 @@ func main() {
 
 		repo := models.NewArchiveRequest(cfg.Conn, cfg.Redlock)
 
-		worker, err := syncmanager.NewWorker(repo)
+		worker, err := syncmanager.NewWorker(repo, cfg.SocksConnStr)
 		if err != nil {
 			log.Errorf("Sync worker exited wth err: %s", err)
 		}
