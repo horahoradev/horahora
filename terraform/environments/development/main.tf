@@ -13,6 +13,17 @@ resource "aws_vpc" "horahora_vpc" {
   enable_dns_support   = true
 }
 
+//resource "aws_vpc" "horahora_vpc_alt" {
+//  cidr_block = "172.31.0.0/16"
+//
+//  tags = {
+//    Name = "horahora-vpc-alt-${var.environment}"
+//  }
+//
+//  enable_dns_hostnames = true
+//  enable_dns_support   = true
+//}
+
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.horahora_vpc.id
 
@@ -20,6 +31,14 @@ resource "aws_internet_gateway" "internet_gateway" {
     Name = "horahora-internet-gateway-${var.environment}"
   }
 }
+
+//resource "aws_internet_gateway" "internet_gateway_alt" {
+//  vpc_id = aws_vpc.horahora_vpc_alt.id
+//
+//  tags = {
+//    Name = "horahora-internet-gateway-alt-${var.environment}"
+//  }
+//}
 
 module "vpc_subnets" {
   source = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
@@ -38,16 +57,6 @@ module "vpc_subnets" {
   }
 }
 
-/*module "eks-cluster" {
-  source      = "../../modules/eks_cluster"
-  name        = "horahora-eks-cluster"
-  environment = var.environment
-
-  subnets = [
-    aws_subnet.subnet_1.id,
-    aws_subnet.subnet_2.id
-  ]
-}*/
 
 // Origin bucket for video files
 // TODO: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html#example-bucket-policies-use-case-3
@@ -74,8 +83,10 @@ module "video_origin" {
 }
 
 module "eks_cluster" {
-  source = "git::https://github.com/cloudposse/terraform-aws-eks-cluster.git?ref=master"
+  source = "git::https://github.com/cloudposse/terraform-aws-eks-cluster.git?ref=0.29.0"
   name   = "horahora-${var.environment}"
+
+  kubernetes_version = "1.17"
 
   workers_security_group_ids = [module.eks_workers.security_group_id]
   workers_role_arns          = [module.eks_workers.workers_role_arn]
@@ -97,6 +108,11 @@ module "eks_workers" {
   max_size                               = 1
   cpu_utilization_high_threshold_percent = 60
   cpu_utilization_low_threshold_percent  = 20
+
+  //  allowed_cidr_blocks = ["0.0.0.0/0"]
+
+  //  use_custom_image_id = true
+  //  image_id            = "ami-0a9a4d789dc726512"
 
   cluster_endpoint                   = module.eks_cluster.eks_cluster_endpoint
   cluster_security_group_id          = module.eks_cluster.security_group_id
@@ -141,7 +157,7 @@ module "scheduledb" {
   source         = "git::https://github.com/cloudposse/terraform-aws-rds.git?ref=master"
   name           = "scheduledb-${var.environment}"
   engine         = "postgres"
-  engine_version = "12.3"
+  engine_version = "12.5"
   instance_class = "db.t3.micro"
 
   vpc_id              = aws_vpc.horahora_vpc.id
@@ -166,7 +182,7 @@ module "userdb" {
   source         = "git::https://github.com/cloudposse/terraform-aws-rds.git?ref=master"
   name           = "userdb-${var.environment}"
   engine         = "postgres"
-  engine_version = "12.3"
+  engine_version = "12.5"
   instance_class = "db.t3.micro"
 
   vpc_id              = aws_vpc.horahora_vpc.id
@@ -190,7 +206,7 @@ module "videodb" {
   source         = "git::https://github.com/cloudposse/terraform-aws-rds.git?ref=master"
   name           = "videodb-${var.environment}"
   engine         = "postgres"
-  engine_version = "12.3"
+  engine_version = "12.5"
   instance_class = "db.t3.micro"
 
   vpc_id              = aws_vpc.horahora_vpc.id

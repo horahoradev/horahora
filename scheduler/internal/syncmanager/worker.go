@@ -13,11 +13,13 @@ import (
 )
 
 type SyncWorker struct {
-	R *models.ArchiveRequestRepo
+	R            *models.ArchiveRequestRepo
+	SocksConnStr string
 }
 
-func NewWorker(r *models.ArchiveRequestRepo) (*SyncWorker, error) {
-	return &SyncWorker{R: r}, nil
+func NewWorker(r *models.ArchiveRequestRepo, socksConnStr string) (*SyncWorker, error) {
+	return &SyncWorker{R: r,
+		SocksConnStr: socksConnStr}, nil
 }
 
 func (s *SyncWorker) Sync() error {
@@ -54,7 +56,7 @@ func (s *SyncWorker) Sync() error {
 			}
 		}
 
-		time.Sleep(time.Minute * 30)
+		time.Sleep(time.Hour * 3)
 	}
 }
 
@@ -90,7 +92,7 @@ type VideoJSON struct {
 }
 
 func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJSON, error) {
-	args, err := getVideoListString(dlReq)
+	args, err := s.getVideoListString(dlReq)
 	if err != nil {
 		return nil, err
 	}
@@ -129,9 +131,15 @@ func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJS
 	return videos, nil
 }
 
-func getVideoListString(dlReq *models.CategoryDLRequest) ([]string, error) {
+func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]string, error) {
 	// TODO: type safety, switch to enum?
-	args := []string{"/scheduler/youtube-dl/youtube_dl/__main__.py", "-j", "--flat-playlist"}
+	args := []string{"/scheduler/youtube-dl/youtube_dl/__main__.py",
+		"-j",
+		"--flat-playlist",
+		"--proxy",
+		s.SocksConnStr,
+	}
+
 	downloadPreference := "all"
 
 	// If it's a tag we're downloading from, then there may be a large number of videos.

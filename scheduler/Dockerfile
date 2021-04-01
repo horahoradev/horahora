@@ -13,7 +13,7 @@ RUN git clone https://github.com/animelover1984/youtube-dl.git  && \
     apt-get update && \
     apt-get install zip unzip && \
     apt-get install -y python3 python3-pip && \
-    pip3 install mutagen requests websockets && \
+    pip3 install mutagen requests websockets python-dateutil && \
     apt-get install -y ffmpeg && \
     python3 /scheduler/youtube-dl/setup.py install
 

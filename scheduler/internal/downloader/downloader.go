@@ -23,14 +23,17 @@ type downloader struct {
 	outputLoc       string
 	videoClient     videoproto.VideoServiceClient
 	numberOfRetries int
+	socksConnStr    string
 }
 
-func New(dlQueue chan *models.VideoDLRequest, outputLoc string, client videoproto.VideoServiceClient, numberOfRetries int) downloader {
+func New(dlQueue chan *models.VideoDLRequest, outputLoc string, client videoproto.VideoServiceClient, numberOfRetries int,
+	socksConnStr string) downloader {
 	return downloader{
 		downloadQueue:   dlQueue,
 		outputLoc:       outputLoc,
 		videoClient:     client,
 		numberOfRetries: numberOfRetries,
+		socksConnStr:    socksConnStr,
 	}
 }
 
@@ -191,16 +194,22 @@ func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTD
 		return nil, nil, err
 	}
 
-	// surely no video will have a metadata file in excess of 100mb??
-	buf := make([]byte, 100*1024*1024)
+	bufSize := 300 * 1024 * 1024
+	// surely no video will have a metadata file in excess of 300mb??
+	buf := make([]byte, bufSize)
 	file, err := os.Open(fmt.Sprintf("%s/%s.info.json", d.outputLoc, video.VideoID))
 	if err != nil {
 		return nil, nil, err
 	}
 
+	// I should probably read until EOF here but I think it's fine as is as long as the file isn't too large
 	n, err := file.Read(buf)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	if n == bufSize {
+		return nil, nil, fmt.Errorf("n equal to bufsize, metadata file too large for %d", video.ID)
 	}
 
 	// Truncate
@@ -225,10 +234,18 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	}
 
 	// FIXME: extend to multiple file extensions, this is bad
+	// I could use walk but I don't want to. I will fix this eventually!
 	generatedVideoFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.mp4", d.outputLoc, video.VideoID))
 	if err != nil {
 		return err
 	}
+
+	generatedVideoFilesFLV, err := filepath.Glob(fmt.Sprintf("%s/%s.flv", d.outputLoc, video.VideoID))
+	if err != nil {
+		return err
+	}
+
+	generatedVideoFiles = append(generatedVideoFiles, generatedVideoFilesFLV...)
 
 	if len(generatedVideoFiles) != 1 {
 		return fmt.Errorf("unexpected number of matched files: %d", len(generatedVideoFiles))
@@ -370,7 +387,11 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"--write-thumbnail",
 		"--get-comments",
 		"--max-filesize",
-		"100m",
+		"200m",
+		"--proxy",
+		d.socksConnStr,
+		"--add-header",
+		"Accept:*/*",
 		// "Why do we need this?"
 		// Previously ffprobe would stall indefinitely if nico's cookies were invalidated by the time it made a request
 		// (or something like that).
@@ -378,7 +399,8 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"1800",
 		"--verbose",
 		"-o",
-		fmt.Sprintf("%s/%s", d.outputLoc, "%(id)s.%(ext)s"),
+		// Some websites have two IDs per video, so I made it explicit just to avoid issues
+		fmt.Sprintf("%s/%s.%s", d.outputLoc, video.VideoID, "%(ext)s"),
 	}
 
 	return args, nil

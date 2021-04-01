@@ -58,10 +58,16 @@ var FailedToFetch = errors.New("failed to retrieve desired number of items")
 func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	// TODO: put this in a repo later
 
+	log.Info("Fetching categories")
 	categories, err := p.getCategories()
 	if err != nil {
 		return nil, err
 	}
+
+	log.Info("Fetching videos to dl")
+
+	// The rand offset is a bit of a hack to prevent video downloads from being attempted many times per video, resulting in many lock acquisition failures
+	// TODO: improve
 
 	var ret []*models.VideoDLRequest
 	for _, category := range categories {
@@ -69,7 +75,8 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 			"INNER JOIN downloads_to_videos d ON downloads.id = d.download_id " +
 			"INNER JOIN videos v ON d.video_id = v.id " +
 			"WHERE downloads.website = $1 AND downloads.attribute_type = $2 AND downloads.attribute_value = $3 AND v.dlStatus = 0 " +
-			"ORDER BY CHAR_LENGTH(v.video_ID) DESC, v.video_ID desc LIMIT 100"
+			"ORDER BY CHAR_LENGTH(v.video_ID) DESC, v.video_ID desc LIMIT 10 " +
+			"OFFSET random() * LEAST(1000, (select count(*) from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id  WHERE downloads.website = $1 AND downloads.attribute_type = $2 AND downloads.attribute_value = $3 AND v.dlStatus = 0)) "
 		res, err := p.Db.Query(sql, category.Website, category.ContentType, category.ContentValue)
 		if err != nil {
 			return nil, err
@@ -99,6 +106,7 @@ func (p *poller) getCategories() ([]models.Category, error) {
 	sql := "select website, attribute_type, attribute_value, d.id, count(user_id) * random() AS score FROM " +
 		"user_download_subscriptions s " +
 		"INNER JOIN downloads d ON d.id = s.download_id " +
+		"WHERE d.id IN (select downloads.id from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v on d.video_id = v.id WHERE v.dlStatus = 0 GROUP BY downloads.id HAVING count(*) > 10) " +
 		"GROUP BY d.id ORDER BY score desc LIMIT 1"
 	row := p.Db.QueryRow(sql)
 
