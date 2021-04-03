@@ -1,15 +1,12 @@
 locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
 
-# source blocks configure your builder plugins; your source is then used inside
-# build blocks to create resources. A build block runs provisioners and
-# post-processors on an instance created by the source.
 source "amazon-ebs" "aws-ami" {
   ami_name      = "packer example ${local.timestamp}"
   instance_type = "t2.micro"
   region        = "us-west-1"
   source_ami_filter {
     filters = {
-      name                = "ubuntu-eks/k8s_1.19/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"
+      name                = "ubuntu-eks/k8s_1.17/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
@@ -21,7 +18,7 @@ source "amazon-ebs" "aws-ami" {
 
 source "vagrant" "local-vm" {
   communicator = "ssh"
-  source_path = "ubuntu/xenial64"
+  source_path = "ubuntu/bionic64"
   provider = "virtualbox"
   add_force = true
   output_dir = "local-vm"
@@ -29,13 +26,18 @@ source "vagrant" "local-vm" {
 
 
 build {
-  sources = ["vagrant.local-vm"]
+  sources = [
+    "vagrant.local-vm",
+    "amazon-ebs.aws-ami"
+  ]
 
   provisioner "shell" {
     inline = [
       "sudo apt-get update",
       "sudo echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections",
-      "DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq openvpn",
+      "sudo apt-get install -yq software-properties-common && sudo add-apt-repository 'deb http://us.archive.ubuntu.com/ubuntu/ bionic main restricted'",
+      "sudo apt-get update",
+      "sudo apt-get install -yq openvpn",
     ]
   }
 
