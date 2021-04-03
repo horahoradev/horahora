@@ -87,7 +87,7 @@ func New() (*config, error) {
 	)
 
 	opts := []grpc_retry.CallOption{
-		grpc_retry.WithBackoff%((grpc_retry.BackoffExponential(100 * time.Millisecond)),
+		grpc_retry.WithBackoff(grpc_retry.BackoffExponential(100 * time.Millisecond)),
 		grpc_retry.WithMax(5),
 	}
 

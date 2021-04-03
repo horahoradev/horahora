@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/horahoradev/horahora/video_service/internal/storage"
 	"github.com/jmoiron/sqlx"
 	"github.com/opentracing/opentracing-go"
 	"google.golang.org/grpc/codes"
@@ -19,10 +20,6 @@ import (
 	"time"
 
 	"github.com/horahoradev/horahora/video_service/internal/dashutils"
-
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-
-	"github.com/aws/aws-sdk-go-v2/aws/external"
 
 	"github.com/horahoradev/horahora/video_service/internal/models"
 
@@ -43,10 +40,9 @@ var _ proto.VideoServiceServer = (*GRPCServer)(nil)
 
 type GRPCServer struct {
 	VideoModel *models.VideoModel
-	S3Client   s3.Client
-	BucketName string
 	Local      bool
 	OriginFQDN string
+	Storage    storage.Storage
 }
 
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
@@ -72,18 +68,16 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 
 func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
 	redisClient *redis.Client, originFQDN string) (*GRPCServer, error) {
-	cfg, err := external.LoadDefaultAWSConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	s3Client := s3.New(cfg)
 
 	g := &GRPCServer{
-		S3Client:   *s3Client,
-		BucketName: bucketName,
 		Local:      local,
 		OriginFQDN: originFQDN,
+	}
+
+	var err error
+	g.Storage, err = storage.New(bucketName)
+	if err != nil {
+		return nil, err
 	}
 
 	g.VideoModel, err = models.NewVideoModel(db, client, redisClient)
@@ -190,21 +184,21 @@ loop:
 	if !g.Local {
 		// FIXME did it again...
 		log.Infof("Uploading thumbnail: %s", video.FileData.Name()+".jpg")
-		err = g.SendToOriginServer(video.FileData.Name()+".jpg", filepath.Base(video.FileData.Name()+".jpg"))
+		err = g.Storage.Upload(video.FileData.Name()+".jpg", filepath.Base(video.FileData.Name()+".jpg"))
 		if err != nil {
 			return err
 		}
 
 		// Upload the raw metadata
 		log.Infof("Uploading metadata: %s", video.MetaFileData.Name())
-		err = g.SendToOriginServer(video.MetaFileData.Name(), filepath.Base(video.MetaFileData.Name()))
+		err = g.Storage.Upload(video.MetaFileData.Name(), filepath.Base(video.MetaFileData.Name()))
 		if err != nil {
 			return err
 		}
 
 		// Upload the original video
 		log.Infof("Uploading video: %s", video.FileData.Name())
-		err = g.SendToOriginServer(video.FileData.Name(), filepath.Base(video.FileData.Name()))
+		err = g.Storage.Upload(video.FileData.Name(), filepath.Base(video.FileData.Name()))
 		if err != nil {
 			return err
 		}
@@ -269,7 +263,7 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 
 				log.Infof("Transcoding/chunking video id %d uuid %s", video.ID, video.GetMPDUUID())
 
-				vid, err := g.fetchFromS3(video.GetMPDUUID())
+				vid, err := g.Storage.Fetch(video.GetMPDUUID())
 
 				if err != nil {
 					log.Errorf("could not fetch unencoded video id %d from s3. Err: %s", video.ID, err)
@@ -328,14 +322,14 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 // used.
 func (g GRPCServer) UploadMPDSet(d *dashutils.DASHVideo) error {
 	// send manifest to origin
-	err := g.SendToOriginServer(d.ManifestPath, filepath.Base(d.ManifestPath))
+	err := g.Storage.Upload(d.ManifestPath, filepath.Base(d.ManifestPath))
 	if err != nil {
 		return err
 	}
 
 	// Send all of the chunked files
 	for _, path := range d.QualityMap {
-		err = g.SendToOriginServer(path, filepath.Base(path))
+		err = g.Storage.Upload(path, filepath.Base(path))
 		if err != nil {
 			return err
 		}
@@ -348,96 +342,6 @@ func (g GRPCServer) UploadMPDSet(d *dashutils.DASHVideo) error {
 	}
 
 	return nil
-}
-
-func (g GRPCServer) fetchFromS3(id string) (*os.File, error) {
-	getReq := &s3.GetObjectInput{
-		Bucket: &g.BucketName,
-		Key:    &id,
-	}
-
-	getObjReq := g.S3Client.GetObjectRequest(getReq)
-	res, err := getObjReq.Send(context.Background())
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	f, err := os.OpenFile(uploadDir+id, os.O_APPEND|os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
-	if err != nil {
-		return nil, err
-	}
-
-loop:
-	for true {
-		buf := make([]byte, 1024*1024*1)
-		n, err := res.Body.Read(buf)
-
-		switch {
-		case n == 0 && err == io.EOF:
-			break loop
-		case err != io.EOF && err != nil:
-			err = fmt.Errorf("could not read from S3 for transcoding. Err: %s", err)
-			log.Error(err)
-			f.Close()
-			return nil, err
-		}
-
-		// Truncate
-		buf = buf[:n]
-
-		_, err = f.Write(buf)
-		if err != nil {
-			f.Close()
-			return nil, err
-		}
-	}
-
-	return f, nil
-}
-
-func (g GRPCServer) SendToOriginServer(path, desiredFilename string) error {
-	data, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-
-	putObjInp := s3.PutObjectInput{
-		ACL:                       s3.ObjectCannedACLPublicRead,
-		Body:                      data,
-		Bucket:                    &g.BucketName,
-		CacheControl:              nil,
-		ContentDisposition:        nil,
-		ContentEncoding:           nil,
-		ContentLanguage:           nil,
-		ContentLength:             nil,
-		ContentMD5:                nil,
-		ContentType:               nil, // TODO
-		Expires:                   nil,
-		GrantFullControl:          nil,
-		GrantRead:                 nil,
-		GrantReadACP:              nil,
-		GrantWriteACP:             nil,
-		Key:                       &desiredFilename,
-		Metadata:                  nil,
-		ObjectLockLegalHoldStatus: "",
-		ObjectLockMode:            "",
-		ObjectLockRetainUntilDate: nil,
-		RequestPayer:              "",
-		SSECustomerAlgorithm:      nil,
-		SSECustomerKey:            nil,
-		SSECustomerKeyMD5:         nil,
-		SSEKMSEncryptionContext:   nil,
-		SSEKMSKeyId:               nil,
-		ServerSideEncryption:      "",
-		StorageClass:              "",
-		Tagging:                   nil,
-		WebsiteRedirectLocation:   nil,
-	}
-
-	putObjReq := g.S3Client.PutObjectRequest(&putObjInp)
-	_, err = putObjReq.Send(context.TODO())
-	return err // TODO
 }
 
 // Do we need this?
