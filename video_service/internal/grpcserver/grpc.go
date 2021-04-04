@@ -45,9 +45,11 @@ type GRPCServer struct {
 	Storage    storage.Storage
 }
 
+// TODO: API is getting bloated
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
-	redisClient *redis.Client, client userproto.UserServiceClient, tracer opentracing.Tracer) error {
-	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN)
+	redisClient *redis.Client, client userproto.UserServiceClient, tracer opentracing.Tracer,
+	storageBackend, apiID, apiKey string, approvalThreshold int) error {
+	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN, storageBackend, apiID, apiKey, approvalThreshold)
 	if err != nil {
 		return err
 	}
@@ -67,7 +69,7 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 }
 
 func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
-	redisClient *redis.Client, originFQDN string) (*GRPCServer, error) {
+	redisClient *redis.Client, originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int) (*GRPCServer, error) {
 
 	g := &GRPCServer{
 		Local:      local,
@@ -75,12 +77,18 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 	}
 
 	var err error
-	g.Storage, err = storage.New(bucketName)
-	if err != nil {
-		return nil, err
+
+	switch storageBackend {
+	case "b2":
+		g.Storage, err = storage.NewB2(apiID, apiKey, bucketName)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("Unknown storage backend %s", storageBackend)
 	}
 
-	g.VideoModel, err = models.NewVideoModel(db, client, redisClient)
+	g.VideoModel, err = models.NewVideoModel(db, client, redisClient, approvalThreshold)
 	if err != nil {
 		return nil, err
 	}

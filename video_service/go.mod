@@ -17,6 +17,7 @@ require (
 	github.com/horahoradev/horahora/user_service v0.0.0-20200526031340-64e1705d00d7
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kr/pretty v0.1.0 // indirect
+	github.com/kurin/blazer v0.5.3
 	github.com/lib/pq v1.4.0
 	github.com/onsi/ginkgo v1.10.1 // indirect
 	github.com/onsi/gomega v1.7.0 // indirect

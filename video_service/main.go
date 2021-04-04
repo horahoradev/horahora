@@ -10,11 +10,12 @@ import (
 func main() {
 	conf, err := config.New()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to initialize config. Err: %s", err)
 	}
 
 	err = grpcserver.NewGRPCServer(conf.BucketName, conf.SqlClient, conf.GRPCPort, conf.OriginFQDN, conf.Local,
-		conf.RedisConn, conf.UserClient, conf.Tracer)
+		conf.RedisConn, conf.UserClient, conf.Tracer, conf.StorageBackend, conf.StorageAPIID, conf.StorageAPIKey,
+		conf.ApprovalThreshold)
 	if err != nil {
 		log.Fatal(err)
 	}
