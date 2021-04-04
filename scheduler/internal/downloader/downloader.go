@@ -388,8 +388,6 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"--get-comments",
 		"--max-filesize",
 		"200m",
-		"--proxy",
-		d.socksConnStr,
 		"--add-header",
 		"Accept:*/*",
 		// "Why do we need this?"
@@ -401,6 +399,10 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"-o",
 		// Some websites have two IDs per video, so I made it explicit just to avoid issues
 		fmt.Sprintf("%s/%s.%s", d.outputLoc, video.VideoID, "%(ext)s"),
+	}
+
+	if d.socksConnStr != "" {
+		args = append(args, []string{"--proxy", d.socksConnStr}...)
 	}
 
 	return args, nil
