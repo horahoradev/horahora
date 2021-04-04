@@ -11,6 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"github.com/opentracing/opentracing-go"
+	log "github.com/sirupsen/logrus"
 	"github.com/uber/jaeger-client-go"
 	"google.golang.org/grpc"
 	"net"
@@ -41,7 +42,7 @@ type config struct {
 	Local                  bool   `env:"Local,required"` // If running locally, no s3 uploads
 	// (this is a workaround for getting IAM permissions into pods running on minikube)
 	OriginFQDN    string `env:"OriginFQDN,required"`
-	JaegerAddress string `env:"JaegerAddress,required"`
+	JaegerAddress string `env:"JaegerAddress"`
 	UserClient    userproto.UserServiceClient
 	SqlClient     *sqlx.DB
 	Tracer        opentracing.Tracer
@@ -78,7 +79,7 @@ func New() (*config, error) {
 	transport, err := jaeger.NewUDPTransport(net.JoinHostPort(config.JaegerAddress, "6831"),
 		4096)
 	if err != nil {
-		return nil, err
+		log.Errorf("Could not initialize jaeger tracer. Err: %s", err)
 	}
 
 	tracer, _ := jaeger.NewTracer("videoservice",

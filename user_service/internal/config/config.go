@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/caarlos0/env"
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 )
 
 type PostgresInfo struct {
@@ -35,6 +36,8 @@ func New() (*config, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not connect to postgres. Err: %s", err)
 	}
+
+	log.Infof("RSAKeypair: %s", config.RSAKeypair)
 
 	config.DbConn = conn
 	return &config, err
