@@ -21,10 +21,11 @@ services:
       - GRPCPort=7777
       - VideoServiceGRPCAddress=videoservice:7777
       - NumberOfRetries=1
-      - redis_host=videoredis
+      - redis_host=redis
       - redis_port=6379
       - redis_pass=
       - SocksConn=
+      - SyncPollDelay=30m
   videoservice:
     build: video_service
     restart: always
@@ -36,14 +37,18 @@ services:
       - pgs_db=videoservice
       - GRPCPort=7777
       - UserServiceGRPCAddress=userservice:7777
-      - BucketName=horahora-dev-otomads
+      - BucketName=otomads
       - Local=false
-      - redis_host=videoredis
+      - redis_host=redis
       - redis_port=6379
       - redis_pass=
-      - OriginFQDN=FIXME
-      - AWS_DEFAULT_REGION=FIXME
+      - OriginFQDN=
+      - AWS_DEFAULT_REGION=
       - JaegerAddress=
+      - StorageBackend=b2
+      - StorageAPIID=
+      - StorageAPIKey=
+      - ApprovalThreshold=1
   userservice:
     build: user_service
     restart: always
@@ -95,3 +100,4 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - ./sql:/sql
+      - ./data:/var/lib/postgresql/data
