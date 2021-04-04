@@ -80,7 +80,7 @@ func main() {
 
 		repo := models.NewArchiveRequest(cfg.Conn, cfg.Redlock)
 
-		worker, err := syncmanager.NewWorker(repo, cfg.SocksConnStr)
+		worker, err := syncmanager.NewWorker(repo, cfg.SocksConnStr, cfg.SyncPollDelay)
 		if err != nil {
 			log.Errorf("Sync worker exited wth err: %s", err)
 		}

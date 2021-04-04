@@ -41,11 +41,15 @@ type config struct {
 	BucketName             string `env:"BucketName,required"`
 	Local                  bool   `env:"Local,required"` // If running locally, no s3 uploads
 	// (this is a workaround for getting IAM permissions into pods running on minikube)
-	OriginFQDN    string `env:"OriginFQDN,required"`
-	JaegerAddress string `env:"JaegerAddress"`
-	UserClient    userproto.UserServiceClient
-	SqlClient     *sqlx.DB
-	Tracer        opentracing.Tracer
+	OriginFQDN        string `env:"OriginFQDN,required"`
+	JaegerAddress     string `env:"JaegerAddress"`
+	UserClient        userproto.UserServiceClient
+	SqlClient         *sqlx.DB
+	Tracer            opentracing.Tracer
+	StorageBackend    string `env:"StorageBackend,required"`
+	StorageAPIID      string `env:"StorageAPIID"`
+	StorageAPIKey     string `env:"StorageAPIKey"`
+	ApprovalThreshold int    `env:"ApprovalThreshold,required"`
 }
 
 func New() (*config, error) {

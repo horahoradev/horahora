@@ -39,7 +39,8 @@ type config struct {
 	Conn                    *sqlx.DB
 	GRPCConn                *grpc.ClientConn
 	Client                  proto.VideoServiceClient
-	SocksConnStr            string `env:"SocksConn,required"`
+	SocksConnStr            string        `env:"SocksConn,required"`
+	SyncPollDelay           time.Duration `env:"SyncPollDelay,required"`
 }
 
 func New() (*config, error) {

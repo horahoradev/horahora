@@ -15,11 +15,13 @@ import (
 type SyncWorker struct {
 	R            *models.ArchiveRequestRepo
 	SocksConnStr string
+	SyncDelay    time.Duration
 }
 
-func NewWorker(r *models.ArchiveRequestRepo, socksConnStr string) (*SyncWorker, error) {
+func NewWorker(r *models.ArchiveRequestRepo, socksConnStr string, syncDelay time.Duration) (*SyncWorker, error) {
 	return &SyncWorker{R: r,
-		SocksConnStr: socksConnStr}, nil
+		SocksConnStr: socksConnStr,
+		SyncDelay:    syncDelay}, nil
 }
 
 func (s *SyncWorker) Sync() error {
@@ -56,7 +58,7 @@ func (s *SyncWorker) Sync() error {
 			}
 		}
 
-		time.Sleep(time.Hour * 3)
+		time.Sleep(s.SyncDelay)
 	}
 }
 
@@ -136,8 +138,9 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 	args := []string{"/scheduler/youtube-dl/youtube_dl/__main__.py",
 		"-j",
 		"--flat-playlist",
-		"--proxy",
-		s.SocksConnStr,
+	}
+	if s.SocksConnStr != "" {
+		args = append(args, []string{"--proxy", s.SocksConnStr}...)
 	}
 
 	downloadPreference := "all"

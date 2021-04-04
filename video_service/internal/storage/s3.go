@@ -17,7 +17,7 @@ type S3Storage struct {
 	S3Client   s3.Client
 }
 
-func New(bucketName string) (*S3Storage, error) {
+func NewS3(bucketName string) (*S3Storage, error) {
 	cfg, err := external.LoadDefaultAWSConfig()
 	if err != nil {
 		return nil, err
@@ -29,6 +29,7 @@ func New(bucketName string) (*S3Storage, error) {
 
 }
 
+// FIXME: can probably rewrite a significant portion of this. Too long and complicated!
 func (s *S3Storage) Fetch(id string) (*os.File, error) {
 	getReq := &s3.GetObjectInput{
 		Bucket: &s.BucketName,
