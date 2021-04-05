@@ -3,6 +3,23 @@ Horahora is a microservice-based video hosting website with additional functiona
 
 This project is a WIP, and under active development. The MVP for local use is not yet complete, but nearly done. Contributions and suggestions are always welcome! If you have any questions regarding this project, feel free to contact me via email.
 
+https://discord.gg/vfwfpctJRZ
+
+## Local Use Instructions
+
+1. Install docker, docker-compose, flyway, and make a Backblaze account
+2. modify docker-compose.yaml, adding values for the following environment variables: 
+    - OriginFQDN: this will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads
+    - StorageAPIID: the API ID for your Backblaze account
+    - StorageAPIKey: The API key for your Backblaze account
+    - SocksConn (optional): youtube-dl socks5 flag value string, allowing downloads to be proxied
+3. docker-compose up
+4. run ./sql/create_and_apply_migrations.sh
+5. Visit localhost:8082 (or if it doesn't work initially, try after a few minutes)
+    - if it never works, check the container logs, and/or bug me on discord
+    - you'll need to login as admin/horahora to view videos that have been encoded. There's an approval workflow which prevents unapproved videos from being viewed by regular users.
+    - there's a delay between videos being downloaded/uploaded and being visible, as they need to be transcoded for DASH
+
 ## Architecture
 ![](Architectural_Drawing.png)
 
