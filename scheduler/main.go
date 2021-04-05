@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
+	"github.com/horahoradev/horahora/scheduler/internal/syncmanager"
 	"os"
 	"os/signal"
 	"sync"
@@ -38,7 +39,7 @@ func main() {
 
 	wg := sync.WaitGroup{}
 
-	dlQueue := make(chan *models.VideoDlRequest, 100)
+	dlQueue := make(chan *models.VideoDLRequest, 100)
 
 	// Start one publisher goroutine to poll postgres and send download requests into the channel
 	// could potentially expand this to multiple publishers
@@ -58,13 +59,14 @@ func main() {
 		wg.Done()
 	}()
 
+	m := &sync.Mutex{}
 	// Start two goroutines to subscribe to channel and download items
-	numOfSubscribers := 2
+	numOfSubscribers := 3
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
-		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, nil)
+		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, cfg.SocksConnStr)
 		go func() {
-			err := dler.SubscribeAndDownload(ctx)
+			err := dler.SubscribeAndDownload(ctx, m)
 			if err != nil {
 				log.Errorf("Downloader failed. Err: %s", err)
 			}
@@ -74,12 +76,30 @@ func main() {
 
 	wg.Add(1)
 	go func() {
-		err := grpcserver.NewGRPCServer(ctx, cfg.Conn, 7777)
+		defer wg.Done()
+
+		repo := models.NewArchiveRequest(cfg.Conn, cfg.Redlock)
+
+		worker, err := syncmanager.NewWorker(repo, cfg.SocksConnStr, cfg.SyncPollDelay)
+		if err != nil {
+			log.Errorf("Sync worker exited wth err: %s", err)
+		}
+
+		err = worker.Sync()
+		if err != nil {
+			log.Errorf("Sync worker exited while syncing with err: %s", err)
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		err := grpcserver.NewGRPCServer(ctx, cfg.Conn, cfg.Redlock, 7777)
 		if err != nil {
 			log.Error(err)
 		}
 		log.Info("GRPC server exited")
-		wg.Done()
 	}()
 
 	log.Info("Goroutines started, waiting")

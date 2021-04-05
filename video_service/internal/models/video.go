@@ -32,9 +32,10 @@ type VideoModel struct {
 	db         *sqlx.DB
 	grpcClient proto.UserServiceClient
 	//redisClient *redis.Client
+	ApprovalThreshold int
 }
 
-func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *redis.Client) (*VideoModel, error) {
+func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *redis.Client, approvalThreshold int) (*VideoModel, error) {
 	return &VideoModel{db: db,
 		grpcClient: client,
 	}, nil

@@ -3,7 +3,6 @@ package downloader
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -15,29 +14,32 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 )
 
 type downloader struct {
-	downloadQueue       chan *models.VideoDlRequest
-	outputLoc           string
-	videoClient         videoproto.VideoServiceClient
-	numberOfRetries     int
-	successfulDownloads chan models.Video
+	downloadQueue   chan *models.VideoDLRequest
+	outputLoc       string
+	videoClient     videoproto.VideoServiceClient
+	numberOfRetries int
+	socksConnStr    string
 }
 
-func New(dlQueue chan *models.VideoDlRequest, outputLoc string, client videoproto.VideoServiceClient, numberOfRetries int, successfulDownloads chan models.Video) downloader {
+func New(dlQueue chan *models.VideoDLRequest, outputLoc string, client videoproto.VideoServiceClient, numberOfRetries int,
+	socksConnStr string) downloader {
 	return downloader{
-		downloadQueue:       dlQueue,
-		outputLoc:           outputLoc,
-		videoClient:         client,
-		numberOfRetries:     numberOfRetries,
-		successfulDownloads: successfulDownloads,
+		downloadQueue:   dlQueue,
+		outputLoc:       outputLoc,
+		videoClient:     client,
+		numberOfRetries: numberOfRetries,
+		socksConnStr:    socksConnStr,
 	}
 }
 
 // SubscribeAndDownload reads from the download queue
 // FIXME: should provide slightly better graceful shutdown behavior here
-func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
+func (d *downloader) SubscribeAndDownload(ctx context.Context, m *sync.Mutex) error {
 	// This is pretty awkward, but guarantees a return on the next iteration,
 	// and guarantees that the function will return if it was waiting on a download
 	// request.
@@ -54,7 +56,7 @@ func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
 			log.Info("Context done, downloader returning")
 			return nil
 		case r := <-d.downloadQueue:
-			err := d.downloadRequest(ctx, r)
+			err := d.downloadVideoReq(ctx, r, m)
 			if err != nil {
 				log.Errorf("Encountered error in downloader. Err: %s. Continuing...", err)
 				// FIXME: increase robustness
@@ -64,224 +66,150 @@ func (d *downloader) SubscribeAndDownload(ctx context.Context) error {
 	}
 }
 
-type VideoJSON struct {
-	Type  string `json:"_type"`
-	URL   string `json:"url"`
-	IeKey string `json:"ie_key"`
-	ID    string `json:"id"`
-	Title string `json:"title"`
-}
-
-// Deals with a particular download request
-func (d *downloader) downloadRequest(ctx context.Context, dlReq *models.VideoDlRequest) error {
-	// TODO: caching download list, lol
-	isBackingOff, err := dlReq.IsBackingOff()
-	if err != nil {
-		return err
-	}
-
-	// refresh cache if backoff period is up
-	if !isBackingOff {
-		log.Infof("Backoff period expired for download request %s, syncing all", dlReq.Id)
-		itemsAdded, err := d.syncDownloadList(dlReq)
+// Deals with a particular video download request
+func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDLRequest, m *sync.Mutex) error {
+	if strings.HasPrefix(video.VideoID, "so") {
+		err := video.SetDownloadFailed()
 		if err != nil {
-			return err
+			log.Errorf("Could not set download failed for video %s. Err: %s", video.VideoID, err)
 		}
-
-		if itemsAdded {
-			err = dlReq.ReportSyncHit()
-			if err != nil {
-				return err
-			}
-		} else {
-			err = dlReq.ReportSyncMiss()
-			if err != nil {
-				return err
-			}
-		}
-	} else {
-		log.Infof("Content archival request %s is backing off, using cached video list", dlReq.Id)
+		log.Info("Video VideoID has the bad prefix so, skipping...")
+		return nil
 	}
 
-	videos, err := dlReq.FetchVideoList()
+	// VideoJSON does not yet exist, try to acquire lock
+	err := video.AcquireLockForVideo()
 	if err != nil {
-		return err
+		// If we can't get the lock, just skip the video in the current archive request
+		log.Errorf("Could not acquire redis lock for video VideoID %s during download of content type %s value %s, err: %s", video.VideoID,
+			video.C.ContentType, video.C.ContentValue, err)
+		return nil
 	}
 
-	log.Infof("Downloading %d videos for content type %s content value %s", len(videos), dlReq.ContentType, dlReq.ContentValue)
+	videoReq := videoproto.ForeignVideoCheck{
+		ForeignVideoID: video.VideoID,
+		ForeignWebsite: videoproto.Website(video.C.Website), // lol FIXME
+	}
 
-	// At this point we have the list of videos to download
-	// Iterate over in reverse (ascending by upload date)
-	for _, video := range videos {
-		// So this is outrageously dumb, but I'll remove it later. Downloader keeps getting stuck on these bad videos!
-		if strings.HasPrefix(video.ID, "so") {
-			log.Info("Video ID has the bad prefix so, skipping...")
-			continue
+	videoExists, err := d.videoClient.ForeignVideoExists(context.TODO(), &videoReq)
+	if err != nil {
+		err := fmt.Errorf("could not check whether video exists for video VideoID %s. Err: %s", video.VideoID, err)
+		log.Error(err)
+		return nil
+	}
+
+	if videoExists.Exists {
+		log.Errorf("Video VideoID %s already exists", video.VideoID)
+		err = video.SetDownloadSucceeded()
+		if err != nil {
+			log.Errorf("Could not set download succeeded for video %s. Err: %s", video.VideoID, err)
 		}
-	currVideoLoop:
-		for currentRetryNum := 1; currentRetryNum <= d.numberOfRetries+1; currentRetryNum++ {
-			select {
-			case <-ctx.Done():
-				log.Infof("Context done, returning from download request loop for content type %s content val %s", dlReq.ContentType, dlReq.ContentValue)
-				return nil
-			default:
-			}
+		return nil
+	}
 
-			switch {
-			case currentRetryNum == d.numberOfRetries+1:
-				log.Errorf("Failed to download %s in %d attempts", video.URL, d.numberOfRetries)
-				break currVideoLoop
-			case currentRetryNum > 1:
-				log.Infof("Attempting to download %s, attempt %d of %d", video.URL, currentRetryNum, d.numberOfRetries)
-			}
+	// LOL
+	// there's a race condition in which ffprobe can stall indefinitely if its cookies are invalidated before its stream metadata
+	// request succeeds. This is my attempt to lower the likelihood of this issue occurring.
+	m.Lock()
+	go func() {
+		time.Sleep(time.Second * 10)
+		m.Unlock()
+	}()
 
-			videoReq := videoproto.ForeignVideoCheck{
-				ForeignVideoID: video.ID,
-				ForeignWebsite: ToVideoSite(dlReq.Website), // LMAO FIXME
-			}
-
-			videoExists, err := d.videoClient.ForeignVideoExists(context.TODO(), &videoReq)
-			if err != nil {
-				err := fmt.Errorf("could not check whether video exists for video ID %s. Err: %s", video.ID, err)
-				log.Error(err)
-				break currVideoLoop
-			}
-
-			if videoExists.Exists {
-				log.Errorf("Video ID %s already exists", video.ID)
-				break currVideoLoop
-			}
-
-			// VideoJSON does not yet exist, try to acquire lock
-			err = dlReq.AcquireLockForVideo(video.ID)
-			if err != nil {
-				// If we can't get the lock, just skip the video in the current archive request
-				log.Errorf("Could not acquire redis lock for video ID %s during download of content type %s value %s, err: %s", video.ID,
-					dlReq.ContentType, dlReq.ContentValue, err)
-				break currVideoLoop
-			}
-
-			metafile, metadata, err := d.downloadVideo(video)
-			if err == nil {
-				log.Infof("Download succeeded for video %s", video.ID)
-
-				// Background is used here to try to ensure that the service will deal with whatever it's currently
-				// downloading before shutting down.
-				err = d.uploadToVideoService(context.Background(), metadata, video, dlReq.Website, metafile)
-				if err != nil {
-					log.Infof("failed to upload to video service. Err: %s. Continuing...", err)
-					continue
-				}
-
-				err := dlReq.SetDownloaded(video.ID)
-
-				// TODO: handle better? retry?
-				if err != nil {
-					log.Errorf("Could not set latest video. Err: %s", err)
-				}
-
-				// TODO: why did I make this channel? I don't remember what it was for, successful video download notifications to client?
-				if d.successfulDownloads != nil {
-					d.successfulDownloads <- video
-				}
-				break
-			}
-			// Just keep trying to download until we succeed
-			// TODO: check for specific errors indicating we should skip to the next entry
-			log.Errorf("Failed to download video %s. Err: %s", video.ID, err)
+currVideoLoop:
+	for currentRetryNum := 1; currentRetryNum <= d.numberOfRetries+1; currentRetryNum++ {
+		select {
+		case <-ctx.Done():
+			log.Infof("Context done, returning from download request loop for content type %s content val %s", video.C.ContentType, video.C.ContentValue)
+			return nil
+		default:
 		}
+
+		switch {
+		case currentRetryNum == d.numberOfRetries+1:
+			log.Errorf("Failed to download %s in %d attempts", video.URL, d.numberOfRetries)
+			err := video.SetDownloadFailed()
+			if err != nil {
+				log.Errorf("Could not set download failed for video %s. Err: %s", video.VideoID, err)
+			}
+			break currVideoLoop
+		case currentRetryNum > 1:
+			log.Infof("Attempting to download %s, attempt %d of %d", video.URL, currentRetryNum, d.numberOfRetries)
+		}
+
+		metafile, metadata, err := d.downloadVideo(video)
+		if err == nil {
+			log.Infof("Download succeeded for video %s", video.VideoID)
+
+			// Background is used here to try to ensure that the service will deal with whatever it's currently
+			// downloading before shutting down.
+			err = d.uploadToVideoService(context.Background(), metadata, video, proto.SupportedSite(video.C.Website), metafile)
+			if err != nil {
+				log.Infof("failed to upload to video service. Err: %s. Continuing...", err)
+				continue
+			}
+
+			err = video.SetDownloadSucceeded()
+			if err != nil {
+				log.Errorf("Could not set download succeeded for video %s. Err: %s", video.VideoID, err)
+			}
+
+			err := video.SetDownloaded()
+
+			// TODO: handle better? retry?
+			if err != nil {
+				log.Errorf("Could not set latest video. Err: %s", err)
+			}
+
+			break
+		}
+		// Just keep trying to download until we succeed
+		// TODO: check for specific errors indicating we should skip to the next entry
+		log.Errorf("Failed to download video %s. Err: %s", video.VideoID, err)
 	}
 	return nil
 }
 
-func (d *downloader) syncDownloadList(dlReq *models.VideoDlRequest) (bool, error) {
-	videos, err := d.getDownloadList(dlReq)
-	if err != nil {
-		return false, fmt.Errorf("could not fetch download list. Err: %s", err)
-	}
-
-	var newItemsAdded bool
-
-	for _, video := range videos {
-		// TODO: batch?
-		itemsAdded, err := dlReq.AddVideo(video.ID, video.URL)
-		if err != nil {
-			return false, fmt.Errorf("could not add video. Err: %s", err)
-		}
-
-		if itemsAdded {
-			newItemsAdded = true
-		}
-	}
-
-	return newItemsAdded, nil
-}
-
-func (d *downloader) getDownloadList(dlReq *models.VideoDlRequest) ([]VideoJSON, error) {
-	args, err := getVideoListString(dlReq)
-	if err != nil {
-		return nil, err
-	}
-
-	// get the list of videos to download
-	cmd := exec.Command("/usr/bin/python3", args...)
-	payload, err := cmd.Output()
-	if err != nil {
-		log.Errorf("Command `%s` finished with err %s", cmd, err)
-		return nil, err
-	}
-
-	var videos []VideoJSON
-	// The json isn't formatted as a list LMAO please FIXME
-	// I assume that the list provided by youtube-dl will be in descending order by upload date.
-	// Download by upload date asc so that we can resume at newest download.
-	spl := strings.Split(string(payload), "\n")
-	for i := len(spl) - 2; i >= 0; i-- {
-		line := spl[i]
-		var video VideoJSON
-		err = json.Unmarshal([]byte(line), &video)
-
-		if err != nil {
-			log.Errorf("Failed to unmarshal json. Payload: %s. Err: %s", line, err)
-			return nil, err
-		}
-
-		videos = append(videos, video)
-	}
-
-	if len(videos) == 0 {
-		log.Errorf("Could not unmarshal, videolist len is 0")
-		return nil, errors.New("unmarshal failure")
-	}
-
-	return videos, nil
-}
-
-func (d *downloader) downloadVideo(video models.Video) (*os.File, *YTDLMetadata, error) {
+func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTDLMetadata, error) {
 	log.Infof("Downloading %s", video)
 
-	args, err := d.getVideoDownloadArgs(&video)
+	args, err := d.getVideoDownloadArgs(video)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	cmd := exec.Command("/usr/bin/python3", args...)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Errorf("Command %s failed with %s. Output: %s", cmd, err, string(output))
-		return nil, nil, err
-	}
-
-	// surely no video will have a metadata file in excess of 100mb??
-	buf := make([]byte, 100*1024*1024)
-	file, err := os.Open(fmt.Sprintf("%s/%s.info.json", d.outputLoc, video.ID))
+	ytdlLog, err := os.Create(fmt.Sprintf("%s/%s.ytdl", d.outputLoc, video.VideoID))
 	if err != nil {
 		return nil, nil, err
 	}
+	defer ytdlLog.Close()
 
+	cmd := exec.Command("/usr/local/bin/youtube-dl", args...)
+	cmd.Stdout = ytdlLog
+	cmd.Stderr = ytdlLog
+
+	err = cmd.Run()
+	if err != nil {
+		log.Errorf("Command %s failed with %s.", cmd, err)
+		return nil, nil, err
+	}
+
+	bufSize := 300 * 1024 * 1024
+	// surely no video will have a metadata file in excess of 300mb??
+	buf := make([]byte, bufSize)
+	file, err := os.Open(fmt.Sprintf("%s/%s.info.json", d.outputLoc, video.VideoID))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// I should probably read until EOF here but I think it's fine as is as long as the file isn't too large
 	n, err := file.Read(buf)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	if n == bufSize {
+		return nil, nil, fmt.Errorf("n equal to bufsize, metadata file too large for %d", video.ID)
 	}
 
 	// Truncate
@@ -298,7 +226,7 @@ func (d *downloader) downloadVideo(video models.Video) (*os.File, *YTDLMetadata,
 }
 
 // FIXME: this function is quite long and complicated
-func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video models.Video,
+func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video *models.VideoDLRequest,
 	website proto.SupportedSite, metafile *os.File) error {
 	stream, err := d.videoClient.UploadVideo(ctx)
 	if err != nil {
@@ -306,17 +234,25 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	}
 
 	// FIXME: extend to multiple file extensions, this is bad
-	generatedVideoFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.mp4", d.outputLoc, video.ID))
+	// I could use walk but I don't want to. I will fix this eventually!
+	generatedVideoFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.mp4", d.outputLoc, video.VideoID))
 	if err != nil {
 		return err
 	}
+
+	generatedVideoFilesFLV, err := filepath.Glob(fmt.Sprintf("%s/%s.flv", d.outputLoc, video.VideoID))
+	if err != nil {
+		return err
+	}
+
+	generatedVideoFiles = append(generatedVideoFiles, generatedVideoFilesFLV...)
 
 	if len(generatedVideoFiles) != 1 {
 		return fmt.Errorf("unexpected number of matched files: %d", len(generatedVideoFiles))
 	}
 
 	// TODO: fix for other extensions?? this is dumb
-	generatedThumbnailFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.jpg", d.outputLoc, video.ID))
+	generatedThumbnailFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.jpg", d.outputLoc, video.VideoID))
 	if err != nil {
 		return err
 	}
@@ -324,9 +260,6 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	if len(generatedThumbnailFiles) != 1 {
 		return fmt.Errorf("unexpected number of matched thumbnail files: %d", len(generatedThumbnailFiles))
 	}
-
-	// FIXME: this is dumb
-	site := ToVideoSite(website)
 
 	thumb, err := os.Open(generatedThumbnailFiles[0])
 	if err != nil {
@@ -348,7 +281,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 				AuthorUID:         metadata.UploaderID,
 				OriginalVideoLink: video.URL,
 				AuthorUsername:    metadata.Uploader,
-				OriginalSite:      site,
+				OriginalSite:      videoproto.Website(video.C.Website),
 				OriginalID:        metadata.ID,
 				Tags:              metadata.Tags,
 				Thumbnail:         thumbnailContents, // nothing to see here...
@@ -387,7 +320,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return fmt.Errorf("received error after closing stream: %s", err)
 	}
 
-	log.Infof("Video %s has been uploaded as video ID %d", video.URL, resp.VideoID)
+	log.Infof("Video %s has been uploaded as video VideoID %d", video.URL, resp.VideoID)
 	return nil
 }
 
@@ -447,91 +380,29 @@ loop:
 	return nil
 }
 
-func getVideoListString(dlReq *models.VideoDlRequest) ([]string, error) {
-	// TODO: type safety, switch to enum?
-	args := []string{"/scheduler/youtube-dl/youtube_dl/__main__.py", "-j", "--flat-playlist"}
-	downloadPreference := "all"
-
-	// If it's a tag we're downloading from, then there may be a large number of videos.
-	// If we've downloaded from this tag before, we should terminate the search once reaching the latest
-	// video we've downloaded.
-
-	// WOW that's a lot of switch statements, should probably flatten or refactor this out into separate functions so
-	// that I can actually read this
-	switch dlReq.Website {
-	case proto.SupportedSite_niconico:
-		switch dlReq.ContentType {
-		case models.Tag:
-			latestVideo, err := dlReq.GetLatestVideoForRequest()
-
-			switch {
-			case err == models.NeverDownloaded:
-				// keep as all
-				log.Infof("Tag category %s has never been downloaded, downloading all", dlReq.ContentValue)
-
-			case err != nil:
-				return nil, err
-			default:
-				log.Infof("Tag category %s has been downloaded before, resuming at %s", dlReq.ContentValue, *latestVideo)
-				downloadPreference = fmt.Sprintf("id%s", *latestVideo)
-			}
-			args = append(args, fmt.Sprintf("nicosearch%s:%s", downloadPreference, dlReq.ContentValue))
-
-		default:
-			err := fmt.Errorf("content type %s is not implemented for niconico.", dlReq.ContentType)
-			return nil, err
-		}
-
-	case proto.SupportedSite_bilibili:
-		switch dlReq.ContentType {
-		case models.Tag:
-			args = append(args, fmt.Sprintf("bilisearch%s:%s", downloadPreference, dlReq.ContentValue))
-			log.Infof("Downloading videos of tag %s from bilibili", dlReq.ContentValue)
-			// TODO: implement continuation from latest video for bilibili in extractor
-			// for now, try to download everything in the list every time
-
-		case models.Channel:
-			log.Infof("Downloading videos from bilibili user %s", dlReq.ContentValue)
-			args = append(args, fmt.Sprintf("https://space.bilibili.com/%s", dlReq.ContentValue))
-
-		default:
-			err := fmt.Errorf("content type %s is not implemented for bilibili.", dlReq.ContentType)
-			return nil, err
-		}
-
-	case proto.SupportedSite_youtube:
-		switch dlReq.ContentType {
-		case models.Tag:
-			args = append(args, fmt.Sprintf("ytsearch%s:%s", downloadPreference, dlReq.ContentValue))
-			log.Infof("downloading videos of tag %s from youtube", dlReq.ContentValue)
-		// TODO: ensure youtube extractor returns list in desc order, implements continuation from latest video id
-
-		case models.Channel:
-			log.Infof("Downloading videos from youtube user %s", dlReq.ContentValue)
-			args = append(args, fmt.Sprintf("https://www.youtube.com/channel/%s", dlReq.ContentValue))
-
-		default:
-			err := fmt.Errorf("content type %s is not implemented for youtube.", dlReq.ContentType)
-			return nil, err
-		}
-
-	default:
-		err := fmt.Errorf("no archive request implementations for website %s", dlReq.Website)
-		return nil, err
-	}
-
-	return args, nil
-}
-
-func (d *downloader) getVideoDownloadArgs(video *models.Video) ([]string, error) {
+func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]string, error) {
 	args := []string{
-		"/scheduler/youtube-dl/youtube_dl/__main__.py",
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
 		"--get-comments",
+		"--max-filesize",
+		"200m",
+		"--add-header",
+		"Accept:*/*",
+		// "Why do we need this?"
+		// Previously ffprobe would stall indefinitely if nico's cookies were invalidated by the time it made a request
+		// (or something like that).
+		"--socket-timeout",
+		"1800",
+		"--verbose",
 		"-o",
-		fmt.Sprintf("%s/%s", d.outputLoc, "%(id)s.%(ext)s"),
+		// Some websites have two IDs per video, so I made it explicit just to avoid issues
+		fmt.Sprintf("%s/%s.%s", d.outputLoc, video.VideoID, "%(ext)s"),
+	}
+
+	if d.socksConnStr != "" {
+		args = append(args, []string{"--proxy", d.socksConnStr}...)
 	}
 
 	return args, nil
@@ -720,9 +591,4 @@ type YTDLMetadata struct {
 	} `json:"http_headers"`
 	Fulltitle string `json:"fulltitle"`
 	Filename  string `json:"_filename"`
-}
-
-// TODO: remove in future
-func ToVideoSite(website proto.SupportedSite) videoproto.Website {
-	return videoproto.Website(videoproto.Website_value[website.String()])
 }
