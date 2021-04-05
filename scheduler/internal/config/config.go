@@ -34,11 +34,13 @@ type config struct {
 	RedisPool               *redis.Pool
 	Redlock                 *redsync.Redsync
 	VideoOutputLoc          string
-	VideoServiceGRPCAddress string `env:"VideoServiceGRPCAddress",required"`
-	NumberOfRetries         int    `env:"NumberOfRetries",required"`
+	VideoServiceGRPCAddress string `env:"VideoServiceGRPCAddress,required"`
+	NumberOfRetries         int    `env:"NumberOfRetries,required"`
 	Conn                    *sqlx.DB
 	GRPCConn                *grpc.ClientConn
 	Client                  proto.VideoServiceClient
+	SocksConnStr            string        `env:"SocksConn,required"`
+	SyncPollDelay           time.Duration `env:"SyncPollDelay,required"`
 }
 
 func New() (*config, error) {

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/labstack/gommon/log"
 	"github.com/sirupsen/logrus"
 	"net"
 	"time"
@@ -21,7 +22,7 @@ type Config struct {
 	VideoServiceGRPCAddress     string `env:"VideoServiceGRPCAddress,required"`
 	SchedulerServiceGRPCAddress string `env:"SchedulerServiceGRPCAddress,required"`
 
-	JaegerAddress string `env:"JaegerAddress,required"`
+	JaegerAddress string `env:"JaegerAddress"`
 
 	VideoClient     videoproto.VideoServiceClient
 	UserClient      userproto.UserServiceClient
@@ -60,7 +61,7 @@ func New() (*Config, error) {
 	transport, err := jaeger.NewUDPTransport(net.JoinHostPort(config.JaegerAddress, "6831"),
 		4096)
 	if err != nil {
-		return nil, err
+		log.Errorf("Failed to initialize jaeger udp transport. Err: %S", err)
 	}
 
 	// TODO: close when main exits to flush traces
