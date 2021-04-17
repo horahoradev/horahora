@@ -451,5 +451,5 @@ func (g GRPCServer) GetVideoRecommendations(ctx context.Context, req *proto.RecR
 		return nil, err
 	}
 
-	return &resp, nil
+	return resp, nil
 }
