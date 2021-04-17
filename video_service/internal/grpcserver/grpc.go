@@ -444,3 +444,12 @@ func (g GRPCServer) GetCommentsForVideo(ctx context.Context, commentListReq *pro
 		Comments: list,
 	}, err
 }
+
+func (g GRPCServer) GetVideoRecommendations(ctx context.Context, req *proto.RecReq) (*proto.RecResp, error) {
+	resp, err := g.VideoModel.GetVideoRecommendations(req.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp, nil
+}

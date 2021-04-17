@@ -571,6 +571,29 @@ func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
 	return nil
 }
 
+func (v *VideoModel) GetVideoRecommendations(userID int64) (videoproto.RecResp, error) {
+	var videos []int64
+	sql := "select id FROM videos WHERE id NOT IN (select id from videos inner join ratings ON videos.id= ratings.video_id AND ratings.user_id = $1)"
+
+	rows, err := v.db.Query(sql, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var videoID int64
+
+		err = rows.Scan(&videoID)
+		if err != nil {
+			return nil, err
+		}
+
+		videos = append(videos, videoID)
+	}
+
+	return videoproto.RecResp{VideoID: videos}, nil
+}
+
 func (v *VideoModel) GetComments(videoID, currUserID int64) ([]*videoproto.Comment, error) {
 	var comments []*videoproto.Comment
 	sql := "SELECT id, sum(COALESCE(vote_score, 0)) as upvote_score, comments.user_id," +
