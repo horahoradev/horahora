@@ -571,9 +571,9 @@ func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
 	return nil
 }
 
-func (v *VideoModel) GetVideoRecommendations(userID int64) (videoproto.RecResp, error) {
+func (v *VideoModel) GetVideoRecommendations(userID int64) (*videoproto.RecResp, error) {
 	var videos []int64
-	sql := "select id FROM videos WHERE id NOT IN (select id from videos inner join ratings ON videos.id= ratings.video_id AND ratings.user_id = $1)"
+	sql := "select id FROM videos WHERE id NOT IN (select id from videos inner join ratings ON videos.id= ratings.video_id AND ratings.user_id = $1) LIMIT 1"
 
 	rows, err := v.db.Query(sql, userID)
 	if err != nil {
@@ -591,7 +591,7 @@ func (v *VideoModel) GetVideoRecommendations(userID int64) (videoproto.RecResp, 
 		videos = append(videos, videoID)
 	}
 
-	return videoproto.RecResp{VideoID: videos}, nil
+	return &videoproto.RecResp{VideoID: videos}, nil
 }
 
 func (v *VideoModel) GetComments(videoID, currUserID int64) ([]*videoproto.Comment, error) {
