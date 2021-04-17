@@ -385,7 +385,6 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
-		"--get-comments",
 		"--max-filesize",
 		"200m",
 		"--add-header",
@@ -399,6 +398,13 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"-o",
 		// Some websites have two IDs per video, so I made it explicit just to avoid issues
 		fmt.Sprintf("%s/%s.%s", d.outputLoc, video.VideoID, "%(ext)s"),
+	}
+
+	// FIXME: This is dumb
+	// youtube doesn't support get-comments
+	if !strings.HasPrefix(video.URL, "https://www.youtube.com") {
+		args = append(args, "--get-comments")
+
 	}
 
 	if d.socksConnStr != "" {
@@ -539,14 +545,14 @@ type YTDLMetadata struct {
 			} `json:"chat,omitempty"`
 		} `json:"cn"`
 	} `json:"raw_comments"`
-	Comments []struct {
-		Parent    interface{} `json:"parent"`
-		ID        int         `json:"id"`
-		AuthorID  string      `json:"author_id"`
-		Text      string      `json:"text"`
-		Timestamp int         `json:"timestamp"`
-		Language  string      `json:"language"`
-	} `json:"comments"`
+	//Comments []struct {
+	//	Parent    interface{} `json:"parent"`
+	//	ID        int         `json:"id"`
+	//	AuthorID  string      `json:"author_id"`
+	//	Text      string      `json:"text"`
+	//	Timestamp int         `json:"timestamp"`
+	//	Language  string      `json:"language"`
+	//} `json:"comments"`
 	Subtitles struct {
 		DanmakuEn []struct {
 			Ext  string `json:"ext"`

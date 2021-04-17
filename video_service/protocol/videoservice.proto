@@ -27,6 +27,10 @@ message recReq {
     int64 user_id = 1;
 }
 
+message recResp {
+    repeated int64 videoID = 1;
+}
+
 message videoComment {
     int64 user_id = 1;
     int64 video_id = 2;
