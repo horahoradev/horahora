@@ -17,10 +17,15 @@ service VideoService {
     rpc MakeCommentUpvote(commentUpvote) returns (Nothing) {}
     rpc GetCommentsForVideo(commentRequest) returns (CommentListResponse) {}
 
+    rpc GetVideoRecommendations(recReq) returns (VideoList) {}
     rpc ApproveVideo(videoApproval) returns (Nothing) {}
 }
 
 message Nothing{}
+
+message recReq {
+    int64 user_id = 1;
+}
 
 message videoComment {
     int64 user_id = 1;

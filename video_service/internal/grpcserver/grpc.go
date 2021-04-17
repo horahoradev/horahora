@@ -84,6 +84,11 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 		if err != nil {
 			return nil, err
 		}
+	case "s3":
+		g.Storage, err = storage.NewS3(bucketName)
+		if err != nil {
+			return nil, err
+		}
 	default:
 		return nil, fmt.Errorf("Unknown storage backend %s", storageBackend)
 	}
