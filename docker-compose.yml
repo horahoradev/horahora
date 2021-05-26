@@ -91,7 +91,9 @@ services:
   redis:
     image: "redis:alpine"
   postgres:
-    image: postgres
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     restart: always
     ports:
       - "5432:5432"
@@ -99,5 +101,7 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
     volumes:
-      - ./sql:/sql
-      - ./data:/var/lib/postgresql/data
+      - postgresdata:/var/lib/postgresql/data
+
+volumes:
+  postgresdata:
