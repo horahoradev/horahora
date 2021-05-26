@@ -28,7 +28,7 @@ services:
       - VideoServiceGRPCAddress=videoservice:7777
       - NumberOfRetries=1
       - SocksConn=
-      - SyncPollDelay=30m
+      - SyncPollDelay=1m
   videoservice:
     build: video_service
     restart: always
