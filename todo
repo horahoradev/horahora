@@ -1,44 +1,7 @@
-now:
+later:
 
-- userservice
-
-================================================================================
-
-- scheduler: depends on python3, youtube-dl (the fork, probably) in PATH
-- scheduler/downloader: calls python3 directly with path to youtube-dl...
-  since its calling __main__, we can just replace it with the youtube-dl in PATH?
-- scheduler: needs redis for redlock
-
-- video_service: depends on ffmpeg in PATH
-- video_service: remove dependency on redis
-  absolutely nothing in the code makes use of it, we don't need it
-- video_service: remove tracing stuff (jaeger)
-- video_service: untangle backblaze storage stuff (hint: OriginFQDN)
-- video_service: remove need for backblaze config, create a new local-only `storage`
-  determine how this thing uses the stored stuff (how does it retrieve it?)
-  looks like it stores the "manifest" file, the .mpd with the OriginFQDN, which we
-  can mangle how we want for the time being (although this, without a doubt, will be annoying)
-- video_service: modify uploadDir (or maybe not, it doesnt matter too much)
-
-- frontend/config: remove tracing stuff (jaeger)
-- frontend/main: figure out what nginx:86 is supposed to serve
-  apparently that's just test data? we can probably safely remove this, nothing else references this
-
-  ...except video_service, that thing uploads to test_files directory on upload
-
-================================================================================
-
-frontend:
-  configures via env, we need to provide:
-  - UserServiceGRPCAddress
-  - VideoServiceGRPCAddress
-  - SchedulerServiceGRPCAddress
-
-user_service:
-  configures via env, we need to provide:
-  - pgs_host (postgres)
-  - pgs_port
-  - pgs_user
-  - pgs_pass
-  - pgs_db
-  - GRPCPort
+- nginx as reverse proxy for everything
+- things like youtube support (although honestly, let's just make it so we can feed arbitrary links to youtube-dl for processing)
+  so we're not restricted to very specific types of archive requests
+- something more proper for the frontend since im a sucker for webapps and not server side rendered pages
+- retry failed downloads of scheduled videos

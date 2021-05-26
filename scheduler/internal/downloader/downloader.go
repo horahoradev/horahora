@@ -4,10 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/horahoradev/horahora/scheduler/internal/models"
-	proto "github.com/horahoradev/horahora/scheduler/protocol"
-	videoproto "github.com/horahoradev/horahora/video_service/protocol"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"os"
@@ -16,6 +12,11 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/horahoradev/horahora/scheduler/internal/models"
+	proto "github.com/horahoradev/horahora/scheduler/protocol"
+	videoproto "github.com/horahoradev/horahora/video_service/protocol"
+	log "github.com/sirupsen/logrus"
 )
 
 type downloader struct {
@@ -171,7 +172,7 @@ currVideoLoop:
 }
 
 func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTDLMetadata, error) {
-	log.Infof("Downloading %s", video)
+	log.Infof("Downloading %v+", video)
 
 	args, err := d.getVideoDownloadArgs(video)
 	if err != nil {

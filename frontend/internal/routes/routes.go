@@ -6,6 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"math"
+	"net/http"
+	"net/url"
+	"strconv"
+	"time"
+
 	"github.com/horahoradev/horahora/frontend/internal/config"
 	custommiddleware "github.com/horahoradev/horahora/frontend/internal/middleware"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -13,12 +20,6 @@ import (
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"io/ioutil"
-	"math"
-	"net/http"
-	"net/url"
-	"strconv"
-	"time"
 )
 
 func SetupRoutes(e *echo.Echo, cfg *config.Config) {
@@ -249,7 +250,7 @@ func setCookie(c echo.Context, jwt string) error {
 	cookie.Value = base64.StdEncoding.EncodeToString([]byte(jwt)) //
 	cookie.Expires = time.Now().Add(24 * time.Hour)
 
-	cookie.SameSite = http.SameSiteStrictMode
+	// cookie.SameSite = http.SameSiteStrictMode
 	//cookie.Secure = true // set this later
 
 	c.SetCookie(cookie)

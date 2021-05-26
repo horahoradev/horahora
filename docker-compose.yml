@@ -1,4 +1,5 @@
 version: "3"
+
 services:
   frontend:
     build: frontend
@@ -9,6 +10,7 @@ services:
       - UserServiceGRPCAddress=userservice:7777
       - VideoServiceGRPCAddress=videoservice:7777
       - SchedulerServiceGRPCAddress=scheduler:7777
+      - JaegerAddress=
   scheduler:
     build: scheduler
     restart: always
@@ -18,12 +20,13 @@ services:
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=scheduler
-      - GRPCPort=7777
-      - VideoServiceGRPCAddress=videoservice:7777
-      - NumberOfRetries=1
       - redis_host=redis
       - redis_port=6379
       - redis_pass=
+      # TODO(ivan): probably should add this to config
+      - GRPCPort=7777
+      - VideoServiceGRPCAddress=videoservice:7777
+      - NumberOfRetries=1
       - SocksConn=
       - SyncPollDelay=30m
   videoservice:
@@ -35,19 +38,19 @@ services:
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=videoservice
+      - redis_host=redis
+      - redis_port=6379
+      - redis_pass=
       - GRPCPort=7777
       - UserServiceGRPCAddress=userservice:7777
       - BucketName=otomads
       - Local=false
-      - redis_host=redis
-      - redis_port=6379
-      - redis_pass=
-      - OriginFQDN=
-      - AWS_DEFAULT_REGION=
+      - OriginFQDN=http://localhost:9000/otomads
       - JaegerAddress=
-      - StorageBackend=b2
-      - StorageAPIID=
-      - StorageAPIKey=
+      - StorageBackend=minio
+      - StorageAPIID=minioadmin
+      - StorageAPIKey=minioadmin
+      - MinioEndpoint=minio:9000
       - ApprovalThreshold=1
   userservice:
     build: user_service
@@ -90,6 +93,7 @@ services:
       - GRPCPort=7777
   redis:
     image: "redis:alpine"
+    restart: always
   postgres:
     build:
       context: .
@@ -102,6 +106,18 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - postgresdata:/var/lib/postgresql/data
+  minio:
+    build: minio
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      BUCKET_NAME: otomads
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - miniodata:/data
 
 volumes:
+  miniodata:
   postgresdata:

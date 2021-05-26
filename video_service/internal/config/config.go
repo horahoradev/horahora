@@ -2,6 +2,9 @@ package config
 
 import (
 	"fmt"
+	"net"
+	"time"
+
 	"github.com/caarlos0/env"
 	"github.com/go-redis/redis"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -14,8 +17,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/uber/jaeger-client-go"
 	"google.golang.org/grpc"
-	"net"
-	"time"
 )
 
 type PostgresInfo struct {
@@ -49,6 +50,7 @@ type config struct {
 	StorageBackend    string `env:"StorageBackend,required"`
 	StorageAPIID      string `env:"StorageAPIID"`
 	StorageAPIKey     string `env:"StorageAPIKey"`
+	MinioEndpoint     string `env:"MinioEndpoint"`
 	ApprovalThreshold int    `env:"ApprovalThreshold,required"`
 }
 
