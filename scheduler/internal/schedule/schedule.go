@@ -4,10 +4,11 @@ import "C"
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/go-redsync/redsync"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
 	proto "github.com/horahoradev/horahora/video_service/protocol"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -106,7 +107,7 @@ func (p *poller) getCategories() ([]models.Category, error) {
 	sql := "select website, attribute_type, attribute_value, d.id, count(user_id) * random() AS score FROM " +
 		"user_download_subscriptions s " +
 		"INNER JOIN downloads d ON d.id = s.download_id " +
-		"WHERE d.id IN (select downloads.id from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v on d.video_id = v.id WHERE v.dlStatus = 0 GROUP BY downloads.id HAVING count(*) > 10) " +
+		"WHERE d.id IN (select downloads.id from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v on d.video_id = v.id WHERE v.dlStatus = 0 GROUP BY downloads.id) " +
 		"GROUP BY d.id ORDER BY score desc LIMIT 1"
 	row := p.Db.QueryRow(sql)
 

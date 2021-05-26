@@ -3,4 +3,5 @@
 INSERT INTO
   users (username, email, pass_hash, rank)
 VALUES
-  ('admin', 'admin', '$2a$05$bfl5teobsWmSk76CiG9IHuBnt94qAirXVGOnbyupVjO9K.8sOn8CK', 2);
+  -- password: admin
+  ('admin', 'admin', '$2y$12$jLgDoFwdXUopJivUGqvxlurZPIdmv7I95PJ97xme35YXmeyy3gRlC', 2);

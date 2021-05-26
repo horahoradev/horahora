@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/horahoradev/horahora/scheduler/internal/models"
-	proto "github.com/horahoradev/horahora/scheduler/protocol"
-	log "github.com/sirupsen/logrus"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/horahoradev/horahora/scheduler/internal/models"
+	proto "github.com/horahoradev/horahora/scheduler/protocol"
+	log "github.com/sirupsen/logrus"
 )
 
 type SyncWorker struct {
@@ -129,6 +130,8 @@ func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJS
 		log.Errorf("Could not unmarshal, videolist len is 0")
 		return nil, errors.New("unmarshal failure")
 	}
+
+	log.Errorf("Videos, %+v", videos)
 
 	return videos, nil
 }
