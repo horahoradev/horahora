@@ -7,6 +7,7 @@ Horahora is a microservice-based video hosting website with additional functiona
 This fork is a WIP of a WIP, and not meant for production use. I ([SEAPUNK](https://github.com/SEAPUNK)) am maintaining and making modifications of this project when I feel like it. Don't expect anything to come out of it. If you want to contact me, open up an issue in this repo.
 
 Horahora's repo: https://github.com/horahoradev/horahora
+
 Horahora's discord: https://discord.gg/vfwfpctJRZ
 
 ## Run Horahora locally (on Linux/MacOS)
