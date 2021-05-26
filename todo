@@ -1,6 +1,6 @@
 now:
 
-- postgres, setup image to include flyway, so we can exec it from inside the container
+- userservice
 
 ================================================================================
 
@@ -19,13 +19,6 @@ now:
   looks like it stores the "manifest" file, the .mpd with the OriginFQDN, which we
   can mangle how we want for the time being (although this, without a doubt, will be annoying)
 - video_service: modify uploadDir (or maybe not, it doesnt matter too much)
-
-- postgres: setup db, run migrations (how?)
-  there's create_and_apply_migrations.sh but it uses flyway, i _guess_ we can use that for now
-  but we should either dockerize it or make it simpler
-
-- user_service/config: hardcode RSA key? its used for JWT
-  or maybe we just use insecure JWTs
 
 - frontend/config: remove tracing stuff (jaeger)
 - frontend/main: figure out what nginx:86 is supposed to serve

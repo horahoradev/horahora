@@ -8,6 +8,6 @@ WORKDIR /userservice
 RUN apt install -y git
 RUN go get github.com/go-delve/delve/cmd/dlv
 
-RUN go build --mod=vendor -gcflags "all=-N -l" -o userservice .
+RUN go build -gcflags "all=-N -l" -o userservice .
 
 ENTRYPOINT ["./userservice"]
