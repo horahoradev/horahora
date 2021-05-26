@@ -1,5 +1,11 @@
+now:
+
+- ???
+
 later:
 
+- new queue system
+  make it so new archive requests get processed immediately, and rechecked depending on the last checked date in the db
 - nginx as reverse proxy for everything
 - things like youtube support (although honestly, let's just make it so we can feed arbitrary links to youtube-dl for processing)
   so we're not restricted to very specific types of archive requests
