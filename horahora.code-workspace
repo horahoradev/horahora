@@ -1,6 +1,10 @@
 {
 	"folders": [
 		{
+			"name": "front_api",
+			"path": "front_api"
+		},
+		{
 			"name": "frontend",
 			"path": "frontend"
 		},
