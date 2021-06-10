@@ -32,15 +32,36 @@ function Search() {
   </>
 }
 
-function UserNav() {
+function LoggedInUserNav(props) {
+  const { userData } = props;
+
   return <>
-    todo: user nav
+    <Link className="mr-4" to="/archive-requests">Archive Requests</Link>
+    <Link to={`/users/${userData.UserID}`}>{userData.Username}</Link>
   </>
 }
 
-function Header() {
+function LoggedOutUserNav() {
+  return <>
+    <Link to="/login">Login</Link>
+  </>
+}
+
+function UserNav(props) {
+  const { userData } = props;
+
+  if (userData.Username != null) {
+    return <LoggedInUserNav userData={userData} />
+  } else {
+    return <LoggedOutUserNav />
+  }
+}
+
+function Header(props) {
+  const { userData } = props;
+
   return <nav className='h-16 bg-white shadow flex justify-center'>
-    <div className="max-w-screen-lg w-screen flex justify-around items-center">
+    <div className="max-w-screen-lg w-screen flex justify-around items-center mx-4">
       <div className="flex justify-start">
         <Link to='/'>Horahora</Link>
       </div>
@@ -48,7 +69,7 @@ function Header() {
         <Search />
       </div>
       <div className="">
-        <UserNav />
+        <UserNav userData={userData} />
       </div>
     </div>
   </nav>

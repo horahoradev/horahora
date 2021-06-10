@@ -35,7 +35,7 @@ func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceCli
 func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient)
 
-	e.GET("/", r.getHome)
+	e.GET("/home", r.getHome)
 	e.GET("/users/:id", r.getUser)
 
 	e.GET("/tag/:tag", r.getTag)

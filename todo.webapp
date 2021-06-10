@@ -1,16 +1,14 @@
 now:
 
-- port api
+- video view
 
 later:
 
-- connect to api
-
-- home
 - login
-- video view
 - archive requests
 
 - profile
 - register
 - upload
+
+- common, styled UI elements (links, etc.)
