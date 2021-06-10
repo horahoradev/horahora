@@ -50,7 +50,7 @@ function LoggedOutUserNav() {
 function UserNav(props) {
   const { userData } = props;
 
-  if (userData.Username != null) {
+  if (userData.Username) {
     return <LoggedInUserNav userData={userData} />
   } else {
     return <LoggedOutUserNav />
