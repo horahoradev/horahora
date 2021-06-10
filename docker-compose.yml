@@ -1,6 +1,17 @@
 version: "3"
 
 services:
+  front_api:
+    build:
+      context: .
+      dockerfile: Dockerfile.front_api
+    restart: always
+    ports:
+      - "8083:8083"
+    environment:
+      - UserServiceGRPCAddress=userservice:7777
+      - VideoServiceGRPCAddress=videoservice:7777
+      - SchedulerServiceGRPCAddress=scheduler:7777
   frontend:
     build: frontend
     restart: always

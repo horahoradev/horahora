@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/url"
+
 	"github.com/horahoradev/horahora/frontend/internal/config"
 	custommiddleware "github.com/horahoradev/horahora/frontend/internal/middleware"
 	"github.com/horahoradev/horahora/frontend/internal/routes"
@@ -8,7 +10,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
-	"net/url"
 )
 
 const testData = false
