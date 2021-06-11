@@ -1,14 +1,9 @@
 now:
 
-- login
+- video view
 
 later:
 
-- improve header
-  - branding text
-  - search bar justified to left (and responsive)
-  - login AND register buttons
-- video view
 - archive requests
 
 - profile
@@ -16,3 +11,8 @@ later:
 - upload
 
 - common, styled UI elements (links, etc.)
+
+- home pagination component
+- video rating
+  - video list
+  - video page
