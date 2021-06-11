@@ -26,3 +26,8 @@ export async function postLogin(data) {
   });
   return res.data;
 }
+
+export async function postLogout() {
+  const res = await axios.post(e("logout"));
+  return res.data;
+}

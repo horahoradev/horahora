@@ -67,7 +67,12 @@ function LoggedInUserNav(props) {
 function LoggedOutUserNav() {
   return (
     <>
-      <Link to="/login">Login</Link>
+      <Link to="/login">
+        <Button>Login</Button>
+      </Link>
+      <Link className="ml-2" to="/register">
+        <Button type="primary">Register</Button>
+      </Link>
     </>
   );
 }
