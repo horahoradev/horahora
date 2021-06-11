@@ -1,8 +1,14 @@
 import { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { Input } from "antd";
+import {
+  faSearch,
+  faBars,
+  faUser,
+  faArchive,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { Input, Button, Dropdown, Menu } from "antd";
 
 function Search() {
   let onSubmit = useCallback((e) => {
@@ -29,12 +35,31 @@ function Search() {
 function LoggedInUserNav(props) {
   const { userData } = props;
 
+  let menu = (
+    <Menu>
+      <Menu.Item icon={<FontAwesomeIcon icon={faUser} />}>
+        <Link to={`/users/${userData.UserID}`}>Profile page</Link>
+      </Menu.Item>
+      <Menu.Item icon={<FontAwesomeIcon icon={faArchive} />}>
+        <Link to="/archive-requests">Archive Requests</Link>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item
+        icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
+      >
+        <Link to="/logout">Logout</Link>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <>
-      <Link className="mr-4" to="/archive-requests">
-        Archive Requests
-      </Link>
-      <Link to={`/users/${userData.UserID}`}>{userData.Username}</Link>
+      <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
+        <Button>
+          {userData.Username}
+          <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
+        </Button>
+      </Dropdown>
     </>
   );
 }
