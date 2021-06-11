@@ -2,13 +2,13 @@ import { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSearch,
-  faBars,
-  faUser,
   faArchive,
+  faBars,
+  faSearch,
   faSignOutAlt,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import { Input, Button, Dropdown, Menu } from "antd";
+import { Button, Dropdown, Input, Menu } from "antd";
 
 function Search() {
   let onSubmit = useCallback((e) => {
