@@ -96,6 +96,7 @@ type LoggedInUserData struct {
 	UserID            int64
 	Username          string
 	ProfilePictureURL string
+	Rank              int32
 }
 
 type ProfileData struct {
@@ -184,6 +185,7 @@ func addUserProfileInfo(c echo.Context, l *LoggedInUserData, client userproto.Us
 	l.Username = userResp.Username
 	// l.ProfilePictureURL = userResp. // TODO
 	l.UserID = idInt
+	l.Rank = int32(userResp.Rank)
 }
 
 type CommentData struct {

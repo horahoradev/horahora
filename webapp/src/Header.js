@@ -37,14 +37,18 @@ function LoggedInUserNav(props) {
 
   let menu = (
     <Menu>
-      <Menu.Item icon={<FontAwesomeIcon icon={faUser} />}>
+      <Menu.Item key="profile" icon={<FontAwesomeIcon icon={faUser} />}>
         <Link to={`/users/${userData.UserID}`}>Profile page</Link>
       </Menu.Item>
-      <Menu.Item icon={<FontAwesomeIcon icon={faArchive} />}>
+      <Menu.Item
+        key="archive-requests"
+        icon={<FontAwesomeIcon icon={faArchive} />}
+      >
         <Link to="/archive-requests">Archive Requests</Link>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
+        key="logout"
         icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
       >
         <Link to="/logout">Logout</Link>

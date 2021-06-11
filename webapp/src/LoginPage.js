@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 
 import Header from "./Header";
-import { postLogin } from "./api";
+import * as API from "./api";
 
 function LoginForm() {
   let history = useHistory();
@@ -18,7 +18,7 @@ function LoginForm() {
       password: "",
     },
     onSubmit: async (values) => {
-      await postLogin(values);
+      await API.postLogin(values);
       history.push("/");
     },
   });

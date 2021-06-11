@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
-import { postLogout } from "./api";
+import * as API from "./api";
 
 function LogoutPage() {
   let history = useHistory();
@@ -10,7 +10,7 @@ function LogoutPage() {
     let ignore = false;
 
     let fetchData = async () => {
-      await postLogout();
+      await API.postLogout();
       if (!ignore) history.push("/");
     };
 

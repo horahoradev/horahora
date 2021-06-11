@@ -36,3 +36,8 @@ export async function getVideo(videoId) {
   const res = await axios.get(e(`videos/${videoId}`));
   return res.data;
 }
+
+export async function approveVideo(videoId) {
+  const res = await axios.post(e(`approve/${videoId}`));
+  return res.data;
+}
