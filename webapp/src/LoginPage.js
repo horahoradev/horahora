@@ -1,10 +1,11 @@
-import Header from "./Header";
 import { useFormik } from "formik";
 import { Button, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
+
+import Header from "./Header";
 import { postLogin } from "./api";
 
 function LoginForm() {

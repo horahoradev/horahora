@@ -9,8 +9,12 @@ later:
 - profile
 - register
 - upload
+- 404
+
+- searching
 
 - common, styled UI elements (links, etc.)
+  we're just using antd for now seems like
 
 - home pagination component
 - video rating

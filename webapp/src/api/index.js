@@ -31,3 +31,8 @@ export async function postLogout() {
   const res = await axios.post(e("logout"));
   return res.data;
 }
+
+export async function getVideo(videoId) {
+  const res = await axios.get(e(`videos/${videoId}`));
+  return res.data;
+}

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { postLogout } from "./api";
 import { useHistory } from "react-router-dom";
+
+import { postLogout } from "./api";
 
 function LogoutPage() {
   let history = useHistory();

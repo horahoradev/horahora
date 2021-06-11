@@ -1,7 +1,9 @@
-import { Switch, Route } from "react-router";
+import { Route, Switch } from "react-router";
+
 import HomePage from "./HomePage";
 import LoginPage from "./LoginPage";
 import LogoutPage from "./LogoutPage";
+import VideoPage from "./VideoPage";
 
 function App() {
   return (
@@ -15,6 +17,9 @@ function App() {
         </Route>
         <Route exact path="/logout">
           <LogoutPage />
+        </Route>
+        <Route exact path="/videos/:id">
+          <VideoPage />
         </Route>
         <Route>TODO(ivan): 404</Route>
       </Switch>
