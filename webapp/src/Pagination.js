@@ -1,5 +1,6 @@
 function Pagination() {
-  return 'TODO(ivan): pagination'
+  // TODO(ivan): pagination
+  return null;
 }
 
 export default Pagination;
