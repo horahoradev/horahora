@@ -45,8 +45,8 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/approve/:id", r.handleApproval)
 
 	e.POST("/login", r.handleLogin)
-
 	e.POST("/register", r.handleRegister)
+	e.POST("/logout", r.handleLogout)
 
 	e.GET("/archiverequests", r.getArchiveRequests)
 	e.POST("/archiverequests", r.handleArchiveRequest)
