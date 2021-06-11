@@ -1,10 +1,14 @@
 now:
 
-- video view
+- login
 
 later:
 
-- login
+- improve header
+  - branding text
+  - search bar justified to left (and responsive)
+  - login AND register buttons
+- video view
 - archive requests
 
 - profile
