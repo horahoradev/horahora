@@ -42,12 +42,12 @@ services:
       - redis_host=redis
       - redis_port=6379
       - redis_pass=
-      - OriginFQDN=
+      - OriginFQDN=$ORIGIN_FQDN
       - AWS_DEFAULT_REGION=
       - JaegerAddress=
-      - StorageBackend=b2
-      - StorageAPIID=
-      - StorageAPIKey=
+      - StorageBackend=$STORAGE_BACKEND
+      - StorageAPIID=$STORAGE_API_ID
+      - StorageAPIKey=$STORAGE_API_KEY
       - ApprovalThreshold=1
   userservice:
     build: user_service
@@ -88,6 +88,9 @@ services:
         rd258VnoYyNVswrjem4jHKTm4frORBF3sx6R1i/KiFSptp941g2hYjGe
         -----END RSA PRIVATE KEY-----
       - GRPCPort=7777
+  backup_manager:
+    build: user_service
+    restart: always
   redis:
     image: "redis:alpine"
   postgres:

@@ -1,1 +1,3 @@
 youtube-dl*
+secrets.env
+docker-compose.yml
