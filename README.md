@@ -8,14 +8,15 @@ https://discord.gg/vfwfpctJRZ
 ## Local Use Instructions
 
 1. Install docker, docker-compose, flyway, and make a Backblaze account
-2. modify docker-compose.yaml, adding values for the following environment variables: 
+2. Create secrets.env docker-compose.yml, exporting the following environment variables:
     - OriginFQDN: this will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads
     - StorageAPIID: the API ID for your Backblaze account
     - StorageAPIKey: The API key for your Backblaze account
     - SocksConn (optional): youtube-dl socks5 flag value string, allowing downloads to be proxied
-3. docker-compose up
-4. run ./sql/create_and_apply_migrations.sh
-5. Visit localhost:8082 (or if it doesn't work initially, try after a few minutes)
+3. Run generate.sh
+4. docker-compose up
+5. run ./sql/create_and_apply_migrations.sh
+6. Visit localhost:8082 (or if it doesn't work initially, try after a few minutes)
     - if it never works, check the container logs, and/or bug me on discord
     - you'll need to login as admin/horahora to view videos that have been encoded. There's an approval workflow which prevents unapproved videos from being viewed by regular users.
     - there's a delay between videos being downloaded/uploaded and being visible, as they need to be transcoded for DASH
