@@ -1,10 +1,10 @@
 package main
 
 import (
-	"exec"
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/horahoradev/horahora/backup_service/internal/config"
@@ -17,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	storageAPI, err := storage.NewB2(conf.BackblazeID, conf.backblazeAPIKey,"otomads")
+	storageAPI, err := storage.NewB2(conf.BackblazeID, conf.BackblazeAPIKey, "otomads")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,12 +43,13 @@ func backupAllDBs(c *config.Config, storageAPI *storage.B2Storage) error {
 	if err != nil {
 		return err
 	}
+	return nil
 }
 
-func dumpAndWrite(hostname, dbName, username, password string, b2 storage.B2Storage) error {
+func dumpAndWrite(hostname, dbName, username, password string, b2 *storage.B2Storage) error {
 	filename := fmt.Sprintf("%s-%d", dbName, time.Now().Unix())
-	
-	dumpFile, err := os.Create(fmt.Sprintf("/tmp/%s", filename)
+
+	dumpFile, err := os.Create(fmt.Sprintf("/tmp/%s", filename))
 	if err != nil {
 		return err
 	}
@@ -56,7 +57,7 @@ func dumpAndWrite(hostname, dbName, username, password string, b2 storage.B2Stor
 
 	cmd := exec.Command("/usr/bin/pg_dump", []string{
 		fmt.Sprintf("--dbname=postgresql://%s:%s@%s:5432/%s", username, password, hostname, dbName),
-	})
+	}...)
 
 	cmd.Stdout = dumpFile
 
@@ -69,5 +70,5 @@ func dumpAndWrite(hostname, dbName, username, password string, b2 storage.B2Stor
 	if err != nil {
 		return err
 	}
-
+	return nil
 }
