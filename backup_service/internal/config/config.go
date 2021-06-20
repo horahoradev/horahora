@@ -4,7 +4,7 @@ import (
 	"github.com/caarlos0/env"
 )
 
-type config struct {
+type Config struct {
 	UserPGSHostname      string `env:"user_pgs_host,required"`
 	VideoPGSHostname     string `env:"video_pgs_host,required"`
 	SchedulerPGSHostname string `env:"scheduler_pgs_host,required"`
@@ -25,8 +25,8 @@ type config struct {
 	BackblazeAPIKey string `env:"StorageAPIKey,required"`
 }
 
-func New() (*config, error) {
-	config := config{}
+func New() (*Config, error) {
+	config := Config{}
 	err := env.Parse(&config)
 	if err != nil {
 		return nil, err
