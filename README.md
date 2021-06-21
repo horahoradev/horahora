@@ -21,6 +21,9 @@ https://discord.gg/vfwfpctJRZ
     - you'll need to login as admin/horahora to view videos that have been encoded. There's an approval workflow which prevents unapproved videos from being viewed by regular users.
     - there's a delay between videos being downloaded/uploaded and being visible, as they need to be transcoded for DASH
 
+### Backup Restoration
+Backup_service writes psql dumps of the three databases (userservice, videoservice, scheduler) to backblaze. To restore, place the three latest dumps in the sql dir, `docker-compose up`, run migrations, then run restore.sh from within the container.
+
 ## Architecture
 ![](Architectural_Drawing.png)
 
