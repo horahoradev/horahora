@@ -1,4 +1,4 @@
 #!/bin/bash
-env ./secrets.env
+source ./secrets.env
 
 envsubst < docker-compose.yml.envs > docker-compose.yml
