@@ -113,6 +113,10 @@ spec:
               value: "us-west-1"
             - name: JaegerAddress
               value: "simplest-agent"
+            - name: ApprovalThreshold
+              value: "1"
+            - name: StorageBackend
+              value: "s3"
       serviceAccountName: videoservice
 ---
 apiVersion: v1
