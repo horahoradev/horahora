@@ -25,16 +25,16 @@ func NewBayesianTagSum(db *sqlx.DB) BayesianTagSum {
 }
 
 func (b *BayesianTagSum) GetRecommendations(uid int64) ([]int64, error) {
-	// Videos which have been viewed and not rated at implicitly 0
+	// Videos which have been viewed and not rated are implicitly rated 0
 	sql := "WITH tag_ratings AS (select tag, sum(ratings.rating)/count(*) - 2.5 AS tag_score from videos INNER JOIN tags ON videos.id = tags.video_id LEFT JOIN ratings ON ratings.video_id = videos.id WHERE ratings.user_id = $1 AND videos.views > 0 GROUP BY tag), video_scores AS (SELECT videos.id, sum(tag_score) AS video_score from videos INNER JOIN tags ON tags.video_id = videos.id INNER JOIN tag_ratings ON tag_ratings.tag = tags.tag WHERE videos.views = 0 AND videos.transcoded = true GROUP BY videos.id) SELECT id from video_scores ORDER BY video_score DESC limit 10;"
-	rows, err := v.db.Query(sql, a)
+	rows, err := b.db.Query(sql, uid)
 	if err != nil {
 		return nil, err
 	}
 
-	var ret []uint64
+	var ret []int64
 	for rows.Next() {
-		var vid uint64
+		var vid int64
 		err = rows.Scan(&vid)
 		if err != nil {
 			return nil, err

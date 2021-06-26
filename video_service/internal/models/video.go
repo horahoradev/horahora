@@ -39,10 +39,11 @@ type VideoModel struct {
 }
 
 func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *redis.Client, approvalThreshold int) (*VideoModel, error) {
-	r, err := NewBayesianTagSum(db)
+	rec := NewBayesianTagSum(db)
 
 	return &VideoModel{db: db,
 		grpcClient: client,
+		r:          &rec,
 	}, nil
 }
 

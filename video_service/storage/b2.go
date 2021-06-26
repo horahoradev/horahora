@@ -2,9 +2,10 @@ package storage
 
 import (
 	"context"
-	"github.com/kurin/blazer/b2"
 	"io"
 	"os"
+
+	"github.com/kurin/blazer/b2"
 )
 
 /*
