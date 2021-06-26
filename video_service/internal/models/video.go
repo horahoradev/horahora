@@ -4,8 +4,9 @@ import (
 	"context"
 	sql2 "database/sql"
 	"fmt"
-	"github.com/go-redis/redis"
 	"strings"
+
+	"github.com/go-redis/redis"
 
 	log "github.com/sirupsen/logrus"
 
@@ -29,13 +30,17 @@ const (
 )
 
 type VideoModel struct {
-	db         *sqlx.DB
+	db *sqlx.DB
+	// TODO: do we really need a grpc client here? bad cohesion ;(
 	grpcClient proto.UserServiceClient
 	//redisClient *redis.Client
 	ApprovalThreshold int
+	r                 Recommender
 }
 
 func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *redis.Client, approvalThreshold int) (*VideoModel, error) {
+	r, err := NewBayesianTagSum(db)
+
 	return &VideoModel{db: db,
 		grpcClient: client,
 	}, nil
@@ -572,26 +577,13 @@ func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
 }
 
 func (v *VideoModel) GetVideoRecommendations(userID int64) (*videoproto.RecResp, error) {
-	var videos []int64
-	sql := "select id FROM videos WHERE id NOT IN (select id from videos inner join ratings ON videos.id= ratings.video_id AND ratings.user_id = $1) LIMIT 1"
-
-	rows, err := v.db.Query(sql, userID)
+	videoList, err := v.r.GetRecommendations(userID)
 	if err != nil {
+		log.Errorf("Could not get recommendations. Err: %s", err)
 		return nil, err
 	}
 
-	for rows.Next() {
-		var videoID int64
-
-		err = rows.Scan(&videoID)
-		if err != nil {
-			return nil, err
-		}
-
-		videos = append(videos, videoID)
-	}
-
-	return &videoproto.RecResp{VideoID: videos}, nil
+	return &videoproto.RecResp{VideoID: videoList}, nil
 }
 
 func (v *VideoModel) GetComments(videoID, currUserID int64) ([]*videoproto.Comment, error) {
