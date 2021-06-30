@@ -8,12 +8,17 @@ https://discord.gg/vfwfpctJRZ
 ## Local Use Instructions
 
 1. Install docker, docker-compose, flyway, and make a Backblaze account
-2. Create secrets.env docker-compose.yml, exporting the following environment variables:
-    - OriginFQDN: this will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads
-    - StorageAPIID: the API ID for your Backblaze account
-    - StorageAPIKey: The API key for your Backblaze account
-    - SocksConn (optional): youtube-dl socks5 flag value string, allowing downloads to be proxied
-3. Run generate.sh
+2. Create secrets.env, exporting the following environment variables:
+    - ORIGIN_FQDN: this will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads
+    - STORAGE_BACKEND: 'b2'
+    - STORAGE_API_ID: the API ID for your Backblaze account
+    - STORAGE_API_KEY: The API key for your Backblaze account
+    So this would look like:
+    export ORIGIN_FQDN=...
+    export STORAGE_BACKEND=b2
+    and so on
+3. Run generate.sh , which will generate docker-compose.yml
+3. docker-compose build
 4. docker-compose up
 5. run ./sql/create_and_apply_migrations.sh
 6. Visit localhost:8082 (or if it doesn't work initially, try after a few minutes)
