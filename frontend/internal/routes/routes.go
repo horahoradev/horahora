@@ -6,6 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"math"
+	"net/http"
+	"net/url"
+	"strconv"
+	"time"
+
 	"github.com/horahoradev/horahora/frontend/internal/config"
 	custommiddleware "github.com/horahoradev/horahora/frontend/internal/middleware"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -13,12 +20,6 @@ import (
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"io/ioutil"
-	"math"
-	"net/http"
-	"net/url"
-	"strconv"
-	"time"
 )
 
 func SetupRoutes(e *echo.Echo, cfg *config.Config) {
@@ -236,7 +237,7 @@ func (r RouteHandler) handleLogin(c echo.Context) error {
 
 	loginResp, err := r.u.Login(context.Background(), loginReq)
 	if err != nil {
-		return err
+		return c.String(http.StatusForbidden, "Failed to authenticate, invalid credentials")
 	}
 
 	return setCookie(c, loginResp.Jwt)
@@ -260,7 +261,7 @@ func setCookie(c echo.Context, jwt string) error {
 func (v RouteHandler) getTag(c echo.Context) error {
 	tag, err := url.QueryUnescape(c.Param("tag"))
 	if err != nil {
-		return err
+		return c.String(http.StatusForbidden, "Invalid tag parameter")
 	}
 
 	pageNumber := c.QueryParam("page")
