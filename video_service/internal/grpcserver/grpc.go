@@ -35,7 +35,7 @@ import (
 	_ "github.com/google/uuid"
 )
 
-const uploadDir = "/videoservice/test_files/"
+const uploadDir = "/tmp/"
 
 var _ proto.VideoServiceServer = (*GRPCServer)(nil)
 

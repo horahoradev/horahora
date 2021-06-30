@@ -248,13 +248,13 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, withTag 
 	var args []interface{}
 	switch {
 	case fromUserID != 0:
-		sql = "SELECT COUNT(*) FROM videos WHERE userID = $1"
+		sql = "SELECT COUNT(*) FROM videos WHERE userID = $1 AND transcoded=true"
 		args = []interface{}{fromUserID}
 	case withTag != "":
-		sql = "SELECT COUNT(DISTINCT video_id) FROM tags WHERE tag = $1"
+		sql = "SELECT COUNT(DISTINCT video_id) FROM tags INNER JOIN videos ON videos.id = tags.video_id WHERE tag = $1 AND transcoded=true"
 		args = []interface{}{withTag}
 	default:
-		sql = "SELECT COUNT(*) FROM videos"
+		sql = "SELECT COUNT(*) FROM videos WHERE transcoded=true"
 		args = []interface{}{}
 	}
 
@@ -614,7 +614,7 @@ func (v *VideoModel) GetComments(videoID, currUserID int64) ([]*videoproto.Comme
 		}
 
 		comment.AuthorUsername = resp.Username
-		comment.AuthorProfileImageUrl = "/static/images/placeholder1.jpg"
+		comment.AuthorProfileImageUrl = "/static/images/placeholder.png"
 
 		var score uint64
 		sqlTwo := "SELECT vote_score FROM comment_upvotes WHERE user_id = $1 AND comment_id = $2"

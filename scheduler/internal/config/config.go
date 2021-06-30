@@ -2,16 +2,17 @@ package config
 
 import (
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/caarlos0/env"
 	"github.com/go-redsync/redsync"
 	"github.com/gomodule/redigo/redis"
-	"github.com/grpc-ecosystem/go-grpc-middleware/retry"
+	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	proto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
-	"log"
-	"time"
 )
 
 type PostgresInfo struct {
@@ -54,7 +55,7 @@ func New() (*config, error) {
 	if err != nil {
 		return nil, err
 	}
-	config.VideoOutputLoc = "./videos"
+	config.VideoOutputLoc = "/tmp"
 
 	// I'm putting this here because it makes it easier to do integration tests
 	// https://www.calhoun.io/connecting-to-a-postgresql-database-with-gos-database-sql-package/
