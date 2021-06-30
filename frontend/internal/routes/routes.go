@@ -397,7 +397,7 @@ func (v RouteHandler) getUser(c echo.Context) error {
 	data := ProfileData{
 		UserID:            idInt,
 		Username:          user.Username,
-		ProfilePictureURL: "/static/images/placeholder1.jpg",
+		ProfilePictureURL: "/static/images/placeholder.png",
 		PaginationData: PaginationData{
 			Pages:                pageRange,
 			PathsAndQueryStrings: queryStrings,
@@ -494,7 +494,7 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		UserDescription:  "", // TODO: not implemented yet
 		VideoDescription: videoInfo.Description,
 		UserSubscribers:  0, // TODO: not implemented yet
-		ProfilePicture:   "/static/images/placeholder1.jpg",
+		ProfilePicture:   "/static/images/placeholder.png",
 		UploadDate:       videoInfo.UploadDate,
 		VideoID:          videoInfo.VideoID,
 		Comments:         nil,
