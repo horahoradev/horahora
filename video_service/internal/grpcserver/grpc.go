@@ -44,6 +44,7 @@ type GRPCServer struct {
 	Local      bool
 	OriginFQDN string
 	Storage    storage.Storage
+	proto.UnsafeVideoServiceServer
 }
 
 // TODO: API is getting bloated
