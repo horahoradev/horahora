@@ -484,22 +484,51 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		rating = 0.00
 	}
 
+	// TODO: stop copy pasting this...
+	userID := c.Get(custommiddleware.UserIDKey)
+	UserIDInt, ok := userID.(int64)
+	if !ok {
+		log.Error("Could not assert userid to int64")
+		return errors.New("could not assert userid to int64")
+	}
+
+	recResp, err := v.v.GetVideoRecommendations(context.Background(), &videoproto.RecReq{
+		UserId: UserIDInt,
+	})
+	if err != nil {
+		log.Errorf("Could not retrieve recommendations. Err: %s", err)
+		// Continue anyway
+	}
+
+	var recVideos []Video
+	for _, rec := range recResp.Videos {
+		// FIXME: fill other fields after modifying protocol
+		vid := Video{
+			Title:        rec.VideoTitle,
+			VideoID:      rec.VideoID,
+			ThumbnailLoc: rec.ThumbnailLoc,
+		}
+
+		recVideos = append(recVideos, vid)
+	}
+
 	data := VideoDetail{
-		L:                LoggedInUserData{},
-		Title:            videoInfo.VideoTitle,
-		MPDLoc:           videoInfo.VideoLoc, // FIXME: fix this in videoservice LOL this is embarrassing
-		Views:            videoInfo.Views,
-		Rating:           rating,
-		AuthorID:         videoInfo.AuthorID, // TODO
-		Username:         videoInfo.AuthorName,
-		UserDescription:  "", // TODO: not implemented yet
-		VideoDescription: videoInfo.Description,
-		UserSubscribers:  0, // TODO: not implemented yet
-		ProfilePicture:   "/static/images/placeholder.png",
-		UploadDate:       videoInfo.UploadDate,
-		VideoID:          videoInfo.VideoID,
-		Comments:         nil,
-		Tags:             videoInfo.Tags,
+		L:                 LoggedInUserData{},
+		Title:             videoInfo.VideoTitle,
+		MPDLoc:            videoInfo.VideoLoc, // FIXME: fix this in videoservice LOL this is embarrassing
+		Views:             videoInfo.Views,
+		Rating:            rating,
+		AuthorID:          videoInfo.AuthorID, // TODO
+		Username:          videoInfo.AuthorName,
+		UserDescription:   "", // TODO: not implemented yet
+		VideoDescription:  videoInfo.Description,
+		UserSubscribers:   0, // TODO: not implemented yet
+		ProfilePicture:    "/static/images/placeholder.png",
+		UploadDate:        videoInfo.UploadDate,
+		VideoID:           videoInfo.VideoID,
+		Comments:          nil,
+		Tags:              videoInfo.Tags,
+		RecommendedVideos: recVideos,
 	}
 
 	addUserProfileInfo(c, &data.L, v.u)
