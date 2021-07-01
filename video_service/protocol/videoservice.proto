@@ -1,4 +1,5 @@
 syntax = "proto3";
+option go_package = "github.com/horahoradev/horahora/video_service/protocol";
 
 package proto;
 
@@ -28,7 +29,13 @@ message recReq {
 }
 
 message recResp {
-    repeated int64 videoID = 1;
+    repeated VideoRec videos = 1;
+}
+
+message VideoRec {
+    string thumbnailLoc = 1;
+    string videoTitle = 2;
+    int64 videoID = 3;
 }
 
 message videoComment {

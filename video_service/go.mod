@@ -10,7 +10,6 @@ require (
 	github.com/doug-martin/goqu/v9 v9.9.0
 	github.com/go-redis/redis v6.15.8+incompatible
 	github.com/golang/mock v1.4.3
-	github.com/golang/protobuf v1.3.4
 	github.com/google/uuid v1.1.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
@@ -27,5 +26,6 @@ require (
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	google.golang.org/grpc v1.33.0
+	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.2.7 // indirect
 )

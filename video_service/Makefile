@@ -1,7 +1,7 @@
 all: proto docker
 
 proto : ./protocol/videoservice.proto
-	protoc -I=protocol videoservice.proto --go_out=plugins=grpc:protocol
+	protoc --go_out=. --go_opt=paths=source_relative     --go-grpc_out=. --go-grpc_opt=paths=source_relative    protocol/videoservice.proto 
 
 docker : Dockerfile
 	docker build -t videoservice .

@@ -584,7 +584,7 @@ func (v *VideoModel) GetVideoRecommendations(userID int64) (*videoproto.RecResp,
 		return nil, err
 	}
 
-	return &videoproto.RecResp{VideoID: videoList}, nil
+	return &videoproto.RecResp{Videos: videoList}, nil
 }
 
 func (v *VideoModel) GetComments(videoID, currUserID int64) ([]*videoproto.Comment, error) {
