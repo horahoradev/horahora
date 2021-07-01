@@ -49,6 +49,9 @@
                 });
             </script>
         </div>
+        <div class="recommendation-section">
+            {{ template "videosection" .RecommendedVideos }}
+        </div>
         <script>
             (function () {
                 var url = "{{.MPDLoc}}";

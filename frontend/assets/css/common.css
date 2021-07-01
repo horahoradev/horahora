@@ -209,7 +209,14 @@ p {
 }
 
 .video-player-section {
-    width: calc(100% - 600px);
+    width: calc(100% - 250px);
+    display: inline-block;
+}
+
+.recommendation-section {
+    width: 200px;
+    display: inline-block;
+    vertical-align: top;
 }
 
 video {
