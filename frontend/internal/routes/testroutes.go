@@ -1,9 +1,10 @@
 package routes
 
 import (
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"time"
+
+	"github.com/labstack/echo/v4"
 )
 
 func SetupTestRoutes(e *echo.Echo) {
@@ -79,8 +80,28 @@ func getTestVideo(c echo.Context) error {
 		VideoID:         1,
 		Comments:        nil,
 		Tags:            []string{"ytpmv", "test"},
+		RecommendedVideos: []Video{
+			{
+				Title:        "WOW",
+				VideoID:      3,
+				Views:        5,
+				AuthorID:     10,
+				AuthorName:   "TESTUSER",
+				ThumbnailLoc: "loc",
+				Rating:       5.0,
+			},
+		},
 	}
 
+	/*
+		Title        string
+		VideoID      int64
+		Views        uint64
+		AuthorID     int64
+		AuthorName   string
+		ThumbnailLoc string
+		Rating       float64
+	*/
 	return c.Render(http.StatusOK, "video", data)
 
 }

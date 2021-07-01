@@ -68,21 +68,22 @@ type Comment struct {
 }
 
 type VideoDetail struct {
-	L                LoggedInUserData
-	Title            string
-	MPDLoc           string
-	Views            uint64
-	Rating           float64
-	VideoID          int64
-	AuthorID         int64
-	Username         string
-	UserDescription  string
-	VideoDescription string
-	UserSubscribers  uint64
-	ProfilePicture   string
-	UploadDate       string // should be a datetime
-	Comments         []Comment
-	Tags             []string
+	L                 LoggedInUserData
+	Title             string
+	MPDLoc            string
+	Views             uint64
+	Rating            float64
+	VideoID           int64
+	AuthorID          int64
+	Username          string
+	UserDescription   string
+	VideoDescription  string
+	UserSubscribers   uint64
+	ProfilePicture    string
+	UploadDate        string // should be a datetime
+	Comments          []Comment
+	Tags              []string
+	RecommendedVideos []Video
 }
 
 type LoggedInUserData struct {
