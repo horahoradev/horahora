@@ -1,8 +1,11 @@
 {{define "home"}}
     <html>
     {{ template "header" .L }}
+    <div class="bodydiv">
+
     {{ template "videosection" .Videos }}
     {{ template "pagination" .PaginationData}}
+    </div>
     </body>
     </html>
 {{end}}

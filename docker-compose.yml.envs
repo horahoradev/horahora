@@ -6,6 +6,7 @@ services:
     ports:
       - "8082:8082"
     environment:
+      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - UserServiceGRPCAddress=userservice:7777
       - VideoServiceGRPCAddress=videoservice:7777
       - SchedulerServiceGRPCAddress=scheduler:7777
@@ -13,6 +14,7 @@ services:
     build: scheduler
     restart: always
     environment:
+      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - pgs_host=postgres
       - pgs_port=5432
       - pgs_user=admin
@@ -30,6 +32,7 @@ services:
     build: video_service
     restart: always
     environment:
+      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - pgs_host=postgres
       - pgs_port=5432
       - pgs_user=admin
@@ -53,6 +56,7 @@ services:
     build: user_service
     restart: always
     environment:
+      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - pgs_host=postgres
       - pgs_port=5432
       - pgs_user=admin

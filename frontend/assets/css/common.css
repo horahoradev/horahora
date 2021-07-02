@@ -146,6 +146,7 @@ h5 {
 .bodydiv {
     padding-left: 50px;
     padding-right: 50px;
+    padding-top: 20px;
 }
 
 .video-thumb {
@@ -159,9 +160,9 @@ h5 {
 }
 
 .video-section {
-    margin-top: 20px;
-    margin-left: 5%;
-    margin-right: 5%;
+    margin-top: 0px;
+    margin-left: 0%;
+    margin-right: 0%;
     padding: 6px;
     position: relative;
     display: flex;
@@ -217,6 +218,8 @@ p {
     width: 200px;
     display: inline-block;
     vertical-align: top;
+    float: right;
+    position: relative;
 }
 
 video {
@@ -433,7 +436,6 @@ video {
     padding: 8px;
     display: inline-block;
     /* applied to every element, need to look more into CSS application order in determining original element position*/
-    left: 5%;
     top: 3px;
 }
 
