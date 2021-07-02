@@ -458,14 +458,14 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 	// Dumb
 	idInt, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		return err
+		log.Errorf("Could not retrieve video id. Err: %s", err)
 	}
 
 	// Increment views first
 	viewReq := videoproto.VideoViewing{VideoID: idInt}
 	_, err = v.v.ViewVideo(context.Background(), &viewReq)
 	if err != nil {
-		return err
+		log.Errorf("Could not increment video views. Err: %s")
 	}
 
 	videoReq := videoproto.VideoRequest{
@@ -474,7 +474,8 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 
 	videoInfo, err := v.v.GetVideo(context.Background(), &videoReq)
 	if err != nil {
-		return err
+		log.Errorf("Failed to get video. Err: %s", err)
+		return c.String(http.StatusForbidden, "Failed to retrieve video metadata")
 	}
 
 	rating := videoInfo.Rating
@@ -489,7 +490,6 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 	UserIDInt, ok := userID.(int64)
 	if !ok {
 		log.Error("Could not assert userid to int64")
-		return errors.New("could not assert userid to int64")
 	}
 
 	recResp, err := v.v.GetVideoRecommendations(context.Background(), &videoproto.RecReq{
