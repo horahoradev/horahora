@@ -501,15 +501,17 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 	}
 
 	var recVideos []Video
-	for _, rec := range recResp.Videos {
-		// FIXME: fill other fields after modifying protocol
-		vid := Video{
-			Title:        rec.VideoTitle,
-			VideoID:      rec.VideoID,
-			ThumbnailLoc: rec.ThumbnailLoc,
-		}
+	if recResp != nil {
+		for _, rec := range recResp.Videos {
+			// FIXME: fill other fields after modifying protocol
+			vid := Video{
+				Title:        rec.VideoTitle,
+				VideoID:      rec.VideoID,
+				ThumbnailLoc: rec.ThumbnailLoc,
+			}
 
-		recVideos = append(recVideos, vid)
+			recVideos = append(recVideos, vid)
+		}
 	}
 
 	data := VideoDetail{
