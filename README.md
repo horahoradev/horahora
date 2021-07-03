@@ -17,15 +17,16 @@ https://discord.gg/vfwfpctJRZ
 
   Once done, rename secrets.env.template to secrets.env.
   If you want to use S3, you need to include your aws credentials and config in $HOME/.aws. The config and credentials will be mounted into the relevant services at runtime. See https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html for more information.
+
 3. Run generate.sh , which will generate docker-compose.yml
-3. docker-compose build
-4. docker-compose up
-5. run ./sql/create_and_apply_migrations.sh
-6. Visit localhost:8082 (or if it doesn't work initially, try after a few minutes)
+4. docker-compose build
+5. docker-compose up
+6. run ./sql/create_and_apply_migrations.sh
+7. Visit localhost:8082 (or if it doesn't work initially, try after a few minutes)
     - if it never works, check the container logs, and/or bug me on discord
     - you'll need to login as admin/horahora to view videos that have been encoded. There's an approval workflow which prevents unapproved videos from being viewed by regular users.
     - there's a delay between videos being downloaded/uploaded and being visible, as they need to be transcoded for DASH
-6. If everything comes up correctly, once you're logged in, visit the archival requests tab, and add a new category of content to be archived. If everything works, videos will start to be downloaded, and will be made available after a delay.
+8. If everything comes up correctly, once you're logged in, visit the archival requests tab, and add a new category of content to be archived. If everything works, videos will start to be downloaded, and will be made available after a delay.
 
 ### Backup Restoration
 Backup_service writes psql dumps of the three databases (userservice, videoservice, scheduler) to backblaze. To restore, place the three latest dumps in the sql dir, `docker-compose up`, run migrations, then run restore.sh from within the container.
