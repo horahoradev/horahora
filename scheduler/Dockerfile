@@ -17,6 +17,7 @@ RUN git clone https://github.com/animelover1984/youtube-dl.git  && \
     apt-get install -y ffmpeg && \
     python3 /scheduler/youtube-dl/setup.py install
 
-RUN go build --mod=vendor -gcflags "all=-N -l" -o scheduler .
+RUN go mod vendor && \
+    go build --mod=vendor -gcflags "all=-N -l" -o scheduler .
 
 ENTRYPOINT ["./scheduler"]

@@ -10,6 +10,7 @@ RUN apt-get update && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update && \
     apt-get -y install postgresql && \
+    go mod vendor && \
     go build --mod=vendor -gcflags "all=-N -l" -o backup_service .
 
 # RUN apt-get update && \

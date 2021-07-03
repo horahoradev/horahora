@@ -7,7 +7,8 @@ WORKDIR /videoservice
 #
 #RUN go get github.com/go-delve/delve/cmd/dlv
 
-RUN go build --mod=vendor -o videoservice .
+RUN go mod vendor && \
+    go build --mod=vendor -o videoservice .
 
 RUN apt-get update && \
     apt-get install -y ffmpeg curl
