@@ -9,6 +9,7 @@ RUN apt-get update && \
     npm install -g browserify && \
     cd javascript && npm install && make build
 
-RUN go build --mod=vendor -gcflags "all=-N -l" -o frontend .
+RUN go mod vendor && \
+    go build --mod=vendor -gcflags "all=-N -l" -o frontend .
 
 ENTRYPOINT ["./frontend"]
