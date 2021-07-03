@@ -2,9 +2,9 @@
 ## Self-hosted Video-hosting Website and Video Archival Manager for Niconico, Bilibili, and Youtube
 ![](https://github.com/horahoradev/horahora-designs/blob/master/archive.png?raw=true)
 
-![](https://github.com/horahoradev/horahora-designs/blob/master/Video.png?raw=true)
-
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archives_1.png)
+
+![](https://github.com/horahoradev/horahora-designs/blob/master/Video.png?raw=true)
 
 Note: the above images are designs, rather than screenshots of the current frontend. The current frontend is essentially a worse version of the above. PRs are welcome 😉
 
