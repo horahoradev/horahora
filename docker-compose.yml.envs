@@ -40,7 +40,7 @@ services:
       - pgs_db=videoservice
       - GRPCPort=7777
       - UserServiceGRPCAddress=userservice:7777
-      - BucketName=otomads
+      - BucketName=$BUCKET_NAME
       - Local=false
       - redis_host=redis
       - redis_port=6379
@@ -52,6 +52,8 @@ services:
       - StorageAPIID=$STORAGE_API_ID
       - StorageAPIKey=$STORAGE_API_KEY
       - ApprovalThreshold=1
+    volumes:
+    - $HOME/.aws/:/root/.aws/:ro
   userservice:
     build: user_service
     restart: always

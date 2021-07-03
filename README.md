@@ -8,15 +8,15 @@ https://discord.gg/vfwfpctJRZ
 ## Local Use Instructions
 
 1. Install docker, docker-compose, flyway, and make a Backblaze account
-2. Create secrets.env, exporting the following environment variables:
-    - ORIGIN_FQDN: this will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads
-    - STORAGE_BACKEND: 'b2'
-    - STORAGE_API_ID: the API ID for your Backblaze account
-    - STORAGE_API_KEY: The API key for your Backblaze account
-    So this would look like:
-    export ORIGIN_FQDN=...
-    export STORAGE_BACKEND=b2
-    and so on
+2. Modify secrets.env.template, adding the relevant values for your use case.
+    - ORIGIN_FQDN: this will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads for backblaze, or https://horahora-dev-otomads.s3-us-west-1.amazonaws.com for s3.
+    - STORAGE_BACKEND: 'b2' or 's3' (depending on which you want to use)
+    - STORAGE_API_ID: the API ID for your Backblaze account if using backblaze, otherwise blank
+    - STORAGE_API_KEY: The API key for your Backblaze account, otherwise blank
+    - BUCKET_NAME: the storage bucket name for b2 or s3
+
+  Once done, rename secrets.env.template to secrets.env.
+  If you want to use S3, you need to include your aws credentials and config in $HOME/.aws. The config and credentials will be mounted into the relevant services at runtime. See https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html for more information.
 3. Run generate.sh , which will generate docker-compose.yml
 3. docker-compose build
 4. docker-compose up
