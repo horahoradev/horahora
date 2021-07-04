@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+
 	"github.com/horahoradev/horahora/frontend/internal/config"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/labstack/echo/v4"
@@ -31,7 +32,12 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 			return next(c)
 		}
 
-		jwt := c.Cookies()[0].Value
+		var jwt string
+		for _, cookie := range c.Cookies() {
+			if cookie.Name == "jwt" {
+				jwt = cookie.Value
+			}
+		}
 
 		jwtDecoded, err := base64.StdEncoding.DecodeString(jwt)
 		if err != nil {
