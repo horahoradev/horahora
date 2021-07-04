@@ -58,6 +58,26 @@
                 var player = dashjs.MediaPlayer().create();
                 player.initialize(document.querySelector("#videoPlayer"), url, true);
 
+                player.on("playbackEnded", function() {
+                    var timer = setInterval(function () {
+                        document.getElementById('recotimer').style.visibility = 'visible';
+                        var timerval = document.getElementById('recCountdown').innerHTML;
+                        if (parseInt(timerval) === 1) {
+                            clearInterval(timer);
+                            window.location.href = '/videos/{{.NextVideo}}';
+                            return;
+                        }
+                        var newVal = parseInt(timerval) - 1;
+                        document.getElementById('recCountdown').innerHTML = newVal.toString();
+                    }, 1000);
+
+                    player.on("playbackStarted", function(){
+                        clearInterval(timer);
+                        document.getElementById('recotimer').style.visibility = 'hidden';
+                        document.getElementById('recCountdown').innerHTML = '10';
+                    });
+
+                });
                 $("#rateYo").rateYo({
                     rating: {{.Rating}},
                     starWidth: "19px"

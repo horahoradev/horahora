@@ -220,6 +220,13 @@ p {
     margin-right: auto;
 }
 
+.recotimer {
+    margin: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    visibility: hidden;
+}
+
 .recommendation-section {
     width: 200px;
     display: inline-block;

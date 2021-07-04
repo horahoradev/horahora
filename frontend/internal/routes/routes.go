@@ -84,6 +84,7 @@ type VideoDetail struct {
 	Comments          []Comment
 	Tags              []string
 	RecommendedVideos []Video
+	NextVideo         int64
 }
 
 type LoggedInUserData struct {
@@ -531,6 +532,11 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		Comments:          nil,
 		Tags:              videoInfo.Tags,
 		RecommendedVideos: recVideos,
+	}
+
+	// TODO: awk
+	if recVideos != nil && len(recVideos) > 0 {
+		data.NextVideo = recVideos[0].VideoID
 	}
 
 	addUserProfileInfo(c, &data.L, v.u)

@@ -1,0 +1,22 @@
+{{define "videolist"}}
+{{range .}}
+        <div class="video-container">
+            <a href="/videos/{{.VideoID}}" class="plain-link">
+                <img src="{{.ThumbnailLoc}}" class="video-thumb">
+                <div id="rateYo{{.VideoID}}" class="video-gallery-rating"></div>
+
+                <p class="video-title">{{.Title}}</p>
+                <p class="views">Views: {{.Views}}<p>
+            </a>
+        </div>
+        <!-- LOL -->
+        <script>
+            $("#rateYo{{.VideoID}}").rateYo({
+                rating: {{.Rating}},
+                starWidth: "19px",
+                ratedFill: "#FAD03B",
+                readOnly: true
+            });
+        </script>
+    {{end}}
+{{end}}
