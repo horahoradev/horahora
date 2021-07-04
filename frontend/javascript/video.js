@@ -6,7 +6,7 @@ function loadComments(videoID, userID) {
         dataType: 'json',
         success: function (response) {
             $('#comment-section').comments({
-                profilePictureURL: '/static/images/placeholder.jpg',
+                profilePictureURL: '/static/images/placeholder.png',
                 getComments: function (success, error) {
                     success(response);
                 },
