@@ -10,4 +10,7 @@ flyway -user=admin -password=password -url=jdbc:postgresql://localhost:5432/user
 flyway -user=admin -password=password -url=jdbc:postgresql://localhost/scheduler -locations=filesystem://$(pwd)/scheduler/migrations migrate
 flyway -user=admin -password=password -url=jdbc:postgresql://localhost:5432/videoservice -locations=filesystem://$(pwd)/video_service/migrations migrate
 
+# 3. Admin user creation
+docker exec $(docker ps | grep "postgres" | awk '{print $1}') /bin/bash -c "psql --user=admin -a -f /sql/create_user.sql"
+
 chmod 777 data
