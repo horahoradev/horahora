@@ -121,7 +121,7 @@ message VideoQueryConfig {
     orderCategory orderBy = 1;
     sortDirection direction = 2;
     int64 pageNumber = 3;
-    string containsTag = 4;
+    string SearchVal = 4;
     int64 fromUserID = 5; // domestic user ID
     bool showUnapproved = 6;
 }
