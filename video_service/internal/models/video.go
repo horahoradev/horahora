@@ -4,6 +4,7 @@ import (
 	"context"
 	sql2 "database/sql"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/go-redis/redis"
@@ -16,6 +17,7 @@ import (
 
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
+	"github.com/doug-martin/goqu/v9/exp"
 	_ "github.com/horahoradev/horahora/user_service/protocol"
 	proto "github.com/horahoradev/horahora/user_service/protocol"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
@@ -199,9 +201,9 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID int64, ratingValue fl
 
 // For now, this only supports either fromUserID or withTag. Can support both in future, need to switch to
 // goqu and write better tests
-func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, withTag string, showUnapproved bool,
+func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, searchVal string, showUnapproved bool,
 	category videoproto.OrderCategory) ([]*videoproto.Video, error) {
-	sql, err := generateVideoListSQL(direction, pageNum, fromUserID, withTag, showUnapproved, category)
+	sql, err := generateVideoListSQL(direction, pageNum, fromUserID, searchVal, showUnapproved, category)
 	if err != nil {
 		return nil, err
 	}
@@ -243,16 +245,37 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 }
 
 // FIXME: optimization: move to redis once I figure out what types of queries are necessary
-func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, withTag string) (int64, error) {
+func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVal string) (int64, error) {
 	var sql string
 	var args []interface{}
 	switch {
 	case fromUserID != 0:
 		sql = "SELECT COUNT(*) FROM videos WHERE userID = $1 AND transcoded=true"
 		args = []interface{}{fromUserID}
-	case withTag != "":
-		sql = "SELECT COUNT(DISTINCT video_id) FROM tags INNER JOIN videos ON videos.id = tags.video_id WHERE tag = $1 AND transcoded=true"
-		args = []interface{}{withTag}
+	case searchVal != "":
+		// TODO: DRY
+		dialect := goqu.Dialect("postgres")
+		ds := dialect.
+			Select(goqu.COUNT("*")).
+			From(
+				goqu.T("videos"),
+			)
+
+		conditions := getConditions(extractSearchTerms(searchVal))
+
+		ds = ds.Join(
+			goqu.T("tags"),
+			goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
+			Where(conditions...).
+			GroupBy(goqu.I("videos.id")).
+			Where(goqu.C("transcoded").Eq(true))
+
+		var err error
+		sql, _, err = ds.ToSQL()
+		if err != nil {
+			return 0, err
+		}
+		args = []interface{}{}
 	default:
 		sql = "SELECT COUNT(*) FROM videos WHERE transcoded=true"
 		args = []interface{}{}
@@ -274,7 +297,7 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, withTag 
 	return l, nil
 }
 
-func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, withTag string, showUnapproved bool, orderCategory videoproto.OrderCategory) (string, error) {
+func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, searchVal string, showUnapproved bool, orderCategory videoproto.OrderCategory) (string, error) {
 	minResultNum := (pageNum - 1) * NumResultsPerPage
 	dialect := goqu.Dialect("postgres")
 
@@ -318,11 +341,13 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	case fromUserID != 0:
 		ds = ds.
 			Where(goqu.C("userid").Eq(fromUserID))
-	case withTag != "":
+	case searchVal != "":
+		conditions := getConditions(extractSearchTerms(searchVal))
+
 		ds = ds.Join(
 			goqu.T("tags"),
 			goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
-			Where(goqu.C("tag").Eq(withTag))
+			Where(conditions...)
 	}
 
 	if !showUnapproved {
@@ -333,11 +358,56 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	// Only show transcoded videos
 	ds = ds.Where(goqu.C("transcoded").Eq(true))
 
+	// Deduplicate
+	ds = ds.GroupBy(goqu.I("videos.id"))
+
 	// TODO: ensure that this is safe from sql injection
 	// Maybe use prepared mode?
 	sql, _, err := ds.ToSQL()
 
+	log.Infof("Sql: %s", sql)
+
 	return sql, err
+}
+
+func getConditions(include, exclude []string) []exp.Expression {
+	var ret []exp.Expression
+	queryCols := []string{"title", "tag", "description"}
+	// TODO: DRY
+	for _, inc := range include {
+		var incQuery []exp.Expression
+		for _, col := range queryCols {
+			exp := goqu.Or(goqu.I(col).Like(regexp.MustCompile(fmt.Sprintf(".*%s.*", inc))))
+			incQuery = append(incQuery, exp)
+		}
+		ret = append(ret, goqu.Or(incQuery...))
+	}
+	for _, exc := range exclude {
+		var excQuery []exp.Expression
+		for _, col := range queryCols {
+			exp := goqu.Or(goqu.I(col).NotLike(regexp.MustCompile(fmt.Sprintf(".*%s.*", exc))))
+			excQuery = append(excQuery, exp)
+		}
+		ret = append(ret, goqu.Or(excQuery...))
+	}
+
+	return ret
+}
+
+// TODO: might want to switch to some domain-specific information retrieval language in the future
+// One of the log query languages, like Lucene, could work
+func extractSearchTerms(search string) (includeTerms, excludeTerms []string) {
+	var exclude, include []string
+	spl := strings.Split(search, " ")
+	for _, term := range spl {
+		switch {
+		case strings.HasPrefix(term, "-"):
+			exclude = append(exclude, term)
+		default:
+			include = append(include, term)
+		}
+	}
+	return include, exclude
 }
 
 type basicVideoInfo struct {
