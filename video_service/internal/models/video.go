@@ -215,13 +215,22 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 		return nil, err
 	}
 
+	// Horrible
+	inc, exc := extractSearchTerms(searchVal)
+
+	numSearchTerms := len(inc) + len(exc)
+
 	for rows.Next() {
 		var video videoproto.Video
-		var authorID, views int64
+		var authorID, views, count int64
 		var mpdLoc string
-		err = rows.Scan(&video.VideoID, &video.VideoTitle, &authorID, &mpdLoc, &views)
+		err = rows.Scan(&video.VideoID, &video.VideoTitle, &authorID, &mpdLoc, &views, &count)
 		if err != nil {
 			return nil, err
+		}
+
+		if !(int(count) >= numSearchTerms) {
+			continue
 		}
 
 		basicInfo, err := v.getBasicVideoInfo(authorID, video.VideoID)
@@ -302,7 +311,7 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	dialect := goqu.Dialect("postgres")
 
 	ds := dialect.
-		Select("videos.id", "title", "userid", "newlink", "views").
+		Select("videos.id", "title", "userid", "newlink", "views", goqu.COUNT("*")).
 		From(
 			goqu.T("videos"),
 		).
@@ -391,7 +400,8 @@ func getConditions(include, exclude []string) []exp.Expression {
 		ret = append(ret, goqu.Or(excQuery...))
 	}
 
-	return ret
+	// Oh no
+	return []exp.Expression{goqu.Or(ret...)}
 }
 
 // TODO: might want to switch to some domain-specific information retrieval language in the future
