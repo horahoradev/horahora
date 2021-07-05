@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/horahoradev/horahora/scheduler/internal/models"
-	proto "github.com/horahoradev/horahora/scheduler/protocol"
-	log "github.com/sirupsen/logrus"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/horahoradev/horahora/scheduler/internal/models"
+	proto "github.com/horahoradev/horahora/scheduler/protocol"
+	log "github.com/sirupsen/logrus"
 )
 
 type SyncWorker struct {
@@ -194,6 +195,9 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 		}
 
 	case proto.SupportedSite_youtube:
+		// bit of a FIXME: switch this when we've merged both repos into one
+		args[0] = "/scheduler/yt-dlp/yt_dlp/__main__.py"
+
 		switch dlReq.ContentType {
 		case models.Tag:
 			args = append(args, fmt.Sprintf("ytsearch%s:%s", downloadPreference, dlReq.ContentValue))

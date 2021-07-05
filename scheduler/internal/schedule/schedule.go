@@ -4,10 +4,11 @@ import "C"
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/go-redsync/redsync"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
 	proto "github.com/horahoradev/horahora/video_service/protocol"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -75,7 +76,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 			"INNER JOIN downloads_to_videos d ON downloads.id = d.download_id " +
 			"INNER JOIN videos v ON d.video_id = v.id " +
 			"WHERE downloads.website = $1 AND downloads.attribute_type = $2 AND downloads.attribute_value = $3 AND v.dlStatus = 0 " +
-			"ORDER BY CHAR_LENGTH(v.video_ID) DESC, v.video_ID desc LIMIT 10 " +
+			"ORDER BY CHAR_LENGTH(v.video_ID) DESC, v.video_ID desc LIMIT 1 " +
 			"OFFSET random() * LEAST(1000, (select count(*) from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id  WHERE downloads.website = $1 AND downloads.attribute_type = $2 AND downloads.attribute_value = $3 AND v.dlStatus = 0)) "
 		res, err := p.Db.Query(sql, category.Website, category.ContentType, category.ContentValue)
 		if err != nil {

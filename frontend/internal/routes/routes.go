@@ -173,6 +173,7 @@ func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
 		}
 	case "channel":
 		req := schedulerproto.ChannelRequest{
+			UserID:    UserIDInt,
 			Website:   supportedWebsite,
 			ChannelID: contentValue,
 		}
@@ -183,6 +184,7 @@ func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
 		}
 	case "playlist":
 		req := schedulerproto.PlaylistRequest{
+			UserID:     UserIDInt,
 			Website:    supportedWebsite,
 			PlaylistID: contentValue,
 		}

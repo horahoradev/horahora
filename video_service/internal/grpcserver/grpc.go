@@ -188,7 +188,7 @@ loop:
 		}
 	}
 
-	err = ioutil.WriteFile(video.FileData.Name()+".jpg", video.Meta.Meta.Thumbnail, 0644)
+	err = ioutil.WriteFile(video.FileData.Name()+".thumb", video.Meta.Meta.Thumbnail, 0644)
 	if err != nil {
 		return LogAndRetErr("could not write thumbnail. Err: %s", err)
 	}
@@ -198,8 +198,8 @@ loop:
 	// If not local, upload the thumbnail and original video before returning
 	if !g.Local {
 		// FIXME did it again...
-		log.Infof("Uploading thumbnail: %s", video.FileData.Name()+".jpg")
-		err = g.Storage.Upload(video.FileData.Name()+".jpg", filepath.Base(video.FileData.Name()+".jpg"))
+		log.Infof("Uploading thumbnail: %s", video.FileData.Name()+".thumb")
+		err = g.Storage.Upload(video.FileData.Name()+".thumb", filepath.Base(video.FileData.Name()+".thumb"))
 		if err != nil {
 			return err
 		}

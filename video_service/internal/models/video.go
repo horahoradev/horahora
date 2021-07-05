@@ -233,7 +233,7 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 
 		// FIXME: nothing is quite as dumb as this
 		// Need to remove the absolute path from mpd loc
-		video.ThumbnailLoc = strings.Replace(mpdLoc, ".mpd", ".jpg", 1)
+		video.ThumbnailLoc = strings.Replace(mpdLoc, ".mpd", ".thumb", 1)
 
 		// TODO: could alloc in advance
 		results = append(results, &video)
