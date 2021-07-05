@@ -4,10 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/horahoradev/horahora/scheduler/internal/models"
-	proto "github.com/horahoradev/horahora/scheduler/protocol"
-	videoproto "github.com/horahoradev/horahora/video_service/protocol"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"os"
@@ -16,6 +12,11 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/horahoradev/horahora/scheduler/internal/models"
+	proto "github.com/horahoradev/horahora/scheduler/protocol"
+	videoproto "github.com/horahoradev/horahora/video_service/protocol"
+	log "github.com/sirupsen/logrus"
 )
 
 type downloader struct {
@@ -24,16 +25,18 @@ type downloader struct {
 	videoClient     videoproto.VideoServiceClient
 	numberOfRetries int
 	socksConnStr    string
+	maxFS           uint64
 }
 
 func New(dlQueue chan *models.VideoDLRequest, outputLoc string, client videoproto.VideoServiceClient, numberOfRetries int,
-	socksConnStr string) downloader {
+	socksConnStr string, maxFS uint64) downloader {
 	return downloader{
 		downloadQueue:   dlQueue,
 		outputLoc:       outputLoc,
 		videoClient:     client,
 		numberOfRetries: numberOfRetries,
 		socksConnStr:    socksConnStr,
+		maxFS:           maxFS,
 	}
 }
 
@@ -184,7 +187,7 @@ func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTD
 	}
 	defer ytdlLog.Close()
 
-	cmd := exec.Command("/usr/local/bin/youtube-dl", args...)
+	cmd := exec.Command("/usr/bin/python3", args...)
 	cmd.Stdout = ytdlLog
 	cmd.Stderr = ytdlLog
 
@@ -233,32 +236,22 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return fmt.Errorf("could not start video upload stream. Err: %s", err)
 	}
 
-	// FIXME: extend to multiple file extensions, this is bad
+	var (
+		videoExts = []string{"mp4", "webm", "flv"}
+		thumbExts = []string{"png", "webp", "jpg"}
+	)
+
+	// FIXME: extend to multiple file extensions, this is bad, not DRY
 	// I could use walk but I don't want to. I will fix this eventually!
-	generatedVideoFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.mp4", d.outputLoc, video.VideoID))
+	generatedVideoFiles, err := globWithExtensions(fmt.Sprintf("%s/*%s", d.outputLoc, video.VideoID), videoExts)
 	if err != nil {
 		return err
-	}
-
-	generatedVideoFilesFLV, err := filepath.Glob(fmt.Sprintf("%s/%s.flv", d.outputLoc, video.VideoID))
-	if err != nil {
-		return err
-	}
-
-	generatedVideoFiles = append(generatedVideoFiles, generatedVideoFilesFLV...)
-
-	if len(generatedVideoFiles) != 1 {
-		return fmt.Errorf("unexpected number of matched files: %d", len(generatedVideoFiles))
 	}
 
 	// TODO: fix for other extensions?? this is dumb
-	generatedThumbnailFiles, err := filepath.Glob(fmt.Sprintf("%s/%s.jpg", d.outputLoc, video.VideoID))
+	generatedThumbnailFiles, err := globWithExtensions(fmt.Sprintf("%s/*%s", d.outputLoc, video.VideoID), thumbExts)
 	if err != nil {
 		return err
-	}
-
-	if len(generatedThumbnailFiles) != 1 {
-		return fmt.Errorf("unexpected number of matched thumbnail files: %d", len(generatedThumbnailFiles))
 	}
 
 	thumb, err := os.Open(generatedThumbnailFiles[0])
@@ -307,12 +300,12 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 
 	err = sendLoop(file, stream, false)
 	if err != nil {
-		return fmt.Errorf("Failed to send video data. Err: %s", err)
+		return fmt.Errorf("failed to send video data. Err: %s", err)
 	}
 
 	err = sendLoop(metafile, stream, true)
 	if err != nil {
-		return fmt.Errorf("Failed to send video raw metadata. Err: %s", err)
+		return fmt.Errorf("failed to send video raw metadata. Err: %s", err)
 	}
 
 	resp, err := stream.CloseAndRecv()
@@ -381,12 +374,18 @@ loop:
 }
 
 func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]string, error) {
+	bin := "/scheduler/youtube-dl/youtube_dl/__main__.py"
+	// this is a FIXME
+	if videoproto.Website(video.C.Website) == videoproto.Website_youtube {
+		bin = "/scheduler/yt-dlp/yt_dlp/__main__.py"
+	}
 	args := []string{
+		bin,
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
 		"--max-filesize",
-		"200m",
+		fmt.Sprintf("%dm", d.maxFS),
 		"--add-header",
 		"Accept:*/*",
 		// "Why do we need this?"
@@ -412,6 +411,25 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 	}
 
 	return args, nil
+}
+
+func globWithExtensions(basepath string, extensions []string) ([]string, error) {
+	var ret []string
+	for _, ext := range extensions {
+		path := fmt.Sprintf("%s.%s*", basepath, ext)
+		g, err := filepath.Glob(path)
+		if err != nil {
+			return nil, err
+		}
+
+		ret = append(ret, g...)
+	}
+
+	if len(ret) != 1 {
+		return nil, fmt.Errorf("incorrect match length for extensions %s, length: %d, contents: %s", extensions, len(ret), ret)
+	}
+
+	return ret, nil
 }
 
 type YTDLMetadata struct {

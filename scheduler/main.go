@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
-	"github.com/horahoradev/horahora/scheduler/internal/models"
-	"github.com/horahoradev/horahora/scheduler/internal/syncmanager"
 	"os"
 	"os/signal"
 	"sync"
 	_ "sync"
 	"syscall"
+
+	"github.com/horahoradev/horahora/scheduler/internal/models"
+	"github.com/horahoradev/horahora/scheduler/internal/syncmanager"
 
 	"github.com/horahoradev/horahora/scheduler/internal/config"
 	"github.com/horahoradev/horahora/scheduler/internal/downloader"
@@ -64,7 +65,7 @@ func main() {
 	numOfSubscribers := 3
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
-		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, cfg.SocksConnStr)
+		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, cfg.SocksConnStr, cfg.MaxFS)
 		go func() {
 			err := dler.SubscribeAndDownload(ctx, m)
 			if err != nil {

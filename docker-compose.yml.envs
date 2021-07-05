@@ -28,6 +28,7 @@ services:
       - redis_pass=
       - SocksConn=
       - SyncPollDelay=30m
+      - MaxDLFileSize=300
   videoservice:
     build: video_service
     restart: always

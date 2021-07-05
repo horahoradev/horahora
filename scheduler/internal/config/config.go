@@ -42,6 +42,7 @@ type config struct {
 	Client                  proto.VideoServiceClient
 	SocksConnStr            string        `env:"SocksConn,required"`
 	SyncPollDelay           time.Duration `env:"SyncPollDelay,required"`
+	MaxFS                   uint64        `env:"MaxDLFileSize,required"`
 }
 
 func New() (*config, error) {
