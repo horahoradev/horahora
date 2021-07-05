@@ -44,7 +44,7 @@ func (b *BayesianTagSum) GetRecommendations(uid int64) ([]*videoproto.VideoRec, 
 		}
 
 		// I should stop doing this...
-		vid.ThumbnailLoc = strings.Replace(vid.ThumbnailLoc, ".mpd", ".jpg", 1)
+		vid.ThumbnailLoc = strings.Replace(vid.ThumbnailLoc, ".mpd", ".thumb", 1)
 
 		ret = append(ret, &vid)
 	}
