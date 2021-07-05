@@ -12,7 +12,7 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-const testData = false
+const testData = true
 
 func main() {
 	e := echo.New()

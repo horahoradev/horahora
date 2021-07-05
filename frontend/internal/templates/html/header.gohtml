@@ -13,7 +13,7 @@
         <div><a class="plain-link" href="/"><h1>Horahora</h1></a></div>
         <div onmouseenter="document.getElementById('search-modal').style.visibility = 'visible';" onmouseleave="document.getElementById('search-modal').style.visibility = 'hidden';">
             <form action="/">
-            <input type="text" class="searchbar" placeholder="Search for videos">
+            <input type="text" class="searchbar" name="search" placeholder="Search for videos">
                 <div class="search-modal" id="search-modal">
                 <div id="search-option-title">SEARCH OPTIONS</div>
                  Order by
@@ -27,10 +27,7 @@
                 <label for="desc">Desc</label>
                 <input type="radio" id="asc" name="order" value="asc">
                 <label for="asc">Asc</label>
-                <br>
-                Tag
-                <input type="text" id="tag" name="tag">
-                <br>
+                </br>
                 <button class="horahora-button" type="submit">Search</button>
             </form>
             </div>
