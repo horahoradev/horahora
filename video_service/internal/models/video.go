@@ -215,22 +215,13 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 		return nil, err
 	}
 
-	// Horrible
-	inc, exc := extractSearchTerms(searchVal)
-
-	numSearchTerms := len(inc) + len(exc)
-
 	for rows.Next() {
 		var video videoproto.Video
-		var authorID, views, count int64
+		var authorID, views int64
 		var mpdLoc string
-		err = rows.Scan(&video.VideoID, &video.VideoTitle, &authorID, &mpdLoc, &views, &count)
+		err = rows.Scan(&video.VideoID, &video.VideoTitle, &authorID, &mpdLoc, &views)
 		if err != nil {
 			return nil, err
-		}
-
-		if !(int(count) >= numSearchTerms) {
-			continue
 		}
 
 		basicInfo, err := v.getBasicVideoInfo(authorID, video.VideoID)
@@ -311,7 +302,7 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	dialect := goqu.Dialect("postgres")
 
 	ds := dialect.
-		Select("videos.id", "title", "userid", "newlink", "views", goqu.COUNT("*")).
+		Select("videos.id", "title", "userid", "newlink", "views").
 		From(
 			goqu.T("videos"),
 		).
@@ -379,29 +370,60 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	return sql, err
 }
 
+// This function is pretty horrifying, one of the worst things I've written
 func getConditions(include, exclude []string) []exp.Expression {
-	var ret []exp.Expression
 	queryCols := []string{"title", "tag", "description"}
-	// TODO: DRY
-	for _, inc := range include {
+
+	f := func(terms []string, include bool) []exp.Expression {
 		var incQuery []exp.Expression
-		for _, col := range queryCols {
-			exp := goqu.Or(goqu.I(col).Like(regexp.MustCompile(fmt.Sprintf(".*%s.*", inc))))
-			incQuery = append(incQuery, exp)
+
+		for _, term := range terms {
+			var currConds []exp.Expression
+			for _, col := range queryCols {
+				patt := regexp.MustCompile(fmt.Sprintf(".*%s.*", term))
+				// Oh no
+				if col == "tag" {
+					t := goqu.Dialect("postgres").
+						Select("videos.id").
+						From(
+							goqu.T("videos"),
+						).Join(
+						goqu.T("tags"),
+						goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
+						Where(goqu.I("tag").Like(patt))
+					var exp exp.Expression
+					if include {
+						exp = goqu.I("videos.id").In(t)
+					} else {
+						exp = goqu.I("videos.id").NotIn(t)
+					}
+					currConds = append(currConds, exp)
+				} else {
+					if include {
+						exp := goqu.I(col).Like(patt)
+						currConds = append(currConds, exp)
+					} else {
+						exp := goqu.I(col).NotLike(patt)
+						currConds = append(currConds, exp)
+					}
+				}
+			}
+			if include {
+				incQuery = append(incQuery, goqu.Or(currConds...))
+			} else {
+				incQuery = append(incQuery, goqu.And(currConds...))
+
+			}
 		}
-		ret = append(ret, goqu.Or(incQuery...))
-	}
-	for _, exc := range exclude {
-		var excQuery []exp.Expression
-		for _, col := range queryCols {
-			exp := goqu.Or(goqu.I(col).NotLike(regexp.MustCompile(fmt.Sprintf(".*%s.*", exc))))
-			excQuery = append(excQuery, exp)
-		}
-		ret = append(ret, goqu.Or(excQuery...))
+		return incQuery
 	}
 
-	// Oh no
-	return []exp.Expression{goqu.Or(ret...)}
+	// TODO: DRY
+	incConds := f(include, true)
+	excConds := f(exclude, false)
+	allConds := append(incConds, excConds...)
+
+	return []exp.Expression{goqu.And(allConds...)}
 }
 
 // TODO: might want to switch to some domain-specific information retrieval language in the future
@@ -412,7 +434,7 @@ func extractSearchTerms(search string) (includeTerms, excludeTerms []string) {
 	for _, term := range spl {
 		switch {
 		case strings.HasPrefix(term, "-"):
-			exclude = append(exclude, term)
+			exclude = append(exclude, term[1:])
 		default:
 			include = append(include, term)
 		}
