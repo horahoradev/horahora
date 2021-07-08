@@ -45,7 +45,7 @@ func (v RouteHandler) getTag(c echo.Context) error {
 		OrderBy:        videoproto.OrderCategory_upload_date,
 		Direction:      videoproto.SortDirection_desc,
 		PageNumber:     pageNumberInt,
-		ContainsTag:    tag,
+		SearchVal:      tag,
 		ShowUnapproved: showUnapproved,
 	}
 

@@ -48,7 +48,7 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		OrderBy:        videoproto.OrderCategory_upload_date,
 		Direction:      videoproto.SortDirection_desc,
 		PageNumber:     pageNumberInt,
-		ContainsTag:    "",
+		SearchVal:      "",
 		FromUserID:     idInt,
 		ShowUnapproved: showUnapproved,
 	}

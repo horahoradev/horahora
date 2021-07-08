@@ -71,7 +71,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 	req := videoproto.VideoQueryConfig{
 		OrderBy:        orderBy,
 		Direction:      order,
-		ContainsTag:    tag,
+		SearchVal:      tag,
 		PageNumber:     pageNumberInt,
 		ShowUnapproved: showUnapproved,
 	}
