@@ -86,13 +86,10 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 		if err != nil {
 			return nil, err
 		}
-<<<<<<< HEAD
 	case "s3":
 		g.Storage, err = storage.NewS3(bucketName)
-=======
 	case "minio":
 		g.Storage, err = storage.NewMinio(minioEndpoint, apiID, apiKey, bucketName)
->>>>>>> 2e5526948c2f3902fc465d119f931cf419e3c3eb
 		if err != nil {
 			return nil, err
 		}

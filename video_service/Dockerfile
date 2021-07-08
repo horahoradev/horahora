@@ -1,6 +1,6 @@
 FROM golang:1.15.8-buster
 
-RUN mkdir -p /videoservice/test_files
+COPY . /videoservice
 WORKDIR /videoservice
 
 #

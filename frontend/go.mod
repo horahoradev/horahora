@@ -9,7 +9,7 @@ require (
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/horahoradev/horahora/scheduler v0.0.0-20200823010907-db67efcf7d8c
 	github.com/horahoradev/horahora/user_service v0.0.0-20200929200329-a2cc6bce4184
-	github.com/horahoradev/horahora/video_service v0.0.0-20210701051644-89672eecca5a
+	github.com/horahoradev/horahora/video_service v0.0.0-20210707060951-28c1ed5e8e12
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/labstack/echo/v4 v4.1.16
 	github.com/labstack/gommon v0.3.0
