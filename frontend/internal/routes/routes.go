@@ -252,7 +252,7 @@ func setCookie(c echo.Context, jwt string) error {
 	cookie.Value = base64.StdEncoding.EncodeToString([]byte(jwt)) //
 	cookie.Expires = time.Now().Add(24 * time.Hour)
 
-	cookie.SameSite = http.SameSiteStrictMode
+	// cookie.SameSite = http.SameSiteStrictMode
 	//cookie.Secure = true // set this later
 
 	c.SetCookie(cookie)

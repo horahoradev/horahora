@@ -1,0 +1,33 @@
+{
+	"folders": [
+		{
+			"name": "webapp",
+			"path": "webapp"
+		},
+		{
+			"name": "front_api",
+			"path": "front_api"
+		},
+		{
+			"name": "frontend",
+			"path": "frontend"
+		},
+		{
+			"name": "scheduler",
+			"path": "scheduler"
+		},
+		{
+			"name": "user_service",
+			"path": "user_service"
+		},
+		{
+			"name": "video_service",
+			"path": "video_service"
+		},
+		{
+			"name": "horahora",
+			"path": "."
+		}
+	],
+	"settings": {}
+}

@@ -1,5 +1,17 @@
 version: "3"
+
 services:
+  front_api:
+    build:
+      context: .
+      dockerfile: Dockerfile.front_api
+    restart: always
+    ports:
+      - "8083:8083"
+    environment:
+      - UserServiceGRPCAddress=userservice:7777
+      - VideoServiceGRPCAddress=videoservice:7777
+      - SchedulerServiceGRPCAddress=scheduler:7777
   frontend:
     build: frontend
     restart: always
@@ -10,6 +22,7 @@ services:
       - UserServiceGRPCAddress=userservice:7777
       - VideoServiceGRPCAddress=videoservice:7777
       - SchedulerServiceGRPCAddress=scheduler:7777
+      - JaegerAddress=
   scheduler:
     build: scheduler
     restart: always
@@ -20,12 +33,13 @@ services:
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=scheduler
-      - GRPCPort=7777
-      - VideoServiceGRPCAddress=videoservice:7777
-      - NumberOfRetries=1
       - redis_host=redis
       - redis_port=6379
       - redis_pass=
+      # TODO(ivan): probably should add this to config
+      - GRPCPort=7777
+      - VideoServiceGRPCAddress=videoservice:7777
+      - NumberOfRetries=1
       - SocksConn=
       - SyncPollDelay=30m
       - MaxDLFileSize=300
@@ -39,10 +53,14 @@ services:
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=videoservice
+      - redis_host=redis
+      - redis_port=6379
+      - redis_pass=
       - GRPCPort=7777
       - UserServiceGRPCAddress=userservice:7777
       - BucketName=$BUCKET_NAME
       - Local=false
+<<<<<<< HEAD:docker-compose.yml.envs
       - redis_host=redis
       - redis_port=6379
       - redis_pass=
@@ -52,6 +70,14 @@ services:
       - StorageBackend=$STORAGE_BACKEND
       - StorageAPIID=$STORAGE_API_ID
       - StorageAPIKey=$STORAGE_API_KEY
+=======
+      - OriginFQDN=http://localhost:9000/otomads
+      - JaegerAddress=
+      - StorageBackend=minio
+      - StorageAPIID=minioadmin
+      - StorageAPIKey=minioadmin
+      - MinioEndpoint=minio:9000
+>>>>>>> 2e5526948c2f3902fc465d119f931cf419e3c3eb:docker-compose.yml
       - ApprovalThreshold=1
     volumes:
     - $HOME/.aws/:/root/.aws/:ro
@@ -115,8 +141,11 @@ services:
       - StorageAPIKey=$STORAGE_API_KEY
   redis:
     image: "redis:alpine"
+    restart: always
   postgres:
-    image: postgres
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     restart: always
     ports:
       - "5432:5432"
@@ -124,5 +153,19 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
     volumes:
-      - ./sql:/sql
-      - ./data:/var/lib/postgresql/data
+      - postgresdata:/var/lib/postgresql/data
+  minio:
+    build: minio
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      BUCKET_NAME: otomads
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - miniodata:/data
+
+volumes:
+  miniodata:
+  postgresdata:

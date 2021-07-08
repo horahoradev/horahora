@@ -131,6 +131,8 @@ func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJS
 		return nil, errors.New("unmarshal failure")
 	}
 
+	log.Errorf("Videos, %+v", videos)
+
 	return videos, nil
 }
 
