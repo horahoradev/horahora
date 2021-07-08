@@ -1,7 +1,6 @@
 FROM golang:1.15.8-buster
 
-COPY . /videoservice
-
+RUN mkdir -p /videoservice/test_files
 WORKDIR /videoservice
 
 #
@@ -12,5 +11,9 @@ RUN go mod vendor && \
 
 RUN apt-get update && \
     apt-get install -y ffmpeg curl
+
+COPY . /videoservice
+
+RUN cgo_enabled=0 go build -o videoservice .
 
 ENTRYPOINT ["./videoservice"]

@@ -174,7 +174,7 @@ currVideoLoop:
 }
 
 func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTDLMetadata, error) {
-	log.Infof("Downloading %s", video)
+	log.Infof("Downloading %v+", video)
 
 	args, err := d.getVideoDownloadArgs(video)
 	if err != nil {

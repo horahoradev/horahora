@@ -50,8 +50,8 @@ type GRPCServer struct {
 // TODO: API is getting bloated
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
 	redisClient *redis.Client, client userproto.UserServiceClient, tracer opentracing.Tracer,
-	storageBackend, apiID, apiKey string, approvalThreshold int) error {
-	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN, storageBackend, apiID, apiKey, approvalThreshold)
+	storageBackend, apiID, apiKey string, approvalThreshold int, minioEndpoint string) error {
+	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, minioEndpoint)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 }
 
 func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
-	redisClient *redis.Client, originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int) (*GRPCServer, error) {
+	redisClient *redis.Client, originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, minioEndpoint string) (*GRPCServer, error) {
 
 	g := &GRPCServer{
 		Local:      local,
@@ -86,8 +86,13 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 		if err != nil {
 			return nil, err
 		}
+<<<<<<< HEAD
 	case "s3":
 		g.Storage, err = storage.NewS3(bucketName)
+=======
+	case "minio":
+		g.Storage, err = storage.NewMinio(minioEndpoint, apiID, apiKey, bucketName)
+>>>>>>> 2e5526948c2f3902fc465d119f931cf419e3c3eb
 		if err != nil {
 			return nil, err
 		}

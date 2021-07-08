@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Horahora
 ## Self-hosted Video-hosting Website and Video Archival Manager for Niconico, Bilibili, and Youtube
 ![](https://github.com/horahoradev/horahora-designs/blob/master/archive.png?raw=true)
@@ -37,21 +38,13 @@ https://discord.gg/vfwfpctJRZ
 
 ## Contributing
 Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
+=======
+(ivan's fork of)
+>>>>>>> 2e5526948c2f3902fc465d119f931cf419e3c3eb
 
-## Architecture
-![](Architectural_Drawing.png)
+# Horahora
 
-Currently, there are three microservices:
-1. User Service, which handles registration, logins, and JWT validation
-2. Video Service, which handles video uploads (both from Scheduler and from users), transcoding/chunking as required for DASH, uploads to the origin, and storage of metadata.
-3. Scheduler, which handles content archival requests from users. For example, if a user specifies that they'd like all videos on Niconico with the tag "YTPMV" to be downloaded, Scheduler will download those videos, register them (and their associated creator) with video service and user service, and check that category of content regularly for new videos.
-
-For more in-depth information on a given microservice, consult its README.
-
-All microservices are horizontally scalable, containerized, and communicate via gRPC.
-
-The MVP will also consist of a frontend service to handle HTML templating, and a Censorship Service (name is a WIP) to manage the workflow for video approvals, and censorship of obscene content from foreign websites.  
-
+<<<<<<< HEAD
 ## Designs
 Designs are listed here:
 https://github.com/horahoradev/horahora-designs
@@ -66,3 +59,23 @@ Note: this is currently outdated
 
 ## Backup Restoration
 Backup_service writes psql dumps of the three databases (userservice, videoservice, scheduler) to backblaze. To restore, place the three latest dumps in the sql dir, `docker-compose up`, run migrations, then run restore.sh from within the container.
+=======
+Horahora is a microservice-based video hosting website with additional functionality for content archival from Niconico, Bilibili, and Youtube. Users can upload their own content, or schedule categories of content from other websites to be archived (e.g. a given channel on Niconico, a tag on Youtube, or a playlist from Bilibili). Content archived from other websites will be accessible in the same manner as user-uploaded videos, and will be organized under the same metadata (author, tags) associated with the original video.
+
+This fork is a WIP of a WIP, and not meant for production use. I ([SEAPUNK](https://github.com/SEAPUNK)) am maintaining and making modifications of this project when I feel like it. Don't expect anything to come out of it. If you want to contact me, open up an issue in this repo.
+
+Horahora's repo: https://github.com/horahoradev/horahora
+
+Horahora's discord: https://discord.gg/vfwfpctJRZ
+
+## Run Horahora locally (on Linux/MacOS)
+
+1. Install Docker and docker-compose
+2. Clone this repository
+3. Run `make up` inside the cloned repo
+4. Wait a while, and then navigate to localhost:8082
+
+   Admin username is `admin` and the password is `admin`
+
+There will be a delay between videos being downloaded/uploaded and showing up on the site, as they need to be transcoded first.
+>>>>>>> 2e5526948c2f3902fc465d119f931cf419e3c3eb
