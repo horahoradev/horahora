@@ -1,9 +1,10 @@
 package models
 
 import (
+	"time"
+
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
-	"time"
 )
 
 type Category struct {
