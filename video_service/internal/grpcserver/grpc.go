@@ -283,7 +283,7 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 				vid, err := g.Storage.Fetch(video.GetMPDUUID())
 
 				if err != nil {
-					log.Errorf("could not fetch unencoded video id %d from s3. Err: %s", video.ID, err)
+					log.Errorf("could not fetch unencoded video id %d from backend. Err: %s", video.ID, err)
 					return
 				} else {
 					defer func() {

@@ -25,7 +25,6 @@ func main() {
 	makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
 	makeArchiveRequest(client, "niconico", "tag", "今年レンコンコマンダー常盤")
 	makeArchiveRequest(client, "youtube", "channel", "UC-_oM0rRXSbpUzxmsJHE69g")
-	// log.Println("Made archive requests successfully")
 
 	time.Sleep(time.Minute * 5)
 

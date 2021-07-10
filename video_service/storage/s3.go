@@ -3,14 +3,15 @@ package storage
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	log "github.com/sirupsen/logrus"
-	"io"
-	"os"
 )
 
-const uploadDir = "/videoservice/test_files/"
+const uploadDir = "/tmp/"
 
 type S3Storage struct {
 	BucketName string
