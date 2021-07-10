@@ -26,6 +26,7 @@ COPY scheduler/protocol /horahora/scheduler/protocol
 COPY video_service/protocol /horahora/video_service/protocol
 COPY user_service/protocol /horahora/user_service/protocol
 
-RUN --mount=type=cache,target=/root/.cache/go-build go build -o /front_api.bin
+RUN go mod vendor && \
+--mount=type=cache,target=/root/.cache/go-build go build -o /front_api.bin
 
 ENTRYPOINT ["/front_api.bin"]
