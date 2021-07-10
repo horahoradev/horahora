@@ -11,6 +11,15 @@ jobs:
         run: sleep 30s
       - name: Run integration tests
         run: go run tests/main.go
-      - name: print relevant logs
+      - name: print relevant logs (frontend)
         run: docker logs $(docker ps | grep "frontend" | awk '{print $1}')
+        if: always()
+      - name: print relevant logs (videoservice)
+        run: docker logs $(docker ps | grep "videoservice" | awk '{print $1}')
+        if: always()
+      - name: print relevant logs (userservice)
+        run: docker logs $(docker ps | grep "userservice" | awk '{print $1}')
+        if: always()
+      - name: print relevant logs (scheduler)
+        run: docker logs $(docker ps | grep "scheduler" | awk '{print $1}')
         if: always()
