@@ -9,3 +9,6 @@ jobs:
         run: make up
       - name: Run integration tests
         run: go run tests/main.go
+      - name: print relevant logs
+        run: docker logs $(docker ps | grep "frontend" | awk '{print $1}')
+        if: always()
