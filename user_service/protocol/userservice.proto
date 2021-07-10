@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "github.com/horahoradev/horahora/user_service/protocol";
+
 package proto;
 
 service UserService {
@@ -9,6 +11,15 @@ service UserService {
 
     rpc GetUserFromID(GetUserFromIDRequest) returns (UserResponse){}
     rpc GetUserForForeignUID(GetForeignUserRequest) returns (GetForeignUserResponse){}
+    rpc GetUserIDsForUsername(GetUserIDsForUsernameRequest) returns (GetUserIDsForUsernameResponse){}
+}
+
+message GetUserIDsForUsernameRequest {
+    string username = 1;
+}
+
+message GetUserIDsForUsernameResponse {
+    repeated int64 userIDs = 1;
 }
 
 message GetForeignUserRequest {

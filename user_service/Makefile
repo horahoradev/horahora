@@ -1,7 +1,7 @@
 all: proto
 
 proto : ./protocol/userservice.proto
-	protoc -I=protocol userservice.proto --go_out=plugins=grpc:protocol
+	protoc --go_out=. --go_opt=paths=source_relative     --go-grpc_out=. --go-grpc_opt=paths=source_relative    protocol/userservice.proto 
 
 
 build : Dockerfile

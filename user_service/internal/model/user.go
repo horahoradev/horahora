@@ -120,3 +120,31 @@ func (m *UserModel) GetForeignUser(foreignUserID string, foreignWebsite proto.Si
 
 	return userID, nil
 }
+
+type Username struct {
+	ID       int64  `db:"id"`
+	Username string `db:"username"`
+	Email    string `db:"email"`
+	Rank     int    `db:"rank"`
+}
+
+func (m *UserModel) GetUserIDsForUsername(username string) ([]int64, error) {
+	sql := "SELECT id from users WHERE username LIKE $1"
+
+	rows, err := m.Conn.Query(sql, username)
+	if err != nil {
+		return nil, err
+	}
+
+	var ret []int64
+	for rows.Next() {
+		var id int64
+		err = rows.Scan(&id)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, id)
+	}
+
+	return ret, nil
+}
