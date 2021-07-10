@@ -203,7 +203,7 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID int64, ratingValue fl
 // goqu and write better tests
 func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, searchVal string, showUnapproved bool,
 	category videoproto.OrderCategory) ([]*videoproto.Video, error) {
-	sql, err := generateVideoListSQL(direction, pageNum, fromUserID, searchVal, showUnapproved, category)
+	sql, err := v.generateVideoListSQL(direction, pageNum, fromUserID, searchVal, showUnapproved, category)
 	if err != nil {
 		return nil, err
 	}
@@ -261,9 +261,9 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 				goqu.T("videos"),
 			)
 
-		conditions := getConditions(extractSearchTerms(searchVal))
+		conditions := v.getConditions(extractSearchTerms(searchVal))
 
-		ds = ds.Join(
+		ds = ds.LeftJoin(
 			goqu.T("tags"),
 			goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
 			Where(conditions...).
@@ -297,7 +297,7 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 	return l, nil
 }
 
-func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, searchVal string, showUnapproved bool, orderCategory videoproto.OrderCategory) (string, error) {
+func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, searchVal string, showUnapproved bool, orderCategory videoproto.OrderCategory) (string, error) {
 	minResultNum := (pageNum - 1) * NumResultsPerPage
 	dialect := goqu.Dialect("postgres")
 
@@ -342,9 +342,9 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 		ds = ds.
 			Where(goqu.C("userid").Eq(fromUserID))
 	case searchVal != "":
-		conditions := getConditions(extractSearchTerms(searchVal))
+		conditions := v.getConditions(extractSearchTerms(searchVal))
 
-		ds = ds.Join(
+		ds = ds.LeftJoin(
 			goqu.T("tags"),
 			goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
 			Where(conditions...)
@@ -365,14 +365,12 @@ func generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserI
 	// Maybe use prepared mode?
 	sql, _, err := ds.ToSQL()
 
-	log.Infof("Sql: %s", sql)
-
 	return sql, err
 }
 
 // This function is pretty horrifying, one of the worst things I've written
-func getConditions(include, exclude []string) []exp.Expression {
-	queryCols := []string{"title", "tag", "description"}
+func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
+	queryCols := []string{"title", "tag", "description", "username"}
 
 	f := func(terms []string, include bool) []exp.Expression {
 		var incQuery []exp.Expression
@@ -398,6 +396,25 @@ func getConditions(include, exclude []string) []exp.Expression {
 						exp = goqu.I("videos.id").NotIn(t)
 					}
 					currConds = append(currConds, exp)
+					// Oh no no no
+				} else if col == "username" {
+					resp, err := v.grpcClient.GetUserIDsForUsername(context.Background(), &proto.GetUserIDsForUsernameRequest{
+						Username: term})
+					if err != nil || len(resp.UserIDs) == 0 {
+						log.Errorf("could not retrieve user ids for username %s", term)
+						continue
+					}
+
+					for _, id := range resp.UserIDs {
+						if include {
+							exp := goqu.I("userid").Eq(id)
+							currConds = append(currConds, exp)
+						} else {
+							exp := goqu.I("userid").Neq(id)
+							currConds = append(currConds, exp)
+						}
+					}
+
 				} else {
 					if include {
 						exp := goqu.I(col).Like(patt)
