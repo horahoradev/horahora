@@ -81,14 +81,15 @@ func main() {
 
 		repo := models.NewArchiveRequest(cfg.Conn, cfg.Redlock)
 
+		// TODDO: sync worker exit becausse schcema isn't up yet
 		worker, err := syncmanager.NewWorker(repo, cfg.SocksConnStr, cfg.SyncPollDelay)
 		if err != nil {
-			log.Errorf("Sync worker exited wth err: %s", err)
+			log.Fatalf("Sync worker exited wth err: %s", err)
 		}
 
 		err = worker.Sync()
 		if err != nil {
-			log.Errorf("Sync worker exited while syncing with err: %s", err)
+			log.Fatalf("Sync worker exited while syncing with err: %s", err)
 		}
 	}()
 
