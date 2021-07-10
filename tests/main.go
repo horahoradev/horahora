@@ -9,6 +9,7 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"strings"
+	"time"
 )
 
 const (
@@ -24,28 +25,28 @@ func main() {
 	makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
 	makeArchiveRequest(client, "niconico", "tag", "今年レンコンコマンダー常盤")
 	makeArchiveRequest(client, "youtube", "channel", "UC-_oM0rRXSbpUzxmsJHE69g")
-	log.Println("Made archive requests successfully")
+	// log.Println("Made archive requests successfully")
 
-	// time.Sleep(time.Minute * 5)
+	time.Sleep(time.Minute * 5)
 
 	// Are videos being downloaded and transcoded correctly?
-	pageHasVideos(client, "今年レンコンコマンダー常盤")
-	pageHasVideos(client, "sm35952346")
-	pageHasVideos(client, "電ǂ鯨")
-	log.Println("Video downloaded and transcoded successfully")
+	pageHasVideos(client, "今年レンコンコマンダー常盤", 1)
+	pageHasVideos(client, "sm35952346", 1)
+	pageHasVideos(client, "電ǂ鯨", 10)
+	log.Println("All videos downloaded and transcoded successfully")
 }
 
-func pageHasVideos(client *http.Client, tag string) {
+func pageHasVideos(client *http.Client, tag string, count int) {
 	response, _ := client.Get(baseURL + fmt.Sprintf("/?search=%s&category=upload_date", tag))
 	cont, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if !strings.Contains(string(cont), "href=\"/videos/") {
-		log.Panicf("page does not contain videos for %s", tag)
+	c := strings.Count(string(cont), "href=\"/videos/")
+	if c != count {
+		log.Panicf("page does not contain the right number of videos for %s. Found: %d", tag, c)
 	}
-
 }
 
 func makeArchiveRequest(client *http.Client, website, contentType, contentValue string) {
