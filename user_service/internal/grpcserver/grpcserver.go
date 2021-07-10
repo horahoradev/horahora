@@ -17,6 +17,7 @@ import (
 )
 
 type GRPCServer struct {
+	proto.UnsafeUserServiceServer
 	db         *sqlx.DB
 	privateKey *rsa.PrivateKey
 	um         *model.UserModel
@@ -104,6 +105,18 @@ func (g GRPCServer) ValidateJWT(ctx context.Context, req *proto.ValidateJWTReque
 	return &proto.ValidateJWTResponse{
 		IsValid: true,
 		Uid:     uid,
+	}, nil
+}
+
+func (g GRPCServer) GetUserIDsForUsername(ctx context.Context, req *proto.GetUserIDsForUsernameRequest) (*proto.GetUserIDsForUsernameResponse, error) {
+	ids, err := g.um.GetUserIDsForUsername(req.Username)
+	if err != nil {
+		log.Errorf("Failed to retrieve usernames for id. Err: %s", err)
+		return nil, err
+	}
+
+	return &proto.GetUserIDsForUsernameResponse{
+		UserIDs: ids,
 	}, nil
 }
 
