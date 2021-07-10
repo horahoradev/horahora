@@ -24,7 +24,7 @@ type poller struct {
 }
 
 func NewPoller(db *sqlx.DB, redsync *redsync.Redsync) (poller, error) {
-	return poller{Db: db, PollingDelay: time.Second * 60, Redsync: redsync}, nil
+	return poller{Db: db, PollingDelay: time.Second * 15, Redsync: redsync}, nil
 }
 
 func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue chan *models.VideoDLRequest) error {

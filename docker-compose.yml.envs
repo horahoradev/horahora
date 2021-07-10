@@ -41,7 +41,7 @@ services:
       - VideoServiceGRPCAddress=videoservice:7777
       - NumberOfRetries=1
       - SocksConn=
-      - SyncPollDelay=30m
+      - SyncPollDelay=1m
       - MaxDLFileSize=300
   videoservice:
     build: video_service

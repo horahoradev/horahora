@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+
 	"github.com/go-redsync/redsync"
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/jmoiron/sqlx"
@@ -34,15 +35,6 @@ type ContentArchivalRequest struct {
 	ContentType  contentType         `db:"attribute_type"`  // "channel", "tag", or "playlist"
 	ContentValue string              `db:"attribute_value"` // either the channel VideoID or the tag string
 }
-
-/*
-CREATE TABLE user_download_subscriptions (
-    user_id int,
-    download_id int REFERENCES downloads(id),
-    primary key(user_id, download_id)
-);
-
-*/
 
 func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]ContentArchivalRequest, error) {
 	sql := "SELECT website, attribute_type, attribute_value FROM user_download_subscriptions s " +

@@ -72,6 +72,11 @@ func (s *SyncWorker) syncDownloadList(dlReq *models.CategoryDLRequest) (bool, er
 	var newItemsAdded bool
 
 	for _, video := range videos {
+		// TODO: this is a hack. yt-dlp isn't returning the expected value for the url field.
+		if dlReq.Website == proto.SupportedSite_youtube && !strings.HasPrefix(video.URL, "https://www.youtube.com") {
+			video.URL = fmt.Sprintf("https://www.youtube.com/watch?v=%s", video.URL)
+		}
+
 		// TODO: batch?
 		itemsAdded, err := dlReq.AddVideo(video.ID, video.URL)
 		if err != nil {

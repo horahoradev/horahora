@@ -237,7 +237,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	}
 
 	var (
-		videoExts = []string{"mp4", "webm", "flv"}
+		videoExts = []string{"mp4", "webm", "flv", "mkv"}
 		thumbExts = []string{"png", "webp", "jpg"}
 	)
 
