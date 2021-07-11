@@ -239,6 +239,7 @@ func (r RouteHandler) handleLogin(c echo.Context) error {
 
 	loginResp, err := r.u.Login(context.Background(), loginReq)
 	if err != nil {
+		log.Errorf("Failed to authenticate %s. Err: %s", username, err)
 		return c.String(http.StatusForbidden, "Failed to authenticate, invalid credentials")
 	}
 
