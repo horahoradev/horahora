@@ -23,15 +23,23 @@ func main() {
 	log.Println("Logged in successfully")
 	// Can we try to archive something?
 	makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
+	makeArchiveRequest(client, "bilibili", "channel", "1963331522")
+
 	makeArchiveRequest(client, "niconico", "tag", "今年レンコンコマンダー常盤")
+	makeArchiveRequest(client, "niconico", "channel", "119163275")
+
 	makeArchiveRequest(client, "youtube", "channel", "UCF43Xa8ZNQqKs1jrhxlntlw") // Some random channel I found with short videos. Good enough!
 
-	time.Sleep(time.Minute * 20)
+	time.Sleep(time.Minute * 30)
 
 	// Are videos being downloaded and transcoded correctly?
-	pageHasVideos(client, "陰陽師", 1) // there's some bizarre nico bug here where the tags keep switching on the video. very strange
-	pageHasVideos(client, "sm35952346", 1)
-	pageHasVideos(client, "しゅんなな", 13)
+	pageHasVideos(client, "sm35952346", 1) // Bilibili tag
+	pageHasVIdeos(client, "空气本さん", 1)      // Bilibili channel
+
+	pageHasVideos(client, "風野灯織", 1) // nico channel
+	pageHasVideos(client, "陰陽師", 1)  // there's some bizarre nico bug here where the tags keep switching on the video. very strange
+
+	pageHasVideos(client, "しゅんなな", 13) // yt channel
 	log.Println("All videos downloaded and transcoded successfully")
 }
 
