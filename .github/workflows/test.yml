@@ -7,8 +7,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build the stack
         run: make up
-      - name: wait 30s
-        run: sleep 30s
+      - name: wait 60s
+        run: sleep 60s
       - name: Run integration tests
         run: go run tests/main.go
       - name: print relevant logs (frontend)
