@@ -31,7 +31,7 @@ func main() {
 	// Are videos being downloaded and transcoded correctly?
 	pageHasVideos(client, "今年レンコンコマンダー常盤", 1)
 	pageHasVideos(client, "sm35952346", 1)
-	pageHasVideos(client, "電ǂ鯨", 10)
+	pageHasVideos(client, "電ǂ鯨", 11)
 	log.Println("All videos downloaded and transcoded successfully")
 }
 
