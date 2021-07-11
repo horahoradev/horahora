@@ -34,7 +34,7 @@ func main() {
 
 	// Are videos being downloaded and transcoded correctly?
 	pageHasVideos(client, "sm35952346", 1) // Bilibili tag
-	pageHasVIdeos(client, "空气本さん", 1)      // Bilibili channel
+	pageHasVideos(client, "空气本さん", 1)      // Bilibili channel
 
 	pageHasVideos(client, "風野灯織", 1) // nico channel
 	pageHasVideos(client, "陰陽師", 1)  // there's some bizarre nico bug here where the tags keep switching on the video. very strange
