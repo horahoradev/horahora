@@ -26,7 +26,7 @@ func main() {
 	makeArchiveRequest(client, "niconico", "tag", "今年レンコンコマンダー常盤")
 	makeArchiveRequest(client, "youtube", "channel", "UC-_oM0rRXSbpUzxmsJHE69g")
 
-	time.Sleep(time.Minute * 5)
+	time.Sleep(time.Minute * 30)
 
 	// Are videos being downloaded and transcoded correctly?
 	pageHasVideos(client, "今年レンコンコマンダー常盤", 1)
