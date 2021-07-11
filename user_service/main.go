@@ -22,6 +22,8 @@ func main() {
 		log.Fatalf("Could not parse RSA keypair. Err: %s", err)
 	}
 
+	log.Print("Serving traffic")
+
 	err = grpcserver.NewGRPCServer(conf.DbConn, privateKey, conf.GRPCPort)
 	if err != nil {
 		log.Fatalf("gRPC server terminated with error: %s", err)
