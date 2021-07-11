@@ -26,10 +26,10 @@ func main() {
 	makeArchiveRequest(client, "niconico", "tag", "今年レンコンコマンダー常盤")
 	makeArchiveRequest(client, "youtube", "channel", "UCF43Xa8ZNQqKs1jrhxlntlw") // Some random channel I found with short videos. Good enough!
 
-	time.Sleep(time.Minute * 30)
+	time.Sleep(time.Minute * 20)
 
 	// Are videos being downloaded and transcoded correctly?
-	pageHasVideos(client, "今年レンコンコマンダー常盤", 1)
+	pageHasVideos(client, "陰陽師", 1) // there's some bizarre nico bug here where the tags keep switching on the video. very strange
 	pageHasVideos(client, "sm35952346", 1)
 	pageHasVideos(client, "しゅんなな", 13)
 	log.Println("All videos downloaded and transcoded successfully")
