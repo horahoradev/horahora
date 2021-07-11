@@ -8,7 +8,7 @@ jobs:
       - name: Build the stack
         run: make up
       - name: wait 60s
-        run: sleep 60s
+        run: sleep 120s
       - name: Run integration tests
         run: go run tests/main.go
       - name: print relevant logs (frontend)
@@ -25,4 +25,7 @@ jobs:
         if: always()
       - name: print relevant logs (redis)
         run: docker logs $(docker ps | grep "redis" | awk '{print $1}')
+        if: always()
+      - name: print relevant logs (postgres)
+        run: docker logs $(docker ps | grep "postgres" | awk '{print $1}')
         if: always()
