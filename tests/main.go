@@ -24,14 +24,14 @@ func main() {
 	// Can we try to archive something?
 	makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
 	makeArchiveRequest(client, "niconico", "tag", "今年レンコンコマンダー常盤")
-	makeArchiveRequest(client, "youtube", "channel", "UC-_oM0rRXSbpUzxmsJHE69g")
+	makeArchiveRequest(client, "youtube", "channel", "UCF43Xa8ZNQqKs1jrhxlntlw") // Some random channel I found with short videos. Good enough!
 
 	time.Sleep(time.Minute * 30)
 
 	// Are videos being downloaded and transcoded correctly?
 	pageHasVideos(client, "今年レンコンコマンダー常盤", 1)
 	pageHasVideos(client, "sm35952346", 1)
-	pageHasVideos(client, "電ǂ鯨", 11)
+	pageHasVideos(client, "しゅんなな", 13)
 	log.Println("All videos downloaded and transcoded successfully")
 }
 
