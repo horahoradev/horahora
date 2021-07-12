@@ -30,30 +30,60 @@ func main() {
 
 	makeArchiveRequest(client, "youtube", "channel", "UCF43Xa8ZNQqKs1jrhxlntlw") // Some random channel I found with short videos. Good enough!
 
-	time.Sleep(time.Minute * 30)
-
 	// Are videos being downloaded and transcoded correctly?
-	pageHasVideos(client, "sm35952346", 1) // Bilibili tag
-	pageHasVideos(client, "空气本さん", 1)      // Bilibili channel
+	for start := time.Now(); time.Since(start) < time.Minute*30; {
+		time.Sleep(time.Second * 30)
+		err := pageHasVideos(client, "sm35952346", 1) // Bilibili tag
+		if err != nil {
+			log.Println(err)
+			continue
+		}
 
-	pageHasVideos(client, "風野灯織", 1) // nico channel
-	pageHasVideos(client, "中の", 1)   // there's some bizarre nico bug here where the tags keep switching on the video. very strange
+		err = pageHasVideos(client, "空气本さん", 1) // Bilibili channel
+		if err != nil {
+			log.Println(err)
+			continue
+		}
 
-	pageHasVideos(client, "しゅんなな", 8) // yt channel, should be 13 but several have ffmpeg errors. Sad!
-	log.Println("All videos downloaded and transcoded successfully")
+		err = pageHasVideos(client, "風野灯織", 1) // nico channel
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		err = pageHasVideos(client, "中の", 1) // there's some bizarre nico bug here where the tags keep switching on the video. very strange
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		err = pageHasVideos(client, "しゅんなな", 8) // yt channel, should be 13 but several have ffmpeg errors. Sad!
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		log.Println("All videos downloaded and transcoded successfully")
+		return
+	}
+
+	log.Panic("Failed to download and transocde videos within 30 minutes")
+
 }
 
-func pageHasVideos(client *http.Client, tag string, count int) {
+func pageHasVideos(client *http.Client, tag string, count int) error {
 	response, _ := client.Get(baseURL + fmt.Sprintf("/?search=%s&category=upload_date", tag))
 	cont, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	c := strings.Count(string(cont), "href=\"/videos/")
 	if c != count {
-		log.Panicf("page does not contain the right number of videos for %s. Found: %d", tag, c)
+		return fmt.Errorf("page does not contain the right number of videos for %s. Found: %d", tag, c)
 	}
+
+	return nil
 }
 
 func makeArchiveRequest(client *http.Client, website, contentType, contentValue string) {
