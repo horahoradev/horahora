@@ -399,7 +399,7 @@ func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
 					// Oh no no no
 				} else if col == "username" {
 					resp, err := v.grpcClient.GetUserIDsForUsername(context.Background(), &proto.GetUserIDsForUsernameRequest{
-						Username: term})
+						Username: "%" + term + "%"})
 					if err != nil || len(resp.UserIDs) == 0 {
 						log.Errorf("could not retrieve user ids for username %s", term)
 						continue

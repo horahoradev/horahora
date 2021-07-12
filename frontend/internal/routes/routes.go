@@ -121,7 +121,7 @@ func (r RouteHandler) getArchiveRequests(c echo.Context) error {
 
 	addUserProfileInfo(c, &data.L, r.u)
 
-	if data.L.UserID == 0 {
+	if data.L.Username == "" {
 		// User isn't logged in
 		// TODO: move this to a middleware somehow
 		return c.String(http.StatusForbidden, "Must be logged in")
@@ -624,10 +624,6 @@ func addUserProfileInfo(c echo.Context, l *LoggedInUserData, client userproto.Us
 	if !ok {
 		log.Error("Could not assert id to int64")
 		return
-	}
-
-	if idInt == 0 {
-		return // User isn't logged in
 	}
 
 	getUserReq := userproto.GetUserFromIDRequest{
