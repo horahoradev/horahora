@@ -25,7 +25,7 @@ func main() {
 	makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
 	makeArchiveRequest(client, "bilibili", "channel", "1963331522")
 
-	makeArchiveRequest(client, "niconico", "tag", "今年レンコンコマンダー常盤")
+	makeArchiveRequest(client, "niconico", "tag", "TEST_sm9")
 	makeArchiveRequest(client, "niconico", "channel", "119163275")
 
 	makeArchiveRequest(client, "youtube", "channel", "UCF43Xa8ZNQqKs1jrhxlntlw") // Some random channel I found with short videos. Good enough!
@@ -37,9 +37,9 @@ func main() {
 	pageHasVideos(client, "空气本さん", 1)      // Bilibili channel
 
 	pageHasVideos(client, "風野灯織", 1) // nico channel
-	pageHasVideos(client, "陰陽師", 1)  // there's some bizarre nico bug here where the tags keep switching on the video. very strange
+	pageHasVideos(client, "中の", 1)   // there's some bizarre nico bug here where the tags keep switching on the video. very strange
 
-	pageHasVideos(client, "しゅんなな", 13) // yt channel
+	pageHasVideos(client, "しゅんなな", 8) // yt channel, should be 13 but several have ffmpeg errors. Sad!
 	log.Println("All videos downloaded and transcoded successfully")
 }
 

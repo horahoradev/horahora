@@ -178,6 +178,9 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 				downloadPreference = fmt.Sprintf("id%s", *latestVideo)
 			}
 			args = append(args, fmt.Sprintf("nicosearch%s:%s", downloadPreference, dlReq.ContentValue))
+		case models.Channel:
+			log.Infof("Downloading videos from niconico user %s", dlReq.ContentValue)
+			args = append(args, fmt.Sprintf("https://www.nicovideo.jp/user/%s", dlReq.ContentValue))
 
 		default:
 			err := fmt.Errorf("content type %s is not implemented for niconico.", dlReq.ContentType)
