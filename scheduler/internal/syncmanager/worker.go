@@ -182,6 +182,10 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 			log.Infof("Downloading videos from niconico user %s", dlReq.ContentValue)
 			args = append(args, fmt.Sprintf("https://www.nicovideo.jp/user/%s", dlReq.ContentValue))
 
+		case models.Playlist:
+			log.Infof("Downloading niconico playlist %s", dlReq.ContentValue)
+			args = append(args, fmt.Sprintf("https://www.nicovideo.jp/mylist/%s", dlReq.ContentValue))
+
 		default:
 			err := fmt.Errorf("content type %s is not implemented for niconico.", dlReq.ContentType)
 			return nil, err
@@ -217,6 +221,10 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 		case models.Channel:
 			log.Infof("Downloading videos from youtube user %s", dlReq.ContentValue)
 			args = append(args, fmt.Sprintf("https://www.youtube.com/channel/%s", dlReq.ContentValue))
+
+		case models.Playlist:
+			log.Infof("Downloading videos from playlist channel %s", dlReq.ContentValue)
+			args = append(args, fmt.Sprintf("https://www.youtube.com/playlist?list=%s", dlReq.ContentValue))
 
 		default:
 			err := fmt.Errorf("content type %s is not implemented for youtube.", dlReq.ContentType)
