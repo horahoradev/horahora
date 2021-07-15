@@ -27,8 +27,10 @@ func main() {
 
 	makeArchiveRequest(client, "niconico", "tag", "TEST_sm9")
 	makeArchiveRequest(client, "niconico", "channel", "119163275")
+	makeArchiveRequest(client, "niconico", "playlist", "58583228")
 
-	makeArchiveRequest(client, "youtube", "channel", "UCF43Xa8ZNQqKs1jrhxlntlw") // Some random channel I found with short videos. Good enough!
+	makeArchiveRequest(client, "youtube", "channel", "UCF43Xa8ZNQqKs1jrhxlntlw")            // Some random channel I found with short videos. Good enough!
+	makeArchiveRequest(client, "youtube", "playlist", "PLz2PzeiUFQLuZ6k_e50OEK0xd_NAy7xat") // random playlist with one entry
 
 	// Are videos being downloaded and transcoded correctly?
 	for start := time.Now(); time.Since(start) < time.Minute*30; {
@@ -58,6 +60,18 @@ func main() {
 		}
 
 		err = pageHasVideos(client, "しゅんなな", 8) // yt channel, should be 13 but several have ffmpeg errors. Sad!
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		err = pageHasVideos(client, "untitled_0360", 1) // yt playlist
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		err = pageHasVIdeos(client, "NEW GAME", 1) // Nico mylist
 		if err != nil {
 			log.Println(err)
 			continue
