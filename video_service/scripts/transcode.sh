@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e -x -o pipefail
 
+# h264/AAC:
+# https://blogs.gnome.org/rbultje/2015/09/28/vp9-encodingdecoding-performance-vs-hevch-264/
+# https://accurate.video/docs/guides/encoding-multi-bitrate-content-optimal-dash-delivery/
+# https://github.com/gpac/gpac/wiki/GPAC-Build-Guide-for-Linux
+
+# vp9:
 # http://wiki.webmproject.org/adaptive-streaming/instructions-to-playback-adaptive-webm-using-dash was used as a reference
 # https://developers.google.com/media/vp9/settings/vod was used as another resource
 # https://streaminglearningcenter.com/blogs/encoding-vp9-in-ffmpeg-an-update.html helpful! led me to the google recommended settings
@@ -12,18 +18,12 @@ set -e -x -o pipefail
 # In the future, there should be smarter, more customizable behavior here.
 # E.g. if the input video is 360p, there's no need to output a version at 1080p.
 
-VP9_DASH_PARAMS="-frame-parallel 1 -row-mt 1 -crf 33"
-COMMON_VIDEO_ARGS="-keyint_min 240 -g 240 -threads 8"
+# VP9_DASH_PARAMS="-frame-parallel 1 -row-mt 1 -crf 33"
+H264_DASH_PARAMS="-r 24 -x264opts 'keyint=48:min-keyint=48:no-scenecut' -movflags faststart -preset fast -profile:v main -threads 8"
+# COMMON_VIDEO_ARGS="-keyint_min 240 -g 240 -threads 8"
 
 # TODO: two-pass encoding/various other parameter tweaks
 # See: https://trac.ffmpeg.org/wiki/Encode/VP9
-
-
-if [ $2 -eq 0 ]
-  then
-    echo "No value given for argument 2, which controls encoding speed"
-    exit 1
-fi
 
 # I'm a little unsure about the CRF values, even though this is what google recommends
 # TODO: improve understanding of CRF in the context of targeted avg video bitrate
@@ -38,11 +38,12 @@ fi
 QUAL_FACT=4
 
 # 240p
-ffmpeg -i ${1} -c:v libvpx-vp9 -vf scale=320x240 -b:v $(echo $((150 * $QUAL_FACT)))k -minrate 75k -maxrate $(echo $((218 * 2 * $QUAL_FACT)))k -tile-columns 0 ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_320x240_600k.webm
+ffmpeg -i ${1} -c:v libx264 -vf scale=320x240 -b:v $(echo $((150 * $QUAL_FACT)))k -minrate 75k -maxrate $(echo $((218 * 2 * $QUAL_FACT)))k -tile-columns 0 ${MP4_DASH_PARAMS} ${2} -an -f mp4 -dash 1 ${1}_320x240_600k.mp4
 #ffmpeg -i ${1} -c:v libvpx-vp9 -vf scale=320x240 -b:v 150k -minrate 75k -maxrate 218k -crf 37 -pass 2 -speed 1 -tile-columns 0 ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 -y ${1}_320x240_150k.webm
 
 # 360p
-ffmpeg -i ${1} -c:v libvpx-vp9 -vf scale=640x360 -b:v $(echo $((276 * $QUAL_FACT)))k -minrate 138k -maxrate $(echo $((400 * 2 * $QUAL_FACT)))k -tile-columns 1 ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 ${1}_640x360_1000k.webm
+ffmpeg -i ${1} -c:v libx264 -vf scale=640x360 -b:v $(echo $((276 * $QUAL_FACT)))k -minrate 138k -maxrate $(echo $((400 * 2 * $QUAL_FACT)))k -tile-columns 1 ${VP9_DASH_PARAMS} ${2} -an -f mp4 -dash 1 ${1}_640x360_1000k.mp4
 #ffmpeg -i ${1} -c:v libvpx-vp9 -vf scale=640x360 -b:v 276k -minrate 138k -maxrate 400k -crf 36 -pass 2 -speed 1 -tile-columns 1 ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 -y ${1}_640x360_276k.webm
 
-ffmpeg -i ${1} -c:a libopus -b:a 128k -vn -f webm -dash 1 ${1}_audio_128k.webm
+# TODO: --strict -2
+ffmpeg -i ${1} -map 0:x -ac 2 -c:a aac -b:a 128k -vn -dash 1 -strict -2 ${1}_audio_128k.m4a
