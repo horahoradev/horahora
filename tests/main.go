@@ -93,7 +93,7 @@ func pageHasVideos(client *http.Client, tag string, count int) error {
 	}
 
 	c := strings.Count(string(cont), "href=\"/videos/")
-	if c != count {
+	if c < count {
 		return fmt.Errorf("page does not contain the right number of videos for %s. Found: %d", tag, c)
 	}
 
