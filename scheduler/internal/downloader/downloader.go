@@ -265,6 +265,11 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		return err
 	}
 
+	// TODO: we need more robust screening for null essential fields
+	if metadata.UploaderID == "" {
+		metadata.UploaderID = metadata.ChannelID
+	}
+
 	// Send metadata
 	metaPayload := videoproto.InputVideoChunk{
 		Payload: &videoproto.InputVideoChunk_Meta{
@@ -468,6 +473,7 @@ type YTDLMetadata struct {
 	Uploader     string   `json:"uploader"`
 	Timestamp    int      `json:"timestamp"`
 	UploaderID   string   `json:"uploader_id"`
+	ChannelID    string   `json:"channel_id"`
 	ViewCount    int      `json:"view_count"`
 	Tags         []string `json:"tags"`
 	Genre        string   `json:"genre"`

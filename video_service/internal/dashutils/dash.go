@@ -37,7 +37,7 @@ func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
 	}
 
 	// At this point it's been transcoded, so generate the DASH manifest
-	cmd = exec.Command("/videoservice/scripts/manifest.sh", path)
+	cmd = exec.Command("/videoservice/scripts/manifest.sh", []string{filepath.Base(path)}...)
 	_, err = cmd.CombinedOutput()
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate dash manifest. Err: %s", err)

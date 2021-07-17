@@ -46,4 +46,4 @@ ffmpeg -i ${1} -c:v libx264 -vf scale=640x360 -b:v $(echo $((276 * $QUAL_FACT)))
 #ffmpeg -i ${1} -c:v libvpx-vp9 -vf scale=640x360 -b:v 276k -minrate 138k -maxrate 400k -crf 36 -pass 2 -speed 1 -tile-columns 1 ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 -y ${1}_640x360_276k.webm
 
 # TODO: --strict -2
-ffmpeg -i ${1} -map 0:x -ac 2 -c:a aac -b:a 128k -vn -dash 1 -strict -2 ${1}_audio_128k.m4a
+ffmpeg -i ${1} -ac 2 -c:a aac -b:a 128k -vn -dash 1 -strict -2 ${1}_audio_128k.m4a
