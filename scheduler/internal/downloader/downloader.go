@@ -266,6 +266,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	}
 
 	// TODO: we need more robust screening for null essential fields
+	// https://github.com/envoyproxy/protoc-gen-validate looks promising!
 	if metadata.UploaderID == "" {
 		metadata.UploaderID = metadata.ChannelID
 	}
