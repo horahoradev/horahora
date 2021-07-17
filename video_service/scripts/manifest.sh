@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e -x -o pipefail
 
+cd /tmp
+
   # http://wiki.webmproject.org/adaptive-streaming/instructions-to-playback-adaptive-webm-using-dash was used as a reference
 
 MP4Box -dash 4000 -frag 4000 -rap \

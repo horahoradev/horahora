@@ -71,7 +71,7 @@ func main() {
 			continue
 		}
 
-		err = pageHasVideos(client, "NEW GAME", 1) // Nico mylist
+		err = pageHasVideos(client, "NEW+GAME", 1) // Nico mylist
 		if err != nil {
 			log.Println(err)
 			continue
