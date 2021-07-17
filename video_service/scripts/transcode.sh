@@ -19,7 +19,7 @@ set -e -x -o pipefail
 # E.g. if the input video is 360p, there's no need to output a version at 1080p.
 
 # VP9_DASH_PARAMS="-frame-parallel 1 -row-mt 1 -crf 33"
-H264_DASH_PARAMS="-r 24 -x264opts 'keyint=48:min-keyint=48:no-scenecut' -movflags faststart -preset fast -profile:v main -threads 8"
+H264_DASH_PARAMS="-r 24 -x264opts 'keyint=48:min-keyint=48:no-scenecut' -movflags faststart -preset medium -profile:v main -threads 8"
 # COMMON_VIDEO_ARGS="-keyint_min 240 -g 240 -threads 8"
 
 # TODO: two-pass encoding/various other parameter tweaks

@@ -61,6 +61,14 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 		return 0, err
 	}
 
+	if foreignAuthorID == "" || foreignAuthorUsername == "" {
+		return 0, errors.New("foreign author info cannot be blank")
+	}
+
+	if originalVideoLink == "" || originalVideoID == "" {
+		return 0, errors.New("original video info cannot be blank")
+	}
+
 	req := proto.GetForeignUserRequest{
 		OriginalWebsite: originalSite,
 		ForeignUserID:   foreignAuthorID,
