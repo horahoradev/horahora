@@ -1,6 +1,6 @@
 up:
 	./generate.sh && \
-	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up --build -d
+	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up --parallel --build -d
 
 down:
 	docker-compose down
