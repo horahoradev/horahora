@@ -61,7 +61,7 @@ func main() {
 	}()
 
 	m := &sync.Mutex{}
-	// Start two goroutines to subscribe to channel and download items
+	// Start three goroutines to subscribe to channel and download items
 	numOfSubscribers := 3
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
