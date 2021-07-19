@@ -13,6 +13,8 @@ import (
 
 	"github.com/horahoradev/horahora/user_service/errors"
 
+	serror "errors"
+
 	"google.golang.org/grpc/status"
 
 	"github.com/doug-martin/goqu/v9"
@@ -62,11 +64,11 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 	}
 
 	if foreignAuthorID == "" || foreignAuthorUsername == "" {
-		return 0, errors.New("foreign author info cannot be blank")
+		return 0, serror.New("foreign author info cannot be blank")
 	}
 
 	if originalVideoLink == "" || originalVideoID == "" {
-		return 0, errors.New("original video info cannot be blank")
+		return 0, serror.New("original video info cannot be blank")
 	}
 
 	req := proto.GetForeignUserRequest{
