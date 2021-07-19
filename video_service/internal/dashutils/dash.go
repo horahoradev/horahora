@@ -50,6 +50,8 @@ func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
 		return nil, err
 	}
 
+	log.Infof("Generated files: %s", generatedFiles)
+
 	for _, fileName := range generatedFiles {
 		fileList = append(fileList, fileName)
 	}
