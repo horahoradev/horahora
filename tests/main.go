@@ -41,7 +41,7 @@ func main() {
 			continue
 		}
 
-		err = pageHasVideos(client, "空气本さん", 1) // Bilibili channel
+		err = pageHasVideos(client, "被劝诱的石川", 1) // Bilibili channel
 		if err != nil {
 			log.Println(err)
 			continue
