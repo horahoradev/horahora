@@ -13,16 +13,11 @@ RUN apt-get update && \
     git clone https://github.com/gpac/gpac gpac_public && \
     cd gpac_public && \
     ./configure --static-mp4box && \
-    make && make install
+    make -j8 && make install
+    
+RUN apt-get install -y ffmpeg curl
 
 RUN go mod vendor && \
     go build --mod=vendor -o videoservice .
-
-RUN apt-get update && \
-    apt-get install -y ffmpeg curl
-
-COPY . /videoservice
-
-RUN cgo_enabled=0 go build -o videoservice .
 
 ENTRYPOINT ["./videoservice"]
