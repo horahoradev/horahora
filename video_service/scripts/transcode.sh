@@ -19,7 +19,7 @@ set -e -x -o pipefail -u
 # E.g. if the input video is 360p, there's no need to output a version at 1080p.
 
 # VP9_DASH_PARAMS="-frame-parallel 1 -row-mt 1 -crf 33"
-H264_DASH_PARAMS="-r 24 -x264-params 'keyint=24:min-keyint=24:no-scenecut' -movflags faststart -preset medium -profile:v main"
+H264_DASH_PARAMS="-r 24 -x264opts keyint=48:min-keyint=48:no-scenecut -movflags faststart -preset medium -profile:v main -threads 8"
 # COMMON_VIDEO_ARGS="-keyint_min 240 -g 240 -threads 8"
 
 # TODO: two-pass encoding/various other parameter tweaks
@@ -38,12 +38,15 @@ H264_DASH_PARAMS="-r 24 -x264-params 'keyint=24:min-keyint=24:no-scenecut' -movf
 QUAL_FACT=4
 
 # 240p
+# x264 --output ${1}_320x240_600k.mp4 --profile main --fps 24 --bitrate 600 --vbv-maxrate 1200 --vbv-bufsize 9600 --min-keyint 48 --keyint 48 --scenecut 0 --no-scenecut --pass 1 --video-filter "resize:width=320,height=240" ${1}
 ffmpeg -i ${1} -c:v libx264 ${H264_DASH_PARAMS} -vf scale=320x240 -b:v $(echo $((150 * $QUAL_FACT)))k -minrate 75k -maxrate $(echo $((218 * 2 * $QUAL_FACT)))k -an -f mp4  ${1}_320x240_600k.mp4
 #ffmpeg -i ${1} -c:v libvpx-vp9 -vf scale=320x240 -b:v 150k -minrate 75k -maxrate 218k -crf 37 -pass 2 -speed 1 -tile-columns 0 ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 -y ${1}_320x240_150k.webm
 
 # 360p
+# x264 --output ${1}_640x360_1000k.mp4 --profile main --fps 24 --bitrate 1100 --vbv-maxrate 2200 --vbv-bufsize 9600 --min-keyint 48 --keyint 48 --scenecut 0 --no-scenecut --pass 1 --video-filter "resize:width=320,height=240" ${1}
+
 ffmpeg -i ${1} -c:v libx264 ${H264_DASH_PARAMS} -vf scale=640x360 -b:v $(echo $((276 * $QUAL_FACT)))k -minrate 138k -maxrate $(echo $((400 * 2 * $QUAL_FACT)))k -an -f mp4 ${1}_640x360_1000k.mp4
 #ffmpeg -i ${1} -c:v libvpx-vp9 -vf scale=640x360 -b:v 276k -minrate 138k -maxrate 400k -crf 36 -pass 2 -speed 1 -tile-columns 1 ${COMMON_VIDEO_ARGS} ${VP9_DASH_PARAMS} ${2} -an -f webm -dash 1 -y ${1}_640x360_276k.webm
 
 # TODO: --strict -2
-ffmpeg -i ${1} -ac 2 -c:a aac -b:a 128k -vn -strict -2 ${1}_audio_128k.m4a
+ffmpeg -i ${1} -ac 2 -c:a aac -ar 48000 -b:a 128k -vn -strict -2 ${1}_audio_128k.m4a
