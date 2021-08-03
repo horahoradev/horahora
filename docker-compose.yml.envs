@@ -2,7 +2,7 @@ version: "3"
 
 services:
   frontend:
-    build: frontend
+    $FRONTEND_BUILD_DIRECTIVE
     restart: always
     ports:
       - "8082:8082"
@@ -13,7 +13,7 @@ services:
       - SchedulerServiceGRPCAddress=scheduler:7777
       - JaegerAddress=
   scheduler:
-    build: scheduler
+    $SCHEDULER_BUILD_DIRECTIVE
     restart: always
     environment:
       - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
@@ -33,7 +33,7 @@ services:
       - SyncPollDelay=1m
       - MaxDLFileSize=300
   videoservice:
-    build: video_service
+    $VIDEOSERVICE_BUILD_DIRECTIVE
     restart: always
     environment:
       - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
@@ -60,7 +60,7 @@ services:
     volumes:
     - $HOME/.aws/:/root/.aws/:ro
   userservice:
-    build: user_service
+    $USERSERVICE_BUILD_DIRECTIVE
     restart: always
     environment:
       - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
