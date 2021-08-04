@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build the stack
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -51,6 +50,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}_Frontend
           labels: ${{ steps.meta.outputs.labels }}_frontend
+      - name: Build the stack
         run: make up
       - name: wait 60s
         run: sleep 60s
