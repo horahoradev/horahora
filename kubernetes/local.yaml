@@ -125,7 +125,7 @@ spec:
                   key: aws_region
           volumeMounts:
             - name: shared-data
-              mountPath: /videoservice/test_files
+              mountPath: /horahora/videoservice/test_files
       imagePullSecrets:
         - name: us-west-1-ecr-registry
 ---
