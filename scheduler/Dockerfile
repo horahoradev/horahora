@@ -1,26 +1,83 @@
-FROM golang:1.15.7-buster
+# syntax=docker/dockerfile:1.2
 
-COPY . /scheduler
-WORKDIR /scheduler
+# Using parts of https://github.com/six8/pyinstaller-alpine/blob/develop/python3.7.Dockerfile as reference
+# For alpine, we need to build pyinstaller manually so its supported on alpine
+FROM python:3.9-alpine as pyinstaller-builder
+LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
-RUN apt install -y git
-RUN go get github.com/go-delve/delve/cmd/dlv
+RUN apk add --update --no-cache zlib-dev musl-dev libc-dev libffi-dev gcc g++ git pwgen
+RUN pip install pycrypto
 
-# Fetch youtube-dl
-RUN git clone https://github.com/animelover1984/youtube-dl.git  && \
-    cd youtube-dl && \
-    apt-get update && \
-    apt-get install zip unzip && \
-    apt-get install -y python3 python3-pip && \
-    pip3 install mutagen requests websockets python-dateutil && \
-    apt-get install -y ffmpeg && \
-    python3 /scheduler/youtube-dl/setup.py install
+RUN git clone --depth 1 --branch v4.5.1 https://github.com/pyinstaller/pyinstaller.git /pyinstaller
+WORKDIR /pyinstaller
+# install pyinstaller into a virtualenv (so we can copy the env to the other stages)
+RUN python -m venv env
+RUN . ./env/bin/activate && \
+    cd bootloader && \
+    CFLAGS="-Wno-stringop-overflow -Wno-stringop-truncation" python ./waf configure --no-lsb all && \
+    pip install -r ../requirements.txt
 
-run git clone https://github.com/yt-dlp/yt-dlp.git && \
-    cd yt-dlp && \
-    pip3 install -r requirements.txt
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-RUN go mod vendor && \
-    go build --mod=vendor -gcflags "all=-N -l" -o scheduler .
+FROM python:3.9-alpine as ytdl-builder
+LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
-ENTRYPOINT ["./scheduler"]
+WORKDIR /
+
+# download youtube-dl and prepare it for usage
+RUN apk add --update --no-cache git gcc musl-dev
+RUN git clone --depth 1 https://github.com/animelover1984/youtube-dl.git youtube-dl
+WORKDIR /youtube-dl
+RUN pip install -r requirements.txt
+COPY --from=pyinstaller-builder /pyinstaller /pyinstaller
+# we provide --paths here because for some reason pyinstaller doesnt figure that out on its own
+RUN /pyinstaller/env/bin/python /pyinstaller/pyinstaller.py --paths /usr/local/lib/python3.9/site-packages --onefile -n youtube-dl youtube_dl/__main__.py
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+FROM python:3.9-alpine as ytdlp-builder
+LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
+
+WORKDIR /
+
+# download yt-dlp and prepare it for usage
+RUN apk add --update --no-cache git gcc musl-dev
+RUN git clone --depth 1 https://github.com/yt-dlp/yt-dlp.git yt-dlp
+WORKDIR /yt-dlp
+RUN pip install -r requirements.txt
+COPY --from=pyinstaller-builder /pyinstaller /pyinstaller
+# we provide --paths here because for some reason pyinstaller doesnt figure that out on its own
+RUN /pyinstaller/env/bin/python /pyinstaller/pyinstaller.py --paths /usr/local/lib/python3.9/site-packages --onefile -n yt-dlp yt_dlp/__main__.py
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+FROM golang:1.16-alpine as builder
+LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
+
+WORKDIR /horahora/scheduler
+
+RUN apk add --update --no-cache gcc musl-dev
+
+# download modules
+COPY go.mod /horahora/scheduler/
+COPY go.sum /horahora/scheduler/
+
+RUN go mod download
+
+# build binary
+COPY . /horahora/scheduler
+
+RUN --mount=type=cache,target=/root/.cache/go-build go build -o /scheduler.bin
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+FROM alpine:3.14 AS runtime
+LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
+
+WORKDIR /horahora/scheduler
+
+COPY --from=ytdl-builder /youtube-dl/dist/youtube-dl /usr/local/bin/youtube-dl
+COPY --from=ytdlp-builder /yt-dlp/dist/yt-dlp /usr/local/bin/yt-dlp
+COPY --from=builder /scheduler.bin /scheduler.bin
+
+ENTRYPOINT ["/scheduler.bin"]
