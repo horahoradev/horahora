@@ -1,14 +1,30 @@
-FROM golang:1.15.2-buster
+# syntax=docker/dockerfile:1.2
 
-COPY . /userservice
+FROM golang:1.16-alpine as builder
+LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
-WORKDIR /userservice
+WORKDIR /horahora/userservice
 
-# reference: https://blog.jetbrains.com/go/2018/04/30/debugging-containerized-go-applications/
-RUN apt install -y git
-RUN go get github.com/go-delve/delve/cmd/dlv
+RUN apk add --update --no-cache gcc musl-dev
 
-RUN go mod vendor && \
-    go build --mod=vendor -gcflags "all=-N -l" -o userservice .
+# download modules
+COPY go.mod /horahora/userservice/
+COPY go.sum /horahora/userservice/
 
-ENTRYPOINT ["./userservice"]
+RUN go mod download
+
+# build binary
+COPY . /horahora/userservice
+
+RUN --mount=type=cache,target=/root/.cache/go-build go build -o /userservice.bin
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+FROM alpine:3.14 AS runtime
+LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
+
+WORKDIR /horahora/userservice
+
+COPY --from=builder /userservice.bin /userservice.bin
+
+ENTRYPOINT ["/userservice.bin"]
