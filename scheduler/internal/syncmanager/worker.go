@@ -106,7 +106,7 @@ func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJS
 	}
 
 	// get the list of videos to download
-	cmd := exec.Command("/usr/bin/python3", args...)
+	cmd := exec.Command(args[0], args[1:]...)
 	payload, err := cmd.Output()
 	if err != nil {
 		log.Errorf("Command `%s` finished with err %s", cmd, err)
@@ -143,7 +143,7 @@ func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJS
 
 func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]string, error) {
 	// TODO: type safety, switch to enum?
-	args := []string{"/scheduler/youtube-dl/youtube_dl/__main__.py",
+	args := []string{"youtube-dl",
 		"-j",
 		"--flat-playlist",
 	}
@@ -210,7 +210,7 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 
 	case proto.SupportedSite_youtube:
 		// bit of a FIXME: switch this when we've merged both repos into one
-		args[0] = "/scheduler/yt-dlp/yt_dlp/__main__.py"
+		args[0] = "yt-dlp"
 
 		switch dlReq.ContentType {
 		case models.Tag:

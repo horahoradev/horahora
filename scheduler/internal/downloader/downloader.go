@@ -187,7 +187,7 @@ func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTD
 	}
 	defer ytdlLog.Close()
 
-	cmd := exec.Command("/usr/bin/python3", args...)
+	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = ytdlLog
 	cmd.Stderr = ytdlLog
 
@@ -380,10 +380,10 @@ loop:
 }
 
 func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]string, error) {
-	bin := "/scheduler/youtube-dl/youtube_dl/__main__.py"
+	bin := "youtube-dl"
 	// this is a FIXME
 	if videoproto.Website(video.C.Website) == videoproto.Website_youtube {
-		bin = "/scheduler/yt-dlp/yt_dlp/__main__.py"
+		bin = "yt-dlp"
 	}
 	args := []string{
 		bin,
