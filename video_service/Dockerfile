@@ -15,7 +15,7 @@ RUN apt-get update && \
     ./configure --static-mp4box && \
     make -j8 && make install
     
-RUN wget https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz && \
+RUN curl --max-time 20 --retry 2  -vvv https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz --output ffmpeg-git-amd64-static.tar.xz && \
     tar -xf ffmpeg-git-amd64-static.tar.xz && \
     cd ffmpeg-git-*-amd64-static && \
     cp ffmpeg /usr/bin/ffmpeg
