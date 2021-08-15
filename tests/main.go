@@ -23,8 +23,8 @@ func main() {
 	log.Println("Logged in successfully")
 	// Can we try to archive something?
 	// bilibili is currently broken...
-	//makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
-	//makeArchiveRequest(client, "bilibili", "channel", "1963331522")
+	makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
+	makeArchiveRequest(client, "bilibili", "channel", "1963331522")
 
 	makeArchiveRequest(client, "niconico", "tag", "TEST_sm9")
 	makeArchiveRequest(client, "niconico", "channel", "119163275")
@@ -36,17 +36,17 @@ func main() {
 	// Are videos being downloaded and transcoded correctly?
 	for start := time.Now(); time.Since(start) < time.Minute*30; {
 		time.Sleep(time.Second * 30)
-		//err := pageHasVideos(client, "sm35952346", 1) // Bilibili tag
-		//if err != nil {
-		//	log.Println(err)
-		//	continue
-		//}
-		//
-		//err = pageHasVideos(client, "被劝诱的石川", 1) // Bilibili channel
-		//if err != nil {
-		//	log.Println(err)
-		//	continue
-		//}
+		err := pageHasVideos(client, "sm35952346", 1) // Bilibili tag
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		err = pageHasVideos(client, "被劝诱的石川", 1) // Bilibili channel
+		if err != nil {
+			log.Println(err)
+			continue
+		}
 
 		err := pageHasVideos(client, "風野灯織", 1) // nico channel
 		if err != nil {
