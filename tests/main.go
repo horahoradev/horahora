@@ -48,7 +48,7 @@ func main() {
 			continue
 		}
 
-		err := pageHasVideos(client, "風野灯織", 1) // nico channel
+		err = pageHasVideos(client, "風野灯織", 1) // nico channel
 		if err != nil {
 			log.Println(err)
 			continue
