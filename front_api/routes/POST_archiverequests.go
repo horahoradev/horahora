@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	custommiddleware "github.com/SEAPUNK/horahora/front_api/middleware"
+	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"

@@ -1,4 +1,4 @@
-module github.com/SEAPUNK/horahora/front_api
+module github.com/horahoradev/horahora/front_api
 
 go 1.16
 
