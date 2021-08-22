@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 
-	"github.com/SEAPUNK/horahora/front_api/config"
+	"github.com/horahoradev/horahora/front_api/config"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"

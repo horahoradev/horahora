@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strconv"
 
-	custommiddleware "github.com/SEAPUNK/horahora/front_api/middleware"
+	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"

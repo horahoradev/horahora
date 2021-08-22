@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/SEAPUNK/horahora/front_api/config"
-	custommiddleware "github.com/SEAPUNK/horahora/front_api/middleware"
-	routes "github.com/SEAPUNK/horahora/front_api/routes"
+	"github.com/horahoradev/horahora/front_api/config"
+	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
+	routes "github.com/horahoradev/horahora/front_api/routes"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"

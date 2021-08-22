@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/SEAPUNK/horahora/front_api/config"
-	custommiddleware "github.com/SEAPUNK/horahora/front_api/middleware"
+	"github.com/horahoradev/horahora/front_api/config"
+	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
