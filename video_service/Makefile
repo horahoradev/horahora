@@ -11,7 +11,7 @@ docker : Dockerfile
 	docker build -t videoservice .
 
 upload : Dockerfile
-	docker build -t 908221837281.dkr.ecr.us-west-1.amazonaws.com/videoservice .
+	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker build -t 908221837281.dkr.ecr.us-west-1.amazonaws.com/videoservice .
 	docker push 908221837281.dkr.ecr.us-west-1.amazonaws.com/videoservice
 
 mock : ./protocol/videoservice.pb.go
