@@ -142,8 +142,7 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
-      - miniodata:/data
+      - ./videos:/data
 
 volumes:
-  miniodata:
   postgresdata:
