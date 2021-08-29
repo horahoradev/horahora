@@ -43,7 +43,7 @@ Currently, Horahora has very specific logic regarding content types and supporte
 [guide-level-explanation]: #guide-level-explanation
 
 The workflow goes like this:
-1. When a user requests a piece of content, it's immediately created as an archival request. Upon creation, we assess whether the URL belongs to a special class of yt-dlp extractors which return results in ascending order. If it is, we mark it as such.
+1. When a user requests a piece of content, it's immediately created as an archival request. Upon creation, we assess whether the URL belongs to a special class of yt-dlp extractors which return results in ascending order. If it is, we mark it as such. Before the url is stored, it's normalized (query string is removed).
 2. Once a piece of content is created, it's acted upon by scheduler's sync manager workers. This worker will fetch an archival request whose backoff period has expired, and download all videos for it. If the archival request is "tailable" (extractor returns results in ascending order), we pass in some special flags to youtube-dl indicating that it can stop once it reaches the last known result.
 3. The scheduler's scheduler workers will fetch the latest video in a given category randomly with probability according to its number of subscribers.
 4. When the scheduler's downloader worker uploads the video, videoservice will store the original website string and video ID. The website is extracted from the domain name.

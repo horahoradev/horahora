@@ -22,6 +22,8 @@ spec:
         env:
           - name: pgs_host
             value: "scheduledb-dev.cwioxjkfbfkg.us-west-1.rds.amazonaws.com"
+          - name: GOLANG_PROTOBUF_REGISTRATION_CONFLICT
+            value: warn
           - name: pgs_port
             value: "5432"
           - name: pgs_user
@@ -31,6 +33,11 @@ spec:
               secretKeyRef:
                 name: scheduledb
                 key: password
+          - name: SocksConn
+            valueFrom:
+              secretKeyRef:
+                name: socks-conn
+                key: socks-conn
           - name: pgs_db
             value: "scheduler"
           - name: GRPCPort
@@ -45,6 +52,10 @@ spec:
             value: "6379"
           - name: redis_pass
             value: ""
+          - name: SyncPollDelay
+            value: "1m"
+          - name: MaxDLFileSize
+            value: "300"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -80,6 +91,8 @@ spec:
           ports:
             - containerPort: 7777
           env:
+            - name: GOLANG_PROTOBUF_REGISTRATION_CONFLICT
+              value: warn
             - name: pgs_host
               value: "videodb-dev.cwioxjkfbfkg.us-west-1.rds.amazonaws.com"
             - name: pgs_port
@@ -174,6 +187,8 @@ spec:
         ports:
           - containerPort: 7777
         env:
+        - name: GOLANG_PROTOBUF_REGISTRATION_CONFLICT
+          value: warn
         - name: pgs_host
           value: "userdb-dev.cwioxjkfbfkg.us-west-1.rds.amazonaws.com"
         - name: pgs_port
@@ -247,6 +262,8 @@ spec:
           ports:
             - containerPort: 8082
           env:
+            - name: GOLANG_PROTOBUF_REGISTRATION_CONFLICT
+              value: warn
             - name: UserServiceGRPCAddress
               value: "userservice:7777"
             - name: VideoServiceGRPCAddress
