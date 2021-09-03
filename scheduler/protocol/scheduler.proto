@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package proto;
+option go_package = "github.com/horahoradev/horahora/scheduler/protocol";
 
 service Scheduler {
     rpc dlChannel(ChannelRequest) returns (Empty) {}
