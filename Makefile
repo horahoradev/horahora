@@ -8,3 +8,7 @@ down:
 
 logs:
 	docker-compose logs -f --tail=100
+
+proto:
+	docker build -t grpcutil . && \
+		docker run -it -t grpcutil
