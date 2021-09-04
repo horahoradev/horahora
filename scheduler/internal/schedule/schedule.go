@@ -60,7 +60,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	// TODO: put this in a repo later
 
 	log.Info("Fetching categories")
-	categories, err := p.getCategories()
+	categories, err := p.getURLs()
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	return ret, nil
 }
 
-func (p *poller) getCategories() ([]models.Category, error) {
+func (p *poller) getURLs() ([]models.Category, error) {
 	// TODO: only select synced download categories
 	sql := "select website, attribute_type, attribute_value, d.id, count(user_id) * random() AS score FROM " +
 		"user_download_subscriptions s " +

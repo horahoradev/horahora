@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/horahoradev/horahora/scheduler/internal/models"
-	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -34,7 +33,7 @@ func (s *SyncWorker) Sync() error {
 		}
 
 		for _, dlReq := range dlReqs {
-			// Distributed lock goes here!
+			// TODO: distributed lock goes here!
 
 			// refresh cache if backoff period is up
 			log.Infof("Backoff period expired for download request %s, syncing all", dlReq.Id)
@@ -72,10 +71,6 @@ func (s *SyncWorker) syncDownloadList(dlReq *models.CategoryDLRequest) (bool, er
 	var newItemsAdded bool
 
 	for _, video := range videos {
-		// TODO: this is a hack. yt-dlp isn't returning the expected value for the url field.
-		if dlReq.Website == proto.SupportedSite_youtube && !strings.HasPrefix(video.URL, "https://www.youtube.com") {
-			video.URL = fmt.Sprintf("https://www.youtube.com/watch?v=%s", video.URL)
-		}
 
 		// TODO: batch?
 		itemsAdded, err := dlReq.AddVideo(video.ID, video.URL)
@@ -93,7 +88,7 @@ func (s *SyncWorker) syncDownloadList(dlReq *models.CategoryDLRequest) (bool, er
 
 type VideoJSON struct {
 	Type  string `json:"_type"`
-	URL   string `json:"url"`
+	URL   string `json:"webpage_url"`
 	IeKey string `json:"ie_key"`
 	ID    string `json:"id"`
 	Title string `json:"title"`
@@ -149,90 +144,9 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 		args = append(args, []string{"--proxy", s.SocksConnStr}...)
 	}
 
-	downloadPreference := "all"
+	args[0] = "yt-dlp"
 
-	// If it's a tag we're downloading from, then there may be a large number of videos.
-	// If we've downloaded from this tag before, we should terminate the search once reaching the latest
-	// video we've downloaded.
-
-	// WOW that's a lot of switch statements, should probably flatten or refactor this out into separate functions so
-	// that I can actually read this
-	switch dlReq.Website {
-	case proto.SupportedSite_niconico:
-		switch dlReq.ContentType {
-		case models.Tag:
-			latestVideo, err := dlReq.GetLatestVideoForRequest()
-
-			switch {
-			case err == models.NeverDownloaded:
-				// keep as all			// TODO: caching download list, lol
-
-				log.Infof("Tag category %s has never been downloaded, downloading all", dlReq.ContentValue)
-
-			case err != nil:
-				return nil, err
-			default:
-				log.Infof("Tag category %s has been downloaded before, resuming at %s", dlReq.ContentValue, *latestVideo)
-				downloadPreference = fmt.Sprintf("id%s", *latestVideo)
-			}
-			args = append(args, fmt.Sprintf("nicosearch%s:%s", downloadPreference, dlReq.ContentValue))
-		case models.Channel:
-			log.Infof("Downloading videos from niconico user %s", dlReq.ContentValue)
-			args = append(args, fmt.Sprintf("https://www.nicovideo.jp/user/%s", dlReq.ContentValue))
-
-		case models.Playlist:
-			log.Infof("Downloading niconico playlist %s", dlReq.ContentValue)
-			args = append(args, fmt.Sprintf("https://www.nicovideo.jp/mylist/%s", dlReq.ContentValue))
-
-		default:
-			err := fmt.Errorf("content type %s is not implemented for niconico.", dlReq.ContentType)
-			return nil, err
-		}
-
-	case proto.SupportedSite_bilibili:
-		switch dlReq.ContentType {
-		case models.Tag:
-			args = append(args, fmt.Sprintf("bilisearch%s:%s", downloadPreference, dlReq.ContentValue))
-			log.Infof("Downloading videos of tag %s from bilibili", dlReq.ContentValue)
-			// TODO: implement continuation from latest video for bilibili in extractor
-			// for now, try to download everything in the list every time
-
-		case models.Channel:
-			log.Infof("Downloading videos from bilibili user %s", dlReq.ContentValue)
-			args = append(args, fmt.Sprintf("https://space.bilibili.com/%s", dlReq.ContentValue))
-
-		default:
-			err := fmt.Errorf("content type %s is not implemented for bilibili.", dlReq.ContentType)
-			return nil, err
-		}
-
-	case proto.SupportedSite_youtube:
-		// bit of a FIXME: switch this when we've merged both repos into one
-		args[0] = "yt-dlp"
-
-		switch dlReq.ContentType {
-		case models.Tag:
-			args = append(args, fmt.Sprintf("ytsearch%s:%s", downloadPreference, dlReq.ContentValue))
-			log.Infof("downloading videos of tag %s from youtube", dlReq.ContentValue)
-		// TODO: ensure youtube extractor returns list in desc order, implements continuation from latest video id
-
-		case models.Channel:
-			log.Infof("Downloading videos from youtube user %s", dlReq.ContentValue)
-			args = append(args, fmt.Sprintf("https://www.youtube.com/channel/%s", dlReq.ContentValue))
-
-		case models.Playlist:
-			log.Infof("Downloading videos from playlist channel %s", dlReq.ContentValue)
-			args = append(args, fmt.Sprintf("https://www.youtube.com/playlist?list=%s", dlReq.ContentValue))
-
-		default:
-			err := fmt.Errorf("content type %s is not implemented for youtube.", dlReq.ContentType)
-			return nil, err
-		}
-
-	default:
-		err := fmt.Errorf("no archive request implementations for website %s", dlReq.Website)
-		return nil, err
-	}
+	args = append(args, dlReq.Url)
 
 	return args, nil
 }

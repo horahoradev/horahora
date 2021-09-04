@@ -3,32 +3,27 @@ package models
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/go-redsync/redsync"
-	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/jmoiron/sqlx"
 	"time"
 )
 
 type CategoryDLRequest struct {
-	ContentArchivalRequest
+	Url     string
+	Website string
 	Id      string
 	Db      *sqlx.DB
 	Redsync *redsync.Redsync
 }
 
-func NewVideoDlRequest(website proto.SupportedSite, contentType contentType, contentValue, id string, Db *sqlx.DB, redsync2 *redsync.Redsync) *CategoryDLRequest {
-	return &CategoryDLRequest{
-		ContentArchivalRequest: ContentArchivalRequest{
-			Website:      website,
-			ContentType:  contentType,
-			ContentValue: contentValue,
-		},
-		Id:      id,
-		Db:      Db,
-		Redsync: redsync2,
-	}
-}
+//func NewVideoDlRequest(Url, id string, Db *sqlx.DB, redsync2 *redsync.Redsync) *CategoryDLRequest {
+//	return &CategoryDLRequest{
+//		Url: Url,
+//		Id:      id,
+//		Db:      Db,
+//		Redsync: redsync2,
+//	}
+//}
 
 // RefreshLock refreshes the lock for this download request, preventing it from being acquired by another scheduler.
 func (v *CategoryDLRequest) RefreshLock() error {
@@ -36,38 +31,36 @@ func (v *CategoryDLRequest) RefreshLock() error {
 	return err
 }
 
-var NeverDownloaded error = errors.New("no video for category")
+var NeverDownloaded = errors.New("no video for category")
 
-// Only relevant for tags
-func (v *CategoryDLRequest) GetLatestVideoForRequest() (*string, error) {
-
-	// Doesn't appear to be working
-	curs, err := v.Db.Query("SELECT videos.video_id from videos INNER JOIN downloads ON videos.download_id = downloads.id "+
-		"WHERE attribute_type=$1 AND attribute_value=$2 AND downloads.website=$3 AND videos.upload_time IS NOT NULL "+
-		"ORDER BY upload_time desc LIMIT 1",
-		v.ContentType, v.ContentValue, v.Website)
-	if err != nil {
-		return nil, err
-	}
-
-	var videoIDList []string
-	for curs.Next() {
-		var i string
-		err := curs.Scan(&i)
-		if err != nil {
-			return nil, err
-		}
-		videoIDList = append(videoIDList, i)
-	}
-
-	if len(videoIDList) == 0 {
-		return nil, NeverDownloaded
-	} else if len(videoIDList) != 1 {
-		return nil, fmt.Errorf("videoIDList had the wrong length. Length: %d", len(videoIDList))
-	}
-
-	return &videoIDList[0], nil
-}
+//// Only relevant for tags
+//func (v *CategoryDLRequest) GetLatestVideoForRequest() (*string, error) {
+//	curs, err := v.Db.Query("SELECT videos.video_id from videos INNER JOIN downloads ON videos.download_id = downloads.id "+
+//		"WHERE attribute_type=$1 AND attribute_value=$2 AND downloads.website=$3 AND videos.upload_time IS NOT NULL "+
+//		"ORDER BY upload_time desc LIMIT 1",
+//		v.ContentType, v.ContentValue, v.Website)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	var videoIDList []string
+//	for curs.Next() {
+//		var i string
+//		err := curs.Scan(&i)
+//		if err != nil {
+//			return nil, err
+//		}
+//		videoIDList = append(videoIDList, i)
+//	}
+//
+//	if len(videoIDList) == 0 {
+//		return nil, NeverDownloaded
+//	} else if len(videoIDList) != 1 {
+//		return nil, fmt.Errorf("videoIDList had the wrong length. Length: %d", len(videoIDList))
+//	}
+//
+//	return &videoIDList[0], nil
+//}
 
 const (
 	MINIMUM_BACKOFF_TIME   = time.Hour * 24
@@ -141,7 +134,7 @@ func (v *CategoryDLRequest) AddVideo(videoID, url string) (bool, error) {
 	}
 
 	var id uint32
-	sql := "INSERT INTO videos (video_ID, website, url) VALUES ($1, $2, $3) " +
+	sql := "INSERT INTO videos (video_ID, Url) VALUES ($1, $2, $3) " +
 		"ON CONFLICT (video_ID, website) DO UPDATE set website = EXCLUDED.website RETURNING id"
 	row := tx.QueryRow(sql, videoID, v.Website, url)
 	err = row.Scan(&id)
