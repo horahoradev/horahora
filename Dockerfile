@@ -7,9 +7,9 @@ RUN apt-get update && \
 
 COPY gen_all.sh /bin/gen_all.sh
 
-COPY video_service/ /video_service/
-COPY scheduler/ /scheduler/
-COPY user_service/ /user_service/
+#COPY video_service/ /video_service/
+#COPY scheduler/ /scheduler/
+#COPY user_service/ /user_service/
 
 
 WORKDIR /
