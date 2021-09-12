@@ -8,8 +8,6 @@ import (
 
 	"github.com/go-redsync/redsync"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
-	proto "github.com/horahoradev/horahora/video_service/protocol"
-
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
@@ -44,7 +42,7 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 			}
 
 			for _, item := range itemsToSchedule {
-				log.Infof("Sending %s %s %s to be processed", proto.Website_name[int32(item.C.Website)], item.C.ContentType, item.C.ContentValue)
+				log.Infof("Sending url %s with parent %s to be processed", item.URL, item.ParentURL)
 				videoQueue <- item
 			}
 		}
@@ -60,7 +58,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	// TODO: put this in a repo later
 
 	log.Info("Fetching categories")
-	categories, err := p.getURLs()
+	urls, err := p.getURLs()
 	if err != nil {
 		return nil, err
 	}
@@ -71,21 +69,21 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	// TODO: improve
 
 	var ret []*models.VideoDLRequest
-	for _, category := range categories {
+	for _, url := range urls {
 		sql := "SELECT v.id, v.video_id, v.url, downloads.id FROM downloads " +
 			"INNER JOIN downloads_to_videos d ON downloads.id = d.download_id " +
 			"INNER JOIN videos v ON d.video_id = v.id " +
-			"WHERE downloads.website = $1 AND downloads.attribute_type = $2 AND downloads.attribute_value = $3 AND v.dlStatus = 0 " +
+			"WHERE downloads.url = $1 AND v.dlStatus = 0 " +
 			"ORDER BY CHAR_LENGTH(v.video_ID) DESC, v.video_ID desc LIMIT 1 " +
-			"OFFSET random() * LEAST(1000, (select count(*) from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id  WHERE downloads.website = $1 AND downloads.attribute_type = $2 AND downloads.attribute_value = $3 AND v.dlStatus = 0)) "
-		res, err := p.Db.Query(sql, category.Website, category.ContentType, category.ContentValue)
+			"OFFSET random() * LEAST(1000, (select count(*) from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id  WHERE downloads.url = $1 AND v.dlStatus = 0)) "
+		res, err := p.Db.Query(sql, url)
 		if err != nil {
 			return nil, err
 		}
 
 		for res.Next() {
 			req := models.VideoDLRequest{
-				C:       category,
+				ParentURL: url,
 				Redsync: p.Redsync,
 				Db:      p.Db,
 			}
@@ -94,6 +92,8 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 			if err != nil {
 				return nil, err
 			}
+
+			log.Infof("Got %s", req.URL)
 			ret = append(ret, &req)
 		}
 
@@ -102,29 +102,24 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	return ret, nil
 }
 
-func (p *poller) getURLs() ([]models.Category, error) {
+func (p *poller) getURLs() ([]string, error) {
 	// TODO: only select synced download categories
-	sql := "select website, attribute_type, attribute_value, d.id, count(user_id) * random() AS score FROM " +
+	sql := "select d.url,  count(user_id) * random() AS score FROM " +
 		"user_download_subscriptions s " +
 		"INNER JOIN downloads d ON d.id = s.download_id " +
 		"WHERE d.id IN (select downloads.id from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v on d.video_id = v.id WHERE v.dlStatus = 0 GROUP BY downloads.id) " +
 		"GROUP BY d.id ORDER BY score desc LIMIT 1"
 	row := p.Db.QueryRow(sql)
 
-	var downloadID, website int
-	var contentType, contentValue string
+	var url string
 	var score float64
 
-	err := row.Scan(&website, &contentType, &contentValue, &downloadID, &score)
+	err := row.Scan(&url, &score)
 	if err != nil {
 		return nil, err
 	}
 
-	return []models.Category{
-		{
-			Website:      website,
-			ContentType:  contentType,
-			ContentValue: contentValue,
-		},
+	return []string{
+		url,
 	}, nil
 }
