@@ -134,9 +134,9 @@ func (v *CategoryDLRequest) AddVideo(videoID, url string) (bool, error) {
 	}
 
 	var id uint32
-	sql := "INSERT INTO videos (video_ID, Url) VALUES ($1, $2, $3) " +
-		"ON CONFLICT (video_ID, website) DO UPDATE set website = EXCLUDED.website RETURNING id"
-	row := tx.QueryRow(sql, videoID, v.Website, url)
+	sql := "INSERT INTO videos (video_ID, Url) VALUES ($1, $2) " +
+		"ON CONFLICT (video_ID, website) DO UPDATE set Url = EXCLUDED.Url RETURNING id"
+	row := tx.QueryRow(sql, videoID, url)
 	err = row.Scan(&id)
 	if err != nil {
 		return false, err

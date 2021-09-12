@@ -15,6 +15,7 @@ type VideoDLRequest struct {
 	ID          int    // Domestic ID
 	DownloaddID int
 	URL         string
+	ParentURL string
 }
 
 func (v *VideoDLRequest) SetDownloaded() error {

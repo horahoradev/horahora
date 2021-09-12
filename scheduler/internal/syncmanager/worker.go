@@ -88,7 +88,7 @@ func (s *SyncWorker) syncDownloadList(dlReq *models.CategoryDLRequest) (bool, er
 
 type VideoJSON struct {
 	Type  string `json:"_type"`
-	URL   string `json:"webpage_url"`
+	URL   string `json:"original_url"`
 	IeKey string `json:"ie_key"`
 	ID    string `json:"id"`
 	Title string `json:"title"`
@@ -116,7 +116,10 @@ func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJS
 	for i := len(spl) - 2; i >= 0; i-- {
 		line := spl[i]
 		var video VideoJSON
+		log.Infof("Line: %s", line)
 		err = json.Unmarshal([]byte(line), &video)
+
+		log.Infof("Got json %s", video)
 
 		if err != nil {
 			log.Errorf("Failed to unmarshal json. Payload: %s. Err: %s", line, err)
@@ -136,7 +139,7 @@ func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJS
 
 func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]string, error) {
 	// TODO: type safety, switch to enum?
-	args := []string{"youtube-dl",
+	args := []string{"yt-dlp",
 		"-j",
 		"--flat-playlist",
 	}
