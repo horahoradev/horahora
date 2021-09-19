@@ -9,7 +9,7 @@
 Horahora is a collaborative archival management tool.
 
 It allows you to:
-- subscribe to categories of content (e.g. a tag on Niconico) and it will download all content and upload it to the site, then intelligently sync new content in that category, keeping the archive up-to-date
+- subscribe to categories of content (e.g. a tag on Niconico) and it will download all videps and upload them to the site, then intelligently sync new videos in that category, keeping the archive up-to-date at all times
 - browse through and watch downloaded videos with ease, with a built-in video recommender system to help you discover new content
 - query the archive by tag or title, and sort by views, average rating, or upload date
 - manage archival with a group of friends, with downloads being prioritized by the number of users subscribed to the video's category
