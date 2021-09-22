@@ -87,9 +87,15 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 		return nil
 	}
 
+	website, err := models.GetWebsiteFromURL(video.URL)
+	if err != nil {
+		log.Errorf("Failed to extract website domain from %s", video.URL)
+		return nil
+	}
+
 	videoReq := videoproto.ForeignVideoCheck{
 		ForeignVideoID: video.VideoID,
-		ForeignWebsite: videoproto.Website_youtube, // lol FIXME
+		ForeignWebsite: website, // lol FIXME
 	}
 
 	videoExists, err := d.videoClient.ForeignVideoExists(context.TODO(), &videoReq)
@@ -268,6 +274,11 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		metadata.UploaderID = metadata.ChannelID
 	}
 
+	website, err := models.GetWebsiteFromURL(video.URL)
+	if err != nil {
+		log.Errorf("failed to extract website from url: %s", video.URL)
+	}
+
 	// Send metadata
 	// REFACTOR TODO
 	metaPayload := videoproto.InputVideoChunk{
@@ -278,7 +289,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 				AuthorUID:         metadata.UploaderID,
 				OriginalVideoLink: video.URL,
 				AuthorUsername:    metadata.Uploader,
-				OriginalSite:      videoproto.Website_youtube,
+				OriginalSite:      website,
 				OriginalID:        metadata.ID,
 				Tags:              metadata.Tags,
 				Thumbnail:         thumbnailContents, // nothing to see here...

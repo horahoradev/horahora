@@ -19,7 +19,7 @@ type VideoDLRequest struct {
 }
 
 func (v *VideoDLRequest) SetDownloaded() error {
-	website, err := getWebsiteFromURL(v.URL)
+	website, err := GetWebsiteFromURL(v.URL)
 	if err != nil {
 		return err
 	}
