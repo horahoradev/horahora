@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -133,9 +134,18 @@ func (v *CategoryDLRequest) AddVideo(videoID, url string) (bool, error) {
 		return false, err
 	}
 
+	if url == "" {
+		return false, errors.New("url cannot be blank")
+	}
+
+	if videoID == "" {
+		// FIXME LOL
+		videoID = url
+	}
+
 	var id uint32
 	sql := "INSERT INTO videos (video_ID, Url) VALUES ($1, $2) " +
-		"ON CONFLICT (video_ID, website) DO UPDATE set Url = EXCLUDED.Url RETURNING id"
+		"ON CONFLICT (video_ID, website) DO UPDATE set video_ID = EXCLUDED.video_ID RETURNING id"
 	row := tx.QueryRow(sql, videoID, url)
 	err = row.Scan(&id)
 	if err != nil {

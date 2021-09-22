@@ -81,6 +81,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 			return nil, err
 		}
 
+
 		for res.Next() {
 			req := models.VideoDLRequest{
 				ParentURL: url,
@@ -91,6 +92,11 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 			err = res.Scan(&req.ID, &req.VideoID, &req.URL, &req.DownloaddID)
 			if err != nil {
 				return nil, err
+			}
+
+			if req.VideoID == "" {
+				log.Errorf("Could not set video ID. Returning...")
+				return nil, errors.New("failed to set video id")
 			}
 
 			ret = append(ret, &req)
