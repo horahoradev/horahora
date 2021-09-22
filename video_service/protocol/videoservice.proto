@@ -133,7 +133,7 @@ message VideoExistenceResponse {
 
 message ForeignVideoCheck {
     string ForeignVideoID = 1;
-    website ForeignWebsite = 2;
+    string ForeignWebsite = 2;
 }
 
 message VideoRequest {
@@ -170,7 +170,7 @@ message InputFileMetadata {
     string authorUID = 3;// 0 if reupload
     string originalVideoLink = 4; // If reupload
     string authorUsername = 5; // If reupload
-    website originalSite = 6; // If reupload
+    string originalSite = 6; // If reupload
     string originalID = 7; // If reupload // this is a little dumb
     int64 domesticAuthorID = 8;
     repeated string Tags = 9;
@@ -185,11 +185,11 @@ message ResponseFileMetadata {
     string originalVideoLink = 4; // If reupload
 }
 
-enum website {
-    niconico = 0;
-    bilibili = 1;
-    youtube = 2;
-}
+//enum website {
+//    niconico = 0;
+//    bilibili = 1;
+//    youtube = 2;
+//}
 
 enum orderCategory {
     views = 0;

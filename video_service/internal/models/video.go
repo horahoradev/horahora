@@ -163,7 +163,7 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 	return videoID, nil
 }
 
-func (v *VideoModel) ForeignVideoExists(foreignVideoID string, website videoproto.Website) (bool, error) {
+func (v *VideoModel) ForeignVideoExists(foreignVideoID, website string) (bool, error) {
 	sql := "SELECT id FROM videos WHERE originalSite=$1 AND originalID=$2"
 	var videoID int64
 	res := v.db.QueryRow(sql, website, foreignVideoID)
