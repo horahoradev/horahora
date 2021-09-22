@@ -83,7 +83,7 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 	err := video.AcquireLockForVideo()
 	if err != nil {
 		// If we can't get the lock, just skip the video in the current archive request
-		log.Errorf("Could not acquire redis lock for video VideoID %s during download of content parent URL %s. Err: %s", video.VideoID, video.ParentURL, err)
+		log.Errorf("Could not acquire redis lock for video VideoID %s during download of content parent URL %s. Err: %s", video.VideoID, video.URL, video.ParentURL, err)
 		return nil
 	}
 
