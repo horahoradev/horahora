@@ -93,7 +93,6 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 				return nil, err
 			}
 
-			log.Infof("Got %s", req.URL)
 			ret = append(ret, &req)
 		}
 
