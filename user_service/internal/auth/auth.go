@@ -8,7 +8,6 @@ import (
 	"errors"
 
 	"github.com/horahoradev/horahora/user_service/internal/model"
-	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	"golang.org/x/crypto/bcrypt"
 	jose "gopkg.in/square/go-jose.v2"
 )
@@ -41,7 +40,7 @@ func Login(username, password string, privateKey *rsa.PrivateKey, u *model.UserM
 }
 
 func Register(username, email, password string, u *model.UserModel, privateKey *rsa.PrivateKey, foreignUser bool,
-	foreignUserID string, foreignWebsite userproto.Site) (string, error) {
+	foreignUserID, foreignWebsite string) (string, error) {
 	pwBytes := []byte(password)
 
 	var passHash []byte
