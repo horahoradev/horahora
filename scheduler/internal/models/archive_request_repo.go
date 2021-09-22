@@ -82,7 +82,7 @@ func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLReques
 			return nil, err
 		}
 
-		c.Website, err = getWebsiteFromURL(c.Url)
+		c.Website, err = GetWebsiteFromURL(c.Url)
 		if err != nil {
 			return nil, err
 		}
@@ -94,7 +94,7 @@ func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLReques
 }
 
 
-func getWebsiteFromURL(u string) (string, error) {
+func GetWebsiteFromURL(u string) (string, error) {
 	urlParsed, err := url.Parse(u)
 	if err != nil {
 		return "", err
