@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -114,6 +115,7 @@ type VideoUpload struct {
 func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) error {
 	log.Info("Handling video upload")
 
+
 	var video VideoUpload
 
 	// UUID for tmp filename and all uploads provides probabilistic guarantee of uniqueness
@@ -190,6 +192,23 @@ loop:
 		}
 	}
 
+	log.Infof("Handling video upload %s from website %s", video.Meta.Meta.OriginalID, video.Meta.Meta.OriginalSite)
+
+	//    niconico = 0;
+	//    bilibili = 1;
+	//    youtube = 2;
+
+	// Do some in-place edits for backwards compatibility...
+	switch {
+	case strings.Contains(video.Meta.Meta.OriginalSite, "nicovideo"):
+		video.Meta.Meta.OriginalSite = "0"
+	case strings.Contains(video.Meta.Meta.OriginalSite, "bilibili"):
+		video.Meta.Meta.OriginalSite = "1"
+	case strings.Contains(video.Meta.Meta.OriginalSite, "youtube"):
+		video.Meta.Meta.OriginalSite = "2"
+	}
+
+
 	err = ioutil.WriteFile(video.FileData.Name()+".thumb", video.Meta.Meta.Thumbnail, 0644)
 	if err != nil {
 		return LogAndRetErr("could not write thumbnail. Err: %s", err)
@@ -229,7 +248,7 @@ loop:
 	manifestLoc := fmt.Sprintf("%s/%s", g.OriginFQDN, filepath.Base(video.FileData.Name()+".mpd"))
 
 	videoID, err := g.VideoModel.SaveForeignVideo(context.TODO(), video.Meta.Meta.Title, video.Meta.Meta.Description,
-		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, userproto.Site(video.Meta.Meta.OriginalSite),
+		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, video.Meta.Meta.OriginalSite,
 		video.Meta.Meta.OriginalVideoLink, video.Meta.Meta.OriginalID, manifestLoc, video.Meta.Meta.Tags, video.Meta.Meta.DomesticAuthorID)
 	if err != nil {
 		return LogAndRetErr("failed to save video to postgres. Err: %s", err)

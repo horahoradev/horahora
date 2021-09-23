@@ -11,7 +11,6 @@ import (
 
 	dbsql "database/sql"
 
-	proto "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -27,7 +26,7 @@ func NewUserModel(db *sqlx.DB) (*UserModel, error) {
 }
 
 // Password in this context is in plaintext
-func (m *UserModel) NewUser(username, email string, passHash []byte, foreignUser bool, foreignUserID string, foreignWebsite proto.Site) (int64, error) {
+func (m *UserModel) NewUser(username, email string, passHash []byte, foreignUser bool, foreignUserID, foreignWebsite string) (int64, error) {
 	// Username is unique, so will fail if user already exists
 	var res *sql.Row
 	var err error
@@ -103,7 +102,7 @@ func (m *UserModel) GetPassHash(uid int64) (string, error) {
 }
 
 // Maybe I should cut down on the copy pasta
-func (m *UserModel) GetForeignUser(foreignUserID string, foreignWebsite proto.Site) (int64, error) {
+func (m *UserModel) GetForeignUser(foreignUserID string, foreignWebsite string) (int64, error) {
 	sql := "SELECT id FROM users WHERE foreign_user_ID=$1 AND foreign_website=$2"
 
 	row := m.Conn.QueryRow(sql, foreignUserID, foreignWebsite)

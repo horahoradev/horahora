@@ -26,12 +26,12 @@ func main() {
 	//makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
 	//makeArchiveRequest(client, "bilibili", "channel", "1963331522")
 
-	makeArchiveRequest(client, "niconico", "tag", "TEST_sm9")
-	makeArchiveRequest(client, "niconico", "channel", "119163275")
-	makeArchiveRequest(client, "niconico", "playlist", "58583228")
+	makeArchiveRequest(client, "https://www.nicovideo.jp/search/TEST_sm9")
+	makeArchiveRequest(client, "https://www.nicovideo.jp/user/119163275")
+	makeArchiveRequest(client, "https://www.nicovideo.jp/mylist/58583228")
 
-	makeArchiveRequest(client, "youtube", "channel", "UCF43Xa8ZNQqKs1jrhxlntlw")            // Some random channel I found with short videos. Good enough!
-	makeArchiveRequest(client, "youtube", "playlist", "PLz2PzeiUFQLuZ6k_e50OEK0xd_NAy7xat") // random playlist with one entry
+	makeArchiveRequest(client, "https://www.youtube.com/channel/UCF43Xa8ZNQqKs1jrhxlntlw")            // Some random channel I found with short videos. Good enough!
+	makeArchiveRequest(client, "https://www.youtube.com/playlist?list=PLz2PzeiUFQLuZ6k_e50OEK0xd_NAy7xat") // random playlist with one entry
 
 	// Are videos being downloaded and transcoded correctly?
 	for start := time.Now(); time.Since(start) < time.Minute*30; {
@@ -101,11 +101,9 @@ func pageHasVideos(client *http.Client, tag string, count int) error {
 	return nil
 }
 
-func makeArchiveRequest(client *http.Client, website, contentType, contentValue string) {
+func makeArchiveRequest(client *http.Client, inpURL string) {
 	response, _ := client.PostForm(baseURL+"/archiverequests", url.Values{
-		"website":      {website},
-		"contentType":  {contentType},
-		"contentValue": {contentValue},
+		"url":      {inpURL},
 	})
 
 	if response.StatusCode != 301 {

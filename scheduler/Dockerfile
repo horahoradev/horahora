@@ -42,7 +42,7 @@ WORKDIR /
 
 # download yt-dlp and prepare it for usage
 RUN apk add --update --no-cache git gcc musl-dev
-RUN git clone --depth 1 https://github.com/yt-dlp/yt-dlp.git yt-dlp
+RUN git clone --depth 1 https://github.com/horahoradev/yt-dlp.git yt-dlp
 WORKDIR /yt-dlp
 RUN pip install -r requirements.txt
 COPY --from=pyinstaller-builder /pyinstaller /pyinstaller

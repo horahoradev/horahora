@@ -555,5 +555,5 @@ var VideoService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "protocol/videoservice.proto",
+	Metadata: "video_service/protocol/videoservice.proto",
 }
