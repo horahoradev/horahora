@@ -139,8 +139,7 @@ func (v *CategoryDLRequest) AddVideo(videoID, url string) (bool, error) {
 	}
 
 	if videoID == "" {
-		// FIXME LOL
-		videoID = url
+		return false, errors.New("video ID cannot be blank")
 	}
 
 	var id uint32
