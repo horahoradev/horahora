@@ -6,9 +6,17 @@
 
 ![](https://github.com/horahoradev/horahora-designs/blob/master/Video.png?raw=true)
 
-Note: the above images are designs, rather than screenshots of the current frontend. The current frontend is essentially a worse version of the above. PRs are welcome 😉 (😭)
+Horahora is a collaborative archival management tool.
 
-Horahora is a microservice-based video hosting website with additional functionality for content archival from Niconico, Bilibili, and Youtube. Users can upload their own content, or schedule categories of content from other websites to be archived (e.g. a given channel on Niconico, a tag on Youtube, or a playlist from Bilibili). Content archived from other websites will be accessible in the same manner as user-uploaded videos, and will be organized under the same metadata (author, tags) associated with the original video.
+It allows you to:
+- subscribe to categories of content (e.g. a tag on Niconico) and it will upload all videos in those categories to the site, then intelligently sync new videos in those categories, keeping the archive up-to-date at all times
+- browse through and watch downloaded videos with ease, with a built-in video recommender system to help you discover new content
+- query the archive by tag or title, and sort by views, average rating, or upload date
+- manage archival with a group of friends, with downloads being prioritized by the number of users subscribed to the video's category
+- easily host your own instance with docker-compose
+
+
+Note: the above images are designs, rather than screenshots of the current frontend. The current frontend is essentially a worse version of the above. PRs are welcome 😉 (😭)
 
 https://discord.gg/vfwfpctJRZ
 
