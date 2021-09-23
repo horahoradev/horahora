@@ -42,44 +42,26 @@ func initializeSchedulerServer(conn *sqlx.DB, rs *redsync.Redsync) schedulerServ
 	}
 }
 
-func (s schedulerServer) DlChannel(ctx context.Context, req *proto.ChannelRequest) (*proto.Empty, error) {
+func (s schedulerServer) DlURL(ctx context.Context, req *proto.URLRequest) (*proto.Empty, error) {
 	ret := &proto.Empty{}
 
-	err := s.M.New(models.Channel, string(req.ChannelID), req.Website, req.UserID)
-
-	return ret, err
-}
-
-func (s schedulerServer) DlPlaylist(ctx context.Context, req *proto.PlaylistRequest) (*proto.Empty, error) {
-	ret := &proto.Empty{}
-
-	err := s.M.New(models.Playlist, req.PlaylistID, req.Website, req.UserID)
-
-	return ret, err
-}
-
-func (s schedulerServer) DlTag(ctx context.Context, req *proto.TagRequest) (*proto.Empty, error) {
-	ret := &proto.Empty{}
-
-	err := s.M.New(models.Tag, req.TagValue, req.Website, req.UserID)
+	err := s.M.New(req.Url, req.UserID)
 
 	return ret, err
 }
 
 func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.ListArchivalEntriesRequest) (*proto.ListArchivalEntriesResponse, error) {
-	requests, err := s.M.GetContentArchivalRequests(req.UserID)
+	urls, err := s.M.GetContentArchivalRequests(req.UserID)
 	if err != nil {
 		return nil, err
 	}
 
 	var entries []*proto.ContentArchivalEntry
 
-	for _, request := range requests {
+	for _, url := range urls {
 		entry := proto.ContentArchivalEntry{
 			UserID:       0, // In the future, will be expanded to allow queries for different users archival requests
-			Website:      request.Website,
-			ContentType:  string(request.ContentType),
-			ContentValue: request.ContentValue,
+			Url: url,
 		}
 
 		entries = append(entries, &entry)

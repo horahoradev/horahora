@@ -4,16 +4,8 @@ import (
 	"context"
 
 	"github.com/go-redsync/redsync"
-	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/jmoiron/sqlx"
-)
-
-type contentType string
-
-const (
-	Tag      contentType = "tag"
-	Channel  contentType = "channel"
-	Playlist contentType = "playlist"
+	"net/url"
 )
 
 // ArchiveRequest is the model for the creation of new archive requests
@@ -30,35 +22,29 @@ func NewArchiveRequest(db *sqlx.DB, rs *redsync.Redsync) *ArchiveRequestRepo {
 		Redsync: rs}
 }
 
-type ContentArchivalRequest struct {
-	Website      proto.SupportedSite `db:"website"`
-	ContentType  contentType         `db:"attribute_type"`  // "channel", "tag", or "playlist"
-	ContentValue string              `db:"attribute_value"` // either the channel VideoID or the tag string
-}
-
-func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]ContentArchivalRequest, error) {
-	sql := "SELECT website, attribute_type, attribute_value FROM user_download_subscriptions s " +
+func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]string, error) {
+	sql := "SELECT Url FROM user_download_subscriptions s " +
 		"INNER JOIN downloads d ON d.id = s.download_id WHERE user_id=$1"
-	var archivalRequests []ContentArchivalRequest
+	var urls []string
 
-	err := m.Db.Select(&archivalRequests, sql, userID)
+	err := m.Db.Select(&urls, sql, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	return archivalRequests, nil
+	return urls, nil
 }
 
-func (m *ArchiveRequestRepo) New(contentType contentType, contentValue string, website proto.SupportedSite, userID int64) error {
+func (m *ArchiveRequestRepo) New(url string, userID int64) error {
 	tx, err := m.Db.BeginTx(context.Background(), nil)
 	if err != nil {
 		return err
 	}
 
 	var downloadID uint32
-	row := tx.QueryRow("INSERT INTO downloads(date_created, website, attribute_type, attribute_value) "+
-		"VALUES (Now(), $1, $2, $3) ON CONFLICT (website, attribute_type, attribute_value) "+
-		"DO UPDATE set website = EXCLUDED.website RETURNING id", website, contentType, contentValue)
+	row := tx.QueryRow("INSERT INTO downloads(date_created, Url) "+
+		"VALUES (Now(), $1) ON CONFLICT (Url) "+
+		"DO UPDATE set Url = EXCLUDED.Url RETURNING id", url)
 	err = row.Scan(&downloadID)
 	if err != nil {
 		tx.Rollback()
@@ -81,7 +67,7 @@ func (m *ArchiveRequestRepo) New(contentType contentType, contentValue string, w
 
 func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLRequest, error) {
 	// Fetch all unsynced downloads, irrespective of priority
-	res, err := m.Db.Query("SELECT id, website, attribute_type, attribute_value FROM downloads " +
+	res, err := m.Db.Query("SELECT id, Url FROM downloads " +
 		"WHERE last_synced IS NULL or last_synced + interval '1 day' * backoff_factor < Now()")
 	if err != nil {
 		return nil, err
@@ -91,7 +77,12 @@ func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLReques
 	for res.Next() {
 		c := CategoryDLRequest{Redsync: m.Redsync, Db: m.Db}
 
-		err = res.Scan(&c.Id, &c.Website, &c.ContentType, &c.ContentValue)
+		err = res.Scan(&c.Id, &c.Url)
+		if err != nil {
+			return nil, err
+		}
+
+		c.Website, err = GetWebsiteFromURL(c.Url)
 		if err != nil {
 			return nil, err
 		}
@@ -100,4 +91,14 @@ func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLReques
 	}
 
 	return ret, nil
+}
+
+
+func GetWebsiteFromURL(u string) (string, error) {
+	urlParsed, err := url.Parse(u)
+	if err != nil {
+		return "", err
+	}
+
+	return urlParsed.Hostname(), nil
 }

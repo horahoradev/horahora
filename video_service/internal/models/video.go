@@ -57,7 +57,7 @@ func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *red
 // FIXME this signature is too long lol
 // If domesticAuthorID is 0, will interpret as foreign video from foreign user
 func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description string, foreignAuthorUsername string, foreignAuthorID string,
-	originalSite proto.Site, originalVideoLink, originalVideoID, newURI string, tags []string, domesticAuthorID int64) (int64, error) {
+	originalSite string, originalVideoLink, originalVideoID, newURI string, tags []string, domesticAuthorID int64) (int64, error) {
 	tx, err := v.db.BeginTx(ctx, nil)
 	if err != nil {
 		return 0, err
@@ -163,7 +163,7 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 	return videoID, nil
 }
 
-func (v *VideoModel) ForeignVideoExists(foreignVideoID string, website videoproto.Website) (bool, error) {
+func (v *VideoModel) ForeignVideoExists(foreignVideoID, website string) (bool, error) {
 	sql := "SELECT id FROM videos WHERE originalSite=$1 AND originalID=$2"
 	var videoID int64
 	res := v.db.QueryRow(sql, website, foreignVideoID)

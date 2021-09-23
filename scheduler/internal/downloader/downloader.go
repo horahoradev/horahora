@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/horahoradev/horahora/scheduler/internal/models"
-	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	log "github.com/sirupsen/logrus"
 )
@@ -84,14 +83,19 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 	err := video.AcquireLockForVideo()
 	if err != nil {
 		// If we can't get the lock, just skip the video in the current archive request
-		log.Errorf("Could not acquire redis lock for video VideoID %s during download of content type %s value %s, err: %s", video.VideoID,
-			video.C.ContentType, video.C.ContentValue, err)
+		log.Errorf("Could not acquire redis lock for video VideoID %s during download of content parent URL %s. Err: %s", video.VideoID, video.URL, video.ParentURL, err)
+		return nil
+	}
+
+	website, err := models.GetWebsiteFromURL(video.URL)
+	if err != nil {
+		log.Errorf("Failed to extract website domain from %s", video.URL)
 		return nil
 	}
 
 	videoReq := videoproto.ForeignVideoCheck{
 		ForeignVideoID: video.VideoID,
-		ForeignWebsite: videoproto.Website(video.C.Website), // lol FIXME
+		ForeignWebsite: website, // lol FIXME
 	}
 
 	videoExists, err := d.videoClient.ForeignVideoExists(context.TODO(), &videoReq)
@@ -123,7 +127,7 @@ currVideoLoop:
 	for currentRetryNum := 1; currentRetryNum <= d.numberOfRetries+1; currentRetryNum++ {
 		select {
 		case <-ctx.Done():
-			log.Infof("Context done, returning from download request loop for content type %s content val %s", video.C.ContentType, video.C.ContentValue)
+			log.Infof("Context done, returning from download request loop for parent url", video.ParentURL)
 			return nil
 		default:
 		}
@@ -146,7 +150,7 @@ currVideoLoop:
 
 			// Background is used here to try to ensure that the service will deal with whatever it's currently
 			// downloading before shutting down.
-			err = d.uploadToVideoService(context.Background(), metadata, video, proto.SupportedSite(video.C.Website), metafile)
+			err = d.uploadToVideoService(context.Background(), metadata, video, metafile)
 			if err != nil {
 				log.Infof("failed to upload to video service. Err: %s. Continuing...", err)
 				continue
@@ -229,8 +233,7 @@ func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTD
 }
 
 // FIXME: this function is quite long and complicated
-func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video *models.VideoDLRequest,
-	website proto.SupportedSite, metafile *os.File) error {
+func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMetadata, video *models.VideoDLRequest, metafile *os.File) error {
 	stream, err := d.videoClient.UploadVideo(ctx)
 	if err != nil {
 		return fmt.Errorf("could not start video upload stream. Err: %s", err)
@@ -271,7 +274,13 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 		metadata.UploaderID = metadata.ChannelID
 	}
 
+	website, err := models.GetWebsiteFromURL(video.URL)
+	if err != nil {
+		log.Errorf("failed to extract website from url: %s", video.URL)
+	}
+
 	// Send metadata
+	// REFACTOR TODO
 	metaPayload := videoproto.InputVideoChunk{
 		Payload: &videoproto.InputVideoChunk_Meta{
 			Meta: &videoproto.InputFileMetadata{
@@ -280,7 +289,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 				AuthorUID:         metadata.UploaderID,
 				OriginalVideoLink: video.URL,
 				AuthorUsername:    metadata.Uploader,
-				OriginalSite:      videoproto.Website(video.C.Website),
+				OriginalSite:      website,
 				OriginalID:        metadata.ID,
 				Tags:              metadata.Tags,
 				Thumbnail:         thumbnailContents, // nothing to see here...
@@ -380,11 +389,7 @@ loop:
 }
 
 func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]string, error) {
-	bin := "youtube-dl"
-	// this is a FIXME
-	if videoproto.Website(video.C.Website) == videoproto.Website_youtube {
-		bin = "yt-dlp"
-	}
+	bin := "yt-dlp"
 	args := []string{
 		bin,
 		video.URL,
