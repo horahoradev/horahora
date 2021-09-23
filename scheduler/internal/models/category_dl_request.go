@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
-	log "github.com/sirupsen/logrus"
 	"time"
 )
 
