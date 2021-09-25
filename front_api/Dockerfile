@@ -8,25 +8,10 @@ FROM golang:1.16.5-buster as builder
 
 WORKDIR /horahora/front_api
 
-# download modules
-COPY front_api/go.mod /horahora/front_api/
-COPY front_api/go.sum /horahora/front_api/
-COPY scheduler/go.mod /horahora/scheduler/
-COPY scheduler/go.sum /horahora/scheduler/
-COPY video_service/go.mod /horahora/video_service/
-COPY video_service/go.sum /horahora/video_service/
-COPY user_service/go.mod /horahora/user_service/
-COPY user_service/go.sum /horahora/user_service/
-
-RUN go mod download
-
 # build binary
-COPY front_api /horahora/front_api
-COPY scheduler/protocol /horahora/scheduler/protocol
-COPY video_service/protocol /horahora/video_service/protocol
-COPY user_service/protocol /horahora/user_service/protocol
+COPY . /horahora/front_api
 
 RUN go mod vendor && \
---mount=type=cache,target=/root/.cache/go-build go build -o /front_api.bin
+ go build -mod=vendor -o /front_api.bin
 
 ENTRYPOINT ["/front_api.bin"]
