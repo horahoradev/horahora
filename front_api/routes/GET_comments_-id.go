@@ -6,33 +6,29 @@ import (
 	"net/url"
 	"strconv"
 
-	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 )
 
 func (r RouteHandler) getComments(c echo.Context) error {
 	videoID, err := url.QueryUnescape(c.Param("id"))
 	if err != nil {
-		return err
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	videoIDInt, err := strconv.ParseInt(videoID, 10, 64)
 	if err != nil {
-		return err
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	// FIX LATER
-	userID := c.Get(custommiddleware.UserIDKey)
-	UserIDInt, ok := userID.(int64)
-	if !ok {
-		log.Error("Could not assert userid to int64 for getComments")
-	}
-
-	resp, err := r.v.GetCommentsForVideo(context.Background(), &videoproto.CommentRequest{VideoID: videoIDInt, CurrUserID: UserIDInt})
+	profileInfo, err := r.getUserProfileInfo(c)
 	if err != nil {
-		return err
+		return c.String(http.StatusForbidden, err.Error())
+	}
+
+	resp, err := r.v.GetCommentsForVideo(context.Background(), &videoproto.CommentRequest{VideoID: videoIDInt, CurrUserID: profileInfo.UserID})
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	commentList := make([]CommentData, 0)

@@ -2,7 +2,6 @@ package routes
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -27,18 +26,15 @@ func (v RouteHandler) handleApproval(c echo.Context) error {
 	if rank < 1 {
 		// privileged user, can show unapproved videos
 		// TODO(ivan): status forbidden
-		return errors.New("Insufficient user status")
+		return c.String(http.StatusForbidden, "Insufficient user status")
 	}
 
-	// THERE IS TOO MUCH COPY PASTA HERE!
-	userID := c.Get(custommiddleware.UserIDKey)
-	UserIDInt, ok := userID.(int64)
-	if !ok {
-		log.Error("Could not assert userid to int64")
-		return errors.New("could not assert userid to int64")
+	profile, err := v.getUserProfileInfo(c)
+	if err != nil {
+		return err
 	}
 
-	_, err = v.v.ApproveVideo(context.Background(), &videoproto.VideoApproval{VideoID: idInt, UserID: UserIDInt})
+	_, err = v.v.ApproveVideo(context.Background(), &videoproto.VideoApproval{VideoID: idInt, UserID: profile.UserID})
 	if err != nil {
 		return err
 	}

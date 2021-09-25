@@ -75,7 +75,6 @@ type Comment struct {
 }
 
 type VideoDetail struct {
-	L                LoggedInUserData
 	Title            string
 	MPDLoc           string
 	Views            uint64
@@ -100,7 +99,6 @@ type LoggedInUserData struct {
 }
 
 type ProfileData struct {
-	L                 LoggedInUserData
 	PaginationData    PaginationData
 	UserID            int64
 	Username          string
@@ -115,7 +113,6 @@ type PaginationData struct {
 }
 
 type ArchiveRequestsPageData struct {
-	L                LoggedInUserData
 	ArchivalRequests []*schedulerproto.ContentArchivalEntry
 }
 
@@ -147,45 +144,39 @@ func generateQueryParams(pageRange []int, c echo.Context) []string {
 	return queryStrings
 }
 
-func getCurrentUserID(c echo.Context) (int64, error) {
+// TODO: this function is overcalled; we don't need to fetch profile data every time
+// maybe just cache and call it a day
+func (r *RouteHandler) getUserProfileInfo(c echo.Context) (*LoggedInUserData, error) {
+	l := LoggedInUserData{}
+
 	id := c.Get(custommiddleware.UserIDKey)
 
 	idInt, ok := id.(int64)
 	if !ok {
 		log.Error("Could not assert id to int64")
-		return 0, errors.New("could not assert id to int64")
-	}
-
-	return idInt, nil
-}
-
-func addUserProfileInfo(c echo.Context, l *LoggedInUserData, client userproto.UserServiceClient) {
-	id := c.Get(custommiddleware.UserIDKey)
-
-	idInt, ok := id.(int64)
-	if !ok {
-		log.Error("Could not assert id to int64")
-		return
+		return nil, errors.New("could not assert id to int64")
 	}
 
 	if idInt == 0 {
-		return // User isn't logged in
+		return nil, errors.New("user is not logged in")// User isn't logged in
 	}
 
 	getUserReq := userproto.GetUserFromIDRequest{
 		UserID: idInt,
 	}
 
-	userResp, err := client.GetUserFromID(context.TODO(), &getUserReq)
+	userResp, err := r.u.GetUserFromID(context.TODO(), &getUserReq)
 	if err != nil {
 		log.Error(err)
-		return
+		return nil, err
 	}
 
 	l.Username = userResp.Username
 	// l.ProfilePictureURL = userResp. // TODO
 	l.UserID = idInt
 	l.Rank = int32(userResp.Rank)
+
+	return &l, nil
 }
 
 type CommentData struct {

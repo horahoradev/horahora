@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -30,15 +29,13 @@ func (v RouteHandler) handleRating(c echo.Context) error {
 		return err
 	}
 
-	userID := c.Get(custommiddleware.UserIDKey)
-	UserIDInt, ok := userID.(int64)
-	if !ok {
-		log.Error("Could not assert userid to int64")
-		return errors.New("could not assert userid to int64")
+	profile, err := v.getUserProfileInfo(c)
+	if err != nil {
+		return err
 	}
 
 	rateReq := videoproto.VideoRating{
-		UserID:  UserIDInt,
+		UserID:  profile.UserID,
 		VideoID: videoIDInt,
 		Rating:  float32(rating),
 	}

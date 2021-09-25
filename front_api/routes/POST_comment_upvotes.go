@@ -22,7 +22,7 @@ func (r RouteHandler) handleUpvote(c echo.Context) error {
 		return err
 	}
 
-	userID, err := getAsInt64(data, "user_id")
+	profile, err := r.getUserProfileInfo(c)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (r RouteHandler) handleUpvote(c echo.Context) error {
 
 	_, err = r.v.MakeCommentUpvote(context.Background(), &videoproto.CommentUpvote{
 		CommentId: commentID,
-		UserId:    userID,
+		UserId:    profile.UserID,
 		IsUpvote:  hasUpvoted,
 	})
 	if err != nil {
