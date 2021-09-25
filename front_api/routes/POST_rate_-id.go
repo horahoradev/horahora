@@ -12,7 +12,7 @@ import (
 )
 
 // Route: POST /rate/:id where id is video id
-// Accepts no parameters
+// Accepts query parameter "rating" (float)
 // Requires authentication
 // response: 200 if ok
 func (v RouteHandler) handleRating(c echo.Context) error {
