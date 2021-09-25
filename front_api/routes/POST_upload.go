@@ -12,7 +12,7 @@ import (
 )
 
 func (r RouteHandler) upload(c echo.Context) error {
-	userID, err := getCurrentUserID(c)
+	profile, err := r.getUserProfileInfo(c)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func (r RouteHandler) upload(c echo.Context) error {
 				//AuthorUsername:       "",
 				//OriginalSite:         0,
 				//OriginalID:           "",
-				DomesticAuthorID: userID,
+				DomesticAuthorID: profile.UserID,
 				Tags:             tags,
 				Thumbnail:        thumbBytes,
 			},

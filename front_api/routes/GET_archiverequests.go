@@ -2,26 +2,24 @@ package routes
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/labstack/echo/v4"
 )
 
+// getArchiveRequests is a GET handler accepting no parameters, returning the list of archival entries
+// Response is of this form:
+//
 func (r RouteHandler) getArchiveRequests(c echo.Context) error {
 	data := ArchiveRequestsPageData{}
 
-	addUserProfileInfo(c, &data.L, r.u)
-
-	if data.L.UserID == 0 {
-		// User isn't logged in
-		// TODO: move this to a middleware somehow
-		// TODO(ivan): status forbidden
-		return errors.New("Must be logged in")
+	profileInfo, err := r.getUserProfileInfo(c)
+	if err != nil {
+		return c.String(http.StatusForbidden, err.Error())
 	}
 
-	resp, err := r.s.ListArchivalEntries(context.TODO(), &schedulerproto.ListArchivalEntriesRequest{UserID: data.L.UserID})
+	resp, err := r.s.ListArchivalEntries(context.TODO(), &schedulerproto.ListArchivalEntriesRequest{UserID: profileInfo.UserID})
 	if err != nil {
 		return err
 	}

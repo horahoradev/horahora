@@ -4,14 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
-	"net/url"
-	"strconv"
-
-	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"net/http"
+	"net/url"
 )
 
 type HomePageData struct {
@@ -27,14 +24,14 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		return err
 	}
 
-	rank, ok := c.Get(custommiddleware.UserRankKey).(int32)
-	if !ok {
-		log.Error("Failed to assert user rank to an int (this should not happen)")
+	profileInfo, err := h.getUserProfileInfo(c)
+	if err != nil {
+		return c.String(http.StatusForbidden, err.Error())
 	}
 
 	// doesn't matter if it fails, 0 is a fine default rank
 	showUnapproved := false
-	if rank > 0 {
+	if profileInfo.Rank > 0 {
 		// privileged user, can show unapproved videos
 		showUnapproved = true
 	}
@@ -56,23 +53,14 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 	}
 	order := videoproto.SortDirection(videoproto.SortDirection_value[orderVal])
 
-	pageNumber := c.QueryParam("page")
-	var pageNumberInt int64 = 1
-
-	if pageNumber != "" {
-		num, err := strconv.ParseInt(pageNumber, 10, 64)
-		if err != nil {
-			log.Errorf("Invalid page number %s, defaulting to 1", pageNumber)
-		}
-		pageNumberInt = num
-	}
+	pageNumber := getPageNumber(c)
 
 	// TODO: if request times out, maybe provide a default list of good videos
 	req := videoproto.VideoQueryConfig{
 		OrderBy:        orderBy,
 		Direction:      order,
 		SearchVal:      tag,
-		PageNumber:     pageNumberInt,
+		PageNumber:     pageNumber,
 		ShowUnapproved: showUnapproved,
 	}
 
@@ -82,7 +70,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		return errors.New("Could not retrieve video list")
 	}
 
-	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumberInt))
+	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumber))
 	if err != nil {
 		err1 := fmt.Errorf("failed to calculate page range. Err: %s", err)
 		log.Error(err1)
@@ -95,11 +83,10 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		PaginationData: PaginationData{
 			Pages:                pageRange,
 			PathsAndQueryStrings: queryStrings,
-			CurrentPage:          int(pageNumberInt),
+			CurrentPage:          int(pageNumber),
 		},
 	}
 
-	addUserProfileInfo(c, &data.L, h.u)
 	for _, video := range videoList.Videos {
 		data.Videos = append(data.Videos, Video{
 			Title:        video.VideoTitle,

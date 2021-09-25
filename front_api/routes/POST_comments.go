@@ -22,7 +22,7 @@ func (r RouteHandler) handleComment(c echo.Context) error {
 		return err
 	}
 
-	userID, err := url.QueryUnescape(data.Get("user_id"))
+	profile, err := r.getUserProfileInfo(c)
 	if err != nil {
 		return err
 	}
@@ -37,18 +37,13 @@ func (r RouteHandler) handleComment(c echo.Context) error {
 		return err
 	}
 
-	userIDInt, err := strconv.ParseInt(userID, 10, 64)
-	if err != nil {
-		return err
-	}
-
 	parentIDInt, _ := getAsInt64(data, "parent")
 	//if err != nil {
 	//	// nothing
 	//}
 
 	_, err = r.v.MakeComment(context.Background(), &videoproto.VideoComment{
-		UserId:        userIDInt,
+		UserId:        profile.UserID,
 		VideoId:       videoIDInt,
 		Comment:       content,
 		ParentComment: parentIDInt,

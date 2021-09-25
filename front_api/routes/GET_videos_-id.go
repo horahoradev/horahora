@@ -14,13 +14,13 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 	id := c.Param("id")
 
 	// Dumb
-	idInt, err := strconv.ParseInt(id, 10, 64)
+	videoID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return err
 	}
 
 	// Increment views first
-	viewReq := videoproto.VideoViewing{VideoID: idInt}
+	viewReq := videoproto.VideoViewing{VideoID: videoID}
 	_, err = v.v.ViewVideo(context.Background(), &viewReq)
 	if err != nil {
 		return err
@@ -43,7 +43,6 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 	}
 
 	data := VideoDetail{
-		L:                LoggedInUserData{},
 		Title:            videoInfo.VideoTitle,
 		MPDLoc:           videoInfo.VideoLoc, // FIXME: fix this in videoservice LOL this is embarrassing
 		Views:            videoInfo.Views,
@@ -59,8 +58,6 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		Comments:         nil,
 		Tags:             videoInfo.Tags,
 	}
-
-	addUserProfileInfo(c, &data.L, v.u)
 
 	return c.JSON(http.StatusOK, data)
 }

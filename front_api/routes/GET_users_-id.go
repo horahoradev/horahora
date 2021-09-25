@@ -3,53 +3,33 @@ package routes
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"strconv"
-
-	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
-	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"net/http"
 )
 
 func (v RouteHandler) getUser(c echo.Context) error {
-	id := c.Param("id")
-
-	idInt, err := strconv.ParseInt(id, 10, 64)
+	profile, err := v.getUserProfileInfo(c)
 	if err != nil {
 		return err
 	}
 
-	// TODO: reduce copy pasta
-	pageNumber := c.QueryParam("page")
-	var pageNumberInt int64 = 1
-
-	if pageNumber != "" {
-		num, err := strconv.ParseInt(pageNumber, 10, 64)
-		if err != nil {
-			log.Errorf("Invalid page number %s, defaulting to 1", pageNumber)
-		}
-		pageNumberInt = num
-	}
-
-	rank, ok := c.Get(custommiddleware.UserRankKey).(int32)
-	if !ok {
-		log.Error("Failed to assert user rank to an int (this should not happen)")
-	}
 	// doesn't matter if it fails, 0 is a fine default rank
 	showUnapproved := false
-	if rank > 0 {
+	if profile.Rank > 0 {
 		// privileged user, can show unapproved videos
 		showUnapproved = true
 	}
 
+	pageNumber := getPageNumber(c)
+
 	videoQueryConfig := videoproto.VideoQueryConfig{
 		OrderBy:        videoproto.OrderCategory_upload_date,
 		Direction:      videoproto.SortDirection_desc,
-		PageNumber:     pageNumberInt,
+		PageNumber:     pageNumber,
 		SearchVal:      "",
-		FromUserID:     idInt,
+		FromUserID:     profile.UserID,
 		ShowUnapproved: showUnapproved,
 	}
 
@@ -58,14 +38,7 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		return err
 	}
 
-	getUserReq := userproto.GetUserFromIDRequest{UserID: idInt}
-
-	user, err := v.u.GetUserFromID(context.TODO(), &getUserReq)
-	if err != nil {
-		return err
-	}
-
-	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumberInt))
+	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumber))
 	if err != nil {
 		err1 := fmt.Errorf("failed to calculate page range. Err: %s", err)
 		log.Error(err1)
@@ -74,13 +47,13 @@ func (v RouteHandler) getUser(c echo.Context) error {
 
 	queryStrings := generateQueryParams(pageRange, c)
 	data := ProfileData{
-		UserID:            idInt,
-		Username:          user.Username,
+		UserID:            profile.UserID,
+		Username:          profile.Username,
 		ProfilePictureURL: "/static/images/placeholder1.jpg",
 		PaginationData: PaginationData{
 			Pages:                pageRange,
 			PathsAndQueryStrings: queryStrings,
-			CurrentPage:          int(pageNumberInt),
+			CurrentPage:          int(pageNumber),
 		},
 	}
 
@@ -97,8 +70,6 @@ func (v RouteHandler) getUser(c echo.Context) error {
 
 		data.Videos = append(data.Videos, v)
 	}
-
-	addUserProfileInfo(c, &data.L, v.u)
-
+	
 	return c.JSON(http.StatusOK, data)
 }
