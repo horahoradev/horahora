@@ -10,6 +10,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+
+// route: GET /videos/:id
+// The video id is located within the path. No other parameters are accepted.
+// Response is of the form:{"Title":"コダック","MPDLoc":"http://localhost:9000/otomads/207f773c-1e23-11ec-a6c3-0242ac1c0004.mpd","Views":2,"Rating":0,"VideoID":5,"AuthorID":5,"Username":"たっぴ","UserDescription":"","VideoDescription":"YouTube　\u003ca href=\"https://youtu.be/kP_lYd9D2to\" target=\"_blank\" rel=\"noopener nofollow\"\u003ehttps://youtu.be/kP_lYd9D2to\u003c/a\u003e","UserSubscribers":0,"ProfilePicture":"/static/images/placeholder1.jpg","UploadDate":"2021-09-25T17:07:56.400857Z","Comments":null,"Tags":null}
+// authorID, userDescription, and userSubscribers all have no meaning as of yet.
 func (v *RouteHandler) getVideo(c echo.Context) error {
 	id := c.Param("id")
 
@@ -55,7 +60,6 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		ProfilePicture:   "/static/images/placeholder1.jpg",
 		UploadDate:       videoInfo.UploadDate,
 		VideoID:          videoInfo.VideoID,
-		Comments:         nil,
 		Tags:             videoInfo.Tags,
 	}
 

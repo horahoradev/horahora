@@ -3,21 +3,44 @@ package routes
 import (
 	"context"
 	"fmt"
+	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"net/http"
+	"strconv"
 )
 
+// route: GET /home[?seach=val]
+// The query string val search is accepted, and will return videos whose title, tags, or description contains the search term. Inclusion and exclusion is supported, e.g. include1 include2 -exclude1
+// A query string val for the page number, starting at 1, is also accepted.
+// Response is of the form: {"PaginationData":{"PathsAndQueryStrings":["/home?page=1"],"Pages":[1],"CurrentPage":1},"Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":6,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
+// For pagination data, the fields pages and PathsAndQueryStrings will always have the same length, and have corresponding values
+// The field authorID is left blank and has no purpose here.
 func (v RouteHandler) getUser(c echo.Context) error {
-	profile, err := v.getUserProfileInfo(c)
+	id := c.Param("id")
+
+	idInt, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	getUserReq := userproto.GetUserFromIDRequest{UserID: idInt}
+
+	profile, err := v.u.GetUserFromID(context.TODO(), &getUserReq)
+	if err != nil {
+		return err
+	}
+
+
+	userProfile, err := v.getUserProfileInfo(c)
 	if err != nil {
 		return err
 	}
 
 	// doesn't matter if it fails, 0 is a fine default rank
 	showUnapproved := false
-	if profile.Rank > 0 {
+	if userProfile.Rank > 0 {
 		// privileged user, can show unapproved videos
 		showUnapproved = true
 	}
@@ -29,7 +52,7 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		Direction:      videoproto.SortDirection_desc,
 		PageNumber:     pageNumber,
 		SearchVal:      "",
-		FromUserID:     profile.UserID,
+		FromUserID:     idInt,
 		ShowUnapproved: showUnapproved,
 	}
 
@@ -45,9 +68,10 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		pageRange = []int{1}
 	}
 
+	// TODO: 0 results in all videos, fix for admin user?
 	queryStrings := generateQueryParams(pageRange, c)
 	data := ProfileData{
-		UserID:            profile.UserID,
+		UserID:            idInt,
 		Username:          profile.Username,
 		ProfilePictureURL: "/static/images/placeholder1.jpg",
 		PaginationData: PaginationData{

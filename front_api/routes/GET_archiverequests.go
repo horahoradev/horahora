@@ -9,8 +9,10 @@ import (
 )
 
 // getArchiveRequests is a GET handler accepting no parameters, returning the list of archival entries
+// Requires authentication
+// route: GET /archiverequests
 // Response is of this form:
-//
+// {"ArchivalRequests":[{"url":"https://www.youtube.com/watch?v=8DXqneHHzA8"}]}
 func (r RouteHandler) getArchiveRequests(c echo.Context) error {
 	data := ArchiveRequestsPageData{}
 

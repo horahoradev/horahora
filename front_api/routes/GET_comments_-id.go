@@ -10,6 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// route: GET /getComments/:id where :id is the video id
+// response is of this form: [{"id":1,"created":"2021-09-25T16:46:53.141031Z","content":"test","fullname":"admin","profile_picture_url":"/static/images/placeholder.png","upvote_count":0,"user_has_upvoted":false}]
 func (r RouteHandler) getComments(c echo.Context) error {
 	videoID, err := url.QueryUnescape(c.Param("id"))
 	if err != nil {

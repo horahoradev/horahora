@@ -7,6 +7,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Route: POST /login
+// Accepts form-encoded values: username, password
+// response: 200 if ok, and sets a cookie
 func (r RouteHandler) handleLogin(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")

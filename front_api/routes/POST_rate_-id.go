@@ -11,6 +11,10 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// Route: POST /rate/:id where id is video id
+// Accepts no parameters
+// Requires authentication
+// response: 200 if ok
 func (v RouteHandler) handleRating(c echo.Context) error {
 	videoID := c.Param("id")
 	videoIDInt, err := strconv.ParseInt(videoID, 10, 64)

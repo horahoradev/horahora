@@ -1,21 +1,17 @@
 package routes
 
 import (
-	"context"
 	"encoding/base64"
-	"errors"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
 
 	"github.com/horahoradev/horahora/front_api/config"
-	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 )
 
 type RouteHandler struct {
@@ -37,8 +33,6 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 
 	e.GET("/home", r.getHome)
 	e.GET("/users/:id", r.getUser)
-
-	e.GET("/tag/:tag", r.getTag)
 
 	e.GET("/videos/:id", r.getVideo)
 	e.POST("/rate/:id", r.handleRating)
@@ -87,7 +81,6 @@ type VideoDetail struct {
 	UserSubscribers  uint64
 	ProfilePicture   string
 	UploadDate       string // should be a datetime
-	Comments         []Comment
 	Tags             []string
 }
 
@@ -142,41 +135,6 @@ func generateQueryParams(pageRange []int, c echo.Context) []string {
 	}
 
 	return queryStrings
-}
-
-// TODO: this function is overcalled; we don't need to fetch profile data every time
-// maybe just cache and call it a day
-func (r *RouteHandler) getUserProfileInfo(c echo.Context) (*LoggedInUserData, error) {
-	l := LoggedInUserData{}
-
-	id := c.Get(custommiddleware.UserIDKey)
-
-	idInt, ok := id.(int64)
-	if !ok {
-		log.Error("Could not assert id to int64")
-		return nil, errors.New("could not assert id to int64")
-	}
-
-	if idInt == 0 {
-		return nil, errors.New("user is not logged in")// User isn't logged in
-	}
-
-	getUserReq := userproto.GetUserFromIDRequest{
-		UserID: idInt,
-	}
-
-	userResp, err := r.u.GetUserFromID(context.TODO(), &getUserReq)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-
-	l.Username = userResp.Username
-	// l.ProfilePictureURL = userResp. // TODO
-	l.UserID = idInt
-	l.Rank = int32(userResp.Rank)
-
-	return &l, nil
 }
 
 type CommentData struct {

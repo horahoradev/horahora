@@ -12,11 +12,16 @@ import (
 )
 
 type HomePageData struct {
-	L              LoggedInUserData
 	PaginationData PaginationData
 	Videos         []Video
 }
 
+// route: GET /home[?seach=val][&page=x]
+// The query string val search is accepted, and will return videos whose title, tags, or description contains the search term. Inclusion and exclusion is supported, e.g. include1 include2 -exclude1
+// A query string val for the page number, starting at 1, is also accepted.
+// Response is of the form: {"PaginationData":{"PathsAndQueryStrings":["/home?page=1"],"Pages":[1],"CurrentPage":1},"Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":6,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
+// For pagination data, the fields pages and PathsAndQueryStrings will always have the same length, and have corresponding values
+// Response is of the form: {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":9,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 func (h *RouteHandler) getHome(c echo.Context) error {
 	// TODO: verify no sql injection lol
 	tag, err := url.QueryUnescape(c.QueryParam("tag"))
