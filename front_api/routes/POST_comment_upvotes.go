@@ -8,6 +8,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Route: POST /comment_upvotes
+// Requires authentication
+// Accepts form-encoded value comment_id, which is the url to be archived
+// response: 200 if ok
 func (r RouteHandler) handleUpvote(c echo.Context) error {
 	// DUMB!
 	err := c.Request().ParseForm()

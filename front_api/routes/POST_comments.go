@@ -10,6 +10,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Route: POST /comments/
+// Requires authentication
+// Accepts form-encoded values: video_id, content (content of comment), and parent (parent comment id if a reply)
+// response: 200 if ok
 func (r RouteHandler) handleComment(c echo.Context) error {
 	err := c.Request().ParseForm()
 	if err != nil {

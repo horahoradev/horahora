@@ -8,6 +8,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Route: POST /archiverequests
+// Requires authentication
+// Accepts form-encoded value URL, which is the url to be archived
+// response: 200 if ok
 func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
 	urlVal := c.FormValue("url")
 
