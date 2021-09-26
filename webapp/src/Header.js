@@ -60,7 +60,7 @@ function LoggedInUserNav(props) {
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
-          {userData.Username}
+          {userData.username}
           <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
         </Button>
       </Dropdown>
@@ -84,7 +84,7 @@ function LoggedOutUserNav() {
 function UserNav(props) {
   const { userData } = props;
 
-  if (userData.Username) {
+  if (userData && userData.username) {
     return <LoggedInUserNav userData={userData} />;
   } else {
     return <LoggedOutUserNav />;
