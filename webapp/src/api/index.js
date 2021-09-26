@@ -14,6 +14,11 @@ export async function getHome() {
   return res.data;
 }
 
+export async function getUserdata() {
+  const res = await axios.get(e("currentuserprofile/"));
+  return res.data;
+}
+
 export async function postLogin(data) {
   let form = new FormData();
   form.append("username", data.username);

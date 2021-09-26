@@ -33,6 +33,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 
 	e.GET("/home", r.getHome)
 	e.GET("/users/:id", r.getUser)
+	e.GET("/currentuserprofile/", r.getCurrentUserProfile)
 
 	e.GET("/videos/:id", r.getVideo)
 	e.POST("/rate/:id", r.handleRating)
@@ -82,13 +83,6 @@ type VideoDetail struct {
 	ProfilePicture   string
 	UploadDate       string // should be a datetime
 	Tags             []string
-}
-
-type LoggedInUserData struct {
-	UserID            int64
-	Username          string
-	ProfilePictureURL string
-	Rank              int32
 }
 
 type ProfileData struct {
