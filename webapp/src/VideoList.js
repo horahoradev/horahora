@@ -42,7 +42,7 @@ function VideoList(props) {
   }
 
   return (
-    <div className="my-4 rounded border p-4 bg-white flex flex-wrap justify-around">
+    <div className="my-4 rounded border p-4 bg-white flex flex-wrap justify-around min-h-screen">
       {elements}
     </div>
   );
