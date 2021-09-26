@@ -41,6 +41,9 @@ https://discord.gg/vfwfpctJRZ
 ## Contributing
 Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
 
+## Security
+There are currently several shortcomings with respect to security. As such, I'd recommend only sharing an instance with a group of trusted users (friends). This will be fixed in future updates, and will be backwards compatible if possible.
+
 # Horahora
 
 ## Designs
