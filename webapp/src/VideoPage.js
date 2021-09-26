@@ -8,6 +8,7 @@ import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import * as API from "./api";
 import Header from "./Header";
 import { UserRank } from "./api/types";
+import VideoList from "./VideoList";
 
 const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
@@ -148,6 +149,9 @@ function VideoPage() {
       <div className="flex justify-center mx-4">
         <div className="max-w-screen-lg w-screen my-6">
           <VideoView data={pageData} />
+        </div>
+        <div className="inline-block w-44 align-top float-right">
+          <VideoList videos={pageData.RecommendedVideos} />
         </div>
       </div>
     </>

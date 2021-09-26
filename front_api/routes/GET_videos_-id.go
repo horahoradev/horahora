@@ -61,7 +61,7 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		// Continue anyway
 	}
 
-	var recVideos []Video
+	recVideos := []Video{}
 	if recResp != nil {
 		for _, rec := range recResp.Videos {
 			// FIXME: fill other fields after modifying protocol
