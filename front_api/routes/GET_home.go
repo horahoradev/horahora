@@ -3,7 +3,6 @@ package routes
 import (
 	"context"
 	"errors"
-	"fmt"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -60,6 +59,8 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	pageNumber := getPageNumber(c)
 
+
+
 	// TODO: if request times out, maybe provide a default list of good videos
 	req := videoproto.VideoQueryConfig{
 		OrderBy:        orderBy,
@@ -75,23 +76,15 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		return errors.New("Could not retrieve video list")
 	}
 
-	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumber))
-	if err != nil {
-		err1 := fmt.Errorf("failed to calculate page range. Err: %s", err)
-		log.Error(err1)
-		pageRange = []int{1}
-	}
-
-	queryStrings := generateQueryParams(pageRange, c)
 
 	data := HomePageData{
 		PaginationData: PaginationData{
-			Pages:                pageRange,
-			PathsAndQueryStrings: queryStrings,
+			NumberOfItems:		 int(videoList.NumberOfVideos),
 			CurrentPage:          int(pageNumber),
 		},
 	}
 
+	data.Videos = []Video{}
 	for _, video := range videoList.Videos {
 		data.Videos = append(data.Videos, Video{
 			Title:        video.VideoTitle,

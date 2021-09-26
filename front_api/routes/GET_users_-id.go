@@ -2,11 +2,9 @@ package routes
 
 import (
 	"context"
-	"fmt"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"net/http"
 	"strconv"
 )
@@ -59,26 +57,18 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		return err
 	}
 
-	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumber))
-	if err != nil {
-		err1 := fmt.Errorf("failed to calculate page range. Err: %s", err)
-		log.Error(err1)
-		pageRange = []int{1}
-	}
-
 	// TODO: 0 results in all videos, fix for admin user?
-	queryStrings := generateQueryParams(pageRange, c)
 	data := ProfileData{
 		UserID:            idInt,
 		Username:          profile.Username,
 		ProfilePictureURL: "/static/images/placeholder1.jpg",
 		PaginationData: PaginationData{
-			Pages:                pageRange,
-			PathsAndQueryStrings: queryStrings,
+			NumberOfItems: 		  int(videoList.NumberOfVideos),
 			CurrentPage:          int(pageNumber),
 		},
 	}
 
+	data.Videos = []Video{}
 	for _, video := range videoList.Videos {
 		v := Video{
 			Title:        video.VideoTitle,
