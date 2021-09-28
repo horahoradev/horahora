@@ -1,5 +1,5 @@
 # Horahora
-## Self-hosted Video-hosting Website and Video Archival Manager for Niconico, Bilibili, and Youtube
+## Self-hosted Video-hosting Website and yt-dlp Video Archival Manager for Niconico, Bilibili, and Youtube
 ![](https://github.com/horahoradev/horahora-designs/blob/master/archive.png?raw=true)
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archives_1.png)
@@ -15,6 +15,7 @@ It allows you to:
 - manage archival with a group of friends, with downloads being prioritized by the number of users subscribed to the video's category
 - easily host your own instance with docker-compose
 
+Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 
 Note: the above images are designs, rather than screenshots of the current frontend. The current frontend is essentially a worse version of the above. PRs are welcome 😉 (😭)
 
@@ -40,6 +41,9 @@ https://discord.gg/vfwfpctJRZ
 
 ## Contributing
 Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
+
+## Security
+There are currently several shortcomings with respect to security. As such, I'd recommend only sharing an instance with a group of trusted users (friends). This will be fixed in future updates, and will be backwards compatible if possible.
 
 # Horahora
 
