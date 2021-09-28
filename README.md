@@ -15,6 +15,7 @@ It allows you to:
 - manage archival with a group of friends, with downloads being prioritized by the number of users subscribed to the video's category
 - easily host your own instance with docker-compose
 
+Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 
 Note: the above images are designs, rather than screenshots of the current frontend. The current frontend is essentially a worse version of the above. PRs are welcome 😉 (😭)
 
