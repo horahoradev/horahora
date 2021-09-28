@@ -1,5 +1,5 @@
 # Horahora
-## Self-hosted Video-hosting Website and Video Archival Manager for Niconico, Bilibili, and Youtube
+## Self-hosted Video-hosting Website and yt-dlp Video Archival Manager for Niconico, Bilibili, and Youtube
 ![](https://github.com/horahoradev/horahora-designs/blob/master/archive.png?raw=true)
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archives_1.png)
