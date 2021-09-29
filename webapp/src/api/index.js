@@ -14,6 +14,12 @@ export async function getHome(page=1) {
   return res.data;
 }
 
+export async function getUser(id, page) {
+  const path = "users/" + id + "?page=" + page;
+  const res = await axios.get(e(path));
+  return res.data;
+}
+
 export async function getUserdata() {
   const res = await axios.get(e("currentuserprofile/"));
   return res.data;

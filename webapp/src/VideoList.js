@@ -29,9 +29,12 @@ function Video(props) {
 function VideoList(props) {
   const { videos } = props;
 
-  let elements = [
-    videos.map((video, idx) => <Video key={idx} video={video} />),
-  ];
+  let elements = [];
+  if (videos) {
+    elements = [
+      videos.map((video, idx) => <Video key={idx} video={video}/>),
+    ];
+  }
 
   // add padding elements so the items in the last row on this flexbox grid
   // get aligned with the other rows
