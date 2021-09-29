@@ -44,7 +44,6 @@ function UserPage() {
 
     if (pageData == null) return null;
 
-    console.log(pageUserData);
     return (
         <>
             <Header userData={userData} />
