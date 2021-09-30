@@ -25,6 +25,24 @@ export async function getUserdata() {
   return res.data;
 }
 
+export async function getArchivalSubscriptions() {
+  const res = await axios.get(e("archiverequests"));
+  return res.data;
+}
+
+export async function postArchival(url) {
+  let form = new FormData();
+  form.append("url", url)
+
+  const res = await axios.post(e("archiverequests"), form, {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+  });
+
+    return res.data;
+}
+
 export async function postLogin(data) {
   let form = new FormData();
   form.append("username", data.username);
