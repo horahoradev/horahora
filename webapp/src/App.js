@@ -5,6 +5,7 @@ import LoginPage from "./LoginPage";
 import LogoutPage from "./LogoutPage";
 import VideoPage from "./VideoPage";
 import UserPage from "./UserPage";
+import ArchivalPage from "./ArchivalPage";
 
 function App() {
   return (
@@ -24,6 +25,9 @@ function App() {
         </Route>
         <Route exact path="/users/:id">
           <UserPage />
+        </Route>
+        <Route exact path ="/archive-requests">
+          <ArchivalPage/>
         </Route>
         <Route>TODO(ivan): 404</Route>
       </Switch>
