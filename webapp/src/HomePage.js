@@ -31,7 +31,7 @@ function HomePage() {
     return () => {
       ignore = true;
     };
-  }, [currPage]);
+  }, [currPage, category, order, search]);
 
   if (pageData == null) return null;
 
