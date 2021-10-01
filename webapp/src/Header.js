@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import {useCallback, useState} from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,10 +12,26 @@ import { useHistory } from 'react-router-dom';
 import { Button, Dropdown, Input, Menu } from "antd";
 
 function Search() {
+    const [redirectVal, setRedirectVal] = useState(null);
+
+    let onSubmit = useCallback((e) => {
+        e.preventDefault();
+        const category = document.getElementById('category').value;
+        const order = document.querySelector('input[name="order"]:checked').value;
+        const search = document.querySelector('input[name="search"]').value;
+
+        setRedirectVal(`/?search=${search}&order=${order}&category=${category}`)
+    }, []);
+
+    const history = useHistory();
+    if (redirectVal){
+        history.push(redirectVal);
+        setRedirectVal(null);
+    }
 
   return (
     <>
-      <form action="/" className="w-full max-w-sm" onMouseEnter={showModal}>
+      <form onSubmit={onSubmit} className="w-full max-w-sm" onMouseEnter={showModal}>
         <Input
           name="search"
           size="large"
