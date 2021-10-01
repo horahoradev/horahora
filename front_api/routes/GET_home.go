@@ -23,7 +23,7 @@ type HomePageData struct {
 // Response is of the form: {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":9,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 func (h *RouteHandler) getHome(c echo.Context) error {
 	// TODO: verify no sql injection lol
-	tag, err := url.QueryUnescape(c.QueryParam("tag"))
+	search, err := url.QueryUnescape(c.QueryParam("search"))
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 	req := videoproto.VideoQueryConfig{
 		OrderBy:        orderBy,
 		Direction:      order,
-		SearchVal:      tag,
+		SearchVal:      search,
 		PageNumber:     pageNumber,
 		ShowUnapproved: showUnapproved,
 	}
