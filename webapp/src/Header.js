@@ -18,7 +18,7 @@ function Search() {
 
   return (
     <>
-      <form onSubmit={onSubmit} className="w-full max-w-sm">
+      <form  onSubmit={onSubmit} className="w-full max-w-sm" onMouseEnter={showModal} onMouseLeave={hideModal}>
         <Input
           name="username"
           size="large"
@@ -27,6 +27,24 @@ function Search() {
             <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
           }
         />
+          <div className="search-modal" id="search-modal">
+              <div id="hidden-modal" className="absolute bg-white w-full max-w-sm invisible">
+                  <div id="search-option-title">SEARCH OPTIONS</div>
+                  Order by
+                  <select name="category">
+                      <option value="upload_date">upload date</option>
+                      <option value="rating">rating</option>
+                      <option value="views">views</option>
+                  </select>
+                  <br></br>
+                    <input type="radio" id="desc" name="order" value="desc"></input>
+                          <label htmlFor="desc">Desc</label>
+                    <input type="radio" id="asc" name="order" value="asc"></input>
+                            <label htmlFor="asc">Asc</label>
+                  <br></br>
+                  <button type="submit">Search</button>
+              </div>
+          </div>
       </form>
     </>
   );
@@ -89,6 +107,15 @@ function UserNav(props) {
   } else {
     return <LoggedOutUserNav />;
   }
+}
+
+function showModal(){
+    document.getElementById('hidden-modal').style.visibility = 'visible';
+}
+
+function hideModal(){
+    // Doesn't work, sus
+    document.getElementById('hidden-modal').style.visibility = 'invisible';
 }
 
 function Header(props) {
