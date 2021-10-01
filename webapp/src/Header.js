@@ -8,30 +8,29 @@ import {
   faSignOutAlt,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { useHistory } from 'react-router-dom';
 import { Button, Dropdown, Input, Menu } from "antd";
 
 function Search() {
-  let onSubmit = useCallback((e) => {
-    e.preventDefault();
-    // TODO(ivan): Search
-  }, []);
 
   return (
     <>
-      <form  onSubmit={onSubmit} className="w-full max-w-sm" onMouseEnter={showModal} onMouseLeave={hideModal}>
+      <form action="/" className="w-full max-w-sm" onMouseEnter={showModal}>
         <Input
-          name="username"
+          name="search"
           size="large"
           placeholder="Search"
           prefix={
             <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
           }
         />
-          <div className="search-modal" id="search-modal">
+          <div className="search-modal p-5" id="search-modal">
               <div id="hidden-modal" className="absolute bg-white w-full max-w-sm invisible">
-                  <div id="search-option-title">SEARCH OPTIONS</div>
+                  <div className="inline-block" id="search-option-title">SEARCH OPTIONS</div>
+                  <div className="inline float-right" onClick={hideModal}>X</div>
+                  <br></br>
                   Order by
-                  <select name="category">
+                  <select name="category" id="category">
                       <option value="upload_date">upload date</option>
                       <option value="rating">rating</option>
                       <option value="views">views</option>
@@ -42,7 +41,7 @@ function Search() {
                     <input type="radio" id="asc" name="order" value="asc"></input>
                             <label htmlFor="asc">Asc</label>
                   <br></br>
-                  <button type="submit">Search</button>
+                  <button>Search</button>
               </div>
           </div>
       </form>
@@ -114,8 +113,7 @@ function showModal(){
 }
 
 function hideModal(){
-    // Doesn't work, sus
-    document.getElementById('hidden-modal').style.visibility = 'invisible';
+    document.getElementById('hidden-modal').style.visibility = 'hidden';
 }
 
 function Header(props) {
