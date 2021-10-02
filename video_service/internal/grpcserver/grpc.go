@@ -194,10 +194,6 @@ loop:
 
 	log.Infof("Handling video upload %s from website %s", video.Meta.Meta.OriginalID, video.Meta.Meta.OriginalSite)
 
-	//    niconico = 0;
-	//    bilibili = 1;
-	//    youtube = 2;
-
 	// Do some in-place edits for backwards compatibility...
 	switch {
 	case strings.Contains(video.Meta.Meta.OriginalSite, "nicovideo"):
@@ -269,6 +265,15 @@ func LogAndRetErr(fmtStr string, err error) error {
 }
 
 func (g GRPCServer) ForeignVideoExists(ctx context.Context, foreignVideoCheck *proto.ForeignVideoCheck) (*proto.VideoExistenceResponse, error) {
+	switch {
+	case strings.Contains(foreignVideoCheck.ForeignWebsite, "nicovideo"):
+		foreignVideoCheck.ForeignWebsite = "0"
+	case strings.Contains(foreignVideoCheck.ForeignWebsite, "bilibili"):
+		foreignVideoCheck.ForeignWebsite = "1"
+	case strings.Contains(foreignVideoCheck.ForeignWebsite, "youtube"):
+		foreignVideoCheck.ForeignWebsite = "2"
+	}
+
 	exists, err := g.VideoModel.ForeignVideoExists(foreignVideoCheck.ForeignVideoID, foreignVideoCheck.ForeignWebsite)
 	if err != nil {
 		return nil, err
