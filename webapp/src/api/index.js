@@ -9,7 +9,7 @@ function e(name) {
   return `${API_ENDPOINT}${name}`;
 }
 
-export async function getHome(page=1, search, order, category) {
+export async function getHome(page=1, search="", order="", category="") {
   const res = await axios.get(e(`home?page=${page}&search=${search}&order=${order}&category=${category}`));
   return res.data;
 }
