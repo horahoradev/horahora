@@ -56,6 +56,22 @@ export async function postLogin(data) {
   return res.data;
 }
 
+export async function postRating(videoID, rating) {
+  if (videoID == 0) {
+    return;
+    // TODO: throw
+  }
+  let form = new FormData();
+  form.append("rating", rating);
+
+  const res = await axios.post(e(`rate/${videoID}`), form, {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+  });
+  return res.data;
+}
+
 export async function postLogout() {
   const res = await axios.post(e("logout"));
   return res.data;

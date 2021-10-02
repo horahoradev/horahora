@@ -31,7 +31,7 @@ function Search() {
 
   return (
     <>
-      <form onSubmit={onSubmit} className="w-full max-w-sm" onMouseEnter={showModal}>
+      <form onSubmit={onSubmit} className="w-full max-w-sm z-50" onMouseEnter={showModal} onMouseLeave={hideModal}>
         <Input
           name="search"
           size="large"
@@ -40,11 +40,8 @@ function Search() {
             <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
           }
         />
-          <div className="search-modal p-5" id="search-modal">
-              <div id="hidden-modal" className="absolute bg-white w-full max-w-sm invisible">
-                  <div className="inline-block" id="search-option-title">SEARCH OPTIONS</div>
-                  <div className="inline float-right" onClick={hideModal}>X</div>
-                  <br></br>
+              <div id="hidden-modal" className="absolute bg-white w-full max-w-sm p-5 invisible">
+                  <h1>SEARCH OPTIONS</h1>
                   Order by
                   <select name="category" id="category">
                       <option value="upload_date">upload date</option>
@@ -59,7 +56,6 @@ function Search() {
                   <br></br>
                   <button>Search</button>
               </div>
-          </div>
       </form>
     </>
   );
