@@ -21,9 +21,10 @@ function HomePage() {
 
 
     let fetchData = async () => {
-      let userData = await API.getUserdata();
       let data = await API.getHome(currPage, search, order, category);
       if (!ignore) setPageData(data);
+
+      let userData = await API.getUserdata();
       if (!ignore) setUserData(userData);
     };
 

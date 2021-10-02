@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Tag, Avatar, Button } from "antd";
+import { Tag, Avatar, Button, Rate } from "antd";
 import { Link, useParams } from "react-router-dom";
 import dashjs from "dashjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,7 +30,7 @@ function VideoPlayer(props) {
     <>
       <video
         ref={videoRef}
-        className="bg-black w-full h-80 object-contain object-center"
+        className="bg-black w-full h-80 object-contain object-center z-0"
         style={{ height: `${VIDEO_HEIGHT}rem` }}
         controls
       ></video>
@@ -67,7 +67,16 @@ function VideoAdminControls(props) {
 }
 
 function VideoView(props) {
-  let { data } = props;
+  let { data, id, setRating } = props;
+
+  function rate(rating) {
+    if (id == 0) {
+      // TODO: throw
+      return;
+    }
+    API.postRating(id, rating);
+    setRating(rating);
+  }
 
   // FIXME: new API endpoint
   return (
@@ -79,7 +88,7 @@ function VideoView(props) {
           <span className="float-right">
             <span className="font-bold">{data.Views}</span> Views
           </span>
-          <span className="float-right">{/* TODO(ivan): rating */}</span>
+          <div className="inline-block relative top-5 float-right left-16"><Rate allowHalf={true} value={data.Rating} onChange={rate}></Rate></div>
           <br />
           <span className="text-gray-600 text-xs">{data.UploadDate}</span>
         </div>
@@ -125,6 +134,8 @@ function VideoPage() {
   let { id } = useParams();
 
   const [pageData, setPageData] = useState(null);
+  const [rating, setRating] = useState(0.0);
+  const [userData, setUserData] = useState(null);
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
@@ -133,22 +144,26 @@ function VideoPage() {
     let fetchData = async () => {
       let data = await API.getVideo(id);
       if (!ignore) setPageData(data);
+      if (!ignore) setRating(data.Rating);
+
+      let userData = await API.getUserdata();
+      if (!ignore) setUserData(userData);
     };
 
     fetchData();
     return () => {
       ignore = true;
     };
-  }, [id]);
+  }, [id, rating]);
 
   if (pageData == null) return null;
 
   return (
     <>
-      <Header userData={pageData.L} />
+      <Header userData={userData} />
       <div className="flex justify-center mx-4">
-        <div className="max-w-screen-lg w-screen my-6">
-          <VideoView data={pageData} />
+        <div className="max-w-screen-lg w-screen my-6 z-0">
+          <VideoView data={pageData} id={id} setRating={setRating}/>
         </div>
         <div className="inline-block w-44 align-top float-right">
           <VideoList videos={pageData.RecommendedVideos} />
