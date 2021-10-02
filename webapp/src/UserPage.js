@@ -47,14 +47,14 @@ function UserPage() {
     return (
         <>
             <Header userData={userData} />
-            <div>
+            <div className="pt-10">
                 {/*lol oh no*/}
                 {/* TODO: add user profile image*/}
                 <div className={"flex justify-center mx-4"}>
-                    <img src="http://localhost:8082/static/images/placeholder.png" className={"rounded-full"}>
+                    <img src="http://localhost:8082/static/images/placeholder.png">
                     </img>
-                    <h1>{pageUserData.Username}</h1>
                 </div>
+                <h1 className={"flex justify-center"}>{pageUserData.Username}</h1>
                 {/* TODO: no more copy pasta! */}
                 <div className="flex justify-center mx-4 min-h-screen">
                     <div className="max-w-screen-lg w-screen my-6">
