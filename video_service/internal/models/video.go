@@ -266,7 +266,7 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 		// TODO: DRY
 		dialect := goqu.Dialect("postgres")
 		ds := dialect.
-			Select(goqu.COUNT("*")).
+			Select(goqu.COUNT(goqu.DISTINCT("videos.id"))).
 			From(
 				goqu.T("videos"),
 			)
@@ -277,11 +277,10 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 			goqu.T("tags"),
 			goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
 			Where(conditions...).
-			GroupBy(goqu.I("videos.id")).
 			Where(goqu.C("transcoded").Eq(true))
-
 		var err error
 		sql, _, err = ds.ToSQL()
+		log.Infof("Sql: %s", sql)
 		if err != nil {
 			return 0, err
 		}
