@@ -40,7 +40,7 @@ function Search() {
             <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
           }
         />
-              <div id="hidden-modal" className="absolute bg-white w-full max-w-sm p-5 invisible">
+              <div id="hidden-modal" className="absolute bg-white w-full max-w-sm p-5 space-y-3 invisible">
                   <h1>SEARCH OPTIONS</h1>
                   Order by
                   <select name="category" id="category">
@@ -54,7 +54,7 @@ function Search() {
                     <input type="radio" id="asc" name="order" value="asc"></input>
                             <label htmlFor="asc">Asc</label>
                   <br></br>
-                  <button>Search</button>
+                  <Button block type="primary" htmlType="submit" size="large">Submit</Button>
               </div>
       </form>
     </>
@@ -67,7 +67,7 @@ function LoggedInUserNav(props) {
   let menu = (
     <Menu>
       <Menu.Item key="profile" icon={<FontAwesomeIcon icon={faUser} />}>
-        <Link to={`/users/${userData.UserID}`}>Profile page</Link>
+        <Link to={`/users/${userData.userID}`}>Profile page</Link>
       </Menu.Item>
       <Menu.Item
         key="archive-requests"
