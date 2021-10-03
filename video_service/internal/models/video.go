@@ -280,7 +280,6 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 			Where(goqu.C("transcoded").Eq(true))
 		var err error
 		sql, _, err = ds.ToSQL()
-		log.Infof("Sql: %s", sql)
 		if err != nil {
 			return 0, err
 		}
