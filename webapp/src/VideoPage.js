@@ -99,7 +99,7 @@ function VideoView(props) {
               // TODO(ivan): add links to tags
               return (
                 <div key={idx} className="my-1 inline-block">
-                  <Tag>{tag}</Tag>
+                  <a href={`/?search=${tag}`}><Tag>{tag}</Tag></a>
                 </div>
               );
             })}
