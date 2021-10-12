@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { Link } from "react-router-dom";
+import { Rate } from "antd";
 
 const VIDEO_ELEMENT_WIDTH = "w-44";
 
@@ -15,8 +16,8 @@ function Video(props) {
             alt={video.Title}
             src={`${video.ThumbnailLoc}`}
           />
-          {/* TODO(ivan): star rating */}
-        </div>
+          <Rate className="relative -mt-8 z-30 float-right" allowHalf={true} disabled={true} value={video.Rating}></Rate>
+          </div>
         {/* TODO(ivan): deal with text truncation (hoping to have a multi-line text truncation,
                         which can't be done purely in css) */}
         <div className="text-xs font-bold w-full py-1">{video.Title}</div>

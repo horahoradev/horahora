@@ -57,7 +57,7 @@ function ArchivalPage() {
             Type URL to archive here: <input type="text" id="url">
             </input>
             <p></p>
-            <button className="background-blue" onClick={createNewArchival}>Submit</button>
+            <Button className="background-blue" onClick={createNewArchival}>Submit</Button>
             <p></p>
             {elements}
             </>
