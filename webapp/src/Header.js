@@ -121,12 +121,11 @@ function UserNav(props) {
 }
 
 function showModal(){
-    console.log(document.getElementById('hidden-search-modal'));
-    document.getElementById('hidden-search-modal').style.visibility = 'visible';
+    document.getElementById('hidden-search-modal').style.setProperty("visibility", 'visible', 'important');
 }
 
 function hideModal(){
-    document.getElementById('hidden-search-modal').style.visibility = 'hidden';
+    document.getElementById('hidden-search-modal').style.setProperty("visibility", 'hidden', 'important');
 }
 
 function Header(props) {
