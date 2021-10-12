@@ -40,7 +40,7 @@ function Search() {
             <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
           }
         />
-              <div id="hidden-modal" className="absolute bg-white w-full max-w-sm p-5 space-y-3 invisible">
+              <div id="hidden-search-modal" className="absolute bg-white w-full max-w-sm p-5 space-y-3 invisible">
                   <h1>SEARCH OPTIONS</h1>
                   Order by
                   <select name="category" id="category">
@@ -121,11 +121,12 @@ function UserNav(props) {
 }
 
 function showModal(){
-    document.getElementById('hidden-modal').style.visibility = 'visible';
+    console.log(document.getElementById('hidden-search-modal'));
+    document.getElementById('hidden-search-modal').style.visibility = 'visible';
 }
 
 function hideModal(){
-    document.getElementById('hidden-modal').style.visibility = 'hidden';
+    document.getElementById('hidden-search-modal').style.visibility = 'hidden';
 }
 
 function Header(props) {
