@@ -1,38 +1,50 @@
 import { useEffect, useState } from "react";
+import { useLocation } from 'react-router';
 
 import * as API from "./api";
 import Header from "./Header";
 import VideoList from "./VideoList";
-import Pagination from "./Pagination";
+import Paginatione from "./Pagination";
+import queryString from 'query-string';
 
 function HomePage() {
   const [pageData, setPageData] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [currPage, setPage] = useState(1);
+  const loc = useLocation();
+
+  const {order, category, search} = queryString.parse(loc.search);
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
     let ignore = false;
 
+
     let fetchData = async () => {
-      let data = await API.getHome();
+      let data = await API.getHome(currPage, search, order, category);
       if (!ignore) setPageData(data);
+
+      let userData = await API.getUserdata();
+      if (!ignore) setUserData(userData);
     };
 
     fetchData();
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [currPage, category, order, search]);
 
   if (pageData == null) return null;
 
   return (
     <>
-      <Header userData={pageData.L} />
-      <div className="flex justify-center mx-4">
-        <div className="max-w-screen-lg w-screen my-6">
-          <Pagination pagination={pageData.PaginationData} />
+      <Header userData={userData} />
+
+      <div className="flex justify-center mx-4 min-h-screen my-4">
+        <div className="max-w-screen-lg w-screen">
+          <h1 className="bold text-2xl">Number of videos: {pageData.PaginationData.NumberOfItems}</h1>
           <VideoList videos={pageData.Videos} />
-          <Pagination pagination={pageData.PaginationData} />
+          <Paginatione paginationData={pageData.PaginationData} onPageChange={setPage}/>
         </div>
       </div>
     </>

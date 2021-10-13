@@ -23,12 +23,9 @@ func (v RouteHandler) handleRating(c echo.Context) error {
 		return errors.New("could not assert videoID to int64")
 	}
 
-	ratings, ok := c.QueryParams()["rating"]
-	if !ok {
-		return errors.New("no rating in query string")
-	}
+	ratingStr := c.FormValue("rating")
 
-	rating, err := strconv.ParseFloat(ratings[0], 64)
+	rating, err := strconv.ParseFloat(ratingStr, 64)
 	if err != nil {
 		return err
 	}
@@ -37,6 +34,8 @@ func (v RouteHandler) handleRating(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	log.Info(videoIDInt)
 
 	rateReq := videoproto.VideoRating{
 		UserID:  profile.UserID,
