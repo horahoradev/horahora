@@ -165,7 +165,7 @@ function VideoPage() {
         <div className="max-w-screen-lg w-screen my-6 z-0">
           <VideoView data={pageData} id={id} setRating={setRating}/>
         </div>
-        <div className="inline-block w-44 align-top float-right">
+        <div className="inline-block w-44 align-top float-left">
           <VideoList videos={pageData.RecommendedVideos} />
         </div>
       </div>
