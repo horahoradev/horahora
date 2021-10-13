@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	baseURL    = "http://localhost:8082"
+	baseURL    = "http://localhost:8083"
 	sm9TestTag = "今年レンコンコマンダー常盤"
 )
 
@@ -106,9 +106,11 @@ func makeArchiveRequest(client *http.Client, inpURL string) {
 		"url":      {inpURL},
 	})
 
-	if response.StatusCode != 301 {
+	if response.StatusCode != 200 {
 		log.Fatalf("bad archival request response status: %d", response.StatusCode)
 	}
+
+	log.Printf("Made archival request for %s", inpURL)
 
 	return
 }
@@ -133,7 +135,7 @@ func authenticate(username, password string) *http.Client {
 	// 	log.Panicf("failed to post with err: %s", err)
 	// }
 
-	if response.StatusCode != 301 {
+	if response.StatusCode != 200 {
 		log.Panicf("bad auth status code: %d", response.StatusCode)
 	}
 

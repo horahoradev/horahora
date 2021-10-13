@@ -41,7 +41,7 @@ function ArchivalPage() {
         return () => {
             ignore = true;
         };
-    }, [archivalSubscriptions]);
+    }, []);
 
     let elements = [];
     if (archivalSubscriptions) {
