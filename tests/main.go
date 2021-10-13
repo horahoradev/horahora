@@ -26,12 +26,12 @@ func main() {
 	//makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
 	//makeArchiveRequest(client, "bilibili", "channel", "1963331522")
 
-	makeArchiveRequest(client, "https://www.nicovideo.jp/search/TEST_sm9")
-	makeArchiveRequest(client, "https://www.nicovideo.jp/user/119163275")
-	makeArchiveRequest(client, "https://www.nicovideo.jp/mylist/58583228")
-
-	makeArchiveRequest(client, "https://www.youtube.com/channel/UCF43Xa8ZNQqKs1jrhxlntlw")            // Some random channel I found with short videos. Good enough!
-	makeArchiveRequest(client, "https://www.youtube.com/playlist?list=PLz2PzeiUFQLuZ6k_e50OEK0xd_NAy7xat") // random playlist with one entry
+	//makeArchiveRequest(client, "https://www.nicovideo.jp/search/TEST_sm9")
+	//makeArchiveRequest(client, "https://www.nicovideo.jp/user/119163275")
+	//makeArchiveRequest(client, "https://www.nicovideo.jp/mylist/58583228")
+	//
+	//makeArchiveRequest(client, "https://www.youtube.com/channel/UCF43Xa8ZNQqKs1jrhxlntlw")            // Some random channel I found with short videos. Good enough!
+	//makeArchiveRequest(client, "https://www.youtube.com/playlist?list=PLz2PzeiUFQLuZ6k_e50OEK0xd_NAy7xat") // random playlist with one entry
 
 	// Are videos being downloaded and transcoded correctly?
 	for start := time.Now(); time.Since(start) < time.Minute*30; {
@@ -87,13 +87,14 @@ func main() {
 }
 
 func pageHasVideos(client *http.Client, tag string, count int) error {
-	response, _ := client.Get(baseURL + fmt.Sprintf("/?search=%s&category=upload_date", tag))
+	url := baseURL + fmt.Sprintf("/home?search=%s&category=upload_date&order=desc", tag)
+	response, _ := client.Get(url)
 	cont, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return err
 	}
 
-	c := strings.Count(string(cont), "href=\"/videos/")
+	c := strings.Count(string(cont), "VideoID")
 	if c < count {
 		return fmt.Errorf("page does not contain the right number of videos for %s. Found: %d", tag, c)
 	}

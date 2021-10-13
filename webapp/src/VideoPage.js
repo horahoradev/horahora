@@ -30,7 +30,7 @@ function VideoPlayer(props) {
     <>
       <video
         ref={videoRef}
-        className="bg-black w-full h-80 object-contain object-center z-0"
+        className="bg-black w-full object-contain object-center z-0"
         style={{ height: `${VIDEO_HEIGHT}rem` }}
         controls
       ></video>
@@ -80,7 +80,7 @@ function VideoView(props) {
 
   // FIXME: new API endpoint
   return (
-    <div className="bg-white border" style={{ width: `${VIDEO_WIDTH}rem` }}>
+    <div className="bg-white border max-h-screen">
       <VideoPlayer url={data.MPDLoc} />
       <div className="p-4">
         <div>
@@ -165,7 +165,7 @@ function VideoPage() {
         <div className="max-w-screen-lg w-screen my-6 z-0">
           <VideoView data={pageData} id={id} setRating={setRating}/>
         </div>
-        <div className="inline-block w-44 align-top float-left">
+        <div className="inline-block w-44 align-top float-right">
           <VideoList videos={pageData.RecommendedVideos} />
         </div>
       </div>
