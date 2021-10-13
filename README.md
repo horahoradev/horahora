@@ -15,8 +15,6 @@ It allows you to:
 
 Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 
-Note: the above images are designs, rather than screenshots of the current frontend. The current frontend is essentially a worse version of the above. PRs are welcome 😉 (😭)
-
 https://discord.gg/vfwfpctJRZ
 
 ## Local Use Instructions
