@@ -12,7 +12,7 @@ services:
       - VideoServiceGRPCAddress=videoservice:7777
       - SchedulerServiceGRPCAddress=scheduler:7777
       - JaegerAddress=
-  react_frontend:
+  react_app:
     build: webapp
     restart: always
     ports:
