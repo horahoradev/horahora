@@ -12,6 +12,13 @@ services:
       - VideoServiceGRPCAddress=videoservice:7777
       - SchedulerServiceGRPCAddress=scheduler:7777
       - JaegerAddress=
+  react_frontend:
+    build: webapp
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./webapp:/webapp
   web_api:
     $FRONT_API_BUILD_DIRECTIVE
     restart: always
@@ -157,3 +164,4 @@ services:
 
 volumes:
   postgresdata:
+
