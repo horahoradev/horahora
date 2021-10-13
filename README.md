@@ -34,7 +34,7 @@ https://discord.gg/vfwfpctJRZ
   If you want to use S3, you need to include your aws credentials and config in $HOME/.aws. The config and credentials will be mounted into the relevant services at runtime. See https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html for more information.
 
 3. sudo make up
-4. Visit localhost:8082 (or if it doesn't work initially, try to wait a minute)
+4. Visit localhost:3000 (or if it doesn't work initially, try to wait a minute)
     - if it never works, check the container logs, and/or bug me on discord
     - you'll need to login as admin/admin to view videos that have been encoded. There's an approval workflow which prevents unapproved videos from being viewed by regular users.
 5. If everything comes up correctly, once you're logged in, visit the archival requests tab, and add a new category of content to be archived. If everything works, videos will start to be downloaded, and will be made available after a delay.

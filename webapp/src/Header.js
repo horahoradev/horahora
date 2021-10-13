@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import {useCallback, useState} from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,25 +8,54 @@ import {
   faSignOutAlt,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { useHistory } from 'react-router-dom';
 import { Button, Dropdown, Input, Menu } from "antd";
 
 function Search() {
-  let onSubmit = useCallback((e) => {
-    e.preventDefault();
-    // TODO(ivan): Search
-  }, []);
+    const [redirectVal, setRedirectVal] = useState(null);
+
+    let onSubmit = useCallback((e) => {
+        e.preventDefault();
+        const category = document.getElementById('category').value;
+        const order = document.querySelector('input[name="order"]:checked').value;
+        const search = document.querySelector('input[name="search"]').value;
+
+        setRedirectVal(`/?search=${search}&order=${order}&category=${category}`)
+    }, []);
+
+    const history = useHistory();
+    if (redirectVal){
+        history.push(redirectVal);
+        setRedirectVal(null);
+    }
 
   return (
     <>
-      <form onSubmit={onSubmit} className="w-full max-w-sm">
+      <form onSubmit={onSubmit} className="w-full max-w-sm z-50" onMouseEnter={showModal} onMouseLeave={hideModal}>
         <Input
-          name="username"
+          name="search"
           size="large"
           placeholder="Search"
           prefix={
             <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
           }
         />
+              <div id="hidden-search-modal" className="absolute bg-white w-full max-w-sm p-5 space-y-3 invisible">
+                  <h1>SEARCH OPTIONS</h1>
+                  Order by
+                  <select name="category" id="category">
+                      <option value="upload_date">upload date</option>
+                      <option value="rating">rating</option>
+                      <option value="views">views</option>
+                  </select>
+                  <br></br>
+                    <input type="radio" id="desc" name="order" value="desc"></input>
+                          <label htmlFor="desc">Desc</label>
+                    <input type="radio" id="asc" name="order" value="asc"></input>
+                            <label htmlFor="asc">Asc</label>
+                  <br></br>
+                  <Button block type="primary" htmlType="submit" size="large">Submit</Button>
+              </div>
       </form>
     </>
   );
@@ -38,7 +67,7 @@ function LoggedInUserNav(props) {
   let menu = (
     <Menu>
       <Menu.Item key="profile" icon={<FontAwesomeIcon icon={faUser} />}>
-        <Link to={`/users/${userData.UserID}`}>Profile page</Link>
+        <Link to={`/users/${userData.userID}`}>Profile page</Link>
       </Menu.Item>
       <Menu.Item
         key="archive-requests"
@@ -60,7 +89,7 @@ function LoggedInUserNav(props) {
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
-          {userData.Username}
+          {userData.username}
           <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
         </Button>
       </Dropdown>
@@ -84,11 +113,19 @@ function LoggedOutUserNav() {
 function UserNav(props) {
   const { userData } = props;
 
-  if (userData.Username) {
+  if (userData && userData.username) {
     return <LoggedInUserNav userData={userData} />;
   } else {
     return <LoggedOutUserNav />;
   }
+}
+
+function showModal(){
+    document.getElementById('hidden-search-modal').style.setProperty("visibility", 'visible', 'important');
+}
+
+function hideModal(){
+    document.getElementById('hidden-search-modal').style.setProperty("visibility", 'hidden', 'important');
 }
 
 function Header(props) {

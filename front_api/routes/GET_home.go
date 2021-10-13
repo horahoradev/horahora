@@ -3,7 +3,6 @@ package routes
 import (
 	"context"
 	"errors"
-	"fmt"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -24,7 +23,7 @@ type HomePageData struct {
 // Response is of the form: {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":9,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 func (h *RouteHandler) getHome(c echo.Context) error {
 	// TODO: verify no sql injection lol
-	tag, err := url.QueryUnescape(c.QueryParam("tag"))
+	search, err := url.QueryUnescape(c.QueryParam("search"))
 	if err != nil {
 		return err
 	}
@@ -60,11 +59,13 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	pageNumber := getPageNumber(c)
 
+
+
 	// TODO: if request times out, maybe provide a default list of good videos
 	req := videoproto.VideoQueryConfig{
 		OrderBy:        orderBy,
 		Direction:      order,
-		SearchVal:      tag,
+		SearchVal:      search,
 		PageNumber:     pageNumber,
 		ShowUnapproved: showUnapproved,
 	}
@@ -75,23 +76,15 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		return errors.New("Could not retrieve video list")
 	}
 
-	pageRange, err := getPageRange(int(videoList.NumberOfVideos), int(pageNumber))
-	if err != nil {
-		err1 := fmt.Errorf("failed to calculate page range. Err: %s", err)
-		log.Error(err1)
-		pageRange = []int{1}
-	}
-
-	queryStrings := generateQueryParams(pageRange, c)
 
 	data := HomePageData{
 		PaginationData: PaginationData{
-			Pages:                pageRange,
-			PathsAndQueryStrings: queryStrings,
+			NumberOfItems:		 int(videoList.NumberOfVideos),
 			CurrentPage:          int(pageNumber),
 		},
 	}
 
+	data.Videos = []Video{}
 	for _, video := range videoList.Videos {
 		data.Videos = append(data.Videos, Video{
 			Title:        video.VideoTitle,

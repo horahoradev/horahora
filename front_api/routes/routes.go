@@ -33,6 +33,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 
 	e.GET("/home", r.getHome)
 	e.GET("/users/:id", r.getUser)
+	e.GET("/currentuserprofile/", r.getCurrentUserProfile)
 
 	e.GET("/videos/:id", r.getVideo)
 	e.POST("/rate/:id", r.handleRating)
@@ -82,13 +83,7 @@ type VideoDetail struct {
 	ProfilePicture   string
 	UploadDate       string // should be a datetime
 	Tags             []string
-}
-
-type LoggedInUserData struct {
-	UserID            int64
-	Username          string
-	ProfilePictureURL string
-	Rank              int32
+	RecommendedVideos []Video
 }
 
 type ProfileData struct {
@@ -100,8 +95,7 @@ type ProfileData struct {
 }
 
 type PaginationData struct {
-	PathsAndQueryStrings []string
-	Pages                []int
+	NumberOfItems int
 	CurrentPage          int
 }
 
@@ -122,19 +116,6 @@ func setCookie(c echo.Context, jwt string) error {
 	c.SetCookie(cookie)
 
 	return c.JSON(http.StatusOK, nil)
-}
-
-func generateQueryParams(pageRange []int, c echo.Context) []string {
-	// This is ugly
-	var queryStrings []string
-	for _, page := range pageRange {
-		p := strconv.FormatInt(int64(page), 10)
-
-		c.QueryParams().Set("page", p) // FIXME
-		queryStrings = append(queryStrings, c.Request().URL.Path+"?"+c.QueryParams().Encode())
-	}
-
-	return queryStrings
 }
 
 type CommentData struct {

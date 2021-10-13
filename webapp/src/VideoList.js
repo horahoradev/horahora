@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { Link } from "react-router-dom";
+import { Rate } from "antd";
 
 const VIDEO_ELEMENT_WIDTH = "w-44";
 
@@ -15,8 +16,8 @@ function Video(props) {
             alt={video.Title}
             src={`${video.ThumbnailLoc}`}
           />
-          {/* TODO(ivan): star rating */}
-        </div>
+          <Rate className="relative -mt-8 z-30 float-right" allowHalf={true} disabled={true} value={video.Rating}></Rate>
+          </div>
         {/* TODO(ivan): deal with text truncation (hoping to have a multi-line text truncation,
                         which can't be done purely in css) */}
         <div className="text-xs font-bold w-full py-1">{video.Title}</div>
@@ -29,9 +30,12 @@ function Video(props) {
 function VideoList(props) {
   const { videos } = props;
 
-  let elements = [
-    videos.map((video, idx) => <Video key={idx} video={video} />),
-  ];
+  let elements = [];
+  if (videos) {
+    elements = [
+      videos.map((video, idx) => <Video key={idx} video={video}/>),
+    ];
+  }
 
   // add padding elements so the items in the last row on this flexbox grid
   // get aligned with the other rows
@@ -42,7 +46,7 @@ function VideoList(props) {
   }
 
   return (
-    <div className="my-4 rounded border p-4 bg-white flex flex-wrap justify-around">
+    <div className="my-4 rounded border p-4 bg-white flex flex-wrap justify-around min-h-screen">
       {elements}
     </div>
   );

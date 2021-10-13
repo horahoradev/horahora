@@ -2,6 +2,7 @@ package routes
 
 import (
 	"context"
+	"github.com/labstack/gommon/log"
 	"math"
 	"net/http"
 	"strconv"
@@ -47,6 +48,33 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		rating = 0.00
 	}
 
+	profile, err := v.getUserProfileInfo(c)
+	if err != nil {
+		return err
+	}
+
+	recResp, err := v.v.GetVideoRecommendations(context.Background(), &videoproto.RecReq{
+		UserId: profile.UserID,
+	})
+	if err != nil {
+		log.Errorf("Could not retrieve recommendations. Err: %s", err)
+		// Continue anyway
+	}
+
+	recVideos := []Video{}
+	if recResp != nil {
+		for _, rec := range recResp.Videos {
+			// FIXME: fill other fields after modifying protocol
+			vid := Video{
+				Title:        rec.VideoTitle,
+				VideoID:      rec.VideoID,
+				ThumbnailLoc: rec.ThumbnailLoc,
+			}
+
+			recVideos = append(recVideos, vid)
+		}
+	}
+
 	data := VideoDetail{
 		Title:            videoInfo.VideoTitle,
 		MPDLoc:           videoInfo.VideoLoc, // FIXME: fix this in videoservice LOL this is embarrassing
@@ -61,6 +89,7 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 		UploadDate:       videoInfo.UploadDate,
 		VideoID:          videoInfo.VideoID,
 		Tags:             videoInfo.Tags,
+		RecommendedVideos: recVideos,
 	}
 
 	return c.JSON(http.StatusOK, data)
