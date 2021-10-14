@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
 	"net/url"
@@ -22,17 +21,40 @@ func NewArchiveRequest(db *sqlx.DB, rs *redsync.Redsync) *ArchiveRequestRepo {
 		Redsync: rs}
 }
 
-func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]string, error) {
-	sql := "SELECT Url FROM user_download_subscriptions s " +
-		"INNER JOIN downloads d ON d.id = s.download_id WHERE user_id=$1"
-	var urls []string
+type Event struct {
+	ParentURL string
+	VideoURL string
+	Message string
+	EventTimestamp string
+}
 
-	err := m.Db.Select(&urls, sql, userID)
+
+func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]string, []Event,  error) {
+	sql := "SELECT Url, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM user_download_subscriptions s " +
+		"INNER JOIN downloads ON downloads.id = s.download_id LEFT JOIN archival_events ON s.download_id = archival_events.download_id WHERE s.user_id=$1"
+
+	rows, err := m.Db.Query(sql, userID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return urls, nil
+	var urls []string
+	var events []Event
+
+	for rows.Next() {
+		var url string
+		var event Event
+
+		err = rows.Scan(&url, &event.VideoURL, &event.ParentURL, &event.Message, &event.EventTimestamp)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		urls = append(urls, url)
+		events = append(events, event)
+	}
+
+	return urls, events, nil
 }
 
 func (m *ArchiveRequestRepo) New(url string, userID int64) error {

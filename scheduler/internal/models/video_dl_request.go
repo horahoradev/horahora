@@ -53,3 +53,18 @@ func (v *VideoDLRequest) AcquireLockForVideo() error {
 	mut := v.Redsync.NewMutex(v.VideoID, redsync.SetExpiry(time.Minute*30))
 	return mut.Lock()
 }
+
+
+type event string
+
+const (
+	Scheduled event = "Video has been scheduled for download"
+	Error event = "Video could not be downloaded, failed with an error"
+	Downloaded event = "Video has been downloaded successfully, and uploaded to videoservice"
+)
+
+func (v *VideoDLRequest) RecordEvent(inpEvent event) error {
+	sql := "insert into archival_events (video_url, download_id, parent_url, event_message, event_time) VALUES ($1, $2, $3, Now())"
+	_, err := v.Db.Exec(sql, v.DownloaddID, v.URL, v.ParentURL, inpEvent)
+	return err
+}

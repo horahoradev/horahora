@@ -17,7 +17,16 @@ message listArchivalEntriesRequest {
 
 message listArchivalEntriesResponse {
     repeated contentArchivalEntry entries = 1;
+    repeated archivalEvent events = 2;
 }
+
+message archivalEvent {
+    string video_url = 1;
+    string parent_url = 2;
+    string message = 3;
+    string timestamp = 4;
+}
+
 
 message URLRequest {
     string url = 1;

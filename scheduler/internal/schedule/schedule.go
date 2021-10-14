@@ -43,6 +43,11 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 
 			for _, item := range itemsToSchedule {
 				log.Infof("Sending url %s with parent %s to be processed", item.URL, item.ParentURL)
+				err = item.RecordEvent(models.Scheduled)
+				if err != nil {
+					log.Errorf("Could not record scheduled event. Err: %s. Continuing...", err)
+				}
+
 				videoQueue <- item
 			}
 		}

@@ -51,7 +51,7 @@ func (s schedulerServer) DlURL(ctx context.Context, req *proto.URLRequest) (*pro
 }
 
 func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.ListArchivalEntriesRequest) (*proto.ListArchivalEntriesResponse, error) {
-	urls, err := s.M.GetContentArchivalRequests(req.UserID)
+	urls, events, err := s.M.GetContentArchivalRequests(req.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +67,21 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 		entries = append(entries, &entry)
 	}
 
+	var protoEvents []*proto.ArchivalEvent
+	for _, event := range events {
+		eventObj := proto.ArchivalEvent{
+			VideoUrl:  event.VideoURL,
+			ParentUrl: event.ParentURL,
+			Message:   event.Message,
+			Timestamp: event.EventTimestamp,
+		}
+		protoEvents = append(protoEvents, &eventObj)
+	}
+
 	resp := proto.ListArchivalEntriesResponse{
 		Entries: entries,
+		Events: protoEvents,
 	}
+
 	return &resp, nil
 }
