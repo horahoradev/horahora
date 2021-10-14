@@ -52,8 +52,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}_frontend
       - name: Build the stack
         run: make up
-      - name: wait 120s
-        run: sleep 120s
+      - name: wait 180s
+        run: sleep 180s
       - name: Run integration tests
         run: go run tests/main.go
       - name: print relevant logs (frontend)
