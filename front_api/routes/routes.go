@@ -101,6 +101,7 @@ type PaginationData struct {
 
 type ArchiveRequestsPageData struct {
 	ArchivalRequests []*schedulerproto.ContentArchivalEntry
+	ArchivalEvents []*schedulerproto.ArchivalEvent
 }
 
 func setCookie(c echo.Context, jwt string) error {
