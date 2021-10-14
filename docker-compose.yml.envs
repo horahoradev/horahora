@@ -16,7 +16,7 @@ services:
     build: webapp
     restart: always
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ./webapp:/webapp
   web_api:

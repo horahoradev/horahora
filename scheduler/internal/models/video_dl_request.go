@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-redsync/redsync"
@@ -58,13 +59,19 @@ func (v *VideoDLRequest) AcquireLockForVideo() error {
 type event string
 
 const (
-	Scheduled event = "Video has been scheduled for download"
-	Error event = "Video could not be downloaded, failed with an error"
-	Downloaded event = "Video has been downloaded successfully, and uploaded to videoservice"
+	Scheduled event = "Video %s from %s has been scheduled for download"
+	Error event = "Video %s from %s could not be downloaded, failed with an error"
+	Downloaded event = "Video %s from %s has been downloaded successfully, and uploaded to videoservice"
 )
 
 func (v *VideoDLRequest) RecordEvent(inpEvent event) error {
-	sql := "insert into archival_events (video_url, download_id, parent_url, event_message, event_time) VALUES ($1, $2, $3, Now())"
-	_, err := v.Db.Exec(sql, v.DownloaddID, v.URL, v.ParentURL, inpEvent)
+	website, err := GetWebsiteFromURL(v.ParentURL)
+	if err != nil {
+		return err
+	}
+
+	formattedMsg := fmt.Sprintf(string(inpEvent), v.VideoID, website)
+	sql := "insert into archival_events (video_url, download_id, parent_url, event_message, event_time) VALUES ($1, $2, $3, $4, Now())"
+	_, err = v.Db.Exec(sql,v.URL, v.DownloaddID, v.ParentURL, formattedMsg)
 	return err
 }

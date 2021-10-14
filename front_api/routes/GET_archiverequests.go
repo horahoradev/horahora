@@ -27,6 +27,7 @@ func (r RouteHandler) getArchiveRequests(c echo.Context) error {
 	}
 
 	data.ArchivalRequests = resp.Entries
+	data.ArchivalEvents = resp.Events
 
 	return c.JSON(http.StatusOK, data)
 }

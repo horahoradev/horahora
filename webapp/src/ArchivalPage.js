@@ -1,22 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Tag, Avatar, Button } from "antd";
-import { Link, useParams } from "react-router-dom";
-import dashjs from "dashjs";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { Table, Timeline, Button } from "antd";
+
 
 import * as API from "./api";
 import Header from "./Header";
-import { UserRank } from "./api/types";
-import VideoList from "./VideoList";
-import Paginatione from "./Pagination";
-
-// {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":11,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 
 
 function ArchivalPage() {
     const [userData, setUserData] = useState(null);
     const [archivalSubscriptions, setArchivalSubscriptions] = useState([]);
+    const [timelineEvents, setTimelineEvents] = useState([]);
 
     function createNewArchival() {
         const url = document.getElementById('url').value;
@@ -34,7 +27,11 @@ function ArchivalPage() {
             if (!ignore) setUserData(userData);
 
             let subscriptionData = await API.getArchivalSubscriptions();
-            if (!ignore) setArchivalSubscriptions(subscriptionData.ArchivalRequests);
+            if (!ignore) {
+                setArchivalSubscriptions(subscriptionData.ArchivalRequests);
+                setTimelineEvents(subscriptionData.ArchivalEvents);
+            }
+
         };
 
         fetchData();
@@ -43,12 +40,20 @@ function ArchivalPage() {
         };
     }, []);
 
-    let elements = [];
-    if (archivalSubscriptions) {
-        elements = [
-            archivalSubscriptions.map((subscription, idx) => <p>{subscription.url}</p>),
+    let timelineElements = [];
+    if (timelineEvents) {
+        timelineElements = [
+            timelineEvents.map((event, idx) => <Timeline.Item>{event.message}<br></br>{event.timestamp}</Timeline.Item>),
         ];
     }
+
+    const columns = [
+        {
+            title: 'URL',
+            dataIndex: 'url',
+            key: 'url',
+        }
+    ];
 
     return (
         <>
@@ -59,7 +64,18 @@ function ArchivalPage() {
             <p></p>
             <Button className="background-blue" onClick={createNewArchival}>Submit</Button>
             <p></p>
-            {elements}
+
+            <div className={"inline-block"}>
+                <Table dataSource={archivalSubscriptions} columns={columns}/>
+            </div>
+
+            <div className={"inline-block float-right   "}>
+                <Timeline mode={"alternate"}>
+                    {timelineElements}
+                </Timeline>
+            </div>
+
+
             </>
     );
 }
