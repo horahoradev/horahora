@@ -137,6 +137,11 @@ currVideoLoop:
 			log.Errorf("Failed to download %s in %d attempts", video.URL, d.numberOfRetries)
 			err := video.SetDownloadFailed()
 			if err != nil {
+				err = video.RecordEvent(models.Error)
+				if err != nil {
+					log.Errorf("Could not record error event. Err: %s", err)
+				}
+
 				log.Errorf("Could not set download failed for video %s. Err: %s", video.VideoID, err)
 			}
 			break currVideoLoop
@@ -329,6 +334,11 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	}
 
 	log.Infof("Video %s has been uploaded as video VideoID %d", video.URL, resp.VideoID)
+	err = video.RecordEvent(models.Downloaded)
+	if err != nil {
+		log.Errorf("Could not record downloaded event. Err: %s. Continuing...", err)
+	}
+
 	return nil
 }
 
