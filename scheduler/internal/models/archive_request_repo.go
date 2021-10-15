@@ -62,17 +62,8 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 			events = append(events, event)
 		}
 
-		// ok so this is really dumb but I'm going to let it go for now.
-		// This prevents duplicates
-		// FIXME
-		_, ok := urlMap[archive.Url]
-		if !ok {
-			urlMap[archive.Url] = true
-			archives = append(archives,archive)
-		}
-
-		progressSql := "WITH numerator AS (select count(*) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1), " +
-			"denominator AS (select count(*) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.download_id WHERE downloads_to_videos.download_id = $1) " +
+		progressSql := "WITH numerator AS (select count(DISTINCT videos.video_id) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1 AND dlstatus=1), " +
+			"denominator AS (select count(DISTINCT videos.video_id) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1) " +
 			"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator"
 
 		row := m.Db.QueryRow(progressSql, downloadID)
@@ -85,11 +76,25 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 			return nil, nil, err
 		}
 
+		// ok so this is really dumb but I'm going to let it go for now.
+		// This prevents duplicates
+		// FIXME
+		_, ok := urlMap[archive.Url]
+		if !ok {
+			urlMap[archive.Url] = true
+			archives = append(archives,archive)
+		}
+
+
 	}
 
 	// This slice is simiilarly dumb
 	// also a minor FIXME
-	return archives, events[:5], nil
+	if events != nil {
+		events = events[:5]
+	}
+
+	return archives, events, nil
 }
 
 func (m *ArchiveRequestRepo) New(url string, userID int64) error {

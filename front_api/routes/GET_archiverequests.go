@@ -2,7 +2,6 @@ package routes
 
 import (
 	"context"
-	"github.com/labstack/gommon/log"
 	"net/http"
 
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -27,12 +26,8 @@ func (r RouteHandler) getArchiveRequests(c echo.Context) error {
 		return err
 	}
 
-	resp.Entries
-
 	data.ArchivalRequests = resp.Entries
 	data.ArchivalEvents = resp.Events
-
-	log.Info(data.ArchivalRequests)
 
 	return c.JSON(http.StatusOK, data)
 }
