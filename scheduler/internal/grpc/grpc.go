@@ -51,17 +51,19 @@ func (s schedulerServer) DlURL(ctx context.Context, req *proto.URLRequest) (*pro
 }
 
 func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.ListArchivalEntriesRequest) (*proto.ListArchivalEntriesResponse, error) {
-	urls, events, err := s.M.GetContentArchivalRequests(req.UserID)
+	archives, events, err := s.M.GetContentArchivalRequests(req.UserID)
 	if err != nil {
 		return nil, err
 	}
 
 	var entries []*proto.ContentArchivalEntry
 
-	for _, url := range urls {
+	for _, archive := range archives {
 		entry := proto.ContentArchivalEntry{
 			UserID:       0, // In the future, will be expanded to allow queries for different users archival requests
-			Url: url,
+			Url: archive.Url,
+			ArchivedVideos: archive.Numerator,
+			CurrentTotalVideos: archive.Denominator
 		}
 
 		entries = append(entries, &entry)
