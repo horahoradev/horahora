@@ -5,6 +5,7 @@ import (
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
 	"net/url"
+	log "github.com/sirupsen/logrus"
 )
 
 // ArchiveRequest is the model for the creation of new archive requests
@@ -68,22 +69,24 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 		_, ok := urlMap[archive.Url]
 		if !ok {
 			urlMap[archive.Url] = true
-			urls = append(archives,archive)
+			archives = append(archives,archive)
 		}
 
 		progressSql := "WITH numerator AS (select count(*) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1), " +
 			"denominator AS (select count(*) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.download_id WHERE downloads_to_videos.download_id = $1) " +
 			"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator"
 
-		rows, err := m.Db.QueryRow(progressSql, downloadID)
+		row := m.Db.QueryRow(progressSql, downloadID)
 		if err != nil {
 			return nil, nil, err
 		}
 
-		err = rows.Scan(&archive.Numerator, &archive.Denominator)
+		err = row.Scan(&archive.Numerator, &archive.Denominator)
 		if err != nil {
 			return nil, nil, err
 		}
+
+		log.Infof("%d, %d", archive.Numerator, archive.Denominator)
 
 	}
 
