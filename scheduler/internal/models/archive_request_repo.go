@@ -5,7 +5,6 @@ import (
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
 	"net/url"
-	log "github.com/sirupsen/logrus"
 )
 
 // ArchiveRequest is the model for the creation of new archive requests
@@ -85,8 +84,6 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 		if err != nil {
 			return nil, nil, err
 		}
-
-		log.Infof("%d, %d", archive.Numerator, archive.Denominator)
 
 	}
 
