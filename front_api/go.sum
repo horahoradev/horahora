@@ -94,6 +94,8 @@ github.com/hashicorp/go-multierror v1.0.0 h1:iVjPR7a6H0tWELX5NxNe7bYopibicUzc7uP
 github.com/hashicorp/go-multierror v1.0.0/go.mod h1:dHtQlpGsu+cZNNAkkCN/P3hoUDHhCYQXV3UM06sGGrk=
 github.com/horahoradev/horahora/scheduler v0.0.0-20211015164738-fa0e5e97a918 h1:jUsZuRN25LCqICLhKin0SKpYCFqA4L8xEQ8GzCjyiy0=
 github.com/horahoradev/horahora/scheduler v0.0.0-20211015164738-fa0e5e97a918/go.mod h1:qF/Bv0G+MIsPl2NwnAY5AP/MFfIrI7SAe1gUkJkRauM=
+github.com/horahoradev/horahora/scheduler v0.0.0-20211015165920-d63d3d376316 h1:RzXstssXVJkDzs+Ya9iOycsDvgymPXAym86/nY93kq8=
+github.com/horahoradev/horahora/scheduler v0.0.0-20211015165920-d63d3d376316/go.mod h1:qF/Bv0G+MIsPl2NwnAY5AP/MFfIrI7SAe1gUkJkRauM=
 github.com/horahoradev/horahora/user_service v0.0.0-20210710200304-9892f28bcdf0/go.mod h1:c2+68tn7GMxziU+YXln0KRssXWtaB8kYqe8zONW5PN4=
 github.com/horahoradev/horahora/user_service v0.0.0-20210922030328-dee03a489f47/go.mod h1:z8FQUYNG7s+DiNmMkdAPG8BwuWjY0zUT+3980/VCjUM=
 github.com/horahoradev/horahora/user_service v0.0.0-20210923020008-dacaa1a9536b h1:TBzBCR+HuXppUwIEGq39oFUqmm77R3Qz+eCll9BsKx0=

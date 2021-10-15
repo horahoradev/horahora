@@ -6,10 +6,19 @@ import * as API from "./api";
 import Header from "./Header";
 
 
+
 function ArchivalPage() {
     const [userData, setUserData] = useState(null);
     const [archivalSubscriptions, setArchivalSubscriptions] = useState([]);
     const [timelineEvents, setTimelineEvents] = useState([]);
+
+    // I think this is a hack? looks okay to me though!
+    const [timerVal, setTimerVal] = useState(0);
+
+    function reloadPage() {
+        setTimerVal(timerVal + 1);
+    }
+    setInterval(reloadPage, 30000);
 
     function createNewArchival() {
         const url = document.getElementById('url').value;
@@ -38,7 +47,7 @@ function ArchivalPage() {
         return () => {
             ignore = true;
         };
-    }, []);
+    }, [timerVal]);
 
     let timelineElements = [];
     if (timelineEvents) {
@@ -50,8 +59,8 @@ function ArchivalPage() {
     const columns = [
         {
             title: 'URL',
-            dataIndex: 'url',
-            key: 'url',
+            dataIndex: 'Url',
+            key: 'Url',
         },
         {
             title: 'Downloaded videos',
