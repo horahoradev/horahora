@@ -36,7 +36,7 @@ message URLRequest {
 message contentArchivalEntry {
     int64 UserID = 1;
     string url = 2;
-    string archivedVideos = 3;
-    string currentTotalVideos = 4;
+    uint64 archivedVideos = 3;
+    uint64 currentTotalVideos = 4;
 }
 

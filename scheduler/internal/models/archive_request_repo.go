@@ -21,6 +21,12 @@ func NewArchiveRequest(db *sqlx.DB, rs *redsync.Redsync) *ArchiveRequestRepo {
 		Redsync: rs}
 }
 
+type Archival struct {
+	Url string
+	Denominator uint64
+	Numerator uint64
+}
+
 type Event struct {
 	ParentURL string
 	VideoURL string
@@ -29,8 +35,8 @@ type Event struct {
 }
 
 
-func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]string, []Event,  error) {
-	sql := "SELECT Url, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM user_download_subscriptions s " +
+func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archival, []Event,  error) {
+	sql := "SELECT Url, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM user_download_subscriptions s " +
 		"INNER JOIN downloads ON downloads.id = s.download_id LEFT JOIN archival_events ON s.download_id = archival_events.download_id WHERE s.user_id=$1 ORDER BY event_time DESC"
 
 	rows, err := m.Db.Query(sql, userID)
@@ -38,15 +44,16 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]string,
 		return nil, nil, err
 	}
 
-	var urls []string
+	var archives []Archival
 	var events []Event
 	urlMap := make(map[string]bool)
 
 	for rows.Next() {
-		var url string
+		var archive Archival
 		var event Event
+		var downloadID uint64
 
-		err = rows.Scan(&url, &event.VideoURL, &event.ParentURL, &event.Message, &event.EventTimestamp)
+		err = rows.Scan(&archive.Url, &downloadID, &event.VideoURL, &event.ParentURL, &event.Message, &event.EventTimestamp)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -58,16 +65,31 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]string,
 		// ok so this is really dumb but I'm going to let it go for now.
 		// This prevents duplicates
 		// FIXME
-		_, ok := urlMap[url]
+		_, ok := urlMap[archive.Url]
 		if !ok {
-			urlMap[url] = true
-			urls = append(urls, url)
+			urlMap[archive.Url] = true
+			urls = append(archives,archive)
 		}
+
+		progressSql := "WITH numerator AS (select count(*) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1), " +
+			"denominator AS (select count(*) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.download_id WHERE downloads_to_videos.download_id = $1) " +
+			"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator"
+
+		rows, err := m.Db.QueryRow(progressSql, downloadID)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		err = rows.Scan(&archive.Numerator, &archive.Denominator)
+		if err != nil {
+			return nil, nil, err
+		}
+
 	}
 
 	// This slice is simiilarly dumb
 	// also a minor FIXME
-	return urls, events[:5], nil
+	return archives, events[:5], nil
 }
 
 func (m *ArchiveRequestRepo) New(url string, userID int64) error {
