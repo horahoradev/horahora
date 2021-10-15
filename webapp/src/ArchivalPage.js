@@ -52,6 +52,16 @@ function ArchivalPage() {
             title: 'URL',
             dataIndex: 'url',
             key: 'url',
+        },
+        {
+            title: 'Downloaded videos',
+            'dataIndex': 'ArchivedVideos',
+            key: 'ArchivedVideos',
+        },
+        {
+            title: 'Total videos',
+            'dataIndex': 'CurrentTotalVideos',
+            key: 'CurrentTotalVideos',
         }
     ];
 

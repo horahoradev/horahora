@@ -63,7 +63,7 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 			UserID:       0, // In the future, will be expanded to allow queries for different users archival requests
 			Url: archive.Url,
 			ArchivedVideos: archive.Numerator,
-			CurrentTotalVideos: archive.Denominator
+			CurrentTotalVideos: archive.Denominator,
 		}
 
 		entries = append(entries, &entry)
