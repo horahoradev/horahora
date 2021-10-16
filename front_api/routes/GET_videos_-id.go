@@ -50,7 +50,7 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 
 	profile, err := v.getUserProfileInfo(c)
 	if err != nil {
-		return err
+		log.Errorf("failed to load user profile. Err: %s", err)
 	}
 
 	recResp, err := v.v.GetVideoRecommendations(context.Background(), &videoproto.RecReq{

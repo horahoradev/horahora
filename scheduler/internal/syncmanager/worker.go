@@ -38,24 +38,24 @@ func (s *SyncWorker) Sync() error {
 			// refresh cache if backoff period is up
 			log.Infof("Backoff period expired for download request %s, syncing all", dlReq.Id)
 			itemsAdded, err := s.syncDownloadList(&dlReq)
+
+			if itemsAdded {
+				err := dlReq.ReportSyncHit()
+				if err != nil {
+					log.Errorf("sync worker report sync hit: %s", err)
+				}
+			} else {
+				err := dlReq.ReportSyncMiss()
+				if err != nil {
+					log.Errorf("Sync worker report sync miss: %s", err)
+				}
+			}
+
 			if err != nil {
 				log.Errorf("Sync worker dl list: %s", err)
 				continue
 			}
 
-			if itemsAdded {
-				err = dlReq.ReportSyncHit()
-				if err != nil {
-					log.Errorf("sync worker report sync hit: %s", err)
-					continue
-				}
-			} else {
-				err = dlReq.ReportSyncMiss()
-				if err != nil {
-					log.Errorf("Sync worker report sync miss: %s", err)
-					continue
-				}
-			}
 		}
 
 		time.Sleep(s.SyncDelay)

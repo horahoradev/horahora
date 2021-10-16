@@ -4,6 +4,8 @@ RUN apk add --update npm
 
 WORKDIR /webapp
 
+COPY . .
+
 COPY entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["sh", "/entrypoint.sh"]

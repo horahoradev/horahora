@@ -30,12 +30,13 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	profileInfo, err := h.getUserProfileInfo(c)
 	if err != nil {
-		return c.String(http.StatusForbidden, err.Error())
+		log.Errorf("failed to load user profile. Err: %s", err)
+		//return c.String(http.StatusForbidden, err.Error())
 	}
 
 	// doesn't matter if it fails, 0 is a fine default rank
 	showUnapproved := false
-	if profileInfo.Rank > 0 {
+	if profileInfo != nil && profileInfo.Rank > 0 {
 		// privileged user, can show unapproved videos
 		showUnapproved = true
 	}
@@ -58,8 +59,6 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 	order := videoproto.SortDirection(videoproto.SortDirection_value[orderVal])
 
 	pageNumber := getPageNumber(c)
-
-
 
 	// TODO: if request times out, maybe provide a default list of good videos
 	req := videoproto.VideoQueryConfig{
