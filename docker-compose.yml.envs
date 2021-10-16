@@ -19,7 +19,7 @@ services:
       - "3000:3000"
     volumes:
       - ./webapp:/webapp
-  web_api:
+  frontapi:
     $FRONT_API_BUILD_DIRECTIVE
     restart: always
     ports:
