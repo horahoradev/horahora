@@ -4,7 +4,7 @@
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/homepage.png)
 
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/archive_page.png)
+![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archival_page_new.png)
 
 Horahora is a collaborative archival management tool.
 
