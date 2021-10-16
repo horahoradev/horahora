@@ -226,23 +226,23 @@ module "videodb" {
   associate_security_group_ids = [aws_security_group.rds_whitelist.id]
 }
 
-// Shared by scheduler and videoservice for now
-// TODO: cluster mode, HA
-module "video_redis" {
-  source         = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
-  name           = "video_redis-${var.environment}"
-  engine_version = "5.0.5"
-  family         = "redis5.0"
-
-  availability_zones                   = local.availability_zones
-  subnets                              = module.vpc_subnets.private_subnet_ids
-  vpc_id                               = aws_vpc.horahora_vpc.id
-  instance_type                        = "cache.t2.micro"
-  cluster_mode_enabled                 = false
-  cluster_size                         = 1
-  cluster_mode_num_node_groups         = 1
-  cluster_mode_replicas_per_node_group = 0
-  automatic_failover_enabled           = false
-  allowed_cidr_blocks                  = ["10.0.0.0/8", "172.16.0.0/12", "217.138.252.0/24"]
-  transit_encryption_enabled           = false
-}
+//// Shared by scheduler and videoservice for now
+//// TODO: cluster mode, HA
+//module "video_redis" {
+//  source         = "git::https://github.com/cloudposse/terraform-aws-elasticache-redis.git?ref=master"
+//  name           = "video_redis-${var.environment}"
+//  engine_version = "5.0.5"
+//  family         = "redis5.0"
+//
+//  availability_zones                   = local.availability_zones
+//  subnets                              = module.vpc_subnets.private_subnet_ids
+//  vpc_id                               = aws_vpc.horahora_vpc.id
+//  instance_type                        = "cache.t2.micro"
+//  cluster_mode_enabled                 = false
+//  cluster_size                         = 1
+//  cluster_mode_num_node_groups         = 1
+//  cluster_mode_replicas_per_node_group = 0
+//  automatic_failover_enabled           = false
+//  allowed_cidr_blocks                  = ["10.0.0.0/8", "172.16.0.0/12", "217.138.252.0/24"]
+//  transit_encryption_enabled           = false
+//}

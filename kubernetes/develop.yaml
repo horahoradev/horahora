@@ -237,30 +237,30 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontapi
   labels:
-    app: frontend
+    app: frontapi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: frontapi
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontapi
 #      annotations:
 #        'consul.hashicorp.com/connect-inject': 'true'
 #        'consul.hashicorp.com/connect-service-upstreams': 'videoservice:7778'
     spec:
       containers:
-        - name: frontend
+        - name: frontapi
           image: 908221837281.dkr.ecr.us-west-1.amazonaws.com/frontend:latest
           #        command: ["/go/bin/dlv"]
           #        args: ["--listen=:39003",  "--headless=true", "--api-version=2", "exec", "./userservice"]
           # "--continue", "--accept-multiclient", to avoid waiting for debugger
           ports:
-            - containerPort: 8082
+            - containerPort: 8083
           env:
             - name: GOLANG_PROTOBUF_REGISTRATION_CONFLICT
               value: warn
@@ -272,6 +272,35 @@ spec:
               value: "scheduler:7777"
             - name: JaegerAddress
               value: "simplest-agent"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-frontend
+  labels:
+    app: react-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: react-frontend
+  template:
+    metadata:
+      labels:
+        app: react-frontend
+    #      annotations:
+    #        'consul.hashicorp.com/connect-inject': 'true'
+    #        'consul.hashicorp.com/connect-service-upstreams': 'videoservice:7778'
+    spec:
+      containers:
+        - name: frontend
+          image: 908221837281.dkr.ecr.us-west-1.amazonaws.com/react_frontend:latest
+          #        command: ["/go/bin/dlv"]
+          #        args: ["--listen=:39003",  "--headless=true", "--api-version=2", "exec", "./userservice"]
+          # "--continue", "--accept-multiclient", to avoid waiting for debugger
+          ports:
+            - containerPort: 3000
+          env:
       serviceAccountName: frontend
 ---
 apiVersion: v1
@@ -337,15 +366,26 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: frontend
+    app: react-frontend
   ports:
     - protocol: TCP
-      port: 8082
-      targetPort: 8082
+      port: 3000
+      targetPort: 3000
   loadBalancerSourceRanges:
   - "217.138.0.0/16"
   - "0.0.0.0/0"
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontapi
+spec:
+  selector:
+    app: frontapi
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
 
 #apiVersion: v1
 #kind: Service

@@ -35,8 +35,7 @@ func (v RouteHandler) handleRating(c echo.Context) error {
 		return err
 	}
 
-	log.Info(videoIDInt)
-
+	log.Infof("%s", profile.UserID)
 	rateReq := videoproto.VideoRating{
 		UserID:  profile.UserID,
 		VideoID: videoIDInt,

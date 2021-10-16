@@ -2,6 +2,8 @@ package routes
 
 import (
 	"context"
+	"errors"
+	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -32,16 +34,16 @@ func (v RouteHandler) getCurrentUserProfile(c echo.Context) error {
 func (r *RouteHandler) getUserProfileInfo(c echo.Context) (*LoggedInUserData, error) {
 	l := LoggedInUserData{}
 
-	//id := c.Get(custommiddleware.UserIDKey)
-	//
-	//idInt, ok := id.(int64)
-	//if !ok {
-	//	log.Error("Could not assert id to int64")
-	//	return nil, errors.New("could not assert id to int64")
-	//}
+	id := c.Get(custommiddleware.UserIDKey)
+
+	idInt, ok := id.(int64)
+	if !ok {
+		log.Error("Could not assert id to int64")
+		return nil, errors.New("could not assert id to int64")
+	}
 
 	getUserReq := userproto.GetUserFromIDRequest{
-		UserID: 0,
+		UserID: idInt,
 	}
 
 	userResp, err := r.u.GetUserFromID(context.TODO(), &getUserReq)
@@ -52,8 +54,7 @@ func (r *RouteHandler) getUserProfileInfo(c echo.Context) (*LoggedInUserData, er
 
 	l.Username = userResp.Username
 	// l.ProfilePictureURL = userResp. // TODO
-	l.UserID = 0
 	l.Rank = int32(userResp.Rank)
-
+	l.UserID = idInt
 	return &l, nil
 }
