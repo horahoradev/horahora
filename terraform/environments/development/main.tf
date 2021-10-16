@@ -41,7 +41,7 @@ resource "aws_internet_gateway" "internet_gateway" {
 //}
 
 module "vpc_subnets" {
-  source = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=master"
+  source = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=0.19.0"
 
   name        = "horahora"
   environment = var.environment
@@ -82,61 +82,61 @@ module "video_origin" {
   })
 }
 
-module "eks_cluster" {
-  source = "git::https://github.com/cloudposse/terraform-aws-eks-cluster.git?ref=0.29.0"
-  name   = "horahora-${var.environment}"
-
-  kubernetes_version = "1.17"
-
-  workers_security_group_ids = [module.eks_workers.security_group_id]
-  workers_role_arns          = [module.eks_workers.workers_role_arn]
-
-  vpc_id     = aws_vpc.horahora_vpc.id
-  subnet_ids = module.vpc_subnets.public_subnet_ids
-  region     = var.region
-}
-
-module "eks_workers" {
-  source     = "git::https://github.com/cloudposse/terraform-aws-eks-workers.git?ref=master"
-  name       = "horahora-eks-workers"
-  stage      = var.environment
-  subnet_ids = module.vpc_subnets.public_subnet_ids
-  vpc_id     = aws_vpc.horahora_vpc.id
-
-  instance_type                          = "c5.large"
-  min_size                               = 1
-  max_size                               = 1
-  cpu_utilization_high_threshold_percent = 60
-  cpu_utilization_low_threshold_percent  = 20
-
-  //  allowed_cidr_blocks = ["0.0.0.0/0"]
-
-  //  use_custom_image_id = true
-  //  image_id            = "ami-0a9a4d789dc726512"
-
-  cluster_endpoint                   = module.eks_cluster.eks_cluster_endpoint
-  cluster_security_group_id          = module.eks_cluster.security_group_id
-  cluster_certificate_authority_data = module.eks_cluster.eks_cluster_certificate_authority_data
-  cluster_name                       = "horahora-${var.environment}-cluster"
-  associate_public_ip_address        = true
-
-  mixed_instances_policy = {
-    instances_distribution = {
-      on_demand_base_capacity                  = 0
-      on_demand_allocation_strategy            = "prioritized"
-      spot_allocation_strategy                 = "lowest-price"
-      spot_instance_pools                      = 2
-      on_demand_percentage_above_base_capacity = 0
-      spot_max_price                           = ""
-    }
-    override = [{
-      instance_type     = "c5.large"
-      weighted_capacity = 1
-    }]
-  }
-
-  key_name = "bastion"
-}
+//module "eks_cluster" {
+//  source = "git::https://github.com/cloudposse/terraform-aws-eks-cluster.git?ref=0.29.0"
+//  name   = "horahora-${var.environment}"
+//
+//  kubernetes_version = "1.17"
+//
+//  workers_security_group_ids = [module.eks_workers.security_group_id]
+//  workers_role_arns          = [module.eks_workers.workers_role_arn]
+//
+//  vpc_id     = aws_vpc.horahora_vpc.id
+//  subnet_ids = module.vpc_subnets.public_subnet_ids
+//  region     = var.region
+//}
+//
+//module "eks_workers" {
+//  source     = "git::https://github.com/cloudposse/terraform-aws-eks-workers.git?ref=master"
+//  name       = "horahora-eks-workers"
+//  stage      = var.environment
+//  subnet_ids = module.vpc_subnets.public_subnet_ids
+//  vpc_id     = aws_vpc.horahora_vpc.id
+//
+//  instance_type                          = "c5.large"
+//  min_size                               = 1
+//  max_size                               = 1
+//  cpu_utilization_high_threshold_percent = 60
+//  cpu_utilization_low_threshold_percent  = 20
+//
+//  //  allowed_cidr_blocks = ["0.0.0.0/0"]
+//
+//  //  use_custom_image_id = true
+//  //  image_id            = "ami-0a9a4d789dc726512"
+//
+//  cluster_endpoint                   = module.eks_cluster.eks_cluster_endpoint
+//  cluster_security_group_id          = module.eks_cluster.security_group_id
+//  cluster_certificate_authority_data = module.eks_cluster.eks_cluster_certificate_authority_data
+//  cluster_name                       = "horahora-${var.environment}-cluster"
+//  associate_public_ip_address        = true
+//
+//  mixed_instances_policy = {
+//    instances_distribution = {
+//      on_demand_base_capacity                  = 0
+//      on_demand_allocation_strategy            = "prioritized"
+//      spot_allocation_strategy                 = "lowest-price"
+//      spot_instance_pools                      = 2
+//      on_demand_percentage_above_base_capacity = 0
+//      spot_max_price                           = ""
+//    }
+//    override = [{
+//      instance_type     = "c5.large"
+//      weighted_capacity = 1
+//    }]
+//  }
+//
+//  key_name = "bastion"
+//}
 
 resource "aws_security_group" "rds_whitelist" {
   name   = "rds_whitelist-${var.environment}"
@@ -154,7 +154,7 @@ resource "aws_security_group" "rds_whitelist" {
 }
 
 module "scheduledb" {
-  source         = "git::https://github.com/cloudposse/terraform-aws-rds.git?ref=master"
+  source         = "git::https://github.com/cloudposse/terraform-aws-rds.git?ref=0.17.0"
   name           = "scheduledb-${var.environment}"
   engine         = "postgres"
   engine_version = "12.5"
@@ -179,7 +179,7 @@ module "scheduledb" {
 }
 
 module "userdb" {
-  source         = "git::https://github.com/cloudposse/terraform-aws-rds.git?ref=master"
+  source         = "git::https://github.com/cloudposse/terraform-aws-rds.git?ref=0.17.0"
   name           = "userdb-${var.environment}"
   engine         = "postgres"
   engine_version = "12.5"
@@ -203,7 +203,7 @@ module "userdb" {
 }
 
 module "videodb" {
-  source         = "git::https://github.com/cloudposse/terraform-aws-rds.git?ref=master"
+  source         = "git::https://github.com/cloudposse/terraform-aws-rds.git?ref=0.17.0"
   name           = "videodb-${var.environment}"
   engine         = "postgres"
   engine_version = "12.5"

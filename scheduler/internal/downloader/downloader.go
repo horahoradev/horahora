@@ -166,12 +166,12 @@ currVideoLoop:
 				log.Errorf("Could not set download succeeded for video %s. Err: %s", video.VideoID, err)
 			}
 
-			err := video.SetDownloaded()
-
-			// TODO: handle better? retry?
-			if err != nil {
-				log.Errorf("Could not set latest video. Err: %s", err)
-			}
+			//err := video.SetDownloaded()
+			//
+			//// TODO: handle better? retry?
+			//if err != nil {
+			//	log.Errorf("Could not set latest video. Err: %s", err)
+			//}
 
 			break
 		}
