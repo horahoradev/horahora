@@ -16,7 +16,6 @@ import Paginatione from "./Pagination";
 function UserPage() {
     let { id } = useParams();
 
-    const [pageData, setPageData] = useState(null);
     const [userData, setUserData] = useState(null);
     const [pageUserData, setPageUserData] = useState({});
     const [currPage, setPage] = useState(1);
@@ -26,9 +25,6 @@ function UserPage() {
         let ignore = false;
 
         let fetchData = async () => {
-            let data = await API.getVideo(id);
-            if (!ignore) setPageData(data);
-
             let userData = await API.getUserdata();
             if (!ignore) setUserData(userData);
 
@@ -42,7 +38,6 @@ function UserPage() {
         };
     }, [id, currPage]);
 
-    if (pageData == null) return null;
 
     return (
         <>
