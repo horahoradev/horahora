@@ -71,6 +71,16 @@ function ArchivalPage() {
             title: 'Total videos',
             'dataIndex': 'CurrentTotalVideos',
             key: 'CurrentTotalVideos',
+        },
+        {
+            title: 'Last synced',
+            'dataIndex': 'LastSynced',
+            key: 'LastSynced',
+        },
+        {
+            title: 'Days until next sync',
+            'dataIndex': 'BackoffFactor',
+            key: 'BackoffFactor',
         }
     ];
 
