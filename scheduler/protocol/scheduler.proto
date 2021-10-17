@@ -38,5 +38,7 @@ message contentArchivalEntry {
     string Url = 2;
     uint64 ArchivedVideos = 3;
     uint64 CurrentTotalVideos = 4;
+    string LastSynced = 5;
+    uint32 BackoffFactor = 6;
 }
 
