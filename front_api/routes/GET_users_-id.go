@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
+	"fmt"
 )
 
 // route: GET /users/:id where id is the user id
@@ -25,13 +26,13 @@ func (v RouteHandler) getUser(c echo.Context) error {
 
 	profile, err := v.u.GetUserFromID(context.TODO(), &getUserReq)
 	if err != nil {
-		return err
+		return fmt.Errorf("Get user from ID: %s", err)
 	}
 
 
 	userProfile, err := v.getUserProfileInfo(c)
 	if err != nil {
-		return err
+		return fmt.Errorf("Get user profile info: %s", err)
 	}
 
 	// doesn't matter if it fails, 0 is a fine default rank
@@ -54,7 +55,7 @@ func (v RouteHandler) getUser(c echo.Context) error {
 
 	videoList, err := v.v.GetVideoList(context.TODO(), &videoQueryConfig)
 	if err != nil {
-		return err
+		return fmt.Errorf("Get video list: %s", err)
 	}
 
 	// TODO: 0 results in all videos, fix for admin user?
