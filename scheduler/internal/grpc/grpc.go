@@ -64,6 +64,8 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 			Url: archive.Url,
 			ArchivedVideos: archive.Numerator,
 			CurrentTotalVideos: archive.Denominator,
+			BackoffFactor: archive.BackoffFactor,
+			LastSynced: archive.LastSynced
 		}
 
 		entries = append(entries, &entry)
@@ -76,6 +78,7 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 			ParentUrl: event.ParentURL,
 			Message:   event.Message,
 			Timestamp: event.EventTimestamp,
+
 		}
 		protoEvents = append(protoEvents, &eventObj)
 	}
