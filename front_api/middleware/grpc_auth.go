@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
 
 	"github.com/horahoradev/horahora/front_api/config"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
@@ -72,7 +73,7 @@ func (j *JWTGRPCAuthenticator) authenticate(jwt string) (int64, error) {
 	// TODO: maybe add timeout
 	validationResp, err := j.config.UserClient.ValidateJWT(context.Background(), jwtValidationRequest)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("could not validate jwt. Err: %s", err)
 	}
 
 	if !validationResp.IsValid {
