@@ -142,7 +142,8 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 	args := []string{"yt-dlp",
 		"-j",
 		"--flat-playlist",
-		"--playlist-end 400",
+		"--playlist-end",
+		"400"
 	}
 	if s.SocksConnStr != "" {
 		args = append(args, []string{"--proxy", s.SocksConnStr}...)

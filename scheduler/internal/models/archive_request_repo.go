@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 	"math"
 	"net/url"
 )
@@ -72,6 +73,7 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 		// FIXME
 		_, ok := urlMap[archive.Url]
 		if !ok {
+			log.Info("Performing query")
 			progressSql := "WITH numerator AS (select count(DISTINCT videos.video_id) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1 AND dlstatus=1), " +
 				"denominator AS (select count(DISTINCT videos.video_id) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1) " +
 				"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator"
