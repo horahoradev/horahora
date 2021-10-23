@@ -40,7 +40,7 @@ type Event struct {
 
 func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archival, []Event,  error) {
 	// This query is pretty dumb. Event and archive queries should be separate. FIXME
-	sql := "SELECT Url, coalesce(last_synced, ''), backoff_factor, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM user_download_subscriptions s " +
+	sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM user_download_subscriptions s " +
 		"INNER JOIN downloads ON downloads.id = s.download_id LEFT JOIN archival_events ON s.download_id = archival_events.download_id WHERE s.user_id=$1 ORDER BY event_time DESC"
 
 	rows, err := m.Db.Query(sql, userID)
