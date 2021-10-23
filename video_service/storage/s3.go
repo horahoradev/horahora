@@ -111,7 +111,7 @@ func (s *S3Storage) Upload(path, desiredFilename string) error {
 		SSEKMSEncryptionContext:   nil,
 		SSEKMSKeyId:               nil,
 		ServerSideEncryption:      "",
-		StorageClass:              "",
+		StorageClass:              "StorageClassStandardIa",
 		Tagging:                   nil,
 		WebsiteRedirectLocation:   nil,
 	}
