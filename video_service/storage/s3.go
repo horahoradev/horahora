@@ -23,6 +23,7 @@ func NewS3(bucketName string) (*S3Storage, error) {
 	if err != nil {
 		return nil, err
 	}
+	cfg.Region = "us-west-2"
 
 	s3Client := s3.New(cfg)
 
