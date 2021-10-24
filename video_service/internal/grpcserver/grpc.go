@@ -322,8 +322,8 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 					return
 				}
 
-				if s.Size() >= 1024*1024*200 {
-					log.Errorf("Video %d greater than 200mb, skipping", v.ID)
+				if s.Size() >= 1024*1024*300 {
+					log.Errorf("Video %d greater than 300mb, skipping", v.ID)
 					return
 				}
 
