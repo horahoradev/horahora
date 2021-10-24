@@ -31,7 +31,7 @@ func main() {
 	makeArchiveRequest(client, "https://www.nicovideo.jp/mylist/58583228")
 
 	makeArchiveRequest(client, "https://www.youtube.com/channel/UCF43Xa8ZNQqKs1jrhxlntlw")            // Some random channel I found with short videos. Good enough!
-	makeArchiveRequest(client, "https://www.youtube.com/playlist?list=PLz2PzeiUFQLuZ6k_e50OEK0xd_NAy7xat") // random playlist with one entry
+	makeArchiveRequest(client, "https://www.youtube.com/playlist?list=PLz2PzeiUFQLsBo_8JkA12pxWQGphIQDhS") // playlist with 7 entries
 
 	// Are videos being downloaded and transcoded correctly?
 	for start := time.Now(); time.Since(start) < time.Minute*30; {
@@ -66,7 +66,7 @@ func main() {
 			continue
 		}
 
-		err = pageHasVideos(client, "untitled_0360", 1) // yt playlist
+		err = pageHasVideos(client, "ヒトデが空から降ってくる けだるぎ", 1) // yt playlist
 		if err != nil {
 			log.Println(err)
 			continue

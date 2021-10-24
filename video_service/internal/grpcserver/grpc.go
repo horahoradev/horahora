@@ -333,12 +333,16 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 					return
 				}
 
-				transcodeResults, err := dashutils.TranscodeAndGenerateManifest(vid.Name(), g.Local)
+
+				nullTranscoder := dashutils.NullTrancoder{}
+
+				transcodeResults, err := nullTranscoder.TranscodeAndGenerateManifest(vid.Name(), g.Local)
 				if err != nil {
 					err := fmt.Errorf("failed to transcode and chunk. Err: %s", err)
 					log.Error(err)
 					return
 				}
+
 
 				err = g.UploadMPDSet(transcodeResults)
 				if err != nil {
@@ -362,8 +366,12 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 // Need to ensure as a precondition that the video hasn't been uploaded before and the temp file ID hasn't been
 // used.
 func (g GRPCServer) UploadMPDSet(d *dashutils.DASHVideo) error {
+	if d.ManifestPath == nil {
+		return nil
+	}
+
 	// send manifest to origin
-	err := g.Storage.Upload(d.ManifestPath, filepath.Base(d.ManifestPath))
+	err := g.Storage.Upload(*d.ManifestPath, filepath.Base(*d.ManifestPath))
 	if err != nil {
 		return err
 	}

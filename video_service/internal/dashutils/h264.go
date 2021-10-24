@@ -1,22 +1,16 @@
-// This package provides utilities for transcoding/chunking in compliance with DASH's requirements
 package dashutils
 
 import (
 	"fmt"
 	"os/exec"
 	"path/filepath"
-
 	log "github.com/sirupsen/logrus"
 )
 
-type DASHVideo struct {
-	ManifestPath     string
-	ThumbnailPath    string
-	QualityMap       []string
-	OriginalFilePath string
+type H264Transcoder struct {
 }
 
-func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
+func (h H264Transcoder) TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
 	// var encodeArgs []string
 	// switch local {
 	// case true:
@@ -32,35 +26,37 @@ func TranscodeAndGenerateManifest(path string, local bool) (*DASHVideo, error) {
 	cmd := exec.Command("/horahora/videoservice/scripts/transcode.sh", []string{path}...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Errorf("%s", out)
-		return nil, err
+	log.Errorf("%s", out)
+	return nil, err
 	}
 
 	// At this point it's been transcoded, so generate the DASH manifest
 	cmd = exec.Command("/horahora/videoservice/scripts/manifest.sh", []string{filepath.Base(path)}...)
 	out, err = cmd.CombinedOutput()
 	if err != nil {
-		log.Errorf("%s", out)
-		return nil, fmt.Errorf("failed to generate dash manifest. Err: %s", err)
+	log.Errorf("%s", out)
+	return nil, fmt.Errorf("failed to generate dash manifest. Err: %s", err)
 	}
 
 	var fileList []string
 
 	generatedFiles, err := filepath.Glob(fmt.Sprintf("%s_*", path))
 	if err != nil {
-		return nil, err
+	return nil, err
 	}
 
 	log.Infof("Generated files: %s", generatedFiles)
 
 	for _, fileName := range generatedFiles {
-		fileList = append(fileList, fileName)
+	fileList = append(fileList, fileName)
 	}
 
+	manifest := fmt.Sprintf("%s.mpd", path)
+
 	return &DASHVideo{
-		ManifestPath:     fmt.Sprintf("%s.mpd", path),
-		QualityMap:       fileList,
-		OriginalFilePath: path,
-		ThumbnailPath:    path + ".jpg",
+	ManifestPath:     &manifest,
+	QualityMap:       fileList,
+	OriginalFilePath: path,
+	ThumbnailPath:    path + ".jpg",
 	}, nil
 }

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Tag, Avatar, Button, Rate } from "antd";
 import { Link, useParams } from "react-router-dom";
 import dashjs from "dashjs";
+import videojs from "video.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
@@ -19,21 +20,28 @@ function VideoPlayer(props) {
   useEffect(() => {
     let video = videoRef.current;
     if (video == null) return;
-    let player = dashjs.MediaPlayer().create();
-    player.initialize(video, url, false);
-    return () => {
-      player.destroy();
-    };
   }, [url, videoRef]);
 
+  var url_without_mpd = url.slice(0, -4);
   return (
     <>
       <video
-        ref={videoRef}
-        className="bg-black w-full object-contain object-center z-0"
-        style={{ height: `${VIDEO_HEIGHT}rem` }}
-        controls
-      ></video>
+          id="my-player"
+          className="bg-black w-full object-contain object-center z-0"
+          style={{ height: `${VIDEO_HEIGHT}rem` }}
+          controls
+          preload="auto"
+          data-setup='{}'>
+        <source src={url_without_mpd} type="video/mp4"></source>
+
+        <p className="vjs-no-js">
+          To view this video please enable JavaScript, and consider upgrading to a
+          web browser that
+          <a href="https://videojs.com/html5-video-support/" target="_blank">
+            supports HTML5 video
+          </a>
+        </p>
+      </video>
     </>
   );
 }

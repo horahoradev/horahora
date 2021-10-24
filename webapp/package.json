@@ -25,6 +25,7 @@
     "react-modal": "^3.14.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "video.js": "^7.15.4",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
