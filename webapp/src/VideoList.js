@@ -15,7 +15,7 @@ function Video(props) {
             className="block w-44 h-24 object-cover object-center"
             alt={video.Title}
             src={`${video.ThumbnailLoc}`}
-            onerror={`this.src=${video.ThumbnailLoc}.png`}
+            onError={`this.src=${video.ThumbnailLoc}.png`}
           />
           <Rate className="relative -mt-8 z-30 float-right" allowHalf={true} disabled={true} value={video.Rating}></Rate>
           </div>
