@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Tag, Avatar, Button, Rate } from "antd";
-import { Link, useParams } from "react-router-dom";
+import {Link, useHistory, useParams} from "react-router-dom";
 import dashjs from "dashjs";
 import videojs from "video.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,20 +15,34 @@ const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
 
 function VideoPlayer(props) {
-  let { url } = props;
+  let { url, next_video} = props;
   let videoRef = useRef();
+  var url_without_mpd = url.slice(0, -4);
+
   useEffect(() => {
     let video = videoRef.current;
     if (video == null) return;
-  }, [url, videoRef]);
+    video.setAttribute('src', url_without_mpd );
+    video.load();
+    video.play();
 
-  var url_without_mpd = url.slice(0, -4);
+  }, [videoRef, url]);
+
+  function set_on_end() {
+      var video = document.getElementById("my-player");
+      video.on('ended', () => {
+        next_video();
+      });
+  }
+
   return (
     <>
       <video
+          ref={videoRef}
           id="my-player"
           className="bg-black w-full object-contain object-center z-0"
           style={{ height: `${VIDEO_HEIGHT}rem` }}
+          onEnded={next_video}
           controls
           preload="auto"
           data-setup='{}'>
@@ -75,7 +89,7 @@ function VideoAdminControls(props) {
 }
 
 function VideoView(props) {
-  let { data, id, setRating } = props;
+  let { data, id, setRating, next_video} = props;
 
   function rate(rating) {
     if (id == 0) {
@@ -89,7 +103,7 @@ function VideoView(props) {
   // FIXME: new API endpoint
   return (
     <div className="bg-white border max-h-screen">
-      <VideoPlayer url={data.MPDLoc} />
+      <VideoPlayer url={data.MPDLoc} next_video={next_video}/>
       <div className="p-4">
         <div>
           <span className="text-lg font-bold">{data.Title}</span>
@@ -139,11 +153,19 @@ function VideoView(props) {
 }
 
 function VideoPage() {
+  let history = useHistory();
+
+
   let { id } = useParams();
 
   const [pageData, setPageData] = useState(null);
   const [rating, setRating] = useState(0.0);
   const [userData, setUserData] = useState(null);
+
+  function navigate_to_next_video(){
+    if (!pageData || !pageData.RecommendedVideos) return;
+    history.push("/videos/" + pageData.RecommendedVideos[0].VideoID);
+  };
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
@@ -171,7 +193,7 @@ function VideoPage() {
       <Header userData={userData} />
       <div className="flex justify-center mx-4">
         <div className="max-w-screen-lg w-screen my-6 z-0">
-          <VideoView data={pageData} id={id} setRating={setRating}/>
+          <VideoView data={pageData} id={id} setRating={setRating} next_video={navigate_to_next_video}/>
         </div>
         <div className="inline-block w-44 align-top float-right">
           <VideoList videos={pageData.RecommendedVideos} />
