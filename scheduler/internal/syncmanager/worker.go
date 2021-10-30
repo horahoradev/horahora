@@ -16,12 +16,15 @@ type SyncWorker struct {
 	R            *models.ArchiveRequestRepo
 	SocksConnStr string
 	SyncDelay    time.Duration
+	RequestDLCountMap map[string]int
 }
 
 func NewWorker(r *models.ArchiveRequestRepo, socksConnStr string, syncDelay time.Duration) (*SyncWorker, error) {
 	return &SyncWorker{R: r,
 		SocksConnStr: socksConnStr,
-		SyncDelay:    syncDelay}, nil
+		SyncDelay:    syncDelay,
+		RequestDLCountMap: make(map[string]int),
+	}, nil
 }
 
 func (s *SyncWorker) Sync() error {
@@ -142,9 +145,24 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 	args := []string{"yt-dlp",
 		"-j",
 		"--flat-playlist",
-		"--playlist-end",
-		"400",
 	}
+
+	_, ok := s.RequestDLCountMap[dlReq.Id]
+	if !ok {
+		s.RequestDLCountMap[dlReq.Id] = 0
+	}
+
+	if s.RequestDLCountMap[dlReq.Id] % 10 != 0 {
+		args = append(args, []string{
+			"--playlist-end",
+			"400",
+		}...)
+	}
+
+	s.RequestDLCountMap[dlReq.Id]++
+
+
+
 	if s.SocksConnStr != "" {
 		args = append(args, []string{"--proxy", s.SocksConnStr}...)
 	}
