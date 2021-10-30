@@ -1,17 +1,6 @@
 version: "3"
 
 services:
-  frontend:
-    $FRONTEND_BUILD_DIRECTIVE
-    restart: always
-    ports:
-      - "8082:8082"
-    environment:
-      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
-      - UserServiceGRPCAddress=userservice:7777
-      - VideoServiceGRPCAddress=videoservice:7777
-      - SchedulerServiceGRPCAddress=scheduler:7777
-      - JaegerAddress=
   react_app:
     build: webapp
     restart: always
