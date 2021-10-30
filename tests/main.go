@@ -66,7 +66,7 @@ func main() {
 			continue
 		}
 
-		err = pageHasVideos(client, "ヒトデが空から降ってくる けだるぎ", 1) // yt playlist
+		err = pageHasVideos(client, "Kyanseru", 1) // yt playlist
 		if err != nil {
 			log.Println(err)
 			continue
