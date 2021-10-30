@@ -43,8 +43,6 @@ Contributions are always welcome (and quite needed atm). If you'd like to contri
 ## Security
 There are currently several shortcomings with respect to security. As such, I'd recommend only sharing an instance with a group of trusted users (friends). This will be fixed in future updates, and will be backwards compatible if possible.
 
-# Horahora
-
 ## Designs
 Designs are listed here:
 https://github.com/horahoradev/horahora-designs
