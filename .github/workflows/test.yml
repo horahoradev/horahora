@@ -45,21 +45,12 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}_scheduler
           labels: ${{ steps.meta.outputs.labels }}_scheduler
-      - name: Build and push Docker image for frontend
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: frontend
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}_frontend
-          labels: ${{ steps.meta.outputs.labels }}_frontend
       - name: Build the stack
         run: make up
       - name: wait 180s
         run: sleep 180s
       - name: Run integration tests
         run: go run tests/main.go
-      - name: print relevant logs (frontend)
-        run: docker logs $(docker ps | grep "frontend" | awk '{print $1}')
         if: always()
       - name: print relevant logs (videoservice)
         run: docker logs $(docker ps | grep "videoservice" | awk '{print $1}')
