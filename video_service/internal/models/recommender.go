@@ -29,7 +29,7 @@ func NewBayesianTagSum(db *sqlx.DB) BayesianTagSum {
 
 func (b *BayesianTagSum) GetRecommendations(uid int64) ([]*videoproto.VideoRec, error) {
 	// Videos which have been viewed and not rated are implicitly rated 0
-	sql := "WITH tag_ratings AS (select tag, sum(coalesce(ratings.rating, 0))/(1 + count(*)) AS tag_score from videos INNER JOIN tags ON videos.id = tags.video_id LEFT JOIN ratings ON ratings.video_id = videos.id WHERE (ratings.user_id = $1 OR ratings.user_id is null) AND videos.views > 0 GROUP BY tag), " +
+	sql := "WITH tag_ratings AS (select tag, sum(coalesce(ratings.rating, 0))/(count(*)) AS tag_score from videos INNER JOIN tags ON videos.id = tags.video_id LEFT JOIN ratings ON ratings.video_id = videos.id WHERE (ratings.user_id = $1 OR ratings.user_id is null) AND videos.views > 0 GROUP BY tag), " +
 		"video_scores AS (SELECT videos.id, sum(tag_score)/count(*) AS video_score from videos INNER JOIN tags ON tags.video_id = videos.id INNER JOIN tag_ratings ON tag_ratings.tag = tags.tag WHERE videos.views = 0 AND videos.transcoded = true GROUP BY videos.id) " +
 		"SELECT videos.id, title, newLink from video_scores INNER JOIN videos ON video_scores.id = videos.id ORDER BY video_score DESC limit 10;"
 	rows, err := b.db.Query(sql, uid)
