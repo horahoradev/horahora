@@ -53,6 +53,3 @@ func (b *BayesianTagSum) GetRecommendations(uid int64) ([]*videoproto.VideoRec, 
 
 	return ret, nil
 }
-
-select tag, sum(ratings.rating) AS tag_score from videos INNER JOIN tags ON videos.id = tags.video_id LEFT JO' GROUP BY tag ORDER BY tag_score desc;.id WHERE (ratings.user_id = 300 OR ratings.user_id is null) AND videos.views > 0 AND tag = 'エメリア
-select tag, avg(ratings.rating) AS tag_score from videos INNER JOIN tags ON videos.id = tags.video_id LEFT JOIN ratings ON ratings.video_id = videos.id WHERE (ratings.user_id = 300 OR ratings.user_id is null) AND videos.views > 0 AND tag = 'エメリア' GROUP BY tag
