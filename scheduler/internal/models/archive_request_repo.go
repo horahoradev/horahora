@@ -98,7 +98,7 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 	// This slice is similarly dumb
 	// also a minor FIXME
 	if events != nil {
-		events = events[:uint64(math.Min(5, float64(len(events))))]
+		events = events[:uint64(math.Min(200, float64(len(events))))]
 	}
 
 	return archives, events, nil
