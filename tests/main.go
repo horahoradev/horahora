@@ -30,8 +30,8 @@ func main() {
 	makeArchiveRequest(client, "https://www.nicovideo.jp/user/119163275")
 	makeArchiveRequest(client, "https://www.nicovideo.jp/mylist/58583228")
 
-	makeArchiveRequest(client, "https://www.youtube.com/channel/UCF43Xa8ZNQqKs1jrhxlntlw")            // Some random channel I found with short videos. Good enough!
-	makeArchiveRequest(client, "https://www.youtube.com/playlist?list=PLz2PzeiUFQLsBo_8JkA12pxWQGphIQDhS") // playlist with 7 entries
+	makeArchiveRequest(client, "https://www.youtube.com/channel/UCF43Xa8ZNQqKs1jrhxlntlw")                            // Some random channel I found with short videos. Good enough!
+	makeArchiveRequest(client, "https://www.youtube.com/watch?v=sPTwJwZOZkI&list=PL27eLnikSM92Vw2ssXmNB_GtK8xG2U9sW") // playlist with 5 entries
 
 	// Are videos being downloaded and transcoded correctly?
 	for start := time.Now(); time.Since(start) < time.Minute*30; {
@@ -66,7 +66,7 @@ func main() {
 			continue
 		}
 
-		err = pageHasVideos(client, "Kyanseru", 1) // yt playlist
+		err = pageHasVideos(client, "琴葉姉妹のにゃーねこにゃー！", 1) // yt playlist, searching for neko neko nya nya video (lol)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -104,7 +104,7 @@ func pageHasVideos(client *http.Client, tag string, count int) error {
 
 func makeArchiveRequest(client *http.Client, inpURL string) {
 	response, _ := client.PostForm(baseURL+"/archiverequests", url.Values{
-		"url":      {inpURL},
+		"url": {inpURL},
 	})
 
 	if response.StatusCode != 200 {
