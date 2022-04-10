@@ -196,7 +196,9 @@ func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTD
 	}
 	defer ytdlLog.Close()
 
-	cmd := exec.Command(args[0], args[1:]...)
+	ctxTimeout, _ := context.WithTimeout(context.Background(), time.Second*240)
+
+	cmd := exec.CommandContext(ctxTimeout, args[0], args[1:]...)
 	cmd.Stdout = ytdlLog
 	cmd.Stderr = ytdlLog
 
