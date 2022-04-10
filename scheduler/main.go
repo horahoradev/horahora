@@ -62,7 +62,7 @@ func main() {
 
 	m := &sync.Mutex{}
 	// Start three goroutines to subscribe to channel and download items
-	numOfSubscribers := 3
+	numOfSubscribers := 5
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
 		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, cfg.SocksConnStr, cfg.MaxFS)

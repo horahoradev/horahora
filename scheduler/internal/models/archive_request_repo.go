@@ -2,10 +2,11 @@ package models
 
 import (
 	"context"
-	"github.com/go-redsync/redsync"
-	"github.com/jmoiron/sqlx"
 	"math"
 	"net/url"
+
+	"github.com/go-redsync/redsync"
+	"github.com/jmoiron/sqlx"
 )
 
 // ArchiveRequest is the model for the creation of new archive requests
@@ -23,23 +24,25 @@ func NewArchiveRequest(db *sqlx.DB, rs *redsync.Redsync) *ArchiveRequestRepo {
 }
 
 type Archival struct {
-	Url string
-	Denominator uint64
-	Numerator uint64
-	LastSynced string
+	Url           string
+	Denominator   uint64
+	Numerator     uint64
+	LastSynced    string
 	BackoffFactor uint32
 }
 
 type Event struct {
-	ParentURL string
-	VideoURL string
-	Message string
+	ParentURL      string
+	VideoURL       string
+	Message        string
 	EventTimestamp string
 }
 
-
-func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archival, []Event,  error) {
+func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archival, []Event, error) {
 	// This query is pretty dumb. Event and archive queries should be separate. FIXME
+	// TODO: this query should be joined on archival subscriptions, not the download user id
+	// This is an MVP fix
+	// nvm i misread it is lol
 	sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM user_download_subscriptions s " +
 		"INNER JOIN downloads ON downloads.id = s.download_id LEFT JOIN archival_events ON s.download_id = archival_events.download_id WHERE s.user_id=$1 ORDER BY event_time DESC"
 
@@ -87,9 +90,8 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 			}
 
 			urlMap[archive.Url] = true
-			archives = append(archives,archive)
+			archives = append(archives, archive)
 		}
-
 
 	}
 
@@ -159,7 +161,6 @@ func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLReques
 
 	return ret, nil
 }
-
 
 func GetWebsiteFromURL(u string) (string, error) {
 	urlParsed, err := url.Parse(u)
