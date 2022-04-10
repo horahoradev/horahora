@@ -137,13 +137,24 @@ currVideoLoop:
 			log.Errorf("Failed to download %s in %d attempts", video.URL, d.numberOfRetries)
 			err := video.SetDownloadFailed()
 			if err != nil {
-				err = video.RecordEvent(models.Error)
-				if err != nil {
-					log.Errorf("Could not record error event. Err: %s", err)
-				}
-
 				log.Errorf("Could not set download failed for video %s. Err: %s", video.VideoID, err)
 			}
+
+			// Get the logs
+			logPath := fmt.Sprintf("%s/%s.ytdl", d.outputLoc, video.VideoID)
+			bytes, err := ioutil.ReadFile(logPath)
+			if err != nil {
+				log.Errorf("Failed to read logs at path %s. err: %s", logPath, err)
+			} else {
+				// lol just give them 100 bytes
+				bytes = bytes[len(bytes)-100:]
+			}
+
+			err = video.RecordEvent(models.Error, string(bytes))
+			if err != nil {
+				log.Errorf("Could not record error event. Err: %s", err)
+			}
+
 			break currVideoLoop
 		case currentRetryNum > 1:
 			log.Infof("Attempting to download %s, attempt %d of %d", video.URL, currentRetryNum, d.numberOfRetries)
@@ -336,7 +347,7 @@ func (d *downloader) uploadToVideoService(ctx context.Context, metadata *YTDLMet
 	}
 
 	log.Infof("Video %s has been uploaded as video VideoID %d", video.URL, resp.VideoID)
-	err = video.RecordEvent(models.Downloaded)
+	err = video.RecordEvent(models.Downloaded, "")
 	if err != nil {
 		log.Errorf("Could not record downloaded event. Err: %s. Continuing...", err)
 	}

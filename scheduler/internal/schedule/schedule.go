@@ -43,7 +43,7 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 
 			for _, item := range itemsToSchedule {
 				log.Infof("Sending url %s with parent %s to be processed", item.URL, item.ParentURL)
-				err = item.RecordEvent(models.Scheduled)
+				err = item.RecordEvent(models.Scheduled, "")
 				if err != nil {
 					log.Errorf("Could not record scheduled event. Err: %s. Continuing...", err)
 				}
@@ -86,12 +86,11 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 			return nil, err
 		}
 
-
 		for res.Next() {
 			req := models.VideoDLRequest{
 				ParentURL: url,
-				Redsync: p.Redsync,
-				Db:      p.Db,
+				Redsync:   p.Redsync,
+				Db:        p.Db,
 			}
 
 			err = res.Scan(&req.ID, &req.VideoID, &req.URL, &req.DownloaddID)

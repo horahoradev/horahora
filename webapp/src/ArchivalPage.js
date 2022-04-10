@@ -84,6 +84,19 @@ function ArchivalPage() {
         }
     ];
 
+    const timelinTableCols = [
+        {
+            title: 'Timestamp',
+            dataIndex: 'timestamp',
+            key: 'timestamp',
+        },
+        {
+            title: 'Event Message',
+            'dataIndex': 'message',
+            key: 'message',
+        }
+    ];
+
     return (
         <>
             <Header userData={userData} />
@@ -98,13 +111,9 @@ function ArchivalPage() {
                 <Table dataSource={archivalSubscriptions} columns={columns}/>
             </div>
 
-            <div className={"inline-block float-right   "}>
-                <Timeline mode={"alternate"}>
-                    {timelineElements}
-                </Timeline>
+            <div>
+                <Table dataSource={timelineEvents} columns={timelinTableCols}/>
             </div>
-
-
             </>
     );
 }
