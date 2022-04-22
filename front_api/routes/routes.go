@@ -70,20 +70,21 @@ type Comment struct {
 }
 
 type VideoDetail struct {
-	Title            string
-	MPDLoc           string
-	Views            uint64
-	Rating           float64
-	VideoID          int64
-	AuthorID         int64
-	Username         string
-	UserDescription  string
-	VideoDescription string
-	UserSubscribers  uint64
-	ProfilePicture   string
-	UploadDate       string // should be a datetime
-	Tags             []string
+	Title             string
+	MPDLoc            string
+	Views             uint64
+	Rating            float64
+	VideoID           int64
+	AuthorID          int64
+	Username          string
+	UserDescription   string
+	VideoDescription  string
+	UserSubscribers   uint64
+	ProfilePicture    string
+	UploadDate        string // should be a datetime
+	Tags              []string
 	RecommendedVideos []Video
+	L                 *LoggedInUserData
 }
 
 type ProfileData struct {
@@ -92,16 +93,17 @@ type ProfileData struct {
 	Username          string
 	ProfilePictureURL string
 	Videos            []Video
+	L                 *LoggedInUserData
 }
 
 type PaginationData struct {
 	NumberOfItems int
-	CurrentPage          int
+	CurrentPage   int
 }
 
 type ArchiveRequestsPageData struct {
 	ArchivalRequests []*schedulerproto.ContentArchivalEntry
-	ArchivalEvents []*schedulerproto.ArchivalEvent
+	ArchivalEvents   []*schedulerproto.ArchivalEvent
 }
 
 func setCookie(c echo.Context, jwt string) error {

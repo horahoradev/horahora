@@ -8,6 +8,7 @@ require (
 	github.com/horahoradev/horahora/scheduler v0.0.0-20211017173402-4c622fa72287
 	github.com/horahoradev/horahora/user_service v0.0.0-20210923020008-dacaa1a9536b
 	github.com/horahoradev/horahora/video_service v0.0.0-20210923020008-dacaa1a9536b
+	github.com/jellydator/ttlcache/v2 v2.11.1
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/labstack/gommon v0.3.0
 	google.golang.org/grpc v1.39.0

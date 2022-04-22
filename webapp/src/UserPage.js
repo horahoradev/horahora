@@ -48,8 +48,13 @@ function UserPage() {
                 <div className={"flex justify-center mx-4"}>
                     <img src="http://localhost:8082/static/images/placeholder.png">
                     </img>
+
                 </div>
-                <h1 className={"flex justify-center"}>{pageUserData.Username}</h1>
+
+                <h1 className={"flex justify-center"}>{pageUserData.Username} Banned: {pageUserData.banned}
+                </h1>
+                {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && <h1 className={"flex justify-center"}><Button type="primary" onClick={() => API.banUser(pageUserData.UserID)}>Ban</Button></h1>}
+
                 {/* TODO: no more copy pasta! */}
                 <div className="flex justify-center mx-4 min-h-screen">
                     <div className="max-w-screen-lg w-screen my-6">

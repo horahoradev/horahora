@@ -12,6 +12,14 @@ service UserService {
     rpc GetUserFromID(GetUserFromIDRequest) returns (UserResponse){}
     rpc GetUserForForeignUID(GetForeignUserRequest) returns (GetForeignUserResponse){}
     rpc GetUserIDsForUsername(GetUserIDsForUsernameRequest) returns (GetUserIDsForUsernameResponse){}
+    rpc BanUser(BanUserRequest) returns ( BanUserResponse){}
+}
+
+message BanUserRequest {
+    int64 userID = 1;
+}
+
+message BanUserResponse {
 }
 
 message GetUserIDsForUsernameRequest {
@@ -83,4 +91,5 @@ message UserResponse {
     string username = 1;
     string email = 2;
     user_rank rank = 3;
+    bool banned = 4;
 }

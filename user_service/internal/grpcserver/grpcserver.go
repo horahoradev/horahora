@@ -3,6 +3,7 @@ package grpcserver
 import (
 	"context"
 	"crypto/rsa"
+	"errors"
 	"fmt"
 	"net"
 
@@ -79,6 +80,12 @@ func (g GRPCServer) Login(ctx context.Context, req *proto.LoginRequest) (*proto.
 	return &p, nil
 }
 
+func (g GRPCServer) BanUser(ctx context.Context, req *proto.BanUserRequest) (*proto.BanUserResponse, error) {
+	idToBan := req.UserID
+	err := g.um.BanUser(idToBan)
+	return &proto.BanUserResponse{}, err
+}
+
 func (g GRPCServer) GetUserFromID(ctx context.Context, req *proto.GetUserFromIDRequest) (*proto.UserResponse, error) {
 	id := req.UserID
 
@@ -92,6 +99,7 @@ func (g GRPCServer) GetUserFromID(ctx context.Context, req *proto.GetUserFromIDR
 		Username: user.Username,
 		Email:    user.Email,
 		Rank:     proto.UserRank(user.Rank),
+		Banned:   user.Banned,
 	}, nil
 }
 
@@ -100,6 +108,15 @@ func (g GRPCServer) ValidateJWT(ctx context.Context, req *proto.ValidateJWTReque
 	if err != nil {
 		log.Errorf("failed to validate JWT, err: %s", err)
 		return nil, err
+	}
+
+	banned, err := g.um.IsBanned(uid)
+	if err != nil {
+		return nil, err
+	}
+
+	if banned {
+		return nil, errors.New("User is banned")
 	}
 
 	return &proto.ValidateJWTResponse{
