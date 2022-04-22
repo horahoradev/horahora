@@ -25,11 +25,11 @@ function UserPage() {
         let ignore = false;
 
         let fetchData = async () => {
-            let userData = await API.getUserdata();
-            if (!ignore) setUserData(userData);
-
             let pageUserData = await API.getUser(id, currPage);
             if (!ignore) setPageUserData(pageUserData);
+            
+            let userData = await API.getUserdata();
+            if (!ignore) setUserData(userData);
         };
 
         fetchData();
@@ -51,7 +51,7 @@ function UserPage() {
 
                 </div>
 
-                <h1 className={"flex justify-center"}>{pageUserData.Username} Banned: {pageUserData.banned}
+                <h1 className={"flex justify-center"}>{pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
                 </h1>
                 {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && <h1 className={"flex justify-center"}><Button type="primary" onClick={() => API.banUser(pageUserData.UserID)}>Ban</Button></h1>}
 

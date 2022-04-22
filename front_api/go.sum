@@ -107,6 +107,8 @@ github.com/horahoradev/horahora/user_service v0.0.0-20210710200304-9892f28bcdf0/
 github.com/horahoradev/horahora/user_service v0.0.0-20210922030328-dee03a489f47/go.mod h1:z8FQUYNG7s+DiNmMkdAPG8BwuWjY0zUT+3980/VCjUM=
 github.com/horahoradev/horahora/user_service v0.0.0-20210923020008-dacaa1a9536b h1:TBzBCR+HuXppUwIEGq39oFUqmm77R3Qz+eCll9BsKx0=
 github.com/horahoradev/horahora/user_service v0.0.0-20210923020008-dacaa1a9536b/go.mod h1:z8FQUYNG7s+DiNmMkdAPG8BwuWjY0zUT+3980/VCjUM=
+github.com/horahoradev/horahora/user_service v0.0.0-20220422184246-79b64670410e h1:E/JpHTh6zTC9QuMReL3bkFA0tMu2TbU82StRswGbawk=
+github.com/horahoradev/horahora/user_service v0.0.0-20220422184246-79b64670410e/go.mod h1:z8FQUYNG7s+DiNmMkdAPG8BwuWjY0zUT+3980/VCjUM=
 github.com/horahoradev/horahora/video_service v0.0.0-20210922030328-dee03a489f47/go.mod h1:1K7li7af9OfuPp1QKfxbuKde8lUKkCHtPE7/7bDaXCQ=
 github.com/horahoradev/horahora/video_service v0.0.0-20210923020008-dacaa1a9536b h1:OH8B9i+GrEUYXa5v7NcELNGAIIoYDw/cOzRgR+dOwhM=
 github.com/horahoradev/horahora/video_service v0.0.0-20210923020008-dacaa1a9536b/go.mod h1:0dT1RVOD5PhWumJCYUT3Rf8JHMVEQXHf6GZ2Lwl2TDE=
@@ -379,6 +381,7 @@ gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f h1:BLraFXnmrev5lT+xlilqcH8X
 gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/fsnotify.v1 v1.4.7/go.mod h1:Tz8NjZHkW78fSQdbUxIjBTcgA1z1m8ZHf0WmKUhAMys=
 gopkg.in/ini.v1 v1.57.0/go.mod h1:pNLf8WUiyNEtQjuu5G5vTm06TEv9tsIgeAvK8hOrP4k=
+gopkg.in/square/go-jose.v2 v2.5.1 h1:7odma5RETjNHWJnR32wx8t+Io4djHE1PqxCFx3iiZ2w=
 gopkg.in/square/go-jose.v2 v2.5.1/go.mod h1:M9dMgbHiYLoDGQrXy7OpJDJWiKiU//h+vD76mk0e1AI=
 gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7/go.mod h1:dt/ZhP58zS4L8KSrWDmTeBkI65Dw0HsyUHuEVlX15mw=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

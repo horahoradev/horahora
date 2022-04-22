@@ -9,6 +9,7 @@ import (
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 // route: GET /users/:id where id is the user id
@@ -30,14 +31,14 @@ func (v RouteHandler) getUser(c echo.Context) error {
 		return fmt.Errorf("Get user from ID: %s", err)
 	}
 
-	userProfile, err := v.getUserProfileInfo(c)
+	userProfile, _ := v.getUserProfileInfo(c)
 	if err != nil {
-		return fmt.Errorf("Get user profile info: %s", err)
+		log.Errorf("Get user profile info: %s", err)
 	}
 
 	// doesn't matter if it fails, 0 is a fine default rank
 	showUnapproved := false
-	if userProfile.Rank > 0 {
+	if userProfile != nil && userProfile.Rank > 0 {
 		// privileged user, can show unapproved videos
 		showUnapproved = true
 	}
@@ -68,6 +69,7 @@ func (v RouteHandler) getUser(c echo.Context) error {
 			NumberOfItems: int(videoList.NumberOfVideos),
 			CurrentPage:   int(pageNumber),
 		},
+		Banned: profile.Banned,
 	}
 
 	data.Videos = []Video{}
