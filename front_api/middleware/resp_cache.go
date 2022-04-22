@@ -23,7 +23,7 @@ type ResponseCache struct {
 func NewRespCache() *ResponseCache {
 	cache := ttlcache.NewCache()
 
-	cache.SetTTL(time.Duration(5 * time.Minute))
+	cache.SetTTL(time.Duration(5 * time.Second))
 
 	return &ResponseCache{
 		cache: cache,

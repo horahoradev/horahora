@@ -51,6 +51,8 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 
 	e.POST("/comment_upvotes/", r.handleUpvote)
 	e.POST("/upload", r.upload)
+
+	e.POST("/ban/:id", r.handleBan)
 }
 
 type Video struct {
@@ -93,6 +95,7 @@ type ProfileData struct {
 	Username          string
 	ProfilePictureURL string
 	Videos            []Video
+	Banned            bool
 	L                 *LoggedInUserData
 }
 

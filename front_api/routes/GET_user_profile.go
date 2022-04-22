@@ -57,7 +57,6 @@ func (r *RouteHandler) getUserProfileInfo(c echo.Context) (*LoggedInUserData, er
 	l.Username = userResp.Username
 	// l.ProfilePictureURL = userResp. // TODO
 	l.Rank = int32(userResp.Rank)
-	l.Banned = userResp.Banned
 	l.UserID = idInt
 	return &l, nil
 }
