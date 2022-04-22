@@ -127,7 +127,7 @@ function VideoView(props) {
             })}
           </div>
         </div>
-        {data.L && data.L.Rank === UserRank.ADMIN && <VideoAdminControls data={data} />}
+        {data.L && data.L.rank === UserRank.ADMIN && <VideoAdminControls data={data} />}
         <hr />
         <div className="my-4">
           <div className="flex justify-start items-center">

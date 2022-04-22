@@ -2,15 +2,15 @@ package routes
 
 import (
 	"context"
-	"github.com/labstack/gommon/log"
 	"math"
 	"net/http"
 	"strconv"
 
+	"github.com/labstack/gommon/log"
+
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 )
-
 
 // route: GET /videos/:id where id is the video id
 // The video id is located within the path. No other parameters are accepted.
@@ -76,20 +76,21 @@ func (v *RouteHandler) getVideo(c echo.Context) error {
 	}
 
 	data := VideoDetail{
-		Title:            videoInfo.VideoTitle,
-		MPDLoc:           videoInfo.VideoLoc, // FIXME: fix this in videoservice LOL this is embarrassing
-		Views:            videoInfo.Views,
-		Rating:           rating,
-		AuthorID:         videoInfo.AuthorID, // TODO
-		Username:         videoInfo.AuthorName,
-		UserDescription:  "", // TODO: not implemented yet
-		VideoDescription: videoInfo.Description,
-		UserSubscribers:  0, // TODO: not implemented yet
-		ProfilePicture:   "/static/images/placeholder1.jpg",
-		UploadDate:       videoInfo.UploadDate,
-		VideoID:          videoInfo.VideoID,
-		Tags:             videoInfo.Tags,
+		Title:             videoInfo.VideoTitle,
+		MPDLoc:            videoInfo.VideoLoc, // FIXME: fix this in videoservice LOL this is embarrassing
+		Views:             videoInfo.Views,
+		Rating:            rating,
+		AuthorID:          videoInfo.AuthorID, // TODO
+		Username:          videoInfo.AuthorName,
+		UserDescription:   "", // TODO: not implemented yet
+		VideoDescription:  videoInfo.Description,
+		UserSubscribers:   0, // TODO: not implemented yet
+		ProfilePicture:    "/static/images/placeholder1.jpg",
+		UploadDate:        videoInfo.UploadDate,
+		VideoID:           videoInfo.VideoID,
+		Tags:              videoInfo.Tags,
 		RecommendedVideos: recVideos,
+		L:                 profile,
 	}
 
 	return c.JSON(http.StatusOK, data)

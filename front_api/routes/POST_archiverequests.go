@@ -2,6 +2,7 @@ package routes
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -20,9 +21,13 @@ func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
 		return err
 	}
 
+	if profile.Rank <= 1 {
+		return errors.New("insufficient permissions")
+	}
+
 	req := schedulerproto.URLRequest{
 		UserID: profile.UserID,
-		Url: urlVal,
+		Url:    urlVal,
 	}
 
 	_, err = r.s.DlURL(context.TODO(), &req)

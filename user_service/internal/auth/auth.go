@@ -20,6 +20,16 @@ func Login(username, password string, privateKey *rsa.PrivateKey, u *model.UserM
 		return "", err
 	}
 
+	// No logins if user banned
+	banned, err := u.IsBanned(uid)
+	if err != nil {
+		return "", err
+	}
+
+	if banned {
+		return "", errors.New("User is banned")
+	}
+
 	passHash, err := u.GetPassHash(uid)
 	if err != nil {
 		return "", err

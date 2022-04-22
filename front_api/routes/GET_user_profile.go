@@ -3,18 +3,20 @@ package routes
 import (
 	"context"
 	"errors"
+	"net/http"
+
 	custommiddleware "github.com/horahoradev/horahora/front_api/middleware"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
 )
 
 type LoggedInUserData struct {
-	UserID            int64 `json:"userID"`
+	UserID            int64  `json:"userID"`
 	Username          string `json:"username"`
-	ProfilePictureURL string  `json:"profile_picture_url"`
-	Rank              int32 `json:"rank"`
+	ProfilePictureURL string `json:"profile_picture_url"`
+	Rank              int32  `json:"rank"`
+	Banned            bool   `json:"banned"`
 }
 
 // Route: /currentuserprofile/
@@ -55,6 +57,7 @@ func (r *RouteHandler) getUserProfileInfo(c echo.Context) (*LoggedInUserData, er
 	l.Username = userResp.Username
 	// l.ProfilePictureURL = userResp. // TODO
 	l.Rank = int32(userResp.Rank)
+	l.Banned = userResp.Banned
 	l.UserID = idInt
 	return &l, nil
 }

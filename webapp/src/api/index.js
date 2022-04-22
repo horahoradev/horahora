@@ -86,3 +86,8 @@ export async function approveVideo(videoId) {
   const res = await axios.post(e(`approve/${videoId}`));
   return res.data;
 }
+
+export async function banUser(userID) {
+  const res = await axios.post(e(`ban/${userID}`));
+  return res.data;
+}

@@ -55,10 +55,11 @@ type User struct {
 	Username string `db:"username"`
 	Email    string `db:"email"`
 	Rank     int    `db:"rank"`
+	Banned   bool   `db:"banned"`
 }
 
 func (m *UserModel) GetUserWithID(userID int64) (*User, error) {
-	sql := "SELECT id, username, email, rank FROM users WHERE id=$1"
+	sql := "SELECT id, username, email, rank, banned FROM users WHERE id=$1"
 	var user []User
 
 	err := m.Conn.Select(&user, sql, userID)
@@ -99,6 +100,27 @@ func (m *UserModel) GetPassHash(uid int64) (string, error) {
 	}
 
 	return passHash, nil
+}
+
+func (m *UserModel) BanUser(uid int64) error {
+	sql := "UPDATE users SET banned = true WHERE id = $1"
+
+	_, err := m.Conn.Exec(sql, uid)
+	return err
+}
+
+func (m *UserModel) IsBanned(uid int64) (bool, error) {
+	sql := "SELECT banned FROM users WHERE id = $1"
+
+	row := m.Conn.QueryRow(sql, uid)
+
+	var banned bool
+	err := row.Scan(&banned)
+	if err != nil {
+		return true, err // default true if error, FIXME take a stern look at!
+	}
+
+	return banned, nil
 }
 
 // Maybe I should cut down on the copy pasta

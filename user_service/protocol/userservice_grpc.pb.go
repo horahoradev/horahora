@@ -24,6 +24,7 @@ type UserServiceClient interface {
 	GetUserFromID(ctx context.Context, in *GetUserFromIDRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	GetUserForForeignUID(ctx context.Context, in *GetForeignUserRequest, opts ...grpc.CallOption) (*GetForeignUserResponse, error)
 	GetUserIDsForUsername(ctx context.Context, in *GetUserIDsForUsernameRequest, opts ...grpc.CallOption) (*GetUserIDsForUsernameResponse, error)
+	BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*BanUserResponse, error)
 }
 
 type userServiceClient struct {
@@ -88,6 +89,15 @@ func (c *userServiceClient) GetUserIDsForUsername(ctx context.Context, in *GetUs
 	return out, nil
 }
 
+func (c *userServiceClient) BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*BanUserResponse, error) {
+	out := new(BanUserResponse)
+	err := c.cc.Invoke(ctx, "/proto.UserService/BanUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -98,6 +108,7 @@ type UserServiceServer interface {
 	GetUserFromID(context.Context, *GetUserFromIDRequest) (*UserResponse, error)
 	GetUserForForeignUID(context.Context, *GetForeignUserRequest) (*GetForeignUserResponse, error)
 	GetUserIDsForUsername(context.Context, *GetUserIDsForUsernameRequest) (*GetUserIDsForUsernameResponse, error)
+	BanUser(context.Context, *BanUserRequest) (*BanUserResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -122,6 +133,9 @@ func (UnimplementedUserServiceServer) GetUserForForeignUID(context.Context, *Get
 }
 func (UnimplementedUserServiceServer) GetUserIDsForUsername(context.Context, *GetUserIDsForUsernameRequest) (*GetUserIDsForUsernameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserIDsForUsername not implemented")
+}
+func (UnimplementedUserServiceServer) BanUser(context.Context, *BanUserRequest) (*BanUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BanUser not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -244,6 +258,24 @@ func _UserService_GetUserIDsForUsername_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_BanUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BanUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).BanUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserService/BanUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).BanUser(ctx, req.(*BanUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -274,6 +306,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserIDsForUsername",
 			Handler:    _UserService_GetUserIDsForUsername_Handler,
+		},
+		{
+			MethodName: "BanUser",
+			Handler:    _UserService_BanUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

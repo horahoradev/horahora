@@ -2,12 +2,13 @@ package routes
 
 import (
 	"context"
+	"fmt"
+	"net/http"
+	"strconv"
+
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"strconv"
-	"fmt"
 )
 
 // route: GET /users/:id where id is the user id
@@ -28,7 +29,6 @@ func (v RouteHandler) getUser(c echo.Context) error {
 	if err != nil {
 		return fmt.Errorf("Get user from ID: %s", err)
 	}
-
 
 	userProfile, err := v.getUserProfileInfo(c)
 	if err != nil {
@@ -62,10 +62,11 @@ func (v RouteHandler) getUser(c echo.Context) error {
 	data := ProfileData{
 		UserID:            idInt,
 		Username:          profile.Username,
+		L:                 userProfile,
 		ProfilePictureURL: "/static/images/placeholder1.jpg",
 		PaginationData: PaginationData{
-			NumberOfItems: 		  int(videoList.NumberOfVideos),
-			CurrentPage:          int(pageNumber),
+			NumberOfItems: int(videoList.NumberOfVideos),
+			CurrentPage:   int(pageNumber),
 		},
 	}
 
@@ -83,6 +84,6 @@ func (v RouteHandler) getUser(c echo.Context) error {
 
 		data.Videos = append(data.Videos, v)
 	}
-	
+
 	return c.JSON(http.StatusOK, data)
 }
