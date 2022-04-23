@@ -6,8 +6,11 @@ import (
 	"io"
 	"os"
 
-	"github.com/aws/aws-sdk-go-v2/aws/external"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -19,14 +22,37 @@ type S3Storage struct {
 }
 
 func NewS3(bucketName string) (*S3Storage, error) {
-	cfg, err := external.LoadDefaultAWSConfig()
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-1"))
 	if err != nil {
 		return nil, err
 	}
-	cfg.Region = "us-west-1"
 
 	s3Client := s3.New(cfg)
 
+	return &S3Storage{S3Client: *s3Client, BucketName: bucketName}, nil
+}
+
+func NewS3Minio(bucketName string, endpoint string) (*S3Storage, error) {
+	// Credit goes to danmux on Stackoverflow for this specific snippet:
+	// https://stackoverflow.com/questions/67575681/is-aws-go-sdk-v2-integrated-with-local-minio-server
+	// Thank you for your work!
+
+	const defaultRegion = "us-east-1"
+	staticResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
+		return aws.Endpoint{
+			PartitionID:   "aws",
+			URL:           endpoint,
+			SigningRegion: defaultRegion,
+		}, nil
+	})
+
+	cfg := aws.Config{
+		Region:           defaultRegion,
+		Credentials:      credentials.NewStaticCredentialsProvider("minioadmin", "minioadmin", ""),
+		EndpointResolver: staticResolver,
+	}
+
+	s3Client := s3.New(cfg)
 	return &S3Storage{S3Client: *s3Client, BucketName: bucketName}, nil
 }
 

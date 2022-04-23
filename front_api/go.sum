@@ -112,6 +112,8 @@ github.com/horahoradev/horahora/user_service v0.0.0-20220422184246-79b64670410e/
 github.com/horahoradev/horahora/video_service v0.0.0-20210922030328-dee03a489f47/go.mod h1:1K7li7af9OfuPp1QKfxbuKde8lUKkCHtPE7/7bDaXCQ=
 github.com/horahoradev/horahora/video_service v0.0.0-20210923020008-dacaa1a9536b h1:OH8B9i+GrEUYXa5v7NcELNGAIIoYDw/cOzRgR+dOwhM=
 github.com/horahoradev/horahora/video_service v0.0.0-20210923020008-dacaa1a9536b/go.mod h1:0dT1RVOD5PhWumJCYUT3Rf8JHMVEQXHf6GZ2Lwl2TDE=
+github.com/horahoradev/horahora/video_service v0.0.0-20220423205115-72d6369be489 h1:yizV44+zx035a+JIOGsUCbQS9irLDixkMIIGZsNg91I=
+github.com/horahoradev/horahora/video_service v0.0.0-20220423205115-72d6369be489/go.mod h1:0dT1RVOD5PhWumJCYUT3Rf8JHMVEQXHf6GZ2Lwl2TDE=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/jellydator/ttlcache/v2 v2.11.1 h1:AZGME43Eh2Vv3giG6GeqeLeFXxwxn1/qHItqWZl6U64=
 github.com/jellydator/ttlcache/v2 v2.11.1/go.mod h1:RtE5Snf0/57e+2cLWFYWCCsLas2Hy3c5Z4n14XmSvTI=
