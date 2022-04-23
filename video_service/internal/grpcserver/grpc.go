@@ -89,8 +89,11 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 		}
 	case "s3":
 		g.Storage, err = storage.NewS3(bucketName)
+		if err != nil {
+			return nil, err
+		}
 	case "minio":
-		g.Storage, err = storage.NewMinio(minioEndpoint, apiID, apiKey, bucketName)
+		g.Storage, err = storage.NewS3Minio(bucketName, minioEndpoint)
 		if err != nil {
 			return nil, err
 		}
@@ -459,6 +462,7 @@ func (g GRPCServer) ApproveVideo(ctx context.Context, req *proto.VideoApproval) 
 	return &proto.Nothing{}, nil
 }
 
+// TODO: note that this method only works for the basic method of encoding, and not for any form of transcoding
 func (g GRPCServer) DeleteVideo(ctx context.Context, deleteReq *proto.VideoDeletionReq) (*proto.Nothing, error) {
 	// Get the video info
 	info, err := g.VideoModel.GetVideoInfo(deleteReq.VideoID)
@@ -467,16 +471,25 @@ func (g GRPCServer) DeleteVideo(ctx context.Context, deleteReq *proto.VideoDelet
 	}
 
 	// Need to fix the mpd storage for this stuff LOL
-	spl := strings.Split(info.NewLink, "/")
+	spl := strings.Split(info.VideoLoc, "/")
 	r := spl[len(spl)-1]
 	uuid := r[:len(r)-4]
 
-	// Delete from storage
+	// Delete video from storage
 	log.Errorf("Deleting video %s", uuid)
 	err = g.Storage.Delete(uuid)
 	if err != nil {
 		return nil, err
 	}
+
+	// Delete thumb from storage
+	log.Errorf("Deleting video %s", uuid)
+	err = g.Storage.Delete(uuid + ".thumb")
+	if err != nil {
+		return nil, err
+	}
+
+	// The rest of the files are ok, e.g. metadata and such
 
 	// Delete from database
 	return &proto.Nothing{}, g.VideoModel.DeleteVideo(deleteReq.VideoID)

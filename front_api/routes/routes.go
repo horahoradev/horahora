@@ -53,6 +53,8 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/upload", r.upload)
 
 	e.POST("/ban/:id", r.handleBan)
+	e.POST("/delete/:id", r.handleDelete)
+
 }
 
 type Video struct {
