@@ -14,10 +14,17 @@ service UserService {
     rpc GetUserIDsForUsername(GetUserIDsForUsernameRequest) returns (GetUserIDsForUsernameResponse){}
     rpc BanUser(BanUserRequest) returns ( BanUserResponse){}
     rpc SetUserRank(SetRankRequest) returns ( Nothing ){}
+    rpc ResetPassword(ResetPasswordRequest) returns ( Nothing ) {}
 }
 
 message Nothing {
 
+}
+
+message ResetPasswordRequest {
+    int64 UserID = 1;
+    string old_password = 2;
+    string new_password = 3;
 }
 
 message SetRankRequest {

@@ -57,7 +57,7 @@ func Register(username, email, password string, u *model.UserModel, privateKey *
 	var err error
 	// TODO: salt + pepper?
 	if !foreignUser {
-		passHash, err = bcrypt.GenerateFromPassword(pwBytes, hashCost)
+		passHash, err = GenerateHash(pwBytes)
 		if err != nil {
 			return "", err
 		}
@@ -74,6 +74,15 @@ func Register(username, email, password string, u *model.UserModel, privateKey *
 
 type JWTPayload struct {
 	UID int64 `json:"uid"`
+}
+
+func GenerateHash(password []byte) ([]byte, error) {
+	passHash, err := bcrypt.GenerateFromPassword(password, hashCost)
+	if err != nil {
+		return nil, err
+	}
+
+	return passHash, nil
 }
 
 func CreateJWT(payload JWTPayload, privateKey *rsa.PrivateKey) (string, error) {

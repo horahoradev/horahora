@@ -180,3 +180,10 @@ func (m *UserModel) SetUserRank(uid, rank int64) error {
 	_, err := m.Conn.Exec(sql, rank, uid)
 	return err
 }
+
+func (m *UserModel) SetNewHash(uid int64, hash []byte) error {
+	sql := "UPDATE users SET pass_hash = $1 WHERE uid = $2"
+
+	_, err := m.Conn.Exec(sql, string(hash), uid)
+	return err
+}
