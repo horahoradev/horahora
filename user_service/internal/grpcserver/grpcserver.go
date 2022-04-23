@@ -152,3 +152,27 @@ func (g GRPCServer) GetUserForForeignUID(ctx context.Context, req *proto.GetFore
 func (g GRPCServer) SetUserRank(ctx context.Context, req *proto.SetRankRequest) (*proto.Nothing, error) {
 	return &proto.Nothing{}, g.um.SetUserRank(req.UserID, int64(req.Rank.Number()))
 }
+
+func (g GRPCServer) ResetPassword(ctx context.Context, req *proto.ResetPasswordRequest) (*proto.Nothing, error) {
+	// This is a little inefficient but whatever
+	user, err := g.um.GetUserWithID(req.UserID)
+	if err != nil {
+		log.Errorf("failed to fetch user with id %s, failed with err %s", req.UserID, err)
+		return nil, err
+	}
+
+	_, err = auth.Login(user.Username, req.OldPassword, g.privateKey, g.um)
+	if err != nil {
+		log.Errorf("Password reset auth failed with err: %s", err)
+		return nil, err
+	}
+
+	// old password is valid, so we can proceed to creating a new hash
+	passHash, err := auth.GenerateHash([]byte(req.NewPassword))
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.Nothing{}, g.um.SetNewHash(req.UserID, passHash)
+
+}

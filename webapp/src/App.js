@@ -7,6 +7,7 @@ import VideoPage from "./VideoPage";
 import UserPage from "./UserPage";
 import ArchivalPage from "./ArchivalPage";
 import RegisterPage from "./RegisterPage";
+import PasswordResetPage from "./Passwordreset";
 
 function App() {
   return (
@@ -32,6 +33,9 @@ function App() {
         </Route>
         <Route exact path ="/archive-requests">
           <ArchivalPage/>
+        </Route>
+        <Route exact path ="/password-reset">
+            <PasswordResetPage/>
         </Route>
         <Route>TODO(ivan): 404</Route>
       </Switch>
