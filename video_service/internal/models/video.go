@@ -366,6 +366,9 @@ func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pa
 	// Only show transcoded videos
 	ds = ds.Where(goqu.C("transcoded").Eq(true))
 
+	// Do not show deleted videos
+	ds = ds.Where(goqu.C("is_deleted").Eq(false))
+
 	// Deduplicate
 	ds = ds.GroupBy(goqu.I("videos.id"))
 
@@ -474,7 +477,7 @@ type basicVideoInfo struct {
 
 // Information that isn't super straightforward to query for
 func (v *VideoModel) GetVideoInfo(videoID string) (*videoproto.VideoMetadata, error) {
-	sql := "SELECT id, title, description, upload_date, userID, newLink, views FROM videos WHERE id=$1"
+	sql := "SELECT id, title, description, upload_date, userID, newLink, views FROM videos WHERE id=$1 AND is_deleted=false"
 	var video videoproto.VideoMetadata
 	var authorID, views int64
 
@@ -712,6 +715,12 @@ func (v *VideoModel) GetVideoRecommendations(userID int64) (*videoproto.RecResp,
 	}
 
 	return &videoproto.RecResp{Videos: videoList}, nil
+}
+
+func (v *VideoModel) DeleteVideo(videoID string) error {
+	sql := "UPDATE videos SET is_deleted = true WHERE video_id = $1 LIMIT 1"
+	_, err := v.db.Exec(sql, videoID)
+	return err
 }
 
 func (v *VideoModel) GetComments(videoID, currUserID int64) ([]*videoproto.Comment, error) {

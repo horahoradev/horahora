@@ -124,7 +124,6 @@ $JWT_KEYPAIR
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
       - ./videos:/data
-
 volumes:
   postgresdata:
 

@@ -119,5 +119,15 @@ func (s *S3Storage) Upload(path, desiredFilename string) error {
 	putObjReq := s.S3Client.PutObjectRequest(&putObjInp)
 	_, err = putObjReq.Send(context.TODO())
 	return err // TODO
+}
 
+func (s *S3Storage) Delete(filename string) error {
+	deleteObjInp := s3.DeleteObjectInput{
+		Bucket: &s.BucketName,
+		Key:    &filename,
+	}
+
+	delObjReq := s.S3Client.DeleteObjectRequest(&deleteObjInp)
+	_, err := delObjReq.Send(context.TODO())
+	return err
 }

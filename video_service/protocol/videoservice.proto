@@ -20,6 +20,11 @@ service VideoService {
 
     rpc GetVideoRecommendations(recReq) returns (recResp) {}
     rpc ApproveVideo(videoApproval) returns (Nothing) {}
+    rpc DeleteVideo(videoDeletionReq) returns (Nothing) {}
+}
+
+message videoDeletionReq {
+    string videoID = 1;
 }
 
 message Nothing{}

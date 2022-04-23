@@ -115,7 +115,6 @@ type VideoUpload struct {
 func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) error {
 	log.Info("Handling video upload")
 
-
 	var video VideoUpload
 
 	// UUID for tmp filename and all uploads provides probabilistic guarantee of uniqueness
@@ -195,6 +194,7 @@ loop:
 	log.Infof("Handling video upload %s from website %s", video.Meta.Meta.OriginalID, video.Meta.Meta.OriginalSite)
 
 	// Do some in-place edits for backwards compatibility...
+	// FIXME
 	switch {
 	case strings.Contains(video.Meta.Meta.OriginalSite, "nicovideo"):
 		video.Meta.Meta.OriginalSite = "0"
@@ -203,7 +203,6 @@ loop:
 	case strings.Contains(video.Meta.Meta.OriginalSite, "youtube"):
 		video.Meta.Meta.OriginalSite = "2"
 	}
-
 
 	err = ioutil.WriteFile(video.FileData.Name()+".thumb", video.Meta.Meta.Thumbnail, 0644)
 	if err != nil {
@@ -241,6 +240,7 @@ loop:
 	// the video hasn't been transcoded/chunked and the mpd hasn't been uploaded yet
 	// a better solution will be provided in the future... I will fix this... (I'm keeping it backwards compatible for now)
 	// TODO: switch to struct for args
+	// (FIXME)
 	manifestLoc := fmt.Sprintf("%s/%s", g.OriginFQDN, filepath.Base(video.FileData.Name()+".mpd"))
 
 	videoID, err := g.VideoModel.SaveForeignVideo(context.TODO(), video.Meta.Meta.Title, video.Meta.Meta.Description,
@@ -333,7 +333,6 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 					return
 				}
 
-
 				nullTranscoder := dashutils.NullTrancoder{}
 
 				transcodeResults, err := nullTranscoder.TranscodeAndGenerateManifest(vid.Name(), g.Local)
@@ -342,7 +341,6 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 					log.Error(err)
 					return
 				}
-
 
 				err = g.UploadMPDSet(transcodeResults)
 				if err != nil {
@@ -459,6 +457,29 @@ func (g GRPCServer) ApproveVideo(ctx context.Context, req *proto.VideoApproval) 
 	}
 
 	return &proto.Nothing{}, nil
+}
+
+func (g GRPCServer) DeleteVideo(ctx context.Context, deleteReq *proto.VideoDeletionReq) (*proto.Nothing, error) {
+	// Get the video info
+	info, err := g.VideoModel.GetVideoInfo(deleteReq.VideoID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Need to fix the mpd storage for this stuff LOL
+	spl := strings.Split(info.NewLink, "/")
+	r := spl[len(spl)-1]
+	uuid := r[:len(r)-4]
+
+	// Delete from storage
+	log.Errorf("Deleting video %s", uuid)
+	err = g.Storage.Delete(uuid)
+	if err != nil {
+		return nil, err
+	}
+
+	// Delete from database
+	return &proto.Nothing{}, g.VideoModel.DeleteVideo(deleteReq.VideoID)
 }
 
 func (g GRPCServer) MakeComment(ctx context.Context, commentReq *proto.VideoComment) (*proto.Nothing, error) {

@@ -64,6 +64,19 @@ function VideoAdminControls(props) {
   let { data } = props;
   let [approvedVideo, setApprovedVideo] = useState(false);
   let approvingVideo = useRef(false);
+  let deletingVideo = useRef(false);
+
+  let deleteVideo = useCallback(() => {
+    if (deletingVideo.current) return;
+    deletingVideo.current = true;
+    let run = async () => {
+      await API.deleteVideo(data.VideoID);
+      deletingVideo.current = false;
+      navigate_to_next_video();
+    };
+    // TODO: error future handler
+  }, [data, deletingVideo]);
+
   let approveVideo = useCallback(() => {
     if (approvingVideo.current) return;
     let run = async () => {
@@ -74,6 +87,7 @@ function VideoAdminControls(props) {
     run().finally(() => {
       approvingVideo.current = false;
     });
+    // TODO: error future handler
   }, [data, approvingVideo, setApprovedVideo]);
 
   return (
@@ -82,6 +96,9 @@ function VideoAdminControls(props) {
       <div className="my-4">
         <Button type="primary" disabled={approvedVideo} onClick={approveVideo}>
           {approvedVideo ? "Approved" : "Approve"}
+        </Button>
+        <Button type="primary" onClick={deleteVideo}>
+          Delete video
         </Button>
       </div>
     </>

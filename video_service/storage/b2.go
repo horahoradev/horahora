@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"io"
 	"os"
 
@@ -83,4 +84,9 @@ func (s *B2Storage) Upload(path, desiredFilename string) error {
 		return err
 	}
 	return w.Close()
+}
+
+// TODO: Not implemented
+func (s *B2Storage) Delete(filename string) error {
+	return errors.New("Not implemented") // there's no easy delete operation
 }
