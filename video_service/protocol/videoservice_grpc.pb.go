@@ -30,6 +30,7 @@ type VideoServiceClient interface {
 	GetCommentsForVideo(ctx context.Context, in *CommentRequest, opts ...grpc.CallOption) (*CommentListResponse, error)
 	GetVideoRecommendations(ctx context.Context, in *RecReq, opts ...grpc.CallOption) (*RecResp, error)
 	ApproveVideo(ctx context.Context, in *VideoApproval, opts ...grpc.CallOption) (*Nothing, error)
+	DeleteVideo(ctx context.Context, in *VideoDeletionReq, opts ...grpc.CallOption) (*Nothing, error)
 }
 
 type videoServiceClient struct {
@@ -196,6 +197,15 @@ func (c *videoServiceClient) ApproveVideo(ctx context.Context, in *VideoApproval
 	return out, nil
 }
 
+func (c *videoServiceClient) DeleteVideo(ctx context.Context, in *VideoDeletionReq, opts ...grpc.CallOption) (*Nothing, error) {
+	out := new(Nothing)
+	err := c.cc.Invoke(ctx, "/proto.VideoService/DeleteVideo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VideoServiceServer is the server API for VideoService service.
 // All implementations must embed UnimplementedVideoServiceServer
 // for forward compatibility
@@ -212,6 +222,7 @@ type VideoServiceServer interface {
 	GetCommentsForVideo(context.Context, *CommentRequest) (*CommentListResponse, error)
 	GetVideoRecommendations(context.Context, *RecReq) (*RecResp, error)
 	ApproveVideo(context.Context, *VideoApproval) (*Nothing, error)
+	DeleteVideo(context.Context, *VideoDeletionReq) (*Nothing, error)
 	mustEmbedUnimplementedVideoServiceServer()
 }
 
@@ -254,6 +265,9 @@ func (UnimplementedVideoServiceServer) GetVideoRecommendations(context.Context, 
 }
 func (UnimplementedVideoServiceServer) ApproveVideo(context.Context, *VideoApproval) (*Nothing, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApproveVideo not implemented")
+}
+func (UnimplementedVideoServiceServer) DeleteVideo(context.Context, *VideoDeletionReq) (*Nothing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteVideo not implemented")
 }
 func (UnimplementedVideoServiceServer) mustEmbedUnimplementedVideoServiceServer() {}
 
@@ -495,6 +509,24 @@ func _VideoService_ApproveVideo_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VideoService_DeleteVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VideoDeletionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServiceServer).DeleteVideo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.VideoService/DeleteVideo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServiceServer).DeleteVideo(ctx, req.(*VideoDeletionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VideoService_ServiceDesc is the grpc.ServiceDesc for VideoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -541,6 +573,10 @@ var VideoService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ApproveVideo",
 			Handler:    _VideoService_ApproveVideo_Handler,
+		},
+		{
+			MethodName: "DeleteVideo",
+			Handler:    _VideoService_DeleteVideo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

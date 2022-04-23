@@ -6,6 +6,7 @@ import LogoutPage from "./LogoutPage";
 import VideoPage from "./VideoPage";
 import UserPage from "./UserPage";
 import ArchivalPage from "./ArchivalPage";
+import RegisterPage from "./RegisterPage";
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
         </Route>
         <Route exact path="/users/:id">
           <UserPage />
+        </Route>
+        <Route exact path="/register">
+          <RegisterPage></RegisterPage>
         </Route>
         <Route exact path ="/archive-requests">
           <ArchivalPage/>

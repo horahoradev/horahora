@@ -43,6 +43,26 @@ export async function postArchival(url) {
     return res.data;
 }
 
+export async function postRegister(data) {
+  let form = new FormData();
+  form.append("username", data.username);
+  form.append("password", data.password);
+  form.append("email", data.email);
+
+
+  const res = await axios.post(e("register"), form, {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+  });
+  return res.data;
+}
+
+export async function deleteVideo(videoId) {
+  const res = await axios.post(e(`delete/${videoId}`));
+  return res.data;
+}
+
 export async function postLogin(data) {
   let form = new FormData();
   form.append("username", data.username);

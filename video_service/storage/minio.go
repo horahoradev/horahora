@@ -67,3 +67,7 @@ func (s *MinioStorage) Upload(path, desiredFilename string) error {
 
 	return nil
 }
+
+func (s *MinioStorage) Delete(filename string) error {
+	return s.Client.RemoveObject(context.Background(), s.Bucket, filename, minio.RemoveObjectOptions{})
+}
