@@ -54,6 +54,8 @@ function UserPage() {
                 <h1 className={"flex justify-center"}>{pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
                 </h1>
                 {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && <h1 className={"flex justify-center"}><Button type="primary" onClick={() => API.banUser(pageUserData.UserID)}>Ban</Button></h1>}
+                {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && <h1 className={"flex justify-center"}><Button type="primary" onClick={() => API.setUserMod(pageUserData.UserID)}>Promote to mod</Button></h1>}
+                {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && <h1 className={"flex justify-center"}><Button type="primary" onClick={() => API.setUserAdmin(pageUserData.UserID)}>Promote to admin</Button></h1>}
 
                 {/* TODO: no more copy pasta! */}
                 <div className="flex justify-center mx-4 min-h-screen">
