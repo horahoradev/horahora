@@ -111,3 +111,13 @@ export async function banUser(userID) {
   const res = await axios.post(e(`ban/${userID}`));
   return res.data;
 }
+
+export async function setUserMod(userID) {
+  const res = await axios.post(e(`setrank/${userID}/1`));
+  return res.data;
+}
+
+export async function setUserAdmin(userID) {
+  const res = await axios.post(e(`setrank/${userID}/2`));
+  return res.data;
+}
