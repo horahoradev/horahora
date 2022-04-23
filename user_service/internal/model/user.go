@@ -169,3 +169,14 @@ func (m *UserModel) GetUserIDsForUsername(username string) ([]int64, error) {
 
 	return ret, nil
 }
+
+func (m *UserModel) SetUserRank(uid, rank int64) error {
+	if rank < 0 || rank > 2 {
+		return errors.New("Invalid rank")
+	}
+
+	sql := "UPDATE users SET rank = $1 WHERE id = $2"
+
+	_, err := m.Conn.Exec(sql, rank, uid)
+	return err
+}

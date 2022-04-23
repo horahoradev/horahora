@@ -5,10 +5,14 @@ go 1.16
 require (
 	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
-	github.com/aws/aws-sdk-go-v2 v0.20.0
+	github.com/aws/aws-sdk-go-v2 v1.16.2
+	github.com/aws/aws-sdk-go-v2/config v1.15.3
+	github.com/aws/aws-sdk-go-v2/credentials v1.11.2
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.5
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/doug-martin/goqu/v9 v9.9.0
 	github.com/go-redis/redis v6.15.8+incompatible
+	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/golang/mock v1.4.3
 	github.com/google/uuid v1.1.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
