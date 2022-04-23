@@ -62,7 +62,7 @@ services:
       - StorageBackend=$STORAGE_BACKEND
       - StorageAPIID=$STORAGE_API_ID
       - StorageAPIKey=$STORAGE_API_KEY
-      - MinioEndpoint=minio:9000
+      - MinioEndpoint=http://minio:9000
       - ApprovalThreshold=1
     volumes:
     - $HOME/.aws/:/root/.aws/:ro

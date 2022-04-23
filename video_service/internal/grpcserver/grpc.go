@@ -31,7 +31,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	_ "github.com/aws/aws-sdk-go-v2/aws/external"
 	_ "github.com/aws/aws-sdk-go-v2/service/s3"
 	_ "github.com/google/uuid"
 )
@@ -483,7 +482,7 @@ func (g GRPCServer) DeleteVideo(ctx context.Context, deleteReq *proto.VideoDelet
 	}
 
 	// Delete thumb from storage
-	log.Errorf("Deleting video %s", uuid)
+	log.Errorf("Deleting thumbnail %s", uuid+".thumb")
 	err = g.Storage.Delete(uuid + ".thumb")
 	if err != nil {
 		return nil, err

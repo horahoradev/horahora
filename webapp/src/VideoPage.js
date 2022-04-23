@@ -65,6 +65,7 @@ function VideoAdminControls(props) {
   let [approvedVideo, setApprovedVideo] = useState(false);
   let approvingVideo = useRef(false);
   let deletingVideo = useRef(false);
+  let history = useHistory();
 
   let deleteVideo = useCallback(() => {
     if (deletingVideo.current) return;
@@ -72,8 +73,9 @@ function VideoAdminControls(props) {
     let run = async () => {
       await API.deleteVideo(data.VideoID);
       deletingVideo.current = false;
-      navigate_to_next_video();
+      history.push("/");
     };
+    run();
     // TODO: error future handler
   }, [data, deletingVideo]);
 

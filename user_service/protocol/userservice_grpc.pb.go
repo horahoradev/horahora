@@ -25,6 +25,7 @@ type UserServiceClient interface {
 	GetUserForForeignUID(ctx context.Context, in *GetForeignUserRequest, opts ...grpc.CallOption) (*GetForeignUserResponse, error)
 	GetUserIDsForUsername(ctx context.Context, in *GetUserIDsForUsernameRequest, opts ...grpc.CallOption) (*GetUserIDsForUsernameResponse, error)
 	BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*BanUserResponse, error)
+	SetUserRank(ctx context.Context, in *SetRankRequest, opts ...grpc.CallOption) (*Nothing, error)
 }
 
 type userServiceClient struct {
@@ -98,6 +99,15 @@ func (c *userServiceClient) BanUser(ctx context.Context, in *BanUserRequest, opt
 	return out, nil
 }
 
+func (c *userServiceClient) SetUserRank(ctx context.Context, in *SetRankRequest, opts ...grpc.CallOption) (*Nothing, error) {
+	out := new(Nothing)
+	err := c.cc.Invoke(ctx, "/proto.UserService/SetUserRank", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -109,6 +119,7 @@ type UserServiceServer interface {
 	GetUserForForeignUID(context.Context, *GetForeignUserRequest) (*GetForeignUserResponse, error)
 	GetUserIDsForUsername(context.Context, *GetUserIDsForUsernameRequest) (*GetUserIDsForUsernameResponse, error)
 	BanUser(context.Context, *BanUserRequest) (*BanUserResponse, error)
+	SetUserRank(context.Context, *SetRankRequest) (*Nothing, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -136,6 +147,9 @@ func (UnimplementedUserServiceServer) GetUserIDsForUsername(context.Context, *Ge
 }
 func (UnimplementedUserServiceServer) BanUser(context.Context, *BanUserRequest) (*BanUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BanUser not implemented")
+}
+func (UnimplementedUserServiceServer) SetUserRank(context.Context, *SetRankRequest) (*Nothing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUserRank not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -276,6 +290,24 @@ func _UserService_BanUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_SetUserRank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetRankRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SetUserRank(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserService/SetUserRank",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SetUserRank(ctx, req.(*SetRankRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -310,6 +342,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BanUser",
 			Handler:    _UserService_BanUser_Handler,
+		},
+		{
+			MethodName: "SetUserRank",
+			Handler:    _UserService_SetUserRank_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -148,3 +148,7 @@ func (g GRPCServer) GetUserForForeignUID(ctx context.Context, req *proto.GetFore
 		NewUID: uid,
 	}, nil
 }
+
+func (g GRPCServer) SetUserRank(ctx context.Context, req *proto.SetRankRequest) (*proto.Nothing, error) {
+	return &proto.Nothing{}, g.um.SetUserRank(req.UserID, int64(req.Rank.Number()))
+}

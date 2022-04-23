@@ -718,7 +718,7 @@ func (v *VideoModel) GetVideoRecommendations(userID int64) (*videoproto.RecResp,
 }
 
 func (v *VideoModel) DeleteVideo(videoID string) error {
-	sql := "UPDATE videos SET is_deleted = true WHERE video_id = $1 LIMIT 1"
+	sql := "UPDATE videos SET is_deleted = true WHERE id = $1"
 	_, err := v.db.Exec(sql, videoID)
 	return err
 }

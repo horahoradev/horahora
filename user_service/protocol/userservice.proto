@@ -13,6 +13,16 @@ service UserService {
     rpc GetUserForForeignUID(GetForeignUserRequest) returns (GetForeignUserResponse){}
     rpc GetUserIDsForUsername(GetUserIDsForUsernameRequest) returns (GetUserIDsForUsernameResponse){}
     rpc BanUser(BanUserRequest) returns ( BanUserResponse){}
+    rpc SetUserRank(SetRankRequest) returns ( Nothing ){}
+}
+
+message Nothing {
+
+}
+
+message SetRankRequest {
+    int64 userID = 1;
+    user_rank rank = 2;
 }
 
 message BanUserRequest {

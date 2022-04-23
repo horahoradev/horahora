@@ -10,15 +10,16 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	log "github.com/sirupsen/logrus"
 )
 
 const uploadDir = "/tmp/"
 
 type S3Storage struct {
-	BucketName string
-	S3Client   s3.Client
+	BucketName   string
+	S3Client     s3.Client
+	StorageClass string
 }
 
 func NewS3(bucketName string) (*S3Storage, error) {
@@ -27,9 +28,9 @@ func NewS3(bucketName string) (*S3Storage, error) {
 		return nil, err
 	}
 
-	s3Client := s3.New(cfg)
+	s3Client := s3.NewFromConfig(cfg)
 
-	return &S3Storage{S3Client: *s3Client, BucketName: bucketName}, nil
+	return &S3Storage{S3Client: *s3Client, BucketName: bucketName, StorageClass: "Standard-IA"}, nil
 }
 
 func NewS3Minio(bucketName string, endpoint string) (*S3Storage, error) {
@@ -40,9 +41,10 @@ func NewS3Minio(bucketName string, endpoint string) (*S3Storage, error) {
 	const defaultRegion = "us-east-1"
 	staticResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 		return aws.Endpoint{
-			PartitionID:   "aws",
-			URL:           endpoint,
-			SigningRegion: defaultRegion,
+			PartitionID:       "aws",
+			URL:               endpoint,
+			SigningRegion:     defaultRegion,
+			HostnameImmutable: true,
 		}, nil
 	})
 
@@ -52,7 +54,7 @@ func NewS3Minio(bucketName string, endpoint string) (*S3Storage, error) {
 		EndpointResolver: staticResolver,
 	}
 
-	s3Client := s3.New(cfg)
+	s3Client := s3.NewFromConfig(cfg)
 	return &S3Storage{S3Client: *s3Client, BucketName: bucketName}, nil
 }
 
@@ -63,8 +65,7 @@ func (s *S3Storage) Fetch(id string) (*os.File, error) {
 		Key:    &id,
 	}
 
-	getObjReq := s.S3Client.GetObjectRequest(getReq)
-	res, err := getObjReq.Send(context.Background())
+	res, err := s.S3Client.GetObject(context.Background(), getReq)
 	if err != nil {
 		return nil, err
 	}
@@ -110,14 +111,13 @@ func (s *S3Storage) Upload(path, desiredFilename string) error {
 	}
 
 	putObjInp := s3.PutObjectInput{
-		ACL:                       s3.ObjectCannedACLPublicRead,
+		ACL:                       "public-read",
 		Body:                      data,
 		Bucket:                    &s.BucketName,
 		CacheControl:              nil,
 		ContentDisposition:        nil,
 		ContentEncoding:           nil,
 		ContentLanguage:           nil,
-		ContentLength:             nil,
 		ContentMD5:                nil,
 		ContentType:               nil, // TODO
 		Expires:                   nil,
@@ -137,13 +137,12 @@ func (s *S3Storage) Upload(path, desiredFilename string) error {
 		SSEKMSEncryptionContext:   nil,
 		SSEKMSKeyId:               nil,
 		ServerSideEncryption:      "",
-		StorageClass:              s3.StorageClassStandardIa,
+		StorageClass:              types.StorageClass(s.StorageClass),
 		Tagging:                   nil,
 		WebsiteRedirectLocation:   nil,
 	}
 
-	putObjReq := s.S3Client.PutObjectRequest(&putObjInp)
-	_, err = putObjReq.Send(context.TODO())
+	_, err = s.S3Client.PutObject(context.TODO(), &putObjInp)
 	return err // TODO
 }
 
@@ -153,7 +152,6 @@ func (s *S3Storage) Delete(filename string) error {
 		Key:    &filename,
 	}
 
-	delObjReq := s.S3Client.DeleteObjectRequest(&deleteObjInp)
-	_, err := delObjReq.Send(context.TODO())
+	_, err := s.S3Client.DeleteObject(context.TODO(), &deleteObjInp)
 	return err
 }
