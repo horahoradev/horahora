@@ -425,6 +425,8 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		// "Why do we need this?"
 		// Previously ffprobe would stall indefinitely if nico's cookies were invalidated by the time it made a request
 		// (or something like that).
+		"--add-header",
+		"Accept-Language:ja",
 		"--socket-timeout",
 		"1800",
 		"--verbose",
