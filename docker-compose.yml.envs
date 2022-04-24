@@ -36,7 +36,7 @@ services:
       - GRPCPort=7777
       - VideoServiceGRPCAddress=videoservice:7777
       - NumberOfRetries=1
-      - SocksConn=
+      - SocksConn=$SOCKS_ADDR
       - SyncPollDelay=1m
       - MaxDLFileSize=300
   videoservice:
@@ -124,6 +124,18 @@ $JWT_KEYPAIR
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
       - ./videos:/data
+  gluetun:
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_SERVICE_PROVIDER=$VPN_PROVIDER
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=$WIREGUARD_PRIVATE_KEY
+      - WIREGUARD_ADDRESSES=$VPN_IP
+      - SERVER_CITIES=$VPN_CITIES
+      - HTTPPROXY=on
+      - HTTPPROXY_LOG=on
 volumes:
   postgresdata:
 
