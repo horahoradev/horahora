@@ -34,6 +34,13 @@ func (v RouteHandler) getCurrentUserProfile(c echo.Context) error {
 // TODO: this function is overcalled; we don't need to fetch profile data every time
 // maybe just cache responses and call it a day
 func (r *RouteHandler) getUserProfileInfo(c echo.Context) (*LoggedInUserData, error) {
+	loggedIn := c.Get(custommiddleware.UserLoggedIn)
+
+	loggedInBool, ok := loggedIn.(bool)
+	if !ok || !loggedInBool {
+		return nil, errors.New("User is not logged in")
+	}
+
 	l := LoggedInUserData{}
 
 	id := c.Get(custommiddleware.UserIDKey)
