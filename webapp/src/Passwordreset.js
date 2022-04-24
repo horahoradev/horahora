@@ -8,18 +8,17 @@ import { useHistory } from "react-router-dom";
 import Header from "./Header";
 import * as API from "./api";
 
-function RegistrationForm() {
+function PasswordResetForm() {
   let history = useHistory();
   // TODO(ivan): validation, form errors
   // TODO(ivan): submitting state
   let formik = useFormik({
     initialValues: {
-      email: "",
-      username: "",
-      password: "",
+      old_password: "",
+      new_password: "",
     },
     onSubmit: async (values) => {
-      await API.postRegister(values);
+      await API.postPasswordReset(values);
       history.push("/");
     },
   });
@@ -32,15 +31,15 @@ function RegistrationForm() {
 
   return (
     <div className="max-w-xs w-full border rounded shadow bg-white p-4">
-      <h2 className="text-xl mb-4">Register</h2>
+      <h2 className="text-xl mb-4">Reset Password</h2>
       <form onSubmit={formik.handleSubmit}>
       <Input.Group>
           <Input
-            name="email"
-            values={formik.values.email}
+            name="old_password"
+            values={formik.values.old_password}
             onChange={formik.handleChange}
             size="large"
-            placeholder="email"
+            placeholder="current password"
             ref={usernameInputRef}
             prefix={
               <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
@@ -49,27 +48,14 @@ function RegistrationForm() {
           </Input.Group>
         <Input.Group>
           <Input
-            name="username"
-            values={formik.values.username}
+            name="new_password"
+            values={formik.values.new_password}
             onChange={formik.handleChange}
             size="large"
-            placeholder="Username"
+            placeholder="new password"
             ref={usernameInputRef}
             prefix={
               <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
-            }
-          />
-        </Input.Group>
-        <br />
-        <Input.Group>
-          <Input.Password
-            name="password"
-            values={formik.values.password}
-            onChange={formik.handleChange}
-            size="large"
-            placeholder="Password"
-            prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faKey} />
             }
           />
         </Input.Group>
@@ -84,17 +70,17 @@ function RegistrationForm() {
   );
 }
 
-function RegisterPage() {
+function PasswordResetPage() {
   return (
     <>
       <Header dataless />
       <div className="flex justify-center mx-4">
         <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
-          <RegistrationForm />
+          <PasswordResetForm />
         </div>
       </div>
     </>
   );
 }
 
-export default RegisterPage;
+export default PasswordResetPage;

@@ -97,10 +97,10 @@ export async function postLogout() {
   return res.data;
 }
 
-export async function postPasswordReset() {
+export async function postPasswordReset(data) {
   let form = new FormData();
-  form.append("username", data.old_password);
-  form.append("password", data.new_password);
+  form.append("old_password", data.old_password);
+  form.append("new_password", data.new_password);
 
   const res = await axios.post(e("password-reset"), form, {
     headers: {

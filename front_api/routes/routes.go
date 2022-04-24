@@ -55,6 +55,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/ban/:id", r.handleBan)
 	e.POST("/delete/:id", r.handleDelete)
 	e.POST("/setrank/:userid/:rank", r.handleSetRank)
+	e.POST("/password-reset", r.handlePasswordReset)
 
 }
 
