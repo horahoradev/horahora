@@ -154,3 +154,17 @@ export async function postComment(data) {
   });
   return res.data;
 }
+
+export async function upvoteComment(commentID, upvoted_already) {
+  let form = new FormData();
+  form.append("comment_id", commentID);
+  form.append("user_has_upvoted", upvoted_already);
+
+  const res = await axios.post(e("comment_upvotes/"), form, {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+  });
+
+  return res.data;
+}

@@ -3,6 +3,7 @@ package routes
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
@@ -13,15 +14,10 @@ import (
 // Accepts form-encoded value comment_id, which is the url to be archived
 // response: 200 if ok
 func (r RouteHandler) handleUpvote(c echo.Context) error {
-	// DUMB!
-	err := c.Request().ParseForm()
-	if err != nil {
-		return err
-	}
 
-	data := c.Request().PostForm
+	commentID := c.FormValue("comment_id")
 
-	commentID, err := getAsInt64(data, "comment_id")
+	commentIDInt, err := strconv.ParseInt(commentID, 10, 64)
 	if err != nil {
 		return err
 	}
@@ -31,15 +27,16 @@ func (r RouteHandler) handleUpvote(c echo.Context) error {
 		return err
 	}
 
-	hasUpvoted, err := getAsBool(data, "user_has_upvoted")
+	hasUpvoted := c.FormValue("user_has_upvoted")
+	hasUpvotedBool, err := strconv.ParseBool(hasUpvoted)
 	if err != nil {
 		return err
 	}
 
 	_, err = r.v.MakeCommentUpvote(context.Background(), &videoproto.CommentUpvote{
-		CommentId: commentID,
+		CommentId: commentIDInt,
 		UserId:    profile.UserID,
-		IsUpvote:  hasUpvoted,
+		IsUpvote:  hasUpvotedBool,
 	})
 	if err != nil {
 		return err
