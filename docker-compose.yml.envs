@@ -136,6 +136,12 @@ $JWT_KEYPAIR
       - SERVER_CITIES=$VPN_CITIES
       - HTTPPROXY=on
       - HTTPPROXY_LOG=on
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./static:/usr/share/nginx/html
 volumes:
   postgresdata:
 
