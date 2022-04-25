@@ -135,3 +135,22 @@ export async function setUserAdmin(userID) {
   const res = await axios.post(e(`setrank/${userID}/2`));
   return res.data;
 }
+
+export async function getComments(videoID) {
+  const res = await axios.get(e(`comments/${videoID}`));
+  return res.data;
+}
+
+export async function postComment(data) {
+  let form = new FormData();
+  form.append("video_id", data.video_id);
+  form.append("content", data.content);
+  form.append("parent", data.parent);
+
+  const res = await axios.post(e("comments/"), form, {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+  });
+  return res.data;
+}

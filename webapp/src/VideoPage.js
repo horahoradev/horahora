@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Tag, Avatar, Button, Rate } from "antd";
+import { Tag, Avatar, Button, Input, Rate, Comment, List } from "antd";
 import {Link, useHistory, useParams} from "react-router-dom";
 import dashjs from "dashjs";
 import videojs from "video.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { faUserCircle, faUser} from "@fortawesome/free-solid-svg-icons";
+import { useFormik } from "formik";
 
 import * as API from "./api";
 import Header from "./Header";
@@ -108,7 +109,19 @@ function VideoAdminControls(props) {
 }
 
 function VideoView(props) {
-  let { data, id, setRating, next_video} = props;
+  let { data, id, setRating, next_video, videoComments} = props;
+
+  // video_id, content (content of comment), and parent (parent comment id if a reply)
+  let formik = useFormik({
+    initialValues: {
+      content: "",
+      video_id: id,
+      parent: "",
+    },
+    onSubmit: async (values) => {
+      await API.postComment(values);
+    },
+  });
 
   function rate(rating) {
     if (id == 0) {
@@ -167,7 +180,42 @@ function VideoView(props) {
           </div>
         </div>
       </div>
-    </div>
+      <List
+    className="comment-list"
+    header={`${videoComments.length} replies`}
+    itemLayout="horizontal"
+    dataSource={videoComments}
+    renderItem={item => (
+      <li>
+        <Comment
+          author={item.fullname}
+          avatar={item.profile_picture_url}
+          content={item.content}
+          datetime={item.created}
+        />
+      </li>
+    )}
+  />,
+   <form onSubmit={formik.handleSubmit}>
+        <Input.Group>
+        <Input
+            name="content"
+            values={formik.values.content}
+            onChange={formik.handleChange}
+            size="large"
+            placeholder="<your comment here>"
+            prefix={
+              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
+            }
+          />
+        </Input.Group>
+        <Input.Group>
+          <Button block type="primary" htmlType="submit" size="large">
+            Submit
+          </Button>
+        </Input.Group>
+    </form>
+  </div>
   );
 }
 
@@ -179,6 +227,7 @@ function VideoPage() {
 
   const [pageData, setPageData] = useState(null);
   const [rating, setRating] = useState(0.0);
+  const [comments, setComments] = useState([]);
   const [userData, setUserData] = useState(null);
 
   function navigate_to_next_video(){
@@ -197,9 +246,13 @@ function VideoPage() {
 
       let userData = await API.getUserdata();
       if (!ignore) setUserData(userData);
+
+      let videoComments = await API.getComments(id);
+      if (!ignore) setComments(videoComments);
     };
 
     fetchData();
+
     return () => {
       ignore = true;
     };
@@ -212,7 +265,7 @@ function VideoPage() {
       <Header userData={userData} />
       <div className="flex justify-center mx-4">
         <div className="max-w-screen-lg w-screen my-6 z-0">
-          <VideoView data={pageData} id={id} setRating={setRating} next_video={navigate_to_next_video}/>
+          <VideoView data={pageData} videoComments={comments} id={id} setRating={setRating} next_video={navigate_to_next_video}/>
         </div>
         <div className="inline-block w-44 align-top float-right">
           <VideoList videos={pageData.RecommendedVideos} />
