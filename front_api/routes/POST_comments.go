@@ -3,7 +3,6 @@ package routes
 import (
 	"context"
 	"net/http"
-	"net/url"
 	"strconv"
 
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
@@ -15,36 +14,22 @@ import (
 // Accepts form-encoded values: video_id, content (content of comment), and parent (parent comment id if a reply)
 // response: 200 if ok
 func (r RouteHandler) handleComment(c echo.Context) error {
-	err := c.Request().ParseForm()
-	if err != nil {
-		return err
-	}
-
-	data := c.Request().PostForm
-	videoID, err := url.QueryUnescape(data.Get("video_id"))
-	if err != nil {
-		return err
-	}
+	videoID := c.FormValue("video_id")
 
 	profile, err := r.getUserProfileInfo(c)
 	if err != nil {
 		return err
 	}
 
-	content, err := url.QueryUnescape(data.Get("content"))
-	if err != nil {
-		return err
-	}
+	content := c.FormValue("content")
 
 	videoIDInt, err := strconv.ParseInt(videoID, 10, 64)
 	if err != nil {
 		return err
 	}
 
-	parentIDInt, _ := getAsInt64(data, "parent")
-	//if err != nil {
-	//	// nothing
-	//}
+	parent := c.FormValue("parent")
+	parentIDInt, _ := strconv.ParseInt(parent, 10, 64)
 
 	_, err = r.v.MakeComment(context.Background(), &videoproto.VideoComment{
 		UserId:        profile.UserID,
