@@ -46,7 +46,7 @@ function UserPage() {
                 {/*lol oh no*/}
                 {/* TODO: add user profile image*/}
                 <div className={"flex justify-center mx-4"}>
-                    <img src="http://localhost:8082/static/images/placeholder.png">
+                    <img src="/static/images/placeholder.png">
                     </img>
 
                 </div>

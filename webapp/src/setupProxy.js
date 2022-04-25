@@ -11,4 +11,12 @@ module.exports = function (app) {
       pathRewrite: { "^/api": "" },
     })
   );
+  app.use(
+    "/static/images",
+    createProxyMiddleware({
+      target: "http://nginx:80",
+      changeOrigin: true,
+      pathRewrite: { "^/static/images": "" },
+    })
+  );
 };
