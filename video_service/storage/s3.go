@@ -30,7 +30,7 @@ func NewS3(bucketName string) (*S3Storage, error) {
 
 	s3Client := s3.NewFromConfig(cfg)
 
-	return &S3Storage{S3Client: *s3Client, BucketName: bucketName, StorageClass: "Standard-IA"}, nil
+	return &S3Storage{S3Client: *s3Client, BucketName: bucketName, StorageClass: "STANDARD_IA"}, nil
 }
 
 func NewS3Minio(bucketName string, endpoint string) (*S3Storage, error) {
