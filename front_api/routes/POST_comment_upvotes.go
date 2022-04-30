@@ -34,7 +34,7 @@ func (r RouteHandler) handleUpvote(c echo.Context) error {
 	}
 
 	_, err = r.v.MakeCommentUpvote(context.Background(), &videoproto.CommentUpvote{
-		CommentId: commentIDInts,
+		CommentId: commentIDInt,
 		UserId:    profile.UserID,
 		IsUpvote:  hasUpvotedBool,
 	})

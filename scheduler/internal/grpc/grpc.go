@@ -51,7 +51,7 @@ func (s schedulerServer) DlURL(ctx context.Context, req *proto.URLRequest) (*pro
 	return ret, err
 }
 
-func (s schedulerServer) deleteArchivalRequest(ctx context.Context, req *proto.DeletionRequest) (*proto.Empty, error) {
+func (s schedulerServer) DeleteArchivalRequest(ctx context.Context, req *proto.DeletionRequest) (*proto.Empty, error) {
 	ret := &proto.Empty{}
 
 	err := s.M.DeleteArchivalRequest(req.UserID, req.DownloadID)
@@ -75,6 +75,7 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 			CurrentTotalVideos: archive.Denominator,
 			BackoffFactor:      archive.BackoffFactor,
 			LastSynced:         archive.LastSynced,
+			DownloadID:         archive.DownloadID,
 		}
 
 		entries = append(entries, &entry)

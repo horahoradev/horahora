@@ -27,6 +27,7 @@ func NewArchiveRequest(db *sqlx.DB, rs *redsync.Redsync) *ArchiveRequestRepo {
 
 type Archival struct {
 	Url           string
+	DownloadID    uint64
 	Denominator   uint64
 	Numerator     uint64
 	LastSynced    string
@@ -60,9 +61,8 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 	for rows.Next() {
 		var archive Archival
 		var event Event
-		var downloadID uint64
 
-		err = rows.Scan(&archive.Url, &archive.LastSynced, &archive.BackoffFactor, &downloadID, &event.VideoURL,
+		err = rows.Scan(&archive.Url, &archive.LastSynced, &archive.BackoffFactor, &archive.DownloadID, &event.VideoURL,
 			&event.ParentURL, &event.Message, &event.EventTimestamp)
 		if err != nil {
 			return nil, nil, err
@@ -81,7 +81,7 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 				"denominator AS (select count(DISTINCT videos.video_id) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1) " +
 				"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator"
 
-			row := m.Db.QueryRow(progressSql, downloadID)
+			row := m.Db.QueryRow(progressSql, archive.DownloadID)
 			if err != nil {
 				return nil, nil, err
 			}
