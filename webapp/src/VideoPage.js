@@ -68,7 +68,7 @@ function VideoAdminControls(props) {
   let deletingVideo = useRef(false);
   let history = useHistory();
 
-  let deleteVideo = useCallback(() => {
+  let deleteVideo = () => { 
     if (deletingVideo.current) return;
     deletingVideo.current = true;
     let run = async () => {
@@ -78,7 +78,7 @@ function VideoAdminControls(props) {
     };
     run();
     // TODO: error future handler
-  }, [data, deletingVideo]);
+  };
 
   let approveVideo = useCallback(() => {
     if (approvingVideo.current) return;
@@ -184,7 +184,9 @@ function VideoView(props) {
           <div className="mt-4">
             <span dangerouslySetInnerHTML={{ __html: data.VideoDescription }} />
           </div>
+          
         </div>
+        
       </div>
       <List
     className="comment-list"
