@@ -299,6 +299,12 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 			continue
 		}
 
+		if len(videos) == 0 {
+			log.Infof("Failed to fetch unencoded videos, sleeping for 5 minutes")
+			time.Sleep(time.Second * 300)
+			continue
+		}
+
 		for _, v := range videos {
 			time.Sleep(time.Second * 10)
 
