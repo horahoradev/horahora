@@ -15,7 +15,7 @@ message Empty {}
 
 message deletionRequest {
     uint64 downloadID = 1;
-    int64 userID = 2;
+    uint64 userID = 2;
 }
 
 message listArchivalEntriesRequest {
