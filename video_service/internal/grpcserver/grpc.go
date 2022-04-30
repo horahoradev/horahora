@@ -2,6 +2,7 @@ package grpcserver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -463,35 +464,36 @@ func (g GRPCServer) ApproveVideo(ctx context.Context, req *proto.VideoApproval) 
 
 // TODO: note that this method only works for the basic method of encoding, and not for any form of transcoding
 func (g GRPCServer) DeleteVideo(ctx context.Context, deleteReq *proto.VideoDeletionReq) (*proto.Nothing, error) {
-	// Get the video info
-	info, err := g.VideoModel.GetVideoInfo(deleteReq.VideoID)
-	if err != nil {
-		return nil, err
-	}
+	return nil, errors.New("Unimplemented")
+	// // Get the video info
+	// info, err := g.VideoModel.GetVideoInfo(deleteReq.VideoID)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	// Need to fix the mpd storage for this stuff LOL
-	spl := strings.Split(info.VideoLoc, "/")
-	r := spl[len(spl)-1]
-	uuid := r[:len(r)-4]
+	// // Need to fix the mpd storage for this stuff LOL
+	// spl := strings.Split(info.VideoLoc, "/")
+	// r := spl[len(spl)-1]
+	// uuid := r[:len(r)-4]
 
-	// Delete video from storage
-	log.Errorf("Deleting video %s", uuid)
-	err = g.Storage.Delete(uuid)
-	if err != nil {
-		return nil, err
-	}
+	// // Delete video from storage
+	// log.Errorf("Deleting video %s", uuid)
+	// err = g.Storage.Delete(uuid)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	// Delete thumb from storage
-	log.Errorf("Deleting thumbnail %s", uuid+".thumb")
-	err = g.Storage.Delete(uuid + ".thumb")
-	if err != nil {
-		return nil, err
-	}
+	// // Delete thumb from storage
+	// log.Errorf("Deleting thumbnail %s", uuid+".thumb")
+	// err = g.Storage.Delete(uuid + ".thumb")
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	// The rest of the files are ok, e.g. metadata and such
+	// // The rest of the files are ok, e.g. metadata and such
 
-	// Delete from database
-	return &proto.Nothing{}, g.VideoModel.DeleteVideo(deleteReq.VideoID)
+	// // Delete from database
+	// return &proto.Nothing{}, g.VideoModel.DeleteVideo(deleteReq.VideoID)
 }
 
 func (g GRPCServer) MakeComment(ctx context.Context, commentReq *proto.VideoComment) (*proto.Nothing, error) {
