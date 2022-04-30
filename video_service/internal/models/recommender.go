@@ -1,7 +1,9 @@
 package models
 
 import (
+	"errors"
 	"strings"
+	"sync"
 
 	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	_ "github.com/horahoradev/horahora/user_service/protocol"
@@ -12,22 +14,69 @@ import (
 // TODO: test suite for recommender implementations with precision and recall for sample dataset
 type Recommender interface {
 	GetRecommendations(userID int64) ([]*videoproto.VideoRec, error)
+	RemoveRecommendedVideoForUser(userID, videoID int64) error
 }
 
 // Dumb recommender system, computes expected rating value for user from a video's tags
 // and orders by sum
 // No more train otomads??? (please)
 type BayesianTagSum struct {
-	db *sqlx.DB
+	db            *sqlx.DB
+	storedResults map[int64][]*videoproto.VideoRec
+	mut           sync.Mutex
 }
 
 func NewBayesianTagSum(db *sqlx.DB) BayesianTagSum {
 	return BayesianTagSum{
-		db: db,
+		db:            db,
+		storedResults: make(map[int64][]*videoproto.VideoRec),
 	}
 }
 
 func (b *BayesianTagSum) GetRecommendations(uid int64) ([]*videoproto.VideoRec, error) {
+	// Is there a cached item?
+	// TODO: rw lock
+	b.mut.Lock()
+	items, ok := b.storedResults[uid]
+	b.mut.Unlock()
+	switch {
+	case ok && len(items) != 0: // if we have a nonempty hit, return that
+		return items, nil
+	default:
+		// otherwise, compute new results and store them
+		results, err := b.getRecommendations(uid)
+		if err != nil {
+			return nil, err
+		}
+		b.mut.Lock()
+		b.storedResults[uid] = results
+		b.mut.Unlock()
+		return results, nil
+	}
+}
+
+func (b *BayesianTagSum) RemoveRecommendedVideoForUser(userID, videoID int64) error {
+	b.mut.Lock()
+	videos, ok := b.storedResults[userID]
+	b.mut.Unlock()
+	if !ok {
+		return errors.New("No videos for given user")
+	}
+
+	for i, video := range videos {
+		if video.VideoID == videoID {
+			// I don't like the look of this. FIXME
+			b.mut.Lock()
+			b.storedResults[userID] = append(videos[:i], videos[i+1:]...)
+			b.mut.Unlock()
+			return nil
+		}
+	}
+
+	return errors.New("Desired video could not be removed, was not found")
+}
+
+func (b *BayesianTagSum) getRecommendations(uid int64) ([]*videoproto.VideoRec, error) {
 	// Videos which have been viewed and not rated are implicitly rated 0
 	// left join from video scores returns some random videos by default
 	sql := "WITH tag_ratings AS (select tag, coalesce(avg(ratings.rating), 0.00) - 2.5 AS tag_score from videos INNER JOIN tags ON videos.id = tags.video_id LEFT JOIN ratings ON ratings.video_id = videos.id WHERE (ratings.user_id = $1 OR ratings.user_id is null) AND videos.views > 0 GROUP BY tag), " +
