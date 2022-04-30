@@ -45,6 +45,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 
 	e.GET("/archiverequests", r.getArchiveRequests)
 	e.POST("/archiverequests", r.handleArchiveRequest)
+	e.POST("/delete-archiverequest", r.handleDeleteArchivalRequest)
 
 	e.GET("/comments/:id", r.getComments)
 	e.POST("/comments/", r.handleComment)
@@ -56,7 +57,6 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/delete/:id", r.handleDelete)
 	e.POST("/setrank/:userid/:rank", r.handleSetRank)
 	e.POST("/password-reset", r.handlePasswordReset)
-
 }
 
 type Video struct {

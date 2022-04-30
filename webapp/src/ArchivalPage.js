@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Table, Timeline, Button } from "antd";
+import { Table, Timeline, Button, Space} from "antd";
 
 
 import * as API from "./api";
@@ -17,6 +17,11 @@ function ArchivalPage() {
 
     function reloadPage() {
         setTimerVal(timerVal => timerVal + 1);
+    }
+
+    async function deleteArchivalRequest(download_id) {
+        await API.deleteArchivalRequest(download_id);
+        reloadPage();   
     }
 
     useEffect(() => {
@@ -87,6 +92,15 @@ function ArchivalPage() {
             title: 'Days until next sync',
             'dataIndex': 'BackoffFactor',
             key: 'BackoffFactor',
+        },
+        {
+            title: 'Actions',
+            key: 'action',
+            render: (text, record) => (
+                <Space size="middle">
+                  <Button className="background-blue" onClick={()=>deleteArchivalRequest(record.downloadID)}>Delete {record.downloadID}</Button>
+                </Space>
+              ),
         }
     ];
 
