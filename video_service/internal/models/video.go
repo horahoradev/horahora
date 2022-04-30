@@ -196,6 +196,11 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID int64, ratingValue fl
 		return err
 	}
 
+	err = v.r.RemoveRecommendedVideoForUser(ratingUID, videoID)
+	if err != nil {
+		log.Errorf("Failed to remove recommended video for user %d. Err: %s", ratingUID, err)
+	}
+
 	rating, err := v.GetAverageRatingForVideoID(videoID)
 	if err != nil {
 		return err
