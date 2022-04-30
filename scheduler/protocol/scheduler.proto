@@ -7,9 +7,16 @@ service Scheduler {
     rpc dlURL(URLRequest) returns (Empty) {}
 
     rpc listArchivalEntries(listArchivalEntriesRequest) returns (listArchivalEntriesResponse) {}
+
+    rpc deleteArchivalRequest(deletionRequest) returns (Empty) {}
 }
 
 message Empty {}
+
+message deletionRequest {
+    uint64 downloadID = 1;
+    int64 userID = 2;
+}
 
 message listArchivalEntriesRequest {
     int64 UserID = 1; // Need to standardize type on userID
@@ -40,5 +47,6 @@ message contentArchivalEntry {
     uint64 CurrentTotalVideos = 4;
     string LastSynced = 5;
     uint32 BackoffFactor = 6;
+    uint64 downloadID = 7;
 }
 

@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type SchedulerClient interface {
 	DlURL(ctx context.Context, in *URLRequest, opts ...grpc.CallOption) (*Empty, error)
 	ListArchivalEntries(ctx context.Context, in *ListArchivalEntriesRequest, opts ...grpc.CallOption) (*ListArchivalEntriesResponse, error)
+	DeleteArchivalRequest(ctx context.Context, in *DeletionRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type schedulerClient struct {
@@ -48,12 +49,22 @@ func (c *schedulerClient) ListArchivalEntries(ctx context.Context, in *ListArchi
 	return out, nil
 }
 
+func (c *schedulerClient) DeleteArchivalRequest(ctx context.Context, in *DeletionRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/proto.Scheduler/deleteArchivalRequest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SchedulerServer is the server API for Scheduler service.
 // All implementations must embed UnimplementedSchedulerServer
 // for forward compatibility
 type SchedulerServer interface {
 	DlURL(context.Context, *URLRequest) (*Empty, error)
 	ListArchivalEntries(context.Context, *ListArchivalEntriesRequest) (*ListArchivalEntriesResponse, error)
+	DeleteArchivalRequest(context.Context, *DeletionRequest) (*Empty, error)
 	mustEmbedUnimplementedSchedulerServer()
 }
 
@@ -66,6 +77,9 @@ func (UnimplementedSchedulerServer) DlURL(context.Context, *URLRequest) (*Empty,
 }
 func (UnimplementedSchedulerServer) ListArchivalEntries(context.Context, *ListArchivalEntriesRequest) (*ListArchivalEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListArchivalEntries not implemented")
+}
+func (UnimplementedSchedulerServer) DeleteArchivalRequest(context.Context, *DeletionRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteArchivalRequest not implemented")
 }
 func (UnimplementedSchedulerServer) mustEmbedUnimplementedSchedulerServer() {}
 
@@ -116,6 +130,24 @@ func _Scheduler_ListArchivalEntries_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Scheduler_DeleteArchivalRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchedulerServer).DeleteArchivalRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Scheduler/deleteArchivalRequest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchedulerServer).DeleteArchivalRequest(ctx, req.(*DeletionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Scheduler_ServiceDesc is the grpc.ServiceDesc for Scheduler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +162,10 @@ var Scheduler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "listArchivalEntries",
 			Handler:    _Scheduler_ListArchivalEntries_Handler,
+		},
+		{
+			MethodName: "deleteArchivalRequest",
+			Handler:    _Scheduler_DeleteArchivalRequest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
