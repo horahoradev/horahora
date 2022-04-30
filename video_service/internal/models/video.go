@@ -669,7 +669,7 @@ func (v UnencodedVideo) GetMPDUUID() string {
 
 func (v *VideoModel) GetUnencodedVideos() ([]UnencodedVideo, error) {
 	// Newest videos first
-	sql := "SELECT id, newLink FROM videos WHERE transcoded = false ORDER BY upload_date desc LIMIT 100"
+	sql := "SELECT id, newLink FROM videos WHERE transcoded = false AND too_big = false ORDER BY upload_date desc LIMIT 100"
 	var videos []UnencodedVideo
 	err := v.db.Select(&videos, sql)
 	if err != nil {
@@ -681,6 +681,16 @@ func (v *VideoModel) GetUnencodedVideos() ([]UnencodedVideo, error) {
 
 func (v *VideoModel) MarkVideoAsEncoded(uv UnencodedVideo) error {
 	sql := "UPDATE videos SET transcoded = true WHERE id = $1"
+	_, err := v.db.Exec(sql, uv.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (v *VideoModel) MarkVideoAsTooBig(uv UnencodedVideo) error {
+	sql := "UPDATE videos SET too_big = true WHERE id = $1"
 	_, err := v.db.Exec(sql, uv.ID)
 	if err != nil {
 		return err

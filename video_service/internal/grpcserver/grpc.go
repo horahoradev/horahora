@@ -326,7 +326,13 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 				}
 
 				if s.Size() >= 1024*1024*300 {
-					log.Errorf("Video %d greater than 300mb, skipping", v.ID)
+					err = g.VideoModel.MarkVideoAsTooBig(video)
+					if err != nil {
+						log.Errorf("failed to mark video as too big. Err: %s", err)
+						return
+					}
+
+					log.Errorf("Video %d greater than 300mb, skipping and marking as too big", v.ID)
 					return
 				}
 
