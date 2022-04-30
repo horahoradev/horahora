@@ -165,6 +165,13 @@ func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLReques
 	return ret, nil
 }
 
+func (m *ArchiveRequestRepo) DeleteArchivalRequest(userID, downloadID uint64) error {
+	sql := "DELETE FROM user_download_subscriptions WHERE user_id = $1 AND download_id = $2"
+
+	_, err := m.Db.Exec(sql, userID, downloadID)
+	return err
+}
+
 func GetWebsiteFromURL(u string) (string, error) {
 	urlParsed, err := url.Parse(u)
 	if err != nil {

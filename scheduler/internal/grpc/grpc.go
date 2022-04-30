@@ -3,9 +3,10 @@ package grpcserver
 import (
 	"context"
 	"fmt"
+	"net"
+
 	"github.com/go-redsync/redsync"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
-	"net"
 
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/jmoiron/sqlx"
@@ -50,6 +51,14 @@ func (s schedulerServer) DlURL(ctx context.Context, req *proto.URLRequest) (*pro
 	return ret, err
 }
 
+func (s schedulerServer) deleteArchivalRequest(ctx context.Context, req *proto.DeletionRequest) (*proto.Empty, error) {
+	ret := &proto.Empty{}
+
+	err := s.M.DeleteArchivalRequest(req.UserID, req.DownloadID)
+
+	return ret, err
+}
+
 func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.ListArchivalEntriesRequest) (*proto.ListArchivalEntriesResponse, error) {
 	archives, events, err := s.M.GetContentArchivalRequests(req.UserID)
 	if err != nil {
@@ -60,12 +69,12 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 
 	for _, archive := range archives {
 		entry := proto.ContentArchivalEntry{
-			UserID:       0, // In the future, will be expanded to allow queries for different users archival requests
-			Url: archive.Url,
-			ArchivedVideos: archive.Numerator,
+			UserID:             0, // In the future, will be expanded to allow queries for different users archival requests
+			Url:                archive.Url,
+			ArchivedVideos:     archive.Numerator,
 			CurrentTotalVideos: archive.Denominator,
-			BackoffFactor: archive.BackoffFactor,
-			LastSynced: archive.LastSynced,
+			BackoffFactor:      archive.BackoffFactor,
+			LastSynced:         archive.LastSynced,
 		}
 
 		entries = append(entries, &entry)
@@ -78,14 +87,13 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 			ParentUrl: event.ParentURL,
 			Message:   event.Message,
 			Timestamp: event.EventTimestamp,
-
 		}
 		protoEvents = append(protoEvents, &eventObj)
 	}
 
 	resp := proto.ListArchivalEntriesResponse{
 		Entries: entries,
-		Events: protoEvents,
+		Events:  protoEvents,
 	}
 
 	return &resp, nil
