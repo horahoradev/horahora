@@ -292,7 +292,7 @@ const NUM_TRANSCODING_WORKERS = 1
 // TODO: graceful shutdown or something, lock video acquisition
 func (g GRPCServer) transcodeAndUploadVideos() {
 	for {
-		time.Sleep(time.Second * 10)
+		<-time.After(time.Second * 10)
 		videos, err := g.VideoModel.GetUnencodedVideos()
 		if err != nil {
 			log.Errorf("could not fetch unencoded videos. Err: %s", err)
@@ -301,12 +301,12 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 
 		if len(videos) == 0 {
 			log.Infof("Failed to fetch unencoded videos, sleeping for 5 minutes")
-			time.Sleep(time.Second * 300)
+			<-time.After(time.Second * 300)
 			continue
 		}
 
 		for _, v := range videos {
-			time.Sleep(time.Second * 10)
+			<-time.After(time.Second * 10)
 
 			func(video models.UnencodedVideo) {
 				// TODO: distributed lock goes here

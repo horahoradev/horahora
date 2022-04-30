@@ -5,6 +5,8 @@ import (
 	"math"
 	"net/url"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
 )
@@ -153,7 +155,8 @@ func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLReques
 
 		c.Website, err = GetWebsiteFromURL(c.Url)
 		if err != nil {
-			return nil, err
+			log.Errorf("Failed to parse %s", c.Url)
+			continue
 		}
 
 		ret = append(ret, c)

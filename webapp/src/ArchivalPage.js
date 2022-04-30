@@ -16,14 +16,21 @@ function ArchivalPage() {
     const [timerVal, setTimerVal] = useState(0);
 
     function reloadPage() {
-        setTimerVal(timerVal + 1);
+        setTimerVal(timerVal => timerVal + 1);
     }
-    setInterval(reloadPage, 30000);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+         reloadPage(timerVal);
+        }, 30000);
+
+        return () => clearInterval(interval);
+      }, []);
 
     function createNewArchival() {
         const url = document.getElementById('url').value;
         API.postArchival(url);
-        let newList = [...archivalSubscriptions, url];
+        let newList = [{'Url': url, 'ArchivedVideos': 0, 'CurrentTotalVideos': 0, 'BackoffFactor': 1}, ...archivalSubscriptions];
         setArchivalSubscriptions(newList);
     }
 
@@ -40,7 +47,6 @@ function ArchivalPage() {
                 setArchivalSubscriptions(subscriptionData.ArchivalRequests);
                 setTimelineEvents(subscriptionData.ArchivalEvents);
             }
-
         };
 
         fetchData();

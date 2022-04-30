@@ -13,16 +13,16 @@ import (
 )
 
 type SyncWorker struct {
-	R            *models.ArchiveRequestRepo
-	SocksConnStr string
-	SyncDelay    time.Duration
+	R                 *models.ArchiveRequestRepo
+	SocksConnStr      string
+	SyncDelay         time.Duration
 	RequestDLCountMap map[string]int
 }
 
 func NewWorker(r *models.ArchiveRequestRepo, socksConnStr string, syncDelay time.Duration) (*SyncWorker, error) {
 	return &SyncWorker{R: r,
-		SocksConnStr: socksConnStr,
-		SyncDelay:    syncDelay,
+		SocksConnStr:      socksConnStr,
+		SyncDelay:         syncDelay,
 		RequestDLCountMap: make(map[string]int),
 	}, nil
 }
@@ -122,8 +122,6 @@ func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJS
 		log.Infof("Line: %s", line)
 		err = json.Unmarshal([]byte(line), &video)
 
-		log.Infof("Got json %s", video)
-
 		if err != nil {
 			log.Errorf("Failed to unmarshal json. Payload: %s. Err: %s", line, err)
 			return nil, err
@@ -152,7 +150,7 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 		s.RequestDLCountMap[dlReq.Id] = 0
 	}
 
-	if s.RequestDLCountMap[dlReq.Id] % 10 != 0 {
+	if s.RequestDLCountMap[dlReq.Id]%10 != 0 {
 		args = append(args, []string{
 			"--playlist-end",
 			"400",
@@ -160,8 +158,6 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 	}
 
 	s.RequestDLCountMap[dlReq.Id]++
-
-
 
 	if s.SocksConnStr != "" {
 		args = append(args, []string{"--proxy", s.SocksConnStr}...)
