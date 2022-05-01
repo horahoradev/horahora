@@ -5,6 +5,7 @@ import {
   faArchive,
   faBars,
   faSearch,
+  faKey,
   faSignOutAlt,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -73,8 +74,19 @@ function LoggedInUserNav(props) {
         key="archive-requests"
         icon={<FontAwesomeIcon icon={faArchive} />}
       >
+
+      <Menu.Divider />
         <Link to="/archive-requests">Archive Requests</Link>
       </Menu.Item>
+      <Menu.Divider />
+
+      <Menu.Item
+        key="password-reset"
+        icon={<FontAwesomeIcon icon={faKey} />}
+      >
+        <Link to="/password-reset">Password Reset</Link>
+      </Menu.Item>
+
       <Menu.Divider />
       <Menu.Item
         key="audits"
