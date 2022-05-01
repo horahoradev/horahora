@@ -34,7 +34,9 @@ If that doesn't work, bug me on Discord.
 ### Advanced Use Cases
 #### Other Storage Backends (s3, backblaze, anything s3-compatible)
 By default, Horahora will storage videos locally using Minio.
+
 If you don't want videos to be stored locally, modify secrets.env.template, adding the relevant values for your use case.
+
     - ORIGIN_FQDN: this will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads for backblaze, or https://horahora-dev-otomads.s3-us-west-1.amazonaws.com for s3.
     - STORAGE_BACKEND: 'b2' or 's3' (depending on which you want to use)
     - STORAGE_API_ID: the API ID for your Backblaze account if using backblaze, otherwise blank
