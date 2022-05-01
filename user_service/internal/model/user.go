@@ -187,3 +187,39 @@ func (m *UserModel) SetNewHash(uid int64, hash []byte) error {
 	_, err := m.Conn.Exec(sql, string(hash), uid)
 	return err
 }
+
+func (m *UserModel) AddNewAuditEvent(userID int64, message string) error {
+	sql := "INSERT INTO audit_events (user_id, msg) VALUES ($1, $2)"
+
+	_, err := m.Conn.Exec(sql, userID, message)
+	return err
+}
+
+type AuditEvent struct {
+	ID        int64  `db:"id"`
+	UserID    int64  `db:"user_id"`
+	Message   string `db:"msg"`
+	Timestamp string `db:"occurred_at"`
+}
+
+func (m *UserModel) GetAuditEvents(userID int64) ([]AuditEvent, error) {
+	var events []AuditEvent
+
+	switch {
+	case userID == -1:
+		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events"
+		err := m.Conn.Select(&events, sql)
+		if err != nil {
+			return nil, err
+		}
+		return events, nil
+
+	default:
+		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events WHERE user_id = $1"
+		err := m.Conn.Select(&events, sql, userID)
+		if err != nil {
+			return nil, err
+		}
+		return events, nil
+	}
+}

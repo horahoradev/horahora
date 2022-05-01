@@ -27,6 +27,8 @@ type UserServiceClient interface {
 	BanUser(ctx context.Context, in *BanUserRequest, opts ...grpc.CallOption) (*BanUserResponse, error)
 	SetUserRank(ctx context.Context, in *SetRankRequest, opts ...grpc.CallOption) (*Nothing, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*Nothing, error)
+	AddAuditEvent(ctx context.Context, in *NewAuditEventRequest, opts ...grpc.CallOption) (*Nothing, error)
+	GetAuditEvents(ctx context.Context, in *AuditEventsListRequest, opts ...grpc.CallOption) (*AuditListResponse, error)
 }
 
 type userServiceClient struct {
@@ -118,6 +120,24 @@ func (c *userServiceClient) ResetPassword(ctx context.Context, in *ResetPassword
 	return out, nil
 }
 
+func (c *userServiceClient) AddAuditEvent(ctx context.Context, in *NewAuditEventRequest, opts ...grpc.CallOption) (*Nothing, error) {
+	out := new(Nothing)
+	err := c.cc.Invoke(ctx, "/proto.UserService/AddAuditEvent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetAuditEvents(ctx context.Context, in *AuditEventsListRequest, opts ...grpc.CallOption) (*AuditListResponse, error) {
+	out := new(AuditListResponse)
+	err := c.cc.Invoke(ctx, "/proto.UserService/GetAuditEvents", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -131,6 +151,8 @@ type UserServiceServer interface {
 	BanUser(context.Context, *BanUserRequest) (*BanUserResponse, error)
 	SetUserRank(context.Context, *SetRankRequest) (*Nothing, error)
 	ResetPassword(context.Context, *ResetPasswordRequest) (*Nothing, error)
+	AddAuditEvent(context.Context, *NewAuditEventRequest) (*Nothing, error)
+	GetAuditEvents(context.Context, *AuditEventsListRequest) (*AuditListResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -164,6 +186,12 @@ func (UnimplementedUserServiceServer) SetUserRank(context.Context, *SetRankReque
 }
 func (UnimplementedUserServiceServer) ResetPassword(context.Context, *ResetPasswordRequest) (*Nothing, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
+}
+func (UnimplementedUserServiceServer) AddAuditEvent(context.Context, *NewAuditEventRequest) (*Nothing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddAuditEvent not implemented")
+}
+func (UnimplementedUserServiceServer) GetAuditEvents(context.Context, *AuditEventsListRequest) (*AuditListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAuditEvents not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -340,6 +368,42 @@ func _UserService_ResetPassword_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_AddAuditEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewAuditEventRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddAuditEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserService/AddAuditEvent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddAuditEvent(ctx, req.(*NewAuditEventRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetAuditEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuditEventsListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAuditEvents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserService/GetAuditEvents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAuditEvents(ctx, req.(*AuditEventsListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -382,6 +446,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetPassword",
 			Handler:    _UserService_ResetPassword_Handler,
+		},
+		{
+			MethodName: "AddAuditEvent",
+			Handler:    _UserService_AddAuditEvent_Handler,
+		},
+		{
+			MethodName: "GetAuditEvents",
+			Handler:    _UserService_GetAuditEvents_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
