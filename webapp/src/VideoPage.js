@@ -140,7 +140,7 @@ function VideoView(props) {
 
   // FIXME: new API endpoint
   return (
-    <div className="bg-white border max-h-screen">
+    <div className="bg-white border">
       <VideoPlayer url={data.MPDLoc} next_video={next_video}/>
       <div className="p-4">
         <div>
