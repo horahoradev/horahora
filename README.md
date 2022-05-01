@@ -4,7 +4,9 @@
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/homepage.png)
 
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archival_page_new.png)
+![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archival_requests_new.png)
+
+![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Audit_logs.png)
 
 Horahora is a collaborative archival management tool.
 
@@ -40,20 +42,9 @@ https://discord.gg/vfwfpctJRZ
 ## Contributing
 Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
 
-## Security
-There are currently several shortcomings with respect to security. As such, I'd recommend only sharing an instance with a group of trusted users (friends). This will be fixed in future updates, and will be backwards compatible if possible.
-
 ## Designs
 Designs are listed here:
 https://github.com/horahoradev/horahora-designs
-
-## Task Roadmap
-Missing features are tracked using Trello.
-
-Our Trello board is:
-https://trello.com/b/Rm5TPR4Q/horahora
-
-Note: this is currently outdated
 
 ## Backup Restoration
 Backup_service writes psql dumps of the three databases (userservice, videoservice, scheduler) to backblaze. To restore, place the three latest dumps in the sql dir, `docker-compose up`, run migrations, then run restore.sh from within the container.
