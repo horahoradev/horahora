@@ -80,24 +80,6 @@ services:
         RSA_KEYPAIR=
 $JWT_KEYPAIR
       - GRPCPort=7777
-  backup_service:
-    build: backup_service
-    restart: always
-    environment:
-      - scheduler_pgs_host=postgres
-      - scheduler_pgs_username=admin
-      - scheduler_pgs_password=password
-      - scheduler_pgs_database=scheduler
-      - video_pgs_host=postgres
-      - video_pgs_username=admin
-      - video_pgs_password=password
-      - video_pgs_database=videoservice
-      - user_pgs_host=postgres
-      - user_pgs_username=admin
-      - user_pgs_password=password
-      - user_pgs_database=userservice
-      - StorageAPIID=$STORAGE_API_ID
-      - StorageAPIKey=$STORAGE_API_KEY
   redis:
     image: "redis:alpine"
     restart: always
