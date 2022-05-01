@@ -21,23 +21,30 @@ Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 
 https://discord.gg/vfwfpctJRZ
 
-## Local Use Instructions
+## Local Use Instructions (START HERE)
 
 1. Install docker and docker-compose
-2. (Optional) If you don't want videos to be stored locally, modify secrets.env.template, adding the relevant values for your use case.
+2. sudo make up
+3. Wait a minute, then visit localhost:3000
+4. Login as admin/admin
+  - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
+
+If that doesn't work, bug me on Discord.
+
+### Advanced Use Cases
+#### Other Storage Backends (s3, backblaze, anything s3-compatible)
+By default, Horahora will storage videos locally using Minio.
+If you don't want videos to be stored locally, modify secrets.env.template, adding the relevant values for your use case.
     - ORIGIN_FQDN: this will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads for backblaze, or https://horahora-dev-otomads.s3-us-west-1.amazonaws.com for s3.
     - STORAGE_BACKEND: 'b2' or 's3' (depending on which you want to use)
     - STORAGE_API_ID: the API ID for your Backblaze account if using backblaze, otherwise blank
     - STORAGE_API_KEY: The API key for your Backblaze account, otherwise blank
     - BUCKET_NAME: the storage bucket name for b2 or s3
-
   If you want to use S3, you need to include your aws credentials and config in $HOME/.aws. The config and credentials will be mounted into the relevant services at runtime. See https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html for more information.
 
-3. sudo make up
-4. Visit localhost:3000 (or if it doesn't work initially, try to wait a minute)
-    - if it never works, check the container logs, and/or bug me on discord
-    - you'll need to login as admin/admin to view videos that have been encoded. There's an approval workflow which prevents unapproved videos from being viewed by regular users.
-5. If everything comes up correctly, once you're logged in, visit the archival requests tab, and add a new category of content to be archived. If everything works, videos will start to be downloaded, and will be made available after a delay.
+#### Tunneling yt-dlp Traffic
+Horahora comes with Gluetun support out of the box. To enable it, you'll need to set the proper values in the "vpn config" section of the secrets.env.template file. This will enable your yt-dlp traffic to be tunneled through your VPN provider via a local Gluetun HTTP proxy.
+
 
 ## Contributing
 Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
