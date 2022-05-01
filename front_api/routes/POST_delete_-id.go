@@ -2,9 +2,11 @@ package routes
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 
 	"github.com/labstack/echo/v4"
@@ -25,6 +27,15 @@ func (v RouteHandler) handleDelete(c echo.Context) error {
 	profile, err := v.getUserProfileInfo(c)
 	if err != nil {
 		return err
+	}
+
+	// Make an audit event even if they don't pass the permission check
+	_, err = v.u.AddAuditEvent(context.TODO(), &userproto.NewAuditEventRequest{
+		Message: fmt.Sprintf("User attempted to delete video id %s", id),
+		User_ID: profile.UserID,
+	})
+	if err != nil {
+		return err // If the audit event can't be created, fail the operation
 	}
 
 	if profile.Rank != 2 {

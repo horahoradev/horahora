@@ -8,6 +8,7 @@ import UserPage from "./UserPage";
 import ArchivalPage from "./ArchivalPage";
 import RegisterPage from "./RegisterPage";
 import PasswordResetPage from "./Passwordreset";
+import AuditPage from "./AuditPage";
 
 function App() {
   return (
@@ -36,6 +37,9 @@ function App() {
         </Route>
         <Route exact path ="/password-reset">
             <PasswordResetPage/>
+        </Route>
+        <Route exact path ="/audits">
+          <AuditPage/>
         </Route>
         <Route>TODO(ivan): 404</Route>
       </Switch>

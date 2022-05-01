@@ -39,6 +39,7 @@ message AuditEvent {
 
 message AuditListResponse {
     repeated AuditEvent events = 1;
+    int64 NumEvents = 2;
 }
 
 message Nothing {

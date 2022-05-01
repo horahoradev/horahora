@@ -23,6 +23,15 @@ func (v RouteHandler) handleBan(c echo.Context) error {
 		return err
 	}
 
+	// Make an audit event even if they don't pass the permission check
+	_, err = v.u.AddAuditEvent(context.TODO(), &userproto.NewAuditEventRequest{
+		Message: fmt.Sprintf("User attempted to ban user id %d", idInt),
+		User_ID: profile.UserID,
+	})
+	if err != nil {
+		return err // If the audit event can't be created, fail the operation
+	}
+
 	if profile.Rank != 2 {
 		return c.String(http.StatusForbidden, "Insufficient user status")
 	}

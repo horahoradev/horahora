@@ -202,24 +202,45 @@ type AuditEvent struct {
 	Timestamp string `db:"occurred_at"`
 }
 
-func (m *UserModel) GetAuditEvents(userID int64) ([]AuditEvent, error) {
+func (m *UserModel) GetAuditEvents(userID, page int64) ([]AuditEvent, int64, error) {
 	var events []AuditEvent
+	minPage := (page - 1) * 50
 
 	switch {
 	case userID == -1:
-		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events"
-		err := m.Conn.Select(&events, sql)
+		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events LIMIT 50 OFFSET $1"
+		err := m.Conn.Select(&events, sql, minPage)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
-		return events, nil
+
+		sql = "SELECT count(*) FROM audit_events"
+		row := m.Conn.QueryRow(sql)
+
+		var count int64
+		err = row.Scan(&count)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		return events, count, nil
 
 	default:
-		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events WHERE user_id = $1"
-		err := m.Conn.Select(&events, sql, userID)
+		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events WHERE user_id = $1 LIMIT 50 OFFSET $2"
+		err := m.Conn.Select(&events, sql, userID, minPage)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
-		return events, nil
+
+		sql = "SELECT count(*) FROM audit_events WHERE user_id = $1"
+		row := m.Conn.QueryRow(sql, userID)
+
+		var count int64
+		err = row.Scan(&count)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		return events, count, nil
 	}
 }
