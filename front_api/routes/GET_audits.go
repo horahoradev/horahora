@@ -41,7 +41,7 @@ func (v RouteHandler) handleGetAudits(c echo.Context) error {
 	}
 
 	var data AuditData
-	data.Length = len(resp.Events)
+	data.Length = int(resp.NumEvents)
 
 	for _, event := range resp.Events {
 		data.Events = append(data.Events, AuditEvent{

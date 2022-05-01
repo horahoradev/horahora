@@ -25,8 +25,8 @@ function AuditPage() {
   const columns = [
     {
         title: 'id',
-        dataIndex: 'Id',
-        key: 'Id',
+        dataIndex: 'ID',
+        key: 'ID',
     },
     {
         title: 'User ID',

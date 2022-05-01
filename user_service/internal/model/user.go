@@ -208,7 +208,7 @@ func (m *UserModel) GetAuditEvents(userID, page int64) ([]AuditEvent, int64, err
 
 	switch {
 	case userID == -1:
-		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events LIMIT 50 OFFSET $1"
+		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events ORDER by occurred_at DESC LIMIT 50 OFFSET $1"
 		err := m.Conn.Select(&events, sql, minPage)
 		if err != nil {
 			return nil, 0, err
@@ -226,7 +226,7 @@ func (m *UserModel) GetAuditEvents(userID, page int64) ([]AuditEvent, int64, err
 		return events, count, nil
 
 	default:
-		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events WHERE user_id = $1 LIMIT 50 OFFSET $2"
+		sql := "SELECT id, user_id, msg, occurred_at FROM audit_events WHERE user_id = $1  ORDER by occurred_at DESC LIMIT 50 OFFSET $2"
 		err := m.Conn.Select(&events, sql, userID, minPage)
 		if err != nil {
 			return nil, 0, err
