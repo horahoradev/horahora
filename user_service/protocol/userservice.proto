@@ -15,6 +15,30 @@ service UserService {
     rpc BanUser(BanUserRequest) returns ( BanUserResponse){}
     rpc SetUserRank(SetRankRequest) returns ( Nothing ){}
     rpc ResetPassword(ResetPasswordRequest) returns ( Nothing ) {}
+
+    rpc AddAuditEvent(NewAuditEventRequest) returns ( Nothing ) {}
+    rpc GetAuditEvents(AuditEventsListRequest) returns ( AuditListResponse ) {}
+}
+
+message NewAuditEventRequest {
+    int64 user_ID = 1;
+    string message = 2;
+}
+
+message AuditEventsListRequest {
+    int64 page = 1;
+    int64 user_id = 2; // -1 if all users
+}
+
+message AuditEvent {
+    int64 id = 1;
+    int64 user_ID = 2;
+    string message = 3;
+    string timestamp = 4;
+}
+
+message AuditListResponse {
+    repeated AuditEvent events = 1;
 }
 
 message Nothing {

@@ -174,5 +174,31 @@ func (g GRPCServer) ResetPassword(ctx context.Context, req *proto.ResetPasswordR
 	}
 
 	return &proto.Nothing{}, g.um.SetNewHash(req.UserID, passHash)
+}
 
+func (g GRPCServer) AddAuditEvent(ctx context.Context, req *proto.NewAuditEventRequest) (*proto.Nothing, error) {
+	return &proto.Nothing{}, g.um.AddNewAuditEvent(req.User_ID, req.Message)
+}
+
+func (g GRPCServer) GetAuditEvents(ctx context.Context, req *proto.AuditEventsListRequest) (*proto.AuditListResponse, error) {
+	events, err := g.um.GetAuditEvents(req.UserId)
+	if err != nil {
+		return nil, err
+	}
+	auditEvents := make([]*proto.AuditEvent, len(events))
+
+	for _, event := range events {
+		event := proto.AuditEvent{
+			Id:        event.ID,
+			Message:   event.Message,
+			Timestamp: event.Timestamp,
+			User_ID:   event.UserID,
+		}
+
+		auditEvents = append(auditEvents, &event)
+	}
+
+	return &proto.AuditListResponse{
+		Events: auditEvents,
+	}, nil
 }
