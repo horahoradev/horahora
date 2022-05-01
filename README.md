@@ -40,9 +40,6 @@ Contributions are always welcome (and quite needed atm). If you'd like to contri
 Designs are listed here:
 https://github.com/horahoradev/horahora-designs
 
-## Backup Restoration
-Backup_service writes psql dumps of the three databases (userservice, videoservice, scheduler) to backblaze. To restore, place the three latest dumps in the sql dir, `docker-compose up`, run migrations, then run restore.sh from within the container.
-
 ## Advanced Use Cases
 ### Other Storage Backends (s3, backblaze, anything s3-compatible)
 By default, Horahora will storage videos locally using Minio.
@@ -58,3 +55,8 @@ If you don't want videos to be stored locally, modify secrets.env.template, addi
 
 ### Tunneling yt-dlp Traffic
 Horahora comes with Gluetun support out of the box. To enable it, you'll need to set the proper values in the "vpn config" section of the secrets.env.template file. This will enable your yt-dlp traffic to be tunneled through your VPN provider via a local Gluetun HTTP proxy.
+
+### Backup Restoration
+(this currently isn't functioning, I'll fix it later)
+
+Backup_service writes psql dumps of the three databases (userservice, videoservice, scheduler) to backblaze. To restore, place the three latest dumps in the sql dir, `docker-compose up`, run migrations, then run restore.sh from within the container.
