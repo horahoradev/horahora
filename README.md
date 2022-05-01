@@ -29,7 +29,7 @@ https://discord.gg/vfwfpctJRZ
 3. Wait a minute, then visit localhost:3000
 4. Login as admin/admin
     - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
-
+    - it's recommended to visit /password-reset immediately to change the admin user's default password if using in an untrusted environment
 If that doesn't work, bug me on Discord.
 
 ## Contributing
