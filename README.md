@@ -27,12 +27,22 @@ https://discord.gg/vfwfpctJRZ
 2. sudo make up
 3. Wait a minute, then visit localhost:3000
 4. Login as admin/admin
-  - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
+    - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
 
 If that doesn't work, bug me on Discord.
 
-### Advanced Use Cases
-#### Other Storage Backends (s3, backblaze, anything s3-compatible)
+## Contributing
+Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
+
+## Designs
+Designs are listed here:
+https://github.com/horahoradev/horahora-designs
+
+## Backup Restoration
+Backup_service writes psql dumps of the three databases (userservice, videoservice, scheduler) to backblaze. To restore, place the three latest dumps in the sql dir, `docker-compose up`, run migrations, then run restore.sh from within the container.
+
+## Advanced Use Cases
+### Other Storage Backends (s3, backblaze, anything s3-compatible)
 By default, Horahora will storage videos locally using Minio.
 
 If you don't want videos to be stored locally, modify secrets.env.template, adding the relevant values for your use case.
@@ -44,16 +54,5 @@ If you don't want videos to be stored locally, modify secrets.env.template, addi
     - BUCKET_NAME: the storage bucket name for b2 or s3
   If you want to use S3, you need to include your aws credentials and config in $HOME/.aws. The config and credentials will be mounted into the relevant services at runtime. See https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html for more information.
 
-#### Tunneling yt-dlp Traffic
+### Tunneling yt-dlp Traffic
 Horahora comes with Gluetun support out of the box. To enable it, you'll need to set the proper values in the "vpn config" section of the secrets.env.template file. This will enable your yt-dlp traffic to be tunneled through your VPN provider via a local Gluetun HTTP proxy.
-
-
-## Contributing
-Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
-
-## Designs
-Designs are listed here:
-https://github.com/horahoradev/horahora-designs
-
-## Backup Restoration
-Backup_service writes psql dumps of the three databases (userservice, videoservice, scheduler) to backblaze. To restore, place the three latest dumps in the sql dir, `docker-compose up`, run migrations, then run restore.sh from within the container.
