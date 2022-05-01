@@ -14,7 +14,8 @@ It allows you to:
 - subscribe to categories of content (e.g. a tag on Niconico) and it will upload all videos in those categories to the site, then intelligently sync new videos in those categories, keeping the archive up-to-date at all times
 - browse through and watch downloaded videos with ease, with a built-in video recommender system to help you discover new content
 - query the archive by tag or title, and sort by views, average rating, or upload date
-- manage archival with a group of friends, with downloads being prioritized by the number of users subscribed to the video's category
+- manage archival with a group of friends or untrusted users, with downloads being prioritized by the number of users subscribed to the video's category
+- manage site user permissions, ban users, delete videos, and view audit logs for admin/moderator actions
 - easily host your own instance with docker-compose
 
 Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
