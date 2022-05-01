@@ -141,6 +141,11 @@ export async function getComments(videoID) {
   return res.data;
 }
 
+export async function getAudits(userID, page) {
+  const res = await axios.get(e(`auditevents/${userID}?page=${page}`));
+  return res.data;
+}
+
 export async function postComment(data) {
   let form = new FormData();
   form.append("video_id", data.video_id);

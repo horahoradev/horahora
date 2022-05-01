@@ -34,6 +34,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.GET("/home", r.getHome)
 	e.GET("/users/:id", r.getUser)
 	e.GET("/currentuserprofile/", r.getCurrentUserProfile)
+	e.GET("/auditevents/:id", r.handleGetAudits)
 
 	e.GET("/videos/:id", r.getVideo)
 	e.POST("/rate/:id", r.handleRating)
@@ -101,6 +102,18 @@ type ProfileData struct {
 	Videos            []Video
 	Banned            bool
 	L                 *LoggedInUserData
+}
+
+type AuditEvent struct {
+	ID        int64
+	UserID    int64
+	Message   string
+	Timestamp string
+}
+
+type AuditData struct {
+	Length int
+	Events []AuditEvent
 }
 
 type PaginationData struct {

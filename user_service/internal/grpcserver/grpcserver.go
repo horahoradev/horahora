@@ -181,11 +181,11 @@ func (g GRPCServer) AddAuditEvent(ctx context.Context, req *proto.NewAuditEventR
 }
 
 func (g GRPCServer) GetAuditEvents(ctx context.Context, req *proto.AuditEventsListRequest) (*proto.AuditListResponse, error) {
-	events, err := g.um.GetAuditEvents(req.UserId)
+	events, count, err := g.um.GetAuditEvents(req.UserId, req.Page)
 	if err != nil {
 		return nil, err
 	}
-	auditEvents := make([]*proto.AuditEvent, len(events))
+	auditEvents := make([]*proto.AuditEvent, 0, len(events))
 
 	for _, event := range events {
 		event := proto.AuditEvent{
@@ -199,6 +199,7 @@ func (g GRPCServer) GetAuditEvents(ctx context.Context, req *proto.AuditEventsLi
 	}
 
 	return &proto.AuditListResponse{
-		Events: auditEvents,
+		Events:    auditEvents,
+		NumEvents: count,
 	}, nil
 }

@@ -77,6 +77,13 @@ function LoggedInUserNav(props) {
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
+        key="audits"
+        icon={<FontAwesomeIcon icon={faArchive} />}
+      >
+        <Link to="/audits">Audit Logs</Link>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item
         key="logout"
         icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
       >
