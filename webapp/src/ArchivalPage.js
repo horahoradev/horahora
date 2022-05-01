@@ -127,11 +127,11 @@ function ArchivalPage() {
             <Button className="background-blue" onClick={createNewArchival}>Submit</Button>
             <p></p>
 
-            <div className={"inline-block"}>
-                <Table dataSource={archivalSubscriptions} columns={columns}/>
+            <div className={"inline-block w-1/2 mr-40"}>
+                <Table dataSource={archivalSubscriptions} tableLayout={"auto"} columns={columns}/>
             </div>
 
-            <div>
+            <div className={"inline-block w-2/5	"}>
                 <Table dataSource={timelineEvents} columns={timelinTableCols}/>
             </div>
             </>
