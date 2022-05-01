@@ -155,7 +155,7 @@ function VideoView(props) {
         <div className="my-4">
           <span className="text-xs font-bold mb-2">Tags</span>
           <div className="border px-2 py-1">
-            {data.Tags && data.Tags.map((tag, idx) => {
+            {!data.Tags ? "None" : data.Tags.map((tag, idx) => {
               // TODO(ivan): add links to tags
               return (
                 <div key={idx} className="my-1 inline-block">
