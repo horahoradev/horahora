@@ -30,7 +30,7 @@ Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
     - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
     - it's recommended to visit /password-reset immediately to change the admin user's default password if using in an untrusted environment
   
-If that doesn't work, bug me on Discord.
+That's it for basic usage, and should work. If that doesn't work, bug me on Discord.
 
 ## Contributing
 Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
