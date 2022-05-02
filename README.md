@@ -1,12 +1,5 @@
 # Horahora
 ## Self-hosted Video-hosting Website and yt-dlp Video Archival Manager for Niconico, Bilibili, and Youtube
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/video_page.png)
-
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/homepage.png)
-
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archival_requests_new.png)
-
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Audit_logs.png)
 
 Horahora is a collaborative archival management tool.
 
@@ -16,9 +9,17 @@ It allows you to:
 - manage archival with a group of friends or untrusted users, with downloads being prioritized by the number of users subscribed to the video's category
 - manage site user permissions, ban users, delete videos, and view audit logs for admin/moderator actions
 
-Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
-
 https://discord.gg/vfwfpctJRZ
+
+![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/video_page.png)
+
+![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/homepage.png)
+
+![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archival_requests_new.png)
+
+![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Audit_logs.png)
+
+Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 
 ## Local Use Instructions (START HERE)
 
