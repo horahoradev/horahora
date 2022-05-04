@@ -4,8 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-
+import PrivacyPolicy from "./PrivacyPolicy";
+import TermsOfService from "./TOS";
 import Header from "./Header";
+
+import Footer from "./Footer";
 import * as API from "./api";
 
 function RegistrationForm() {
@@ -60,7 +63,6 @@ function RegistrationForm() {
             }
           />
         </Input.Group>
-        <br />
         <Input.Group>
           <Input.Password
             name="password"
@@ -73,7 +75,7 @@ function RegistrationForm() {
             }
           />
         </Input.Group>
-        <br />
+        By submitting, you agree to the <PrivacyPolicy></PrivacyPolicy> and <TermsOfService></TermsOfService>
         <Input.Group>
           <Button block type="primary" htmlType="submit" size="large">
             Submit
@@ -92,6 +94,9 @@ function RegisterPage() {
         <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
           <RegistrationForm />
         </div>
+      </div>
+      <div className="absolute bottom-0 w-full">
+      <Footer></Footer>
       </div>
     </>
   );

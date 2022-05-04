@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import Footer from "./Footer";
 
 import Header from "./Header";
 import * as API from "./api";
@@ -79,6 +80,7 @@ function PasswordResetPage() {
           <PasswordResetForm />
         </div>
       </div>
+      <Footer></Footer>
     </>
   );
 }

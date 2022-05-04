@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import dashjs from "dashjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import Footer from "./Footer";
 
 import * as API from "./api";
 import Header from "./Header";
@@ -65,6 +66,7 @@ function UserPage() {
                     </div>
                 </div>
             </div>
+            <Footer></Footer>
         </>
     );
 }
