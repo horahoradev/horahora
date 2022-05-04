@@ -1,5 +1,16 @@
 # Horahora
 ## Self-hosted Video-hosting Website and yt-dlp Video Archival Manager for Niconico, Bilibili, and Youtube
+
+Horahora is a collaborative archival management tool.
+
+It allows you to:
+- download and sync videos from any link supported by yt-dlp
+- browse through downloaded videos by channel, tag, views, rating, upload date, etc
+- manage archival with a group of friends or untrusted users, with downloads being prioritized by the number of users subscribed to the video's category
+- manage site user permissions, ban users, delete videos, and view audit logs for admin/moderator actions
+
+https://discord.gg/vfwfpctJRZ
+
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/video_page.png)
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/homepage.png)
@@ -8,19 +19,7 @@
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Audit_logs.png)
 
-Horahora is a collaborative archival management tool.
-
-It allows you to:
-- subscribe to categories of content (e.g. a tag on Niconico) and it will upload all videos in those categories to the site, then intelligently sync new videos in those categories, keeping the archive up-to-date at all times
-- browse through and watch downloaded videos with ease, with a built-in video recommender system to help you discover new content
-- query the archive by tag or title, and sort by views, average rating, or upload date
-- manage archival with a group of friends or untrusted users, with downloads being prioritized by the number of users subscribed to the video's category
-- manage site user permissions, ban users, delete videos, and view audit logs for admin/moderator actions
-- easily host your own instance with docker-compose
-
 Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
-
-https://discord.gg/vfwfpctJRZ
 
 ## Local Use Instructions (START HERE)
 
@@ -31,7 +30,7 @@ https://discord.gg/vfwfpctJRZ
     - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
     - it's recommended to visit /password-reset immediately to change the admin user's default password if using in an untrusted environment
   
-If that doesn't work, bug me on Discord.
+That's it for basic usage, and should work. If that doesn't work, bug me on Discord.
 
 ## Contributing
 Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
