@@ -9,7 +9,7 @@ It allows you to:
 - manage archival with a group of friends or untrusted users, with downloads being prioritized by the number of users subscribed to the video's category
 - manage site user permissions, ban users, delete videos, and view audit logs for admin/moderator actions
 
-https://discord.gg/vfwfpctJRZ
+Join our Discord: https://discord.gg/vfwfpctJRZ
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/video_page.png)
 
