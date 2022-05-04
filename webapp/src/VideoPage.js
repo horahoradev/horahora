@@ -6,6 +6,7 @@ import videojs from "video.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faThumbsDown, faUserCircle, faUser} from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
+import Footer from "./Footer";
 
 import * as API from "./api";
 import Header from "./Header";
@@ -285,6 +286,7 @@ function VideoPage() {
           <VideoList videos={pageData.RecommendedVideos} />
         </div>
       </div>
+      <Footer></Footer>
     </>
   );
 }

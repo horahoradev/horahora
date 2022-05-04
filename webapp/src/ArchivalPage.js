@@ -4,6 +4,7 @@ import { Table, Timeline, Button, Space} from "antd";
 
 import * as API from "./api";
 import Header from "./Header";
+import Footer from "./Footer";
 
 
 
@@ -134,6 +135,7 @@ function ArchivalPage() {
             <div className={"inline-block w-2/5	"}>
                 <Table dataSource={timelineEvents} columns={timelinTableCols}/>
             </div>
+            <Footer></Footer>
             </>
     );
 }

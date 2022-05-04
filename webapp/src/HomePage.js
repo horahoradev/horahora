@@ -6,8 +6,13 @@ import Header from "./Header";
 import VideoList from "./VideoList";
 import Paginatione from "./Pagination";
 import queryString from 'query-string';
+import { useHistory } from "react-router-dom";
+
+import Footer from "./Footer";
 
 function HomePage() {
+  let history = useHistory();
+
   const [pageData, setPageData] = useState(null);
   const [userData, setUserData] = useState(null);
   const [currPage, setPage] = useState(1);
@@ -21,8 +26,15 @@ function HomePage() {
 
 
     let fetchData = async () => {
-      let data = await API.getHome(currPage, search, order, category);
-      if (!ignore) setPageData(data);
+      try {
+        let data = await API.getHome(currPage, search, order, category);
+        if (!ignore) setPageData(data);
+      } catch (error) {
+        // Bad redirect if not authenticated
+        if (error.response.status === 403) {
+          history.push("/login");
+        }
+      }
 
       let userData = await API.getUserdata();
       if (!ignore) setUserData(userData);
@@ -34,19 +46,18 @@ function HomePage() {
     };
   }, [currPage, category, order, search]);
 
-  if (pageData == null) return null;
-
   return (
     <>
       <Header userData={userData} />
 
       <div className="flex justify-center mx-4 min-h-screen my-4">
         <div className="max-w-screen-lg w-screen">
-          <h1 className="bold text-2xl">Number of videos: {pageData.PaginationData.NumberOfItems}</h1>
-          <VideoList videos={pageData.Videos} />
-          <Paginatione paginationData={pageData.PaginationData} onPageChange={setPage}/>
+          <h1 className="bold text-2xl">Number of videos: {pageData ? pageData.PaginationData.NumberOfItems : 0}</h1>
+          <VideoList videos={pageData ? pageData.Videos : []} />
+          <Paginatione paginationData={pageData ? pageData.PaginationData : []} onPageChange={setPage}/>
         </div>
       </div>
+      <Footer></Footer>
     </>
   );
 }

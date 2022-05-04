@@ -1,11 +1,13 @@
 import { useFormik } from "formik";
-import { Button, Input } from "antd";
+import { Link, Button, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import Footer from "./Footer";
 
 import Header from "./Header";
+
 import * as API from "./api";
 
 function LoginForm() {
@@ -31,7 +33,7 @@ function LoginForm() {
 
   return (
     <div className="max-w-xs w-full border rounded shadow bg-white p-4">
-      <h2 className="text-xl mb-4">Welcome back!</h2>
+      <h2 className="text-xl mb-4 inline-block">Welcome back!</h2> <a className="float-right -top-5" href="/register">register</a>
       <form onSubmit={formik.handleSubmit}>
         <Input.Group>
           <Input
@@ -78,6 +80,9 @@ function LoginPage() {
         <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
           <LoginForm />
         </div>
+      </div>
+      <div className="absolute bottom-0 w-full">
+        <Footer></Footer>
       </div>
     </>
   );

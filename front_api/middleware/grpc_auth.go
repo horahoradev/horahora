@@ -5,6 +5,9 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"net/http"
+
+	"strings"
 
 	"github.com/horahoradev/horahora/front_api/config"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
@@ -28,26 +31,30 @@ const UserLoggedIn = "loggedin"
 
 func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		c.Set(UserLoggedIn, false)
-		// TODO: maybe add validation on the number of cookies
-
-		if len(c.Cookies()) < 1 {
+		reqPath := c.Request().URL.Path
+		switch { // obv if they're trying to login or register we don't need to try to auth them
+		case strings.HasPrefix(reqPath, "/login") || strings.HasPrefix(reqPath, "/register"):
 			return next(c)
 		}
 
+		c.Set(UserLoggedIn, false)
+
+		if len(c.Cookies()) < 1 {
+			return c.String(http.StatusForbidden, "")
+		}
 
 		jwt := c.Cookies()[0].Value
 
 		jwtDecoded, err := base64.StdEncoding.DecodeString(jwt)
 		if err != nil {
 			log.Errorf("Failed to decode jwt. Err: %s", err)
-			return next(c)
+			return c.String(http.StatusForbidden, "")
 		}
 
 		uid, err := j.authenticate(string(jwtDecoded))
 		if err != nil {
 			log.Errorf("Error while authenticating: %s", err)
-			return next(c)
+			return c.String(http.StatusForbidden, "")
 		}
 
 		c.Set(UserIDKey, uid)
@@ -57,7 +64,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 		_, err = j.config.UserClient.GetUserFromID(context.Background(), &userproto.GetUserFromIDRequest{UserID: uid})
 		if err != nil {
 			log.Errorf("Could not retrieve authenticated users metadata. Err: %s", err)
-			return next(c)
+			return c.String(http.StatusForbidden, "")
 		}
 
 		c.Set(UserLoggedIn, true)

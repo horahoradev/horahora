@@ -14,6 +14,7 @@ import Header from "./Header";
 import VideoList from "./VideoList";
 import Paginatione from "./Pagination";
 import queryString from 'query-string';
+import Footer from "./Footer";
 
 function AuditPage() {
   const [pageData, setPageData] = useState(null);
@@ -84,7 +85,7 @@ function AuditPage() {
           }
         />
     <Table dataSource={pageData.Events} columns={columns} pagination={{current: currPage,  onChange: setPage, pageSize: 50, total: pageData.Length}}/>
-
+    <Footer></Footer>
     </>
   );
 }
