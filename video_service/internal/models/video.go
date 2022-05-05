@@ -260,12 +260,17 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 }
 
 // FIXME: optimization: move to redis once I figure out what types of queries are necessary
-func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVal string) (int64, error) {
+func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVal string, showUnapproved bool) (int64, error) {
 	var sql string
 	var args []interface{}
 	switch {
 	case fromUserID != 0:
-		sql = "SELECT COUNT(*) FROM videos WHERE userID = $1 AND transcoded=true"
+		sql = "SELECT COUNT(*) FROM videos WHERE userID = $1 AND transcoded=true AND is_deleted=false"
+		if !showUnapproved {
+			// oh no no no no FIXME
+			sql = sql + " AND is_approved = true"
+		}
+
 		args = []interface{}{fromUserID}
 	case searchVal != "":
 		// TODO: DRY
@@ -282,7 +287,8 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 			goqu.T("tags"),
 			goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
 			Where(conditions...).
-			Where(goqu.C("transcoded").Eq(true))
+			Where(goqu.C("transcoded").Eq(true)).
+			Where(goqu.C("is_deleted").Eq(false))
 		var err error
 		sql, _, err = ds.ToSQL()
 		if err != nil {
@@ -290,7 +296,11 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 		}
 		args = []interface{}{}
 	default:
-		sql = "SELECT COUNT(*) FROM videos WHERE transcoded=true"
+		sql = "SELECT COUNT(*) FROM videos WHERE transcoded=true AND is_deleted=false"
+		if !showUnapproved {
+			// oh no no no no FIXME
+			sql = sql + " AND is_approved = true"
+		}
 		args = []interface{}{}
 	}
 
