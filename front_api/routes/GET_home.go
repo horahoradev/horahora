@@ -3,11 +3,12 @@ package routes
 import (
 	"context"
 	"errors"
+	"net/http"
+	"net/url"
+
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
-	"net/url"
 )
 
 type HomePageData struct {
@@ -56,8 +57,12 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	order := videoproto.SortDirection(videoproto.SortDirection_value[orderVal])
-
+	var order videoproto.SortDirection
+	if orderVal == "" {
+		order = videoproto.SortDirection_desc
+	} else {
+		order = videoproto.SortDirection(videoproto.SortDirection_value[orderVal])
+	}
 	pageNumber := getPageNumber(c)
 
 	// TODO: if request times out, maybe provide a default list of good videos
@@ -75,11 +80,10 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		return errors.New("Could not retrieve video list")
 	}
 
-
 	data := HomePageData{
 		PaginationData: PaginationData{
-			NumberOfItems:		 int(videoList.NumberOfVideos),
-			CurrentPage:          int(pageNumber),
+			NumberOfItems: int(videoList.NumberOfVideos),
+			CurrentPage:   int(pageNumber),
 		},
 	}
 

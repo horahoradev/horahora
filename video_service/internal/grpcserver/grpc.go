@@ -422,7 +422,7 @@ func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQu
 			return nil, err
 		}
 
-		numberOfVideos, err := g.VideoModel.GetNumberOfSearchResultsForQuery(queryConfig.FromUserID, queryConfig.SearchVal)
+		numberOfVideos, err := g.VideoModel.GetNumberOfSearchResultsForQuery(queryConfig.FromUserID, queryConfig.SearchVal, queryConfig.ShowUnapproved)
 		if err != nil {
 			log.Errorf("Could not get count of entries for query. Err: %s", err)
 			return nil, err
