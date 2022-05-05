@@ -26,6 +26,22 @@ func (r RouteHandler) handleRegister(c echo.Context) error {
 		return err
 	}
 
+	// NO!!! FIXME
+	validateResp, err := r.u.ValidateJWT(context.TODO(), &userproto.ValidateJWTRequest{
+		Jwt: regisResp.Jwt,
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = r.u.AddAuditEvent(context.TODO(), &userproto.NewAuditEventRequest{
+		Message: "New user has registered",
+		User_ID: validateResp.Uid,
+	})
+	if err != nil {
+		return err // If the audit event can't be created, fail the operation
+	}
+
 	// TODO: use registration JWT to auth
 
 	return setCookie(c, regisResp.Jwt)

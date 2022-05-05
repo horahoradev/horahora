@@ -63,6 +63,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 	} else {
 		order = videoproto.SortDirection(videoproto.SortDirection_value[orderVal])
 	}
+
 	pageNumber := getPageNumber(c)
 
 	// TODO: if request times out, maybe provide a default list of good videos
