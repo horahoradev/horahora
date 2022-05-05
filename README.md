@@ -41,7 +41,7 @@ https://github.com/horahoradev/horahora-designs
 
 ## Advanced Use Cases
 ### Other Storage Backends (s3, backblaze, anything s3-compatible)
-By default, Horahora will storage videos locally using Minio.
+By default, Horahora will store videos locally using Minio.
 
 If you don't want videos to be stored locally, modify secrets.env.template, adding the relevant values for your use case.
 
