@@ -4,7 +4,7 @@
 Horahora is a collaborative archival management tool.
 
 It allows you to:
-- download and sync videos from any link supported by yt-dlp; usability is very fire-and-forget, e.g. you specify that you're interested in a search on Youtube or nicovideo, and Horahora will regularly download new videos in that category and keep it synced.
+- download and continuously sync videos from any link supported by yt-dlp
 - browse through downloaded videos by channel, tag, views, rating, upload date, etc
 - manage archival with a group of friends or untrusted users, with downloads being prioritized by the number of users subscribed to the video's category
 - manage site user permissions, ban users, delete videos, and view audit logs for admin/moderator actions
