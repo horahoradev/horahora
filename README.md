@@ -25,7 +25,7 @@ Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 
 1. Install docker and docker-compose
 2. sudo make up
-3. Wait a minute, then visit localhost:3000
+3. Wait a minute, then visit localhost:80
 4. Login as admin/admin
     - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
     - it's recommended to visit /password-reset immediately to change the admin user's default password if using in an untrusted environment
