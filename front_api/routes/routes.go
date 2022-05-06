@@ -31,33 +31,33 @@ func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceCli
 func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient)
 
-	e.GET("/home", r.getHome)
-	e.GET("/users/:id", r.getUser)
-	e.GET("/currentuserprofile/", r.getCurrentUserProfile)
-	e.GET("/auditevents/:id", r.handleGetAudits)
+	e.GET("/api/home", r.getHome)
+	e.GET("/api/users/:id", r.getUser)
+	e.GET("/api/currentuserprofile/", r.getCurrentUserProfile)
+	e.GET("/api/auditevents/:id", r.handleGetAudits)
 
-	e.GET("/videos/:id", r.getVideo)
-	e.POST("/rate/:id", r.handleRating)
-	e.POST("/approve/:id", r.handleApproval)
+	e.GET("/api/videos/:id", r.getVideo)
+	e.POST("/api/rate/:id", r.handleRating)
+	e.POST("/api/approve/:id", r.handleApproval)
 
-	e.POST("/login", r.handleLogin)
-	e.POST("/register", r.handleRegister)
-	e.POST("/logout", r.handleLogout)
+	e.POST("/api/login", r.handleLogin)
+	e.POST("/api/register", r.handleRegister)
+	e.POST("/api/logout", r.handleLogout)
 
-	e.GET("/archiverequests", r.getArchiveRequests)
-	e.POST("/archiverequests", r.handleArchiveRequest)
-	e.POST("/delete-archiverequest", r.handleDeleteArchivalRequest)
+	e.GET("/api/archiverequests", r.getArchiveRequests)
+	e.POST("/api/archiverequests", r.handleArchiveRequest)
+	e.POST("/api/delete-archiverequest", r.handleDeleteArchivalRequest)
 
-	e.GET("/comments/:id", r.getComments)
-	e.POST("/comments/", r.handleComment)
+	e.GET("/api/comments/:id", r.getComments)
+	e.POST("/api/comments/", r.handleComment)
 
-	e.POST("/comment_upvotes/", r.handleUpvote)
-	e.POST("/upload", r.upload)
+	e.POST("/api/comment_upvotes/", r.handleUpvote)
+	e.POST("/api/upload", r.upload)
 
-	e.POST("/ban/:id", r.handleBan)
-	e.POST("/delete/:id", r.handleDelete)
-	e.POST("/setrank/:userid/:rank", r.handleSetRank)
-	e.POST("/password-reset", r.handlePasswordReset)
+	e.POST("/api/ban/:id", r.handleBan)
+	e.POST("/api/delete/:id", r.handleDelete)
+	e.POST("/api/setrank/:userid/:rank", r.handleSetRank)
+	e.POST("/api/password-reset", r.handlePasswordReset)
 }
 
 type Video struct {

@@ -33,7 +33,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 	return func(c echo.Context) error {
 		reqPath := c.Request().URL.Path
 		switch { // obv if they're trying to login or register we don't need to try to auth them
-		case strings.HasPrefix(reqPath, "/login") || strings.HasPrefix(reqPath, "/register"):
+		case strings.HasPrefix(reqPath, "/api/login") || strings.HasPrefix(reqPath, "/api/register"):
 			return next(c)
 		}
 

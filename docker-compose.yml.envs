@@ -120,10 +120,13 @@ $JWT_KEYPAIR
       - HTTPPROXY_LOG=on
   nginx:
     image: nginx
+    restart: always
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./static:/usr/share/nginx/html
+      - ./static:/etc/nginx/html/static/images
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
 volumes:
   postgresdata:
 
