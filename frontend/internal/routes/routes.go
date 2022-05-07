@@ -149,7 +149,7 @@ func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
 
 	req := schedulerproto.URLRequest{
 		UserID: UserIDInt,
-		Url: urlVal,
+		Url:    urlVal,
 	}
 
 	_, err := r.s.DlURL(context.TODO(), &req)
@@ -477,7 +477,7 @@ func getPageNumber(c echo.Context) int64 {
 }
 
 func (h *RouteHandler) getHome(c echo.Context) error {
-	// TODO: verify no sql injection lol
+	// SQL injection shouldn't be an issue here, just becomes a list of conditions
 	search, err := url.QueryUnescape(c.QueryParam("search"))
 	if err != nil {
 		return err

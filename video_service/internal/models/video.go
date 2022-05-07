@@ -389,6 +389,7 @@ func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pa
 
 	// TODO: ensure that this is safe from sql injection
 	// Maybe use prepared mode?
+	// update: this should be fine.
 	sql, _, err := ds.ToSQL()
 
 	return sql, err
