@@ -4,7 +4,6 @@ import (
 	"context"
 	sql2 "database/sql"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/go-redis/redis"
@@ -405,7 +404,7 @@ func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
 		for _, term := range terms {
 			var currConds []exp.Expression
 			for _, col := range queryCols {
-				patt := regexp.MustCompile(fmt.Sprintf("%s.*", term)) // Prefix matching only, but we could add a reversed b-tree index for fully fuzzy matching
+				patt := term // Prefix matching only, but we could add a reversed b-tree index for fully fuzzy matching
 				// Oh no
 				if col == "tag" {
 					t := goqu.Dialect("postgres").
@@ -415,7 +414,7 @@ func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
 						).Join(
 						goqu.T("tags"),
 						goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
-						Where(goqu.I("tag").Like(patt))
+						Where(goqu.I("tag").Eq(patt))
 					var exp exp.Expression
 					if include {
 						exp = goqu.I("videos.id").In(t)
@@ -444,10 +443,10 @@ func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
 
 				} else {
 					if include {
-						exp := goqu.I(col).Like(patt)
+						exp := goqu.I(col).Eq(patt)
 						currConds = append(currConds, exp)
 					} else {
-						exp := goqu.I(col).NotLike(patt)
+						exp := goqu.I(col).Neq(patt)
 						currConds = append(currConds, exp)
 					}
 				}
