@@ -379,9 +379,6 @@ func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pa
 	// Do not show deleted videos
 	ds = ds.Where(goqu.C("is_deleted").Eq(false))
 
-	// Deduplicate
-	ds = ds.GroupBy(goqu.I("videos.id"))
-
 	// TODO: ensure that this is safe from sql injection
 	// Maybe use prepared mode?
 	// update: this should be fine.
