@@ -39,6 +39,17 @@ Contributions are always welcome (and quite needed atm). If you'd like to contri
 Designs are listed here:
 https://github.com/horahoradev/horahora-designs
 
+## More Detailed Feature List
+- performant at 170k videos, even for all varieties of search queries
+- support for videos which have been deleted from the origin (e.g. if the original site deletes the video, there's no impact on your instance)
+- support for comments, view count, user ratings
+- video approval workflow which prevents normal users from seeing videos before they've been approved
+- support for TOS/privacy policy
+- content archival modeled as one-to-many user subscriptions, so users "subscribe" to a category (link), and links are prioritized according to the number of subscribers
+- support for any website supported by yt-dlp which has the required metadata (but I only use YT/nicovideo atm)
+- artificial user creation: archived videos will be grouped under a Horahora user created for the archived website's user (e.g. if I archive from Russia Today, then a Russia TOday user will be created on Horahora)
+- support for yt-dlp tunneling via Gluetun (see below for setup)
+
 ## Advanced Use Cases
 ### Other Storage Backends (s3, backblaze, anything s3-compatible)
 By default, Horahora will store videos locally using Minio.
