@@ -397,7 +397,7 @@ func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pa
 
 // This function is pretty horrifying, one of the worst things I've written
 func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
-	queryCols := []string{"title", "tag", "description", "username"}
+	queryCols := []string{"title", "tag", "username"}
 
 	f := func(terms []string, include bool) []exp.Expression {
 		var incQuery []exp.Expression
@@ -405,7 +405,7 @@ func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
 		for _, term := range terms {
 			var currConds []exp.Expression
 			for _, col := range queryCols {
-				patt := regexp.MustCompile(fmt.Sprintf(".*%s.*", term))
+				patt := regexp.MustCompile(fmt.Sprintf("%s.*", term)) // Prefix matching only, but we could add a reversed b-tree index for fully fuzzy matching
 				// Oh no
 				if col == "tag" {
 					t := goqu.Dialect("postgres").
