@@ -364,9 +364,7 @@ func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pa
 	case searchVal != "":
 		conditions := v.getConditions(extractSearchTerms(searchVal))
 
-		ds = ds.LeftJoin(
-			goqu.T("tags"),
-			goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
+		ds = ds.
 			Where(conditions...)
 	}
 
