@@ -275,16 +275,14 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 		// TODO: DRY
 		dialect := goqu.Dialect("postgres")
 		ds := dialect.
-			Select(goqu.COUNT(goqu.DISTINCT("videos.id"))).
+			Select(goqu.COUNT("videos.id")).
 			From(
 				goqu.T("videos"),
 			)
 
 		conditions := v.getConditions(extractSearchTerms(searchVal))
 
-		ds = ds.LeftJoin(
-			goqu.T("tags"),
-			goqu.On(goqu.Ex{"videos.id": goqu.I("tags.video_id")})).
+		ds = ds.
 			Where(conditions...).
 			Where(goqu.C("transcoded").Eq(true)).
 			Where(goqu.C("is_deleted").Eq(false))
@@ -437,10 +435,10 @@ func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
 						in = append(in, id)
 					}
 					if include {
-						exp := goqu.I("userid").In(in)
+						exp := goqu.I("userID").In(in)
 						currConds = append(currConds, exp)
 					} else {
-						exp := goqu.I("userid").NotIn(in)
+						exp := goqu.I("userID").NotIn(in)
 						currConds = append(currConds, exp)
 					}
 
