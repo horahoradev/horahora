@@ -3,6 +3,7 @@ package routes
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 
@@ -31,8 +32,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	profileInfo, err := h.getUserProfileInfo(c)
 	if err != nil {
-		log.Errorf("failed to load user profile. Err: %s", err)
-		//return c.String(http.StatusForbidden, err.Error())
+		return c.String(http.StatusForbidden, err.Error())
 	}
 
 	// doesn't matter if it fails, 0 is a fine default rank
@@ -51,7 +51,13 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 	if orderByVal == "" {
 		orderByVal = "upload_date"
 	}
-	orderBy := videoproto.OrderCategory(videoproto.OrderCategory_value[orderByVal])
+
+	orderCat, ok := videoproto.OrderCategory_value[orderByVal]
+	if !ok {
+		return fmt.Errorf("Invalid category supplied: %s", orderByVal)
+	}
+
+	orderBy := videoproto.OrderCategory(orderCat)
 
 	orderVal, err := url.QueryUnescape(c.QueryParam("order"))
 	if err != nil {
@@ -59,7 +65,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 	}
 	var order videoproto.SortDirection
 	if orderVal == "" {
-		order = videoproto.SortDirection_desc
+		order = videoproto.SortDirection_desc // Default to desc
 	} else {
 		order = videoproto.SortDirection(videoproto.SortDirection_value[orderVal])
 	}
