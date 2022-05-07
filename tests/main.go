@@ -82,7 +82,7 @@ func main() {
 		return
 	}
 
-	log.Panic("Failed to download and transocde videos within 30 minutes")
+	log.Panic("Failed to download and transcode videos within 30 minutes")
 
 }
 
