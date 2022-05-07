@@ -433,7 +433,7 @@ func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
 						in = append(in, id)
 					}
 					if include {
-						exp := goqu.I("userID").In(in)
+						exp := goqu.I("userid").In(in)
 						currConds = append(currConds, exp)
 					} else {
 						exp := goqu.I("userID").NotIn(in)
