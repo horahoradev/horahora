@@ -431,14 +431,17 @@ func (v *VideoModel) getConditions(include, exclude []string) []exp.Expression {
 						continue
 					}
 
+					in := make([]interface{}, 0, len(resp.UserIDs))
+
 					for _, id := range resp.UserIDs {
-						if include {
-							exp := goqu.I("userid").Eq(id)
-							currConds = append(currConds, exp)
-						} else {
-							exp := goqu.I("userid").Neq(id)
-							currConds = append(currConds, exp)
-						}
+						in = append(in, id)
+					}
+					if include {
+						exp := goqu.I("userid").In(in)
+						currConds = append(currConds, exp)
+					} else {
+						exp := goqu.I("userid").NotIn(in)
+						currConds = append(currConds, exp)
 					}
 
 				} else {
