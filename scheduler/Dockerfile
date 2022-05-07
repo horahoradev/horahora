@@ -19,22 +19,6 @@ RUN . ./env/bin/activate && \
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-FROM python:3.9-alpine as ytdl-builder
-LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
-
-WORKDIR /
-
-# download youtube-dl and prepare it for usage
-RUN apk add --update --no-cache git gcc musl-dev
-RUN git clone --depth 1 https://github.com/animelover1984/youtube-dl.git youtube-dl
-WORKDIR /youtube-dl
-RUN pip install -r requirements.txt
-COPY --from=pyinstaller-builder /pyinstaller /pyinstaller
-# we provide --paths here because for some reason pyinstaller doesnt figure that out on its own
-RUN /pyinstaller/env/bin/python /pyinstaller/pyinstaller.py --paths /usr/local/lib/python3.9/site-packages --onefile -n youtube-dl youtube_dl/__main__.py
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
 FROM python:3.9-alpine as ytdlp-builder
 LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
@@ -76,7 +60,6 @@ LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
 WORKDIR /horahora/scheduler
 
-COPY --from=ytdl-builder /youtube-dl/dist/youtube-dl /usr/local/bin/youtube-dl
 COPY --from=ytdlp-builder /yt-dlp/dist/yt-dlp /usr/local/bin/yt-dlp
 COPY --from=builder /scheduler.bin /scheduler.bin
 
