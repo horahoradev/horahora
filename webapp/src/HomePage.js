@@ -5,7 +5,6 @@ import * as API from "./api";
 import Header from "./Header";
 import VideoList from "./VideoList";
 import Paginatione from "./Pagination";
-import queryString from 'query-string';
 import { useHistory } from "react-router-dom";
 
 import Footer from "./Footer";
@@ -18,7 +17,11 @@ function HomePage() {
   const [currPage, setPage] = useState(1);
   const loc = useLocation();
 
-  const {order, category, search} = queryString.parse(loc.search);
+  let s = window.location.search;
+  let searchParams = new URLSearchParams(s);
+  let order = searchParams.get("order") || "";
+  let category = searchParams.get("category") || "";
+  let search = searchParams.get("search") || "";  
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
