@@ -15,7 +15,7 @@ Join our Discord: https://discord.gg/vfwfpctJRZ
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/homepage.png)
 
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archival_requests_new.png)
+![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Archival_Requests_5-8.png)
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/Audit_logs.png)
 
