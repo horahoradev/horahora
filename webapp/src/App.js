@@ -9,9 +9,11 @@ import ArchivalPage from "./ArchivalPage";
 import RegisterPage from "./RegisterPage";
 import PasswordResetPage from "./Passwordreset";
 import AuditPage from "./AuditPage";
+import Footer from "./Footer";
 
 function App() {
   return (
+    <>
     <div className="bg-yellow-50 min-h-screen font-serif">
       <Switch>
         <Route exact path="/">
@@ -44,6 +46,8 @@ function App() {
         <Route>TODO(ivan): 404</Route>
       </Switch>
     </div>
+    <Footer></Footer>
+    </>
   );
 }
 

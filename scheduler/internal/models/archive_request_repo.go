@@ -46,7 +46,7 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 	// TODO: this query should be joined on archival subscriptions, not the download user id
 	// This is an MVP fix
 	// nvm i misread it is lol
-	sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM " +
+	sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), event_time FROM " +
 		"downloads INNER JOIN user_download_subscriptions s ON downloads.id = s.download_id LEFT JOIN archival_events ON downloads.id = archival_events.download_id WHERE s.user_id=$1 ORDER BY event_time DESC"
 
 	rows, err := m.Db.Query(sql, userID)

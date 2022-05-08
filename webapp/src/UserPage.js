@@ -66,7 +66,6 @@ function UserPage() {
                     </div>
                 </div>
             </div>
-            <Footer></Footer>
         </>
     );
 }

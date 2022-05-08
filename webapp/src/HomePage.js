@@ -60,7 +60,6 @@ function HomePage() {
           <Paginatione paginationData={pageData ? pageData.PaginationData : []} onPageChange={setPage}/>
         </div>
       </div>
-      <Footer></Footer>
     </>
   );
 }

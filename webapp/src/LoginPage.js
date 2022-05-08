@@ -81,9 +81,6 @@ function LoginPage() {
           <LoginForm />
         </div>
       </div>
-      <div className="absolute bottom-0 w-full">
-        <Footer></Footer>
-      </div>
     </>
   );
 }

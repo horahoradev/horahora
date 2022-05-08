@@ -286,7 +286,6 @@ function VideoPage() {
           <VideoList videos={pageData.RecommendedVideos} />
         </div>
       </div>
-      <Footer></Footer>
     </>
   );
 }
