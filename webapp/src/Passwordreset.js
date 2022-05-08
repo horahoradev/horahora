@@ -80,7 +80,6 @@ function PasswordResetPage() {
           <PasswordResetForm />
         </div>
       </div>
-      <Footer></Footer>
     </>
   );
 }

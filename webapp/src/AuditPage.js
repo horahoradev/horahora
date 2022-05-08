@@ -84,7 +84,6 @@ function AuditPage() {
           }
         />
     <Table dataSource={pageData.Events} columns={columns} pagination={{current: currPage,  onChange: setPage, pageSize: 50, total: pageData.Length}}/>
-    <Footer></Footer>
     </>
   );
 }

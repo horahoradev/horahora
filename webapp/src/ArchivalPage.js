@@ -147,26 +147,31 @@ function ArchivalPage() {
         <>
             <Header userData={userData} />
             <br></br>
-            <div className="m-10">
-                <div className="w-2/5 inline-block mr-5">
+            <div className="mx-10 h-full">
+                <div className="inline-block mr-5">
                     <b className="text-4xl m-0">Archives</b>
                     <h2 className="text-xl mb-5">View and manage your archives</h2>
-                    <div className="bg-gray-50 border-b-4">
-                        <input type="text" className="w-4/5 font-black text-base" placeholder="Paste URL to archive here" id="url">
-                        </input>
-                        <Button className="w-1/5" onClick={createNewArchival}>Submit</Button>
+                    <div>
+
+                    <div>
+                    <div className={"inline-block mr-5 w-2/5 align-bottom"}>
+                        <div className="bg-gray-50 border-b-4">
+                            <input type="text" className="w-4/5 font-black text-base" placeholder="Paste URL to archive here" id="url">
+                            </input>
+                            <Button className="w-1/5" onClick={createNewArchival}>Submit</Button>
+                        </div>
+                            <Table dataSource={archivalSubscriptions} scroll={{y: 700}} className="align-bottom w-full" ellipsis={true} columns={columns}/>
                     </div>
-                    
-                    <div className={"inline-block w-full mr-40 align-top"}>
-                        <Table dataSource={archivalSubscriptions} tableLayout={"auto"} columns={columns}/>
+                    <div className="h-full inline-block w-2/5">
+
+                        <Table dataSource={timelineEvents} className="align-bottom w-full" scroll={{y: 700}} ellipsis={true} columns={timelinTableCols}/>
                     </div>
                 </div>
-                <div className={"inline-block w-2/5 inline-block align-bottom"}>
-                    <Table dataSource={timelineEvents} columns={timelinTableCols}/>
                 </div>
+                </div>
+
             </div>
-            <Footer></Footer>
-            </>
+                  </>
     );
 }
 
