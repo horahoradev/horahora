@@ -122,8 +122,18 @@ type PaginationData struct {
 }
 
 type ArchiveRequestsPageData struct {
-	ArchivalRequests []*schedulerproto.ContentArchivalEntry
+	ArchivalRequests []ArchivalRequest
 	ArchivalEvents   []*schedulerproto.ArchivalEvent
+}
+
+type ArchivalRequest struct {
+	UserID             int64
+	Url                string
+	ArchivedVideos     uint64
+	CurrentTotalVideos uint64
+	LastSynced         string
+	BackoffFactor      uint32
+	DownloadID         uint64
 }
 
 func setCookie(c echo.Context, jwt string) error {
