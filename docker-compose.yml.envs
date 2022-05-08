@@ -124,6 +124,11 @@ $JWT_KEYPAIR
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - frontapi
+      - userservice
+      - scheduler
+      - videoservice
     volumes:
       - ./static:/etc/nginx/html/static/images
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf

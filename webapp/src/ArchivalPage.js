@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Table, Timeline, Button, Space} from "antd";
+import { Tag, Table, Timeline, Button, Space} from "antd";
+import { CheckOutlined, SyncOutlined } from '@ant-design/icons';
 
 
 import * as API from "./api";
@@ -40,6 +41,22 @@ function ArchivalPage() {
         setArchivalSubscriptions(newList);
     }
 
+    function Status(record) {
+        if (record.ArchivedVideos == record.CurrentTotalVideos && record.CurrentTotalVideos != 0){
+            return (
+                <Tag color="green" className="p-1 text-base" icon={<CheckOutlined/>}>Complete</Tag>
+            );
+        } else if(record.CurrentTotalVideos == 0 || record.LastSynced == null) {
+            return (
+                <Tag color="blue" className="text-base" icon={<SyncOutlined spin/>}>Fetching...</Tag>
+            );
+        } else {
+            return (
+                <Tag color="blue" className="text-base" icon={<SyncOutlined spin/>}>  Archiving...</Tag>
+            );
+        }
+    }
+
     // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
     useEffect(() => {
         let ignore = false;
@@ -70,36 +87,44 @@ function ArchivalPage() {
 
     const columns = [
         {
+            title: 'Status',
+            key: 'Url',
+            render: (text, record) => (
+                <span>
+                   {Status(record)}
+                </span>
+              ),
+        },
+        {
             title: 'URL',
             dataIndex: 'Url',
             key: 'Url',
-        },
-        {
-            title: 'Downloaded videos',
-            'dataIndex': 'ArchivedVideos',
-            key: 'ArchivedVideos',
-        },
-        {
-            title: 'Total videos',
-            'dataIndex': 'CurrentTotalVideos',
-            key: 'CurrentTotalVideos',
         },
         {
             title: 'Last synced',
             'dataIndex': 'LastSynced',
             key: 'LastSynced',
         },
+        // {
+        //     title: 'Days until next sync',
+        //     'dataIndex': 'BackoffFactor',
+        //     key: 'BackoffFactor',
+        // },
         {
-            title: 'Days until next sync',
-            'dataIndex': 'BackoffFactor',
-            key: 'BackoffFactor',
+            title: 'Downloaded',
+            key: 'Downloaded',
+            render: (text, record) => (
+                <span>
+                    <b>{record.ArchivedVideos + "/" + record.CurrentTotalVideos}</b> videos
+                </span>
+              ),
         },
         {
             title: 'Actions',
             key: 'action',
             render: (text, record) => (
                 <Space size="middle">
-                  <Button className="background-blue" onClick={()=>deleteArchivalRequest(record.downloadID)}>Delete {record.downloadID}</Button>
+                  <Button className="background-blue" onClick={()=>deleteArchivalRequest(record.DownloadID)}>Delete {record.DownloadID}</Button>
                 </Space>
               ),
         }
@@ -122,18 +147,23 @@ function ArchivalPage() {
         <>
             <Header userData={userData} />
             <br></br>
-            Type URL to archive here: <input type="text" id="url">
-            </input>
-            <p></p>
-            <Button className="background-blue" onClick={createNewArchival}>Submit</Button>
-            <p></p>
-
-            <div className={"inline-block w-1/2 mr-40"}>
-                <Table dataSource={archivalSubscriptions} tableLayout={"auto"} columns={columns}/>
-            </div>
-
-            <div className={"inline-block w-2/5	"}>
-                <Table dataSource={timelineEvents} columns={timelinTableCols}/>
+            <div className="m-10">
+                <div className="w-2/5 inline-block mr-5">
+                    <b className="text-4xl m-0">Archives</b>
+                    <h2 className="text-xl mb-5">View and manage your archives</h2>
+                    <div className="bg-gray-50 border-b-4">
+                        <input type="text" className="w-4/5 font-black text-base" placeholder="Paste URL to archive here" id="url">
+                        </input>
+                        <Button className="w-1/5" onClick={createNewArchival}>Submit</Button>
+                    </div>
+                    
+                    <div className={"inline-block w-full mr-40 align-top"}>
+                        <Table dataSource={archivalSubscriptions} tableLayout={"auto"} columns={columns}/>
+                    </div>
+                </div>
+                <div className={"inline-block w-2/5 inline-block align-bottom"}>
+                    <Table dataSource={timelineEvents} columns={timelinTableCols}/>
+                </div>
             </div>
             <Footer></Footer>
             </>

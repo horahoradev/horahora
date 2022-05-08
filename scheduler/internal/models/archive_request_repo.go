@@ -46,8 +46,8 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 	// TODO: this query should be joined on archival subscriptions, not the download user id
 	// This is an MVP fix
 	// nvm i misread it is lol
-	sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM user_download_subscriptions s " +
-		"INNER JOIN downloads ON downloads.id = s.download_id LEFT JOIN archival_events ON s.download_id = archival_events.download_id WHERE s.user_id=$1 ORDER BY event_time DESC"
+	sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM " +
+		"downloads INNER JOIN user_download_subscriptions s ON downloads.id = s.download_id LEFT JOIN archival_events ON downloads.id = archival_events.download_id WHERE s.user_id=$1 ORDER BY event_time DESC"
 
 	rows, err := m.Db.Query(sql, userID)
 	if err != nil {
@@ -77,8 +77,8 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 		// FIXME
 		_, ok := urlMap[archive.Url]
 		if !ok {
-			progressSql := "WITH numerator AS (select count(DISTINCT videos.video_id) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1 AND dlstatus=1), " +
-				"denominator AS (select count(DISTINCT videos.video_id) from videos INNER JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1) " +
+			progressSql := "WITH numerator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1 AND dlstatus!=0), " +
+				"denominator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1) " +
 				"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator"
 
 			row := m.Db.QueryRow(progressSql, archive.DownloadID)
