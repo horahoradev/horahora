@@ -50,7 +50,7 @@ jobs:
       - name: wait 180s
         run: sleep 180s
       - name: Run integration tests
-        run: go run tests/main.go
+        run: cd tests && go run main.go
         if: always()
       - name: print relevant logs (videoservice)
         run: docker logs $(docker ps | grep "videoservice" | awk '{print $1}')
