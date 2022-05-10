@@ -191,7 +191,7 @@ function VideoView(props) {
       </div>
       <List
     className="comment-list"
-    header={`${videoComments.length} replies`}
+    header={<h2 className="ml-10 mb-0 text-xl">{videoComments.length} replies</h2>}
     itemLayout="horizontal"
     dataSource={videoComments}
     renderItem={item => (
