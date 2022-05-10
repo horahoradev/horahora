@@ -47,8 +47,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}_scheduler
       - name: Build the stack
         run: make up
-      - name: wait 180s
-        run: sleep 180s
       - name: Run integration tests
         run: cd tests && go run main.go
         if: always()
