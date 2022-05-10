@@ -5,6 +5,7 @@ import dashjs from "dashjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import Footer from "./Footer";
+import { UserOutlined } from '@ant-design/icons';
 
 import * as API from "./api";
 import Header from "./Header";
@@ -47,9 +48,7 @@ function UserPage() {
                 {/*lol oh no*/}
                 {/* TODO: add user profile image*/}
                 <div className={"flex justify-center mx-4"}>
-                    <img src="/static/images/placeholder.png">
-                    </img>
-
+                    <Avatar shape="square" size={96} icon={<UserOutlined />} />
                 </div>
 
                 <h1 className={"flex justify-center"}>{pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
