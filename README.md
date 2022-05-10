@@ -11,7 +11,7 @@ It allows you to:
 
 Join our Discord: https://discord.gg/vfwfpctJRZ
 
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/video_page_improved.png)
+![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/video_page_improved_2.png)
 
 ![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/homepage.png)
 
