@@ -29,6 +29,7 @@ Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 4. Login as admin/admin
     - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
     - it's recommended to visit /password-reset immediately to change the admin user's default password if using in an untrusted environment
+5. navigate to the archival requests page from the hamburger menu, add a link, and wait a few minutes
   
 That's it for basic usage, and should work. If that doesn't work, bug me on Discord.
 
