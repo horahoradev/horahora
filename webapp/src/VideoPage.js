@@ -12,6 +12,7 @@ import * as API from "./api";
 import Header from "./Header";
 import { UserRank } from "./api/types";
 import VideoList from "./VideoList";
+import { UserOutlined } from "@ant-design/icons";
 
 const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
@@ -153,7 +154,8 @@ function VideoView(props) {
           <br />
           <span className="text-gray-600 text-xs">{data.UploadDate}</span>
         </div>
-        <div className="my-4">
+
+        <div className="my-2">
           <span className="text-xs font-bold mb-2">Tags</span>
           <div className="border px-2 py-1">
             {!data.Tags ? "None" : data.Tags.map((tag, idx) => {
@@ -165,41 +167,50 @@ function VideoView(props) {
               );
             })}
           </div>
+          
         </div>
-        {data.L && data.L.rank === UserRank.ADMIN && <VideoAdminControls data={data} />}
-        <hr />
+        <hr></hr>
+
         <div className="my-4">
-          <div className="flex justify-start items-center">
+          <div>
+            <span className="h-20 w-20 inline-block">
             <Link to={`/users/${data.AuthorID}`}>
               <Avatar
-                size="large"
+                size={80}
                 icon={<FontAwesomeIcon icon={faUserCircle} />}
               />
             </Link>
-            <div className="ml-3 text-center">
-              {" "}
-              <Link to={`/users/${data.AuthorID}`}>{data.Username}</Link>
-            </div>
+            </span>
+            <span className="ml-2 pl-1 mt-2 inline-block align-top">
+            <Link to={`/users/${data.AuthorID}`}>
+              <b className="font-black text-xl">{data.Username}</b>
+            </Link>
+              <h1>0 subscribers</h1>
+              
+            </span>
           </div>
-          {/* TODO(ivan): THIS IS VERY OBVIOUSLY A SECURITY ISSUE! Remove this once you get a proper video description format going */}
-          <div className="mt-4">
+          <div className="ml-20 pl-3">
             <span dangerouslySetInnerHTML={{ __html: data.VideoDescription }} />
           </div>
-          
         </div>
-        
+      
       </div>
+
+      <hr></hr>
       <List
+      bordered={false}
+      split={false}
     className="comment-list"
-    header={<h2 className="ml-10 mb-0 text-xl">{videoComments.length} replies</h2>}
+    header={<h2 className="ml-4 mb-0 text-xl">Comments ({videoComments.length})</h2>}
     itemLayout="horizontal"
     dataSource={videoComments}
     renderItem={item => (
       <li>
-        <Comment
+        <Comment className="border-0 shadow-none"
           actions={[<span>{item.upvote_count}</span>, <FontAwesomeIcon onClick={() => upvoteComment(item.id, item.user_has_upvoted) } className={item.user_has_upvoted ? "mr-1 text-green-400" : "mr-1 text-gray-400"} icon={faThumbsUp} />]}
           author={item.fullname}
-          avatar={item.profile_picture_url}
+          avatar={<Avatar className="ml-4" shape="square" size={50} icon={<UserOutlined />} />
+        }
           content={item.content}
           datetime={item.created}
         />
@@ -282,7 +293,7 @@ function VideoPage() {
         <div className="max-w-screen-lg w-screen my-6 z-0">
           <VideoView data={pageData} videoComments={comments} id={id} refreshComments={refreshComments} setRating={setRating} next_video={navigate_to_next_video}/>
         </div>
-        <div className="inline-block w-44 align-top float-right">
+        <div className="inline-block ml-4 mt-2 w-44 align-top float-right">
           <VideoList videos={pageData.RecommendedVideos} />
         </div>
       </div>
