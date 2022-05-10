@@ -300,8 +300,8 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 		}
 
 		if len(videos) == 0 {
-			log.Infof("Failed to fetch unencoded videos, sleeping for 5 minutes")
-			<-time.After(time.Second * 300)
+			log.Infof("Failed to fetch unencoded videos, sleeping for 1 minute")
+			<-time.After(time.Second * 60)
 			continue
 		}
 
