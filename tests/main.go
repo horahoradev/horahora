@@ -4,12 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -18,24 +19,39 @@ const (
 )
 
 func main() {
-	// Can we login?
-	client := authenticate("admin", "admin")
-	log.Println("Logged in successfully")
-	// Can we try to archive something?
-	// bilibili is currently broken...
 	//makeArchiveRequest(client, "bilibili", "tag", "sm35952346")
 	//makeArchiveRequest(client, "bilibili", "channel", "1963331522")
 
-	makeArchiveRequest(client, "https://www.nicovideo.jp/search/TEST_sm9")
-	makeArchiveRequest(client, "https://www.nicovideo.jp/user/119163275")
-	makeArchiveRequest(client, "https://www.nicovideo.jp/mylist/58583228")
+	var client *http.Client
+	var err error
+	for start := time.Now(); time.Since(start) < time.Minute*5; time.Sleep(time.Second * 30) {
+		client, err = authenticate("admin", "admin")
+		if err != nil {
+			log.Errorf("Failed to login. Err: %s", err)
+			continue
+		}
 
-	makeArchiveRequest(client, "https://www.youtube.com/channel/UCF43Xa8ZNQqKs1jrhxlntlw")                            // Some random channel I found with short videos. Good enough!
-	makeArchiveRequest(client, "https://www.youtube.com/watch?v=sPTwJwZOZkI&list=PL27eLnikSM92Vw2ssXmNB_GtK8xG2U9sW") // playlist with 5 entries
+		urls := []string{
+			"https://www.nicovideo.jp/search/TEST_sm9",
+			"https://www.nicovideo.jp/user/119163275",
+			"https://www.nicovideo.jp/mylist/58583228",
+			"https://www.youtube.com/channel/UCF43Xa8ZNQqKs1jrhxlntlw",
+			"https://www.youtube.com/watch?v=sPTwJwZOZkI&list=PL27eLnikSM92Vw2ssXmNB_GtK8xG2U9sW",
+		}
+		for _, url := range urls {
+			err := makeArchiveRequest(client, url)
+			if err != nil {
+				fmt.Errorf("Failed to make archival request. Err: %s", err)
+				continue
+			}
+		}
+		break
+	}
 
-	// Are videos being downloaded and transcoded correctly?
-	for start := time.Now(); time.Since(start) < time.Minute*30; {
-		time.Sleep(time.Second * 30)
+	log.Info("Authenticated and made archival requests")
+
+	for start := time.Now(); time.Since(start) < time.Minute*30; time.Sleep(time.Second * 30) {
+
 		//err := pageHasVideos(client, "sm35952346", 1) // Bilibili tag
 		//if err != nil {
 		//	log.Println(err)
@@ -48,7 +64,7 @@ func main() {
 		//	continue
 		//}
 
-		err := pageHasVideos(client, "風野灯織", 1) // nico channel
+		err = pageHasVideos(client, "風野灯織", 1) // nico channel
 		if err != nil {
 			log.Println(err)
 			continue
@@ -72,7 +88,7 @@ func main() {
 			continue
 		}
 
-		err = pageHasVideos(client, "NEW+GAME", 1) // Nico mylist
+		err = pageHasVideos(client, "NEW_GAME!", 1) // Nico mylist
 		if err != nil {
 			log.Println(err)
 			continue
@@ -102,23 +118,26 @@ func pageHasVideos(client *http.Client, tag string, count int) error {
 	return nil
 }
 
-func makeArchiveRequest(client *http.Client, inpURL string) {
-	response, _ := client.PostForm(baseURL+"/archiverequests", url.Values{
+func makeArchiveRequest(client *http.Client, inpURL string) error {
+	response, err := client.PostForm(baseURL+"/archiverequests", url.Values{
 		"url": {inpURL},
 	})
 
+	if err != nil {
+		return err
+	}
+
 	if response.StatusCode != 200 {
-		log.Fatalf("bad archival request response status: %d", response.StatusCode)
+		return fmt.Errorf("bad archival request response status: %d", response.StatusCode)
 	}
 
 	log.Printf("Made archival request for %s", inpURL)
-
-	return
+	return nil
 }
 
 var redirectErr error = errors.New("don't redirect")
 
-func authenticate(username, password string) *http.Client {
+func authenticate(username, password string) (*http.Client, error) {
 	jar, _ := cookiejar.New(nil)
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -127,17 +146,20 @@ func authenticate(username, password string) *http.Client {
 		Jar: jar,
 	}
 
-	response, _ := client.PostForm(baseURL+"/login", url.Values{
+	response, err := client.PostForm(baseURL+"/login", url.Values{
 		"username": {username},
 		"password": {password},
 	})
+	if err != nil {
+		return nil, err
+	}
 	// lol how do i check for an error here? :thinking:
 	// if err != nil && err != redirectErr {
 	// 	log.Panicf("failed to post with err: %s", err)
 	// }
 
 	if response.StatusCode != 200 {
-		log.Panicf("bad auth status code: %d", response.StatusCode)
+		return nil, fmt.Errorf("bad auth status code: %d", response.StatusCode)
 	}
 
 	jwt := ""
@@ -148,8 +170,8 @@ func authenticate(username, password string) *http.Client {
 	}
 
 	if jwt == "" {
-		log.Panicf("jwt cookie not set")
+		return nil, errors.New("JWT cookie not set")
 	}
 
-	return client
+	return client, nil
 }
