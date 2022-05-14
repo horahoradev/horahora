@@ -25,10 +25,12 @@
     "postcss-flexbugs-fixes": "^4.2.1",
     "prettier": "^2.3.1",
     "react": "^17.0.2",
+    "react-css-theme-switcher": "^0.3.0",
     "react-dom": "^17.0.2",
     "react-modal": "^3.14.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.1",
+    "tailwind-children": "^0.5.0",
     "video.js": "^7.15.4",
     "web-vitals": "^1.0.1",
     "yarn": "^1.22.18"
@@ -68,6 +70,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^9.8.8",
+    "nightwind": "^1.1.12",
     "postcss": "^7.0.39",
     "postcss-preset-env": "^6.7.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"

@@ -8,11 +8,14 @@ import {
   faKey,
   faSignOutAlt,
   faUser,
+  faMoon,
+  faSun,
 } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from 'react-router-dom';
-import { Button, Dropdown, Input, Menu } from "antd";
+import { Switch, Button, Dropdown, Input, Menu } from "antd";
 import { UserRank } from "./api/types";
-
+import nightwind from "nightwind/helper"
+import { useThemeSwitcher } from 'react-css-theme-switcher';
 
 function Search() {
     const [redirectVal, setRedirectVal] = useState(null);
@@ -46,13 +49,13 @@ function Search() {
               <div id="hidden-search-modal" className="absolute bg-white w-full max-w-sm p-5 space-y-3 invisible">
                   <h1>SEARCH OPTIONS</h1>
                   Order by
-                  <select name="category" id="category">
+                  <select name="category" className="bg-white" id="category">
                       <option value="upload_date">upload date</option>
                       <option value="rating">rating</option>
                       <option value="views">views</option>
                   </select>
                   <br></br>
-                    <input type="radio" id="desc" name="order" checked="checked" value="desc"></input>
+                    <input type="radio" id="desc" name="order" onChange={()=>true} checked="checked" value="desc"></input>
                           <label htmlFor="desc">Desc</label>
                     <input type="radio" id="asc" name="order" value="asc"></input>
                             <label htmlFor="asc">Asc</label>
@@ -95,7 +98,7 @@ function LoggedInUserNav(props) {
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
-          {userData.username}
+        <b className="text-blue-500">{userData.username}</b>
           <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
         </Button>
       </Dropdown>
@@ -105,21 +108,38 @@ function LoggedInUserNav(props) {
 
 function LoggedInAdminNav(props) {
   const { userData } = props;
+  const [darkMode, setDarkMode] = useState(false);
+  const { switcher, themes, currentTheme, status } = useThemeSwitcher();
+
+  let toggleDarkmode = function() {
+    // must be capture by value or something goiong on here
+    switcher({ theme: !darkMode ? themes.dark : themes.light });
+    nightwind.toggle();
+    setDarkMode(!darkMode);
+  };
 
   let menu = (
     <Menu>
       <Menu.Item key="profile" icon={<FontAwesomeIcon icon={faUser} />}>
         <Link to={`/users/${userData.userID}`}>Profile page</Link>
       </Menu.Item>
+
+      <Menu.Divider />
       <Menu.Item
         key="archive-requests"
         icon={<FontAwesomeIcon icon={faArchive} />}
       >
-
-      <Menu.Divider />
         <Link to="/archive-requests">Archive Requests</Link>
       </Menu.Item>
       <Menu.Divider />
+
+
+      <Menu.Item key="darkmode" icon={<FontAwesomeIcon icon={faMoon} />}>
+        <Switch onChange={()=>toggleDarkmode()}></Switch>
+      </Menu.Item>
+
+      <Menu.Divider />
+       
 
       <Menu.Item
         key="password-reset"
@@ -149,7 +169,7 @@ function LoggedInAdminNav(props) {
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
-          {userData.username}
+        <b className="text-blue-500">{userData.username}</b>
           <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
         </Button>
       </Dropdown>
@@ -197,7 +217,7 @@ function Header(props) {
     <nav className="h-16 bg-white shadow flex justify-center">
       <div className="max-w-screen-lg w-screen flex justify-start items-center mx-4">
         <div className="flex justify-start flex-grow-0">
-          <Link to="/" className="text-xl">
+          <Link to="/" className="text-2xl font-black text-blue-500">
             Horahora
           </Link>
         </div>

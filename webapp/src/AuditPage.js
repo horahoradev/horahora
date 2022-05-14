@@ -78,12 +78,13 @@ function AuditPage() {
           name="search"
           size="large"
           placeholder="Search for user ID"
+          className="bg-white children:m-5 w-full text-black font-bold"
           onChange={UserIDFFromSearch}
           prefix={
-            <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
+            <FontAwesomeIcon className="mr-1 text-gray-400 dark:text-white" icon={faSearch} />
           }
         />
-    <Table dataSource={pageData.Events} columns={columns} pagination={{current: currPage,  onChange: setPage, pageSize: 50, total: pageData.Length}}/>
+    <Table className="bg-black" dataSource={pageData.Events} columns={columns} pagination={{current: currPage,  onChange: setPage, pageSize: 50, total: pageData.Length}}/>
     </>
   );
 }

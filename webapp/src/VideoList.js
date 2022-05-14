@@ -9,7 +9,7 @@ function Video(props) {
 
   return (
     <Link to={`/videos/${video.VideoID}`}>
-      <div className={classNames(VIDEO_ELEMENT_WIDTH, "px-2 py-2 h-44")}>
+      <div className={classNames(VIDEO_ELEMENT_WIDTH, "px-2 h-44")}>
         <div className="rounded overflow-hidden">
           <img
             className="block w-44 h-24 object-cover object-center"
@@ -21,15 +21,15 @@ function Video(props) {
           </div>
         {/* TODO(ivan): deal with text truncation (hoping to have a multi-line text truncation,
                         which can't be done purely in css) */}
-        <div className="text-xs font-bold w-full py-1">{video.Title}</div>
-        <div className="text-xs">Views: {video.Views}</div>
+        <div className="text-xs font-bold text-blue-500 w-full py-1 text-black">{video.Title}</div>
+        <div className="text-xs text-black">Views: {video.Views}</div>
       </div>
     </Link>
   );
 }
 
 function VideoList(props) {
-  const { videos } = props;
+  const { videos, title } = props;
 
   let elements = [];
   if (videos) {
@@ -48,6 +48,7 @@ function VideoList(props) {
 
   return (
     <div className="my-4 rounded border p-4 bg-white flex flex-wrap justify-around min-h-screen">
+      {title ? <b className="text-xl">{title}</b> : <></>}
       {elements}
     </div>
   );

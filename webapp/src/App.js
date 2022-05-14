@@ -10,11 +10,18 @@ import RegisterPage from "./RegisterPage";
 import PasswordResetPage from "./Passwordreset";
 import AuditPage from "./AuditPage";
 import Footer from "./Footer";
+import { ThemeSwitcherProvider } from 'react-css-theme-switcher';
+
 
 function App() {
+  const themes = {
+    light: 'antd.min.css',
+    dark: 'antd.dark.min.css',
+  };
+
   return (
-    <>
-    <div className="bg-yellow-50 min-h-screen font-serif">
+    <ThemeSwitcherProvider defaultTheme="light" themeMap={themes}>
+    <div className=" bg-yellow-50 dark:bg-gray-900 min-h-screen font-serif">
       <Switch>
         <Route exact path="/">
           <HomePage />
@@ -47,7 +54,7 @@ function App() {
       </Switch>
     </div>
     <Footer></Footer>
-    </>
+    </ThemeSwitcherProvider>
   );
 }
 

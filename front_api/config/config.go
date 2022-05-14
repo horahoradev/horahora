@@ -32,8 +32,8 @@ func New() (*Config, error) {
 	}
 
 	retryCallOpts := []grpc_retry.CallOption{
-		grpc_retry.WithBackoff(grpc_retry.BackoffExponential(100 * time.Millisecond)),
-		grpc_retry.WithMax(5),
+		grpc_retry.WithBackoff(grpc_retry.BackoffExponential(1000 * time.Millisecond)),
+		grpc_retry.WithMax(7),
 	}
 
 	dialOpts := []grpc.DialOption{

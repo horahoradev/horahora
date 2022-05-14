@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Tag, Avatar, Button, Input, Rate, Comment, List } from "antd";
 import {Link, useHistory, useParams} from "react-router-dom";
-import dashjs from "dashjs";
-import videojs from "video.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faThumbsDown, faUserCircle, faUser} from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
@@ -43,7 +41,7 @@ function VideoPlayer(props) {
       <video
           ref={videoRef}
           id="my-player"
-          className="bg-black w-full object-contain object-center z-0"
+          className="bg-black dark:bg-black w-full object-contain object-center z-0"
           style={{ height: `${VIDEO_HEIGHT}rem` }}
           onEnded={next_video}
           controls
@@ -144,13 +142,13 @@ function VideoView(props) {
   return (
     <div className="bg-white border">
       <VideoPlayer url={data.MPDLoc} next_video={next_video}/>
-      <div className="p-4">
+      <div className="px-4 pt-4">
         <div>
           <span className="text-lg font-bold">{data.Title}</span>
           <span className="float-right">
             <span className="font-bold">{data.Views}</span> Views
           </span>
-          <div className="inline-block relative top-5 float-right left-16"><Rate allowHalf={true} value={data.Rating} onChange={rate}></Rate></div>
+          <div className="inline-block relative top-5 float-right left-16 mr-2"><Rate allowHalf={true} value={data.Rating} onChange={rate}></Rate></div>
           <br />
           <span className="text-gray-600 text-xs">{data.UploadDate}</span>
         </div>
@@ -162,14 +160,14 @@ function VideoView(props) {
               // TODO(ivan): add links to tags
               return (
                 <div key={idx} className="my-1 inline-block">
-                  <a href={`/?search=${tag}`}><Tag>{tag}</Tag></a>
+                 <Link to={`/?search=${tag}`}><Tag color="blue" >{tag}</Tag></Link>
                 </div>
               );
             })}
           </div>
-          
         </div>
-        <hr></hr>
+
+        <hr className="box-border w-full"></hr>
 
         <div className="my-4">
           <div>
@@ -183,9 +181,9 @@ function VideoView(props) {
             </span>
             <span className="ml-2 pl-1 mt-2 inline-block align-top">
             <Link to={`/users/${data.AuthorID}`}>
-              <b className="font-black text-xl">{data.Username}</b>
+              <b className="font-black text-blue-500 text-xl">{data.Username}</b>
             </Link>
-              <h1>0 subscribers</h1>
+              <h1 className="text-black">0 subscribers</h1>
               
             </span>
           </div>
@@ -201,14 +199,14 @@ function VideoView(props) {
       bordered={false}
       split={false}
     className="comment-list"
-    header={<h2 className="ml-4 mb-0 text-xl">Comments ({videoComments.length})</h2>}
+    header={<h2 className="ml-4 mb-0 text-xl text-black">Comments ({videoComments.length})</h2>}
     itemLayout="horizontal"
     dataSource={videoComments}
     renderItem={item => (
       <li>
-        <Comment className="border-0 shadow-none"
-          actions={[<span>{item.upvote_count}</span>, <FontAwesomeIcon onClick={() => upvoteComment(item.id, item.user_has_upvoted) } className={item.user_has_upvoted ? "mr-1 text-green-400" : "mr-1 text-gray-400"} icon={faThumbsUp} />]}
-          author={item.fullname}
+        <Comment className="border-0 text-black shadow-none"
+          actions={[<span className="text-black text-bold">{item.upvote_count}</span>, <FontAwesomeIcon onClick={() => upvoteComment(item.id, item.user_has_upvoted) } className={item.user_has_upvoted ? "mr-1 text-green-400" : "mr-1 text-gray-400"} icon={faThumbsUp} />]}
+          author={<b className="text-black">{item.fullname}</b>}
           avatar={<Avatar className="ml-4" shape="square" size={50} icon={<UserOutlined />} />
         }
           content={item.content}
@@ -294,7 +292,7 @@ function VideoPage() {
           <VideoView data={pageData} videoComments={comments} id={id} refreshComments={refreshComments} setRating={setRating} next_video={navigate_to_next_video}/>
         </div>
         <div className="inline-block ml-4 mt-2 w-44 align-top float-right">
-          <VideoList videos={pageData.RecommendedVideos} />
+          <VideoList videos={pageData.RecommendedVideos} title="Recommendations" />
         </div>
       </div>
     </>

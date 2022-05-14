@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Tag, Table, Timeline, Button, Space} from "antd";
+import { Input, Tag, Table, Timeline, Button, Space} from "antd";
 import { CheckOutlined, SyncOutlined } from '@ant-design/icons';
 
 
@@ -37,7 +37,8 @@ function ArchivalPage() {
     function createNewArchival() {
         const url = document.getElementById('url').value;
         API.postArchival(url);
-        let newList = [{'Url': url, 'ArchivedVideos': 0, 'CurrentTotalVideos': 0, 'BackoffFactor': 1}, ...archivalSubscriptions];
+        let subs =  archivalSubscriptions ? archivalSubscriptions : [];
+        let newList = [{'Url': url, 'ArchivedVideos': 0, 'CurrentTotalVideos': 0, 'BackoffFactor': 1}, ...subs];
         setArchivalSubscriptions(newList);
     }
 
@@ -155,10 +156,10 @@ function ArchivalPage() {
 
                     <div>
                     <div className={"inline-block mr-5 w-2/5 align-bottom"}>
-                        <div className="bg-gray-50 border-b-4">
-                            <input type="text" className="w-4/5 font-black text-base" placeholder="Paste URL to archive here" id="url">
-                            </input>
-                            <Button className="w-1/5" onClick={createNewArchival}>Submit</Button>
+                        <div className="bg-gray-50 border-gray-50 border-b-4">
+                            <Input type="text" className="w-4/5 font-black text-base" placeholder="Paste URL to archive here" id="url">
+                            </Input>
+                            <Button className="w-1/5 text-base" type="primary"  onClick={createNewArchival}>Submit</Button>
                         </div>
                             <Table dataSource={archivalSubscriptions} scroll={{y: 700}} className="align-bottom w-full" ellipsis={true} columns={columns}/>
                     </div>
