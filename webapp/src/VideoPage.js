@@ -95,12 +95,13 @@ function VideoAdminControls(props) {
 
   return (
     <>
-      <hr />
+    <hr/>
       <div className="my-4">
-        <Button type="primary" disabled={approvedVideo} onClick={approveVideo}>
+        <b className="text-2xl ml-4">Admin controls:</b>
+        <Button type="primary" className="mx-4" disabled={approvedVideo} onClick={approveVideo}>
           {approvedVideo ? "Approved" : "Approve"}
         </Button>
-        <Button type="primary" onClick={deleteVideo}>
+        <Button type="primary" className="mx-4" onClick={deleteVideo}>
           Delete video
         </Button>
       </div>
@@ -168,7 +169,6 @@ function VideoView(props) {
         </div>
 
         <hr className="box-border w-full"></hr>
-
         <div className="my-4">
           <div>
             <span className="h-20 w-20 inline-block">
@@ -193,6 +193,8 @@ function VideoView(props) {
         </div>
       
       </div>
+  
+      {data.L && data.L.rank === UserRank.ADMIN && <VideoAdminControls></VideoAdminControls>}
 
       <hr></hr>
       <List
