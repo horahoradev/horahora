@@ -1,6 +1,0 @@
-.idea*
-*.tfstate*
-.terraform/*
-*.terraform*
-*.tfvars
-./sql/backup*

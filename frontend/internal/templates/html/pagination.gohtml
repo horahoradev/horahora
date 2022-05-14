@@ -1,9 +1,0 @@
-{{define "pagination"}}
-    {{ $currentPage := .CurrentPage }}
-    {{ $PathsAndQueryStrings := .PathsAndQueryStrings }}
-    <div class="pageSection">
-        {{ range $index, $pageNumber := .Pages }}
-            {{ if eq $pageNumber $currentPage }} <a class="pageLink horahora-button" href="{{ index $PathsAndQueryStrings $index }}"> {{ $pageNumber }}</a> {{else}} <a class="horahora-button pageLink plain-link" href="{{ index $PathsAndQueryStrings $index }}"> {{ $pageNumber }}</a> {{end}}
-        {{end}}
-    </div>
-{{end}}
