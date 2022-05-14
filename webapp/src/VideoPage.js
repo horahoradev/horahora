@@ -119,6 +119,7 @@ function VideoView(props) {
       video_id: id,
       parent: "",
     },
+    enableReinitialize: true,
     onSubmit: async (values) => {
       await API.postComment(values);
       await refreshComments();
