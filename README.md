@@ -51,6 +51,7 @@ https://github.com/horahoradev/horahora-designs
 - support for any website supported by yt-dlp which has the required metadata (but I only use YT/nicovideo atm)
 - artificial user creation: archived videos will be grouped under a Horahora user created for the archived website's user (e.g. if I archive from Russia Today, then a Russia TOday user will be created on Horahora)
 - support for yt-dlp tunneling via Gluetun (see below for setup)
+- dark mode toggle
 
 ## Advanced Use Cases
 ### Other Storage Backends (s3, backblaze, anything s3-compatible)
