@@ -15,8 +15,8 @@ import { ThemeSwitcherProvider } from 'react-css-theme-switcher';
 
 function App() {
   const themes = {
-    light: 'antd.min.css',
-    dark: 'antd.dark.min.css',
+    light: '/antd.min.css',
+    dark: '/antd.dark.min.css',
   };
 
   return (

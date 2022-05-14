@@ -65,3 +65,6 @@ jobs:
       - name: print relevant logs (postgres)
         run: docker logs $(docker ps | grep "postgres" | awk '{print $1}')
         if: always()
+      - name: print relevant logs (frontapi)
+        run: docker logs $(docker ps | grep "frontapi" | awk '{print $1}')
+        if: always()
