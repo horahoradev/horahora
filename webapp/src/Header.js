@@ -8,7 +8,6 @@ import {
   faKey,
   faSignOutAlt,
   faUser,
-  faMoon,
   faSun,
 } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from 'react-router-dom';
@@ -46,9 +45,9 @@ function Search() {
             <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
           }
         />
-              <div id="hidden-search-modal" className="absolute bg-white w-full max-w-sm p-5 space-y-3 invisible">
-                  <h1>SEARCH OPTIONS</h1>
-                  Order by
+              <div id="hidden-search-modal" className="absolute text-black bg-white w-full max-w-sm p-5 space-y-3 invisible">
+                  <h1 className="text-black text-base" >SEARCH OPTIONS</h1>
+                  <b className="text-black text-base" >Order by: </b>
                   <select name="category" className="bg-white" id="category">
                       <option value="upload_date">upload date</option>
                       <option value="rating">rating</option>
@@ -134,7 +133,7 @@ function LoggedInAdminNav(props) {
       <Menu.Divider />
 
 
-      <Menu.Item key="darkmode" icon={<FontAwesomeIcon icon={faMoon} />}>
+      <Menu.Item key="darkmode" icon={<FontAwesomeIcon icon={faSun} />}>
         <Switch onChange={()=>toggleDarkmode()}></Switch>
       </Menu.Item>
 
