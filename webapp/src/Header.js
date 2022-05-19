@@ -107,7 +107,7 @@ function LoggedInUserNav(props) {
 
 function LoggedInAdminNav(props) {
   const { userData } = props;
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const { switcher, themes, currentTheme, status } = useThemeSwitcher();
 
   let toggleDarkmode = function() {
