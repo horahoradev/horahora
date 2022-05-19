@@ -20,8 +20,8 @@ function App() {
   };
 
   return (
-    <ThemeSwitcherProvider defaultTheme="light" themeMap={themes}>
-    <div className=" bg-yellow-50 dark:bg-gray-900 min-h-screen font-serif">
+    <ThemeSwitcherProvider defaultTheme="dark" themeMap={themes}>
+    <div className=" bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
       <Switch>
         <Route exact path="/">
           <HomePage />

@@ -5,6 +5,8 @@ import "antd/dist/antd.css";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import nightwind from "nightwind/helper";
+nightwind.toggle();
 
 ReactDOM.render(
   <React.StrictMode>

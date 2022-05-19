@@ -55,7 +55,7 @@ function HomePage() {
 
       <div className="flex justify-center mx-4 min-h-screen py-4">
         <div className="max-w-screen-lg w-screen">
-          <h1 className="bold text-2xl">Number of videos: {pageData ? pageData.PaginationData.NumberOfItems : 0}</h1>
+          <h1 className="bold text-2xl text-black">Number of videos: {pageData ? pageData.PaginationData.NumberOfItems : 0}</h1>
           <VideoList videos={pageData ? pageData.Videos : []} />
           <Paginatione paginationData={pageData ? pageData.PaginationData : []} onPageChange={setPage}/>
         </div>
