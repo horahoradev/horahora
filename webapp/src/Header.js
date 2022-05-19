@@ -52,6 +52,7 @@ function Search() {
                       <option value="upload_date">upload date</option>
                       <option value="rating">rating</option>
                       <option value="views">views</option>
+                      <option value="my_ratings">my ratings</option>
                   </select>
                   <br></br>
                     <input type="radio" id="desc" name="order" onChange={()=>true} checked="checked" value="desc"></input>
