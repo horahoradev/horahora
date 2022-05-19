@@ -48,7 +48,7 @@ function UserPage() {
                 {/*lol oh no*/}
                 {/* TODO: add user profile image*/}
                 <div className={"flex justify-center mx-4"}>
-                    <Avatar shape="square" className="bg-black" size={96} icon={<UserOutlined />} />
+                    <Avatar shape="square" size={96} icon={<UserOutlined />} />
                 </div>
 
                 <h1 className={"flex justify-center text-black"}>{pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
