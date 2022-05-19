@@ -146,9 +146,9 @@ function VideoView(props) {
       <VideoPlayer url={data.MPDLoc} next_video={next_video}/>
       <div className="px-4 pt-4">
         <div>
-          <span className="text-lg font-bold">{data.Title}</span>
+          <span className="text-lg font-bold text-black">{data.Title}</span>
           <span className="float-right">
-            <span className="font-bold">{data.Views}</span> Views
+            <span className="text-black">{data.Views} Views</span>
           </span>
           <div className="inline-block relative top-5 float-right left-16 mr-2"><Rate allowHalf={true} value={data.Rating} onChange={rate}></Rate></div>
           <br />

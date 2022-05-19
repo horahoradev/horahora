@@ -48,10 +48,10 @@ function UserPage() {
                 {/*lol oh no*/}
                 {/* TODO: add user profile image*/}
                 <div className={"flex justify-center mx-4"}>
-                    <Avatar shape="square" size={96} icon={<UserOutlined />} />
+                    <Avatar shape="square" className="bg-black" size={96} icon={<UserOutlined />} />
                 </div>
 
-                <h1 className={"flex justify-center"}>{pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
+                <h1 className={"flex justify-center text-black"}>{pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
                 </h1>
                 {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && <h1 className={"flex justify-center"}><Button type="primary" onClick={() => API.banUser(pageUserData.UserID)}>Ban</Button></h1>}
                 {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && <h1 className={"flex justify-center"}><Button type="primary" onClick={() => API.setUserMod(pageUserData.UserID)}>Promote to mod</Button></h1>}
