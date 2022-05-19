@@ -200,6 +200,7 @@ enum orderCategory {
     views = 0;
     rating = 1;
     upload_date = 2;
+    my_ratings = 3;
 }
 
 enum sortDirection {

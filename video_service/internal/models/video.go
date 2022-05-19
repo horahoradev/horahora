@@ -354,6 +354,18 @@ func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pa
 		case videoproto.SortDirection_desc:
 			ds = ds.Order(goqu.I("rating").Desc())
 		}
+
+	case videoproto.OrderCategory_my_ratings:
+		ds = ds.LeftJoin(
+						goqu.T("ratings"),
+						goqu.On(goqu.Ex{"videos.id": goqu.I("ratings.video_id")})).
+						Where(goqu.I("user_id").Eq(fromUserID))
+		switch direction {
+		case videoproto.SortDirection_asc:
+			ds = ds.Order(goqu.I("ratings.rating").Asc())
+		case videoproto.SortDirection_desc:
+			ds = ds.Order(goqu.I("ratings.rating").Desc())
+		}
 	}
 
 	// Mutually exclusive for now, can change later if desired
