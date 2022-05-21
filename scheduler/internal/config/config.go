@@ -43,6 +43,7 @@ type config struct {
 	SocksConnStr            string        `env:"SocksConn,required"`
 	SyncPollDelay           time.Duration `env:"SyncPollDelay,required"`
 	MaxFS                   uint64        `env:"MaxDLFileSize,required"`
+	AcceptLanguage          string        `env:"AcceptLanguage"`
 }
 
 func New() (*config, error) {
