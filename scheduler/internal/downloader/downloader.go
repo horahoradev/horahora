@@ -425,9 +425,9 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 	if d.maxFS != 0 {
 		maxFSString = fmt.Sprintf("--max-filesize %dm", d.maxFS)
 	}
-	acceptLanguageString := "Accept-Language: en"
+	acceptLanguageString := "Accept-Language:en"
 	if d.acceptLanguage != "" {
-		acceptLanguageString = fmt.Sprintf("Accept-Language: %s", d.acceptLanguage)
+		acceptLanguageString = fmt.Sprintf("Accept-Language:%s", d.acceptLanguage)
 	}
 	bin := "yt-dlp"
 	args := []string{
