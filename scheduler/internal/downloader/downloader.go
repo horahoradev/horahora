@@ -25,10 +25,11 @@ type downloader struct {
 	numberOfRetries int
 	socksConnStr    string
 	maxFS           uint64
+	acceptLanguage  string
 }
 
 func New(dlQueue chan *models.VideoDLRequest, outputLoc string, client videoproto.VideoServiceClient, numberOfRetries int,
-	socksConnStr string, maxFS uint64) downloader {
+	socksConnStr string, maxFS uint64, acceptLanguage string) downloader {
 	return downloader{
 		downloadQueue:   dlQueue,
 		outputLoc:       outputLoc,
@@ -36,6 +37,7 @@ func New(dlQueue chan *models.VideoDLRequest, outputLoc string, client videoprot
 		numberOfRetries: numberOfRetries,
 		socksConnStr:    socksConnStr,
 		maxFS:           maxFS,
+		acceptLanguage:  acceptLanguage,
 	}
 }
 
@@ -412,21 +414,28 @@ loop:
 }
 
 func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]string, error) {
+	maxFSString := ""
+	if d.maxFS != 0 {
+		maxFSString = fmt.Sprintf("--max-filesize %dm", d.maxFS)
+	}
+	acceptLanguageString := "Accept-Language: en"
+	if d.acceptLanguage != "" {
+		acceptLanguageString = fmt.Sprintf("Accept-Language: %s", d.acceptLanguage)
+	}
 	bin := "yt-dlp"
 	args := []string{
 		bin,
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
-		"--max-filesize",
-		fmt.Sprintf("%dm", d.maxFS),
+		maxFSString,
 		"--add-header",
 		"Accept:*/*",
 		// "Why do we need this?"
 		// Previously ffprobe would stall indefinitely if nico's cookies were invalidated by the time it made a request
 		// (or something like that).
 		"--add-header",
-		"Accept-Language:ja",
+		acceptLanguageString,
 		"--socket-timeout",
 		"1800",
 		"--verbose",
