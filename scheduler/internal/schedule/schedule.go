@@ -105,18 +105,21 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 				return nil, err
 			}
 
-			err = req.SetDownloadInProgress(tx)
-			if err != nil {
-				tx.Rollback()
-				return nil, err
-			}
-
 			if req.VideoID == "" {
+				tx.Rollback()
 				log.Errorf("Could not set video ID. Returning...")
 				return nil, errors.New("failed to set video id")
 			}
 
 			ret = append(ret, &req)
+		}
+	}
+
+	for _, req := range ret {
+		err = req.SetDownloadInProgress(tx)
+		if err != nil {
+			tx.Rollback()
+			return nil, err
 		}
 	}
 

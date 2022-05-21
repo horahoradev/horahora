@@ -132,6 +132,7 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 		m.Unlock()
 	}()
 
+	errCh := make(chan error, d.numberOfRetries)
 currVideoLoop:
 	for currentRetryNum := 1; currentRetryNum <= d.numberOfRetries+1; currentRetryNum++ {
 		select {
@@ -149,17 +150,9 @@ currVideoLoop:
 				log.Errorf("Could not set download failed for video %s. Err: %s", video.VideoID, err)
 			}
 
-			// Get the logs
-			logPath := fmt.Sprintf("%s/%s.ytdl", d.outputLoc, video.VideoID)
-			bytes, err := ioutil.ReadFile(logPath)
-			if err != nil {
-				log.Errorf("Failed to read logs at path %s. err: %s", logPath, err)
-			} else {
-				// lol just give them 100 bytes
-				bytes = bytes[len(bytes)-100:]
-			}
-
-			err = video.RecordEvent(models.Error, string(bytes))
+			close(errCh)
+			err = <-errCh // just get the last error for now, TODO
+			err = video.RecordEvent(models.Error, err.Error())
 			if err != nil {
 				log.Errorf("Could not record error event. Err: %s", err)
 			}
@@ -177,12 +170,14 @@ currVideoLoop:
 			// downloading before shutting down.
 			err = d.uploadToVideoService(context.Background(), metadata, video, metafile)
 			if err != nil {
+				errCh <- err
 				log.Infof("failed to upload to video service. Err: %s. Continuing...", err)
 				continue
 			}
 
 			err = video.SetDownloadSucceeded()
 			if err != nil {
+				errCh <- err
 				log.Errorf("Could not set download succeeded for video %s. Err: %s", video.VideoID, err)
 			}
 
@@ -197,6 +192,7 @@ currVideoLoop:
 		}
 		// Just keep trying to download until we succeed
 		// TODO: check for specific errors indicating we should skip to the next entry
+		errCh <- err
 		log.Errorf("Failed to download video %s. Err: %s", video.VideoID, err)
 	}
 	return nil

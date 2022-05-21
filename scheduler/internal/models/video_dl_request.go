@@ -83,7 +83,7 @@ func (v *VideoDLRequest) RecordEvent(inpEvent event, additionalErrorMsg string) 
 	formattedMsg := fmt.Sprintf(string(inpEvent), v.VideoID, website)
 
 	if additionalErrorMsg != "" {
-		formattedMsg += fmt.Sprintf("\n\nError log: %s", additionalErrorMsg)
+		formattedMsg += fmt.Sprintf("\n\nError message: %s", additionalErrorMsg)
 	}
 
 	sql := "insert into archival_events (video_url, download_id, parent_url, event_message, event_time) VALUES ($1, $2, $3, $4, Now())"

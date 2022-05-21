@@ -146,6 +146,11 @@ export async function getAudits(userID, page) {
   return res.data;
 }
 
+export async function getDownloadsInProgress() {
+  const res = await axios.get(e(`downloadsinprogress`));
+  return res.data;
+}
+
 export async function postComment(data) {
   let form = new FormData();
   form.append("video_id", data.video_id);

@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
-	github.com/horahoradev/horahora/scheduler v0.0.0-20220521180230-bd22395226ea
+	github.com/horahoradev/horahora/scheduler v0.0.0-20220521212031-ef348a4503de
 	github.com/horahoradev/horahora/user_service v0.0.0-20220501205714-89dd03bf6e1e
 	github.com/horahoradev/horahora/video_service v0.0.0-20220423205115-72d6369be489
 	github.com/jellydator/ttlcache/v2 v2.11.1

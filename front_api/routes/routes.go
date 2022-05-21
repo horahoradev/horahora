@@ -35,6 +35,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.GET("/api/users/:id", r.getUser)
 	e.GET("/api/currentuserprofile/", r.getCurrentUserProfile)
 	e.GET("/api/auditevents/:id", r.handleGetAudits)
+	e.GET("/api/downloadsinprogress", r.handleGetDownloadsInProgress)
 
 	e.GET("/api/videos/:id", r.getVideo)
 	e.POST("/api/rate/:id", r.handleRating)
@@ -75,6 +76,11 @@ type Comment struct {
 	ProfilePicture string
 	Username       string
 	Comment        string
+}
+
+type VideoInProgress struct {
+	Website string
+	VideoID string
 }
 
 type VideoDetail struct {
