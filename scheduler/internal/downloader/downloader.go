@@ -92,7 +92,7 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 	defer func() {
 		video.ReleaseLockForVideo()
 		if err != nil {
-			log.Errorf("Could not release lock for video %s", video.videoID)
+			log.Errorf("Could not release lock for video %s", video.VideoID)
 		}
 	}()
 
