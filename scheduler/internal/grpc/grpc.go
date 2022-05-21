@@ -69,13 +69,14 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 
 	for _, archive := range archives {
 		entry := proto.ContentArchivalEntry{
-			UserID:             0, // In the future, will be expanded to allow queries for different users archival requests
-			Url:                archive.Url,
-			ArchivedVideos:     archive.Numerator,
-			CurrentTotalVideos: archive.Denominator,
-			BackoffFactor:      archive.BackoffFactor,
-			LastSynced:         archive.LastSynced,
-			DownloadID:         archive.DownloadID,
+			UserID:               0, // In the future, will be expanded to allow queries for different users archival requests
+			Url:                  archive.Url,
+			ArchivedVideos:       archive.Numerator,
+			CurrentTotalVideos:   archive.Denominator,
+			BackoffFactor:        archive.BackoffFactor,
+			LastSynced:           archive.LastSynced,
+			DownloadID:           archive.DownloadID,
+			UndownloadableVideos: archive.Undownloadable,
 		}
 
 		entries = append(entries, &entry)
@@ -98,4 +99,12 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 	}
 
 	return &resp, nil
+}
+
+func (s schedulerServer) RetryArchivalRequestDownloadss(ctx context.Context, req *proto.RetryRequest) (*proto.Empty, error) {
+	ret := &proto.Empty{}
+
+	err := s.M.RetryArchivalRequest(req.UserID, req.DownloadID)
+
+	return ret, err
 }
