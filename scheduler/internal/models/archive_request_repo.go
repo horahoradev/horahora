@@ -26,12 +26,13 @@ func NewArchiveRequest(db *sqlx.DB, rs *redsync.Redsync) *ArchiveRequestRepo {
 }
 
 type Archival struct {
-	Url           string
-	DownloadID    uint64
-	Denominator   uint64
-	Numerator     uint64
-	LastSynced    string
-	BackoffFactor uint32
+	Url            string
+	DownloadID     uint64
+	Denominator    uint64
+	Numerator      uint64
+	Undownloadable uint64
+	LastSynced     string
+	BackoffFactor  uint32
 }
 
 type Event struct {
@@ -78,15 +79,16 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 		_, ok := urlMap[archive.Url]
 		if !ok {
 			progressSql := "WITH numerator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1 AND dlstatus!=0), " +
-				"denominator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1) " +
-				"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator"
+				"denominator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1), " +
+				"undownloadable AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1 AND videos.dlStatus=2) " +
+				"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator, (select * from undownloadable) AS undownloadable"
 
 			row := m.Db.QueryRow(progressSql, archive.DownloadID)
 			if err != nil {
 				return nil, nil, err
 			}
 
-			err = row.Scan(&archive.Numerator, &archive.Denominator)
+			err = row.Scan(&archive.Numerator, &archive.Denominator, &archive.Undownloadable)
 			if err != nil {
 				return nil, nil, err
 			}
