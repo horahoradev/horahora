@@ -89,6 +89,13 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 		return nil
 	}
 
+	defer func() {
+		video.ReleaseLockForVideo()
+		if err != nil {
+			log.Errorf("Could not release lock for video %s", video.videoID)
+		}
+	}()
+
 	website, err := models.GetWebsiteFromURL(video.URL)
 	if err != nil {
 		log.Errorf("Failed to extract website domain from %s", video.URL)

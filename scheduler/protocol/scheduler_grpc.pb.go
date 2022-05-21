@@ -21,6 +21,7 @@ type SchedulerClient interface {
 	DlURL(ctx context.Context, in *URLRequest, opts ...grpc.CallOption) (*Empty, error)
 	ListArchivalEntries(ctx context.Context, in *ListArchivalEntriesRequest, opts ...grpc.CallOption) (*ListArchivalEntriesResponse, error)
 	DeleteArchivalRequest(ctx context.Context, in *DeletionRequest, opts ...grpc.CallOption) (*Empty, error)
+	RetryArchivalRequestDownloadss(ctx context.Context, in *RetryRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type schedulerClient struct {
@@ -58,6 +59,15 @@ func (c *schedulerClient) DeleteArchivalRequest(ctx context.Context, in *Deletio
 	return out, nil
 }
 
+func (c *schedulerClient) RetryArchivalRequestDownloadss(ctx context.Context, in *RetryRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/proto.Scheduler/retryArchivalRequestDownloadss", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SchedulerServer is the server API for Scheduler service.
 // All implementations must embed UnimplementedSchedulerServer
 // for forward compatibility
@@ -65,6 +75,7 @@ type SchedulerServer interface {
 	DlURL(context.Context, *URLRequest) (*Empty, error)
 	ListArchivalEntries(context.Context, *ListArchivalEntriesRequest) (*ListArchivalEntriesResponse, error)
 	DeleteArchivalRequest(context.Context, *DeletionRequest) (*Empty, error)
+	RetryArchivalRequestDownloadss(context.Context, *RetryRequest) (*Empty, error)
 	mustEmbedUnimplementedSchedulerServer()
 }
 
@@ -80,6 +91,9 @@ func (UnimplementedSchedulerServer) ListArchivalEntries(context.Context, *ListAr
 }
 func (UnimplementedSchedulerServer) DeleteArchivalRequest(context.Context, *DeletionRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteArchivalRequest not implemented")
+}
+func (UnimplementedSchedulerServer) RetryArchivalRequestDownloadss(context.Context, *RetryRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RetryArchivalRequestDownloadss not implemented")
 }
 func (UnimplementedSchedulerServer) mustEmbedUnimplementedSchedulerServer() {}
 
@@ -148,6 +162,24 @@ func _Scheduler_DeleteArchivalRequest_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Scheduler_RetryArchivalRequestDownloadss_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RetryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchedulerServer).RetryArchivalRequestDownloadss(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Scheduler/retryArchivalRequestDownloadss",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchedulerServer).RetryArchivalRequestDownloadss(ctx, req.(*RetryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Scheduler_ServiceDesc is the grpc.ServiceDesc for Scheduler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -166,6 +198,10 @@ var Scheduler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "deleteArchivalRequest",
 			Handler:    _Scheduler_DeleteArchivalRequest_Handler,
+		},
+		{
+			MethodName: "retryArchivalRequestDownloadss",
+			Handler:    _Scheduler_RetryArchivalRequestDownloadss_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

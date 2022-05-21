@@ -47,6 +47,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.GET("/api/archiverequests", r.getArchiveRequests)
 	e.POST("/api/archiverequests", r.handleArchiveRequest)
 	e.POST("/api/delete-archiverequest", r.handleDeleteArchivalRequest)
+	e.POST("/api/retry-archiverequest", r.handleRetryArchivalRequest)
 
 	e.GET("/api/comments/:id", r.getComments)
 	e.POST("/api/comments/", r.handleComment)
@@ -127,13 +128,14 @@ type ArchiveRequestsPageData struct {
 }
 
 type ArchivalRequest struct {
-	UserID             int64
-	Url                string
-	ArchivedVideos     uint64
-	CurrentTotalVideos uint64
-	LastSynced         string
-	BackoffFactor      uint32
-	DownloadID         uint64
+	UserID               int64
+	Url                  string
+	ArchivedVideos       uint64
+	CurrentTotalVideos   uint64
+	LastSynced           string
+	BackoffFactor        uint32
+	DownloadID           uint64
+	UndownloadableVideos uint64
 }
 
 func setCookie(c echo.Context, jwt string) error {

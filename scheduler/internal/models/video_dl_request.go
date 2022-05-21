@@ -16,6 +16,7 @@ type VideoDLRequest struct {
 	DownloaddID int
 	URL         string
 	ParentURL   string
+	mut         redsync.Mutex
 }
 
 func (v *VideoDLRequest) SetDownloaded() error {
@@ -48,8 +49,12 @@ func (v *VideoDLRequest) SetDownloadFailed() error {
 }
 
 func (v *VideoDLRequest) AcquireLockForVideo() error {
-	mut := v.Redsync.NewMutex(v.VideoID, redsync.SetExpiry(time.Minute*30))
-	return mut.Lock()
+	v.mut = v.Redsync.NewMutex(v.VideoID, redsync.SetExpiry(time.Minute*10))
+	return v.mut.Lock()
+}
+
+func (v *VideoDLRequest) ReleaseLockForVideo() error {
+	return v.mut.Unlock()
 }
 
 type event string

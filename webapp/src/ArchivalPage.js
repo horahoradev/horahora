@@ -26,6 +26,11 @@ function ArchivalPage() {
         reloadPage();   
     }
 
+    async function retryArchivalRequest(download_id) {
+        await API.retryArchivalRequest(download_id);
+        reloadPage();   
+    }
+
     useEffect(() => {
         const interval = setInterval(() => {
          reloadPage(timerVal);
@@ -116,7 +121,7 @@ function ArchivalPage() {
             key: 'Downloaded',
             render: (text, record) => (
                 <span>
-                    <b>{record.ArchivedVideos + "/" + record.CurrentTotalVideos}</b> videos
+                    <b>{record.ArchivedVideos + "/" + record.CurrentTotalVideos}</b> videos ({record.UndownloadableVideos} undownloadable)
                 </span>
               ),
         },
@@ -126,6 +131,7 @@ function ArchivalPage() {
             render: (text, record) => (
                 <Space size="middle">
                   <Button className="background-blue" onClick={()=>deleteArchivalRequest(record.DownloadID)}>Delete {record.DownloadID}</Button>
+                  <Button className="background-blue" onClick={()=>retryArchivalRequest(record.DownloadID)}>Retry {record.DownloadID}</Button>
                 </Space>
               ),
         }

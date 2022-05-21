@@ -29,13 +29,14 @@ func (r RouteHandler) getArchiveRequests(c echo.Context) error {
 	var requests []ArchivalRequest
 	for _, archivalReq := range resp.Entries {
 		req := ArchivalRequest{
-			UserID:             archivalReq.UserID,
-			Url:                archivalReq.Url,
-			ArchivedVideos:     archivalReq.ArchivedVideos,
-			CurrentTotalVideos: archivalReq.CurrentTotalVideos,
-			LastSynced:         archivalReq.LastSynced,
-			BackoffFactor:      archivalReq.BackoffFactor,
-			DownloadID:         archivalReq.DownloadID,
+			UserID:               archivalReq.UserID,
+			Url:                  archivalReq.Url,
+			ArchivedVideos:       archivalReq.ArchivedVideos,
+			CurrentTotalVideos:   archivalReq.CurrentTotalVideos,
+			LastSynced:           archivalReq.LastSynced,
+			BackoffFactor:        archivalReq.BackoffFactor,
+			DownloadID:           archivalReq.DownloadID,
+			UndownloadableVideos: archivalReq.UndownloadableVideos,
 		}
 		requests = append(requests, req)
 	}
