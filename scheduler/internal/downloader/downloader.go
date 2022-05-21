@@ -443,7 +443,7 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 	}
 
 	if d.maxFS != 0 {
-		args = append(args, []string{fmt.Sprintf("--max-filesize %dm", d.maxFS)}...)
+		args = append(args, []string{"--max-filesize", fmt.Sprintf("%dm", d.maxFS)}...)
 	}
 
 	// FIXME: This is dumb
