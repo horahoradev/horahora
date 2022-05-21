@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -45,6 +46,13 @@ func (v *VideoDLRequest) SetDownloadSucceeded() error {
 func (v *VideoDLRequest) SetDownloadFailed() error {
 	sql := "UPDATE videos SET dlStatus = 2 WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.ID)
+	return err
+}
+
+// have to pass a transaction for this one because it needs to be atomic with the scheduler query
+func (v *VideoDLRequest) SetDownloadInProgress(tx *sql.Tx) error {
+	sql := "UPDATE videos SET dlStatus = 3 WHERE id = $1"
+	_, err := tx.Exec(sql, v.ID)
 	return err
 }
 

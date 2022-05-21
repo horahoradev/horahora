@@ -62,6 +62,11 @@ var FailedToFetch = errors.New("failed to retrieve desired number of items")
 func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	// TODO: put this in a repo later
 
+	tx, err := p.Db.BeginTx(context.Background(), nil)
+	if err != nil {
+		return nil, err
+	}
+
 	log.Info("Fetching categories")
 	urls, err := p.getURLs()
 	if err != nil {
@@ -81,8 +86,9 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 			"WHERE downloads.url = $1 AND v.dlStatus = 0 " +
 			"ORDER BY CHAR_LENGTH(v.video_ID) DESC, v.video_ID desc LIMIT 1 " +
 			"OFFSET random() * LEAST(1000, (select count(*) from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id  WHERE downloads.url = $1 AND v.dlStatus = 0)) "
-		res, err := p.Db.Query(sql, url)
+		res, err := tx.Query(sql, url)
 		if err != nil {
+			tx.Rollback()
 			return nil, err
 		}
 
@@ -95,6 +101,13 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 
 			err = res.Scan(&req.ID, &req.VideoID, &req.URL, &req.DownloaddID)
 			if err != nil {
+				tx.Rollback()
+				return nil, err
+			}
+
+			err = req.SetDownloadInProgress(tx)
+			if err != nil {
+				tx.Rollback()
 				return nil, err
 			}
 
@@ -105,10 +118,9 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 
 			ret = append(ret, &req)
 		}
-
 	}
 
-	return ret, nil
+	return ret, tx.Commit()
 }
 
 func (p *poller) getURLs() ([]string, error) {

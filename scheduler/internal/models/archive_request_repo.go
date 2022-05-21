@@ -175,9 +175,21 @@ func (m *ArchiveRequestRepo) DeleteArchivalRequest(userID, downloadID uint64) er
 }
 
 func (m *ArchiveRequestRepo) RetryArchivalRequest(userID, downloadID uint64) error {
-	sql := "UPDATE videos SET dlStatus = 0 WHERE videos.id IN (select videos.id FROM videos INNER JOIN downloads_to_videos ON downloads_to_videos.video_id = videos.id INNER JOIN user_download_subscriptions ON downloads_to_videos.download_id = user_download_subscriptions.download_id WHERE user_download_subscriptions.download_id = $1 AND user_download_subscriptions.user_id = $2 AND dlStatus = 2)"
+	sql := "UPDATE videos SET dlStatus = 0 WHERE videos.id IN (] videos.id FROM videos INNER JOIN downloads_to_videos ON downloads_to_videos.video_id = videos.id INNER JOIN user_download_subscriptions ON downloads_to_videos.download_id = user_download_subscriptions.download_id WHERE user_download_subscriptions.download_id = $1 AND user_download_subscriptions.user_id = $2 AND dlStatus = 2)"
 	_, err := m.Db.Exec(sql, downloadID, userID)
 	return err
+}
+
+type Video struct {
+	ID      string `db:"video_id"`
+	Website string `db:"website"`
+}
+
+func (m *ArchiveRequestRepo) GetDownloadsInProgress() ([]Video, error) {
+	var videos []Video
+	sql := "select video_id, website FROM videos WHERE dlStatus = 3"
+	err := m.Db.Select(&videos, sql)
+	return videos, err
 }
 
 func GetWebsiteFromURL(u string) (string, error) {

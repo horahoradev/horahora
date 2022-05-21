@@ -11,6 +11,20 @@ service Scheduler {
     rpc deleteArchivalRequest(deletionRequest) returns (Empty) {}
 
     rpc retryArchivalRequestDownloadss(retryRequest) returns (Empty) {}
+
+    rpc getDownloadsInProgress(downloadsInProgressRequest) returns (downloadsInProgressResponse) {}
+}
+
+message downloadsInProgressRequest {}
+
+
+message downloadsInProgressResponse {
+    repeated Video videos = 1;
+}
+
+message Video  {
+    string VideoID = 1;
+    string website = 2;
 }
 
 message Empty {}
