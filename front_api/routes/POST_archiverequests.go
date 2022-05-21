@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strings"
 
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/labstack/echo/v4"
@@ -14,7 +15,7 @@ import (
 // Accepts form-encoded value URL, which is the url to be archived
 // response: 200 if ok
 func (r RouteHandler) handleArchiveRequest(c echo.Context) error {
-	urlVal := c.FormValue("url")
+	urlVal := strings.TrimSpace(c.FormValue("url"))
 
 	profile, err := r.getUserProfileInfo(c)
 	if err != nil {
