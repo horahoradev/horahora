@@ -33,7 +33,7 @@ func NewS3(bucketName string) (*S3Storage, error) {
 	return &S3Storage{S3Client: *s3Client, BucketName: bucketName, StorageClass: "STANDARD_IA"}, nil
 }
 
-func NewS3Minio(bucketName string, endpoint string) (*S3Storage, error) {
+func NewS3Endpoint(bucketName string, endpoint string, apiID string, apiKey string) (*S3Storage, error) {
 	// Credit goes to danmux on Stackoverflow for this specific snippet:
 	// https://stackoverflow.com/questions/67575681/is-aws-go-sdk-v2-integrated-with-local-minio-server
 	// Thank you for your work!
@@ -50,7 +50,7 @@ func NewS3Minio(bucketName string, endpoint string) (*S3Storage, error) {
 
 	cfg := aws.Config{
 		Region:           defaultRegion,
-		Credentials:      credentials.NewStaticCredentialsProvider("minioadmin", "minioadmin", ""),
+		Credentials:      credentials.NewStaticCredentialsProvider(apiID, apiKey, ""),
 		EndpointResolver: staticResolver,
 	}
 
