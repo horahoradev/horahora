@@ -51,8 +51,8 @@ type GRPCServer struct {
 // TODO: API is getting bloated
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
 	redisClient *redis.Client, client userproto.UserServiceClient, tracer opentracing.Tracer,
-	storageBackend, apiID, apiKey string, approvalThreshold int, minioEndpoint string) error {
-	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, minioEndpoint)
+	storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string) error {
+	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, storageEndpoint)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 }
 
 func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
-	redisClient *redis.Client, originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, minioEndpoint string) (*GRPCServer, error) {
+	redisClient *redis.Client, originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string) (*GRPCServer, error) {
 
 	g := &GRPCServer{
 		Local:      local,
@@ -88,14 +88,16 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 			return nil, err
 		}
 	case "s3":
-		g.Storage, err = storage.NewS3(bucketName)
-		if err != nil {
-			return nil, err
-		}
-	case "minio":
-		g.Storage, err = storage.NewS3Minio(bucketName, minioEndpoint)
-		if err != nil {
-			return nil, err
+		if storageEndpoint == "" {
+			g.Storage, err = storage.NewS3(bucketName)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			g.Storage, err = storage.NewS3Endpoint(bucketName, storageEndpoint, apiID, apiKey)
+			if err != nil {
+				return nil, err
+			}
 		}
 	default:
 		return nil, fmt.Errorf("Unknown storage backend %s", storageBackend)
