@@ -39,6 +39,7 @@ services:
       - SocksConn=$SOCKS_ADDR
       - SyncPollDelay=1m
       - MaxDLFileSize=300
+      - AcceptLanguage=en
   videoservice:
     $VIDEOSERVICE_BUILD_DIRECTIVE
     restart: always
@@ -62,7 +63,7 @@ services:
       - StorageBackend=$STORAGE_BACKEND
       - StorageAPIID=$STORAGE_API_ID
       - StorageAPIKey=$STORAGE_API_KEY
-      - MinioEndpoint=http://minio:9000
+      - StorageEndpoint=$STORAGE_ENDPOINT
       - ApprovalThreshold=1
     volumes:
     - $HOME/.aws/:/root/.aws/:ro

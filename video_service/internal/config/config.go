@@ -50,7 +50,7 @@ type config struct {
 	StorageBackend    string `env:"StorageBackend,required"`
 	StorageAPIID      string `env:"StorageAPIID"`
 	StorageAPIKey     string `env:"StorageAPIKey"`
-	MinioEndpoint     string `env:"MinioEndpoint"`
+	StorageEndpoint     string `env:"StorageEndpoint"`
 	ApprovalThreshold int    `env:"ApprovalThreshold,required"`
 }
 
