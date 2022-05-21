@@ -412,14 +412,17 @@ loop:
 }
 
 func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]string, error) {
+	maxFSString := ""
+	if d.maxFS != 0 {
+		maxFSString = fmt.Sprintf("--max-filesize %dm", d.maxFS)
+	}
 	bin := "yt-dlp"
 	args := []string{
 		bin,
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
-		"--max-filesize",
-		fmt.Sprintf("%dm", d.maxFS),
+		maxFSString,
 		"--add-header",
 		"Accept:*/*",
 		// "Why do we need this?"
