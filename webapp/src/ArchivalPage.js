@@ -13,6 +13,7 @@ function ArchivalPage() {
     const [userData, setUserData] = useState(null);
     const [archivalSubscriptions, setArchivalSubscriptions] = useState([]);
     const [timelineEvents, setTimelineEvents] = useState([]);
+    const [videosInProgress, setVideoInProgress] = useState([]);
 
     // I think this is a hack? looks okay to me though!
     const [timerVal, setTimerVal] = useState(0);
@@ -72,9 +73,11 @@ function ArchivalPage() {
             if (!ignore) setUserData(userData);
 
             let subscriptionData = await API.getArchivalSubscriptions();
+            let videos = await API.getDownloadsInProgress();
             if (!ignore) {
                 setArchivalSubscriptions(subscriptionData.ArchivalRequests);
                 setTimelineEvents(subscriptionData.ArchivalEvents);
+                setVideoInProgress(videos);
             }
         };
 
@@ -130,8 +133,8 @@ function ArchivalPage() {
             key: 'action',
             render: (text, record) => (
                 <Space size="middle">
-                  <Button className="background-blue" onClick={()=>deleteArchivalRequest(record.DownloadID)}>Delete {record.DownloadID}</Button>
                   <Button className="background-blue" onClick={()=>retryArchivalRequest(record.DownloadID)}>Retry {record.DownloadID}</Button>
+                  <Button className="background-blue" onClick={()=>deleteArchivalRequest(record.DownloadID)}>Delete {record.DownloadID}</Button>
                 </Space>
               ),
         }
@@ -147,6 +150,19 @@ function ArchivalPage() {
             title: 'Event Message',
             'dataIndex': 'message',
             key: 'message',
+        }
+    ];
+
+    const videoDLsCols = [
+        {
+            title: 'Video ID',
+            dataIndex: 'videoID',
+            key: 'videoID',
+        },
+        {
+            title: 'Website',
+            'dataIndex': 'Website',
+            key: 'website',
         }
     ];
 
@@ -170,8 +186,12 @@ function ArchivalPage() {
                             <Table dataSource={archivalSubscriptions} scroll={{y: 700}} className="align-bottom w-full" ellipsis={true} columns={columns}/>
                     </div>
                     <div className="h-full inline-block w-2/5">
-
+                        <h2 className="text-xl text-black">Archival Events</h2>
                         <Table dataSource={timelineEvents} className="align-bottom w-full" scroll={{y: 700}} ellipsis={true} columns={timelinTableCols}/>
+                    </div>
+                    <div className="h-full inline-block w-4/5">
+                        <h2 className="text-xl text-black">Videos Being Downloaded</h2>
+                        <Table dataSource={videosInProgress} className="align-bottom w-full" scroll={{y: 700}} ellipsis={true} columns={videoDLsCols}/>
                     </div>
                 </div>
                 </div>

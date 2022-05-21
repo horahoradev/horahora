@@ -78,7 +78,7 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 		// FIXME
 		_, ok := urlMap[archive.Url]
 		if !ok {
-			progressSql := "WITH numerator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1 AND dlstatus!=0), " +
+			progressSql := "WITH numerator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1 AND dlstatus>0 AND dlStatus <3), " +
 				"denominator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1), " +
 				"undownloadable AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1 AND videos.dlStatus=2) " +
 				"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator, (select * from undownloadable) AS undownloadable"

@@ -109,7 +109,7 @@ func (s schedulerServer) RetryArchivalRequestDownloadss(ctx context.Context, req
 	return ret, err
 }
 
-func (s schedulerServer) getDownloadsInProgress(ctx context.Context, req *proto.DownloadsInProgressRequest) (*proto.DownloadsInProgressResponse, error) {
+func (s schedulerServer) GetDownloadsInProgress(ctx context.Context, req *proto.DownloadsInProgressRequest) (*proto.DownloadsInProgressResponse, error) {
 	videos, err := s.M.GetDownloadsInProgress()
 	if err != nil {
 		return nil, err
