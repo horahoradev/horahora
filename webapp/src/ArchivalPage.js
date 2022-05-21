@@ -156,7 +156,7 @@ function ArchivalPage() {
     const videoDLsCols = [
         {
             title: 'Video ID',
-            dataIndex: 'videoID',
+            dataIndex: 'VideoID',
             key: 'videoID',
         },
         {
@@ -190,7 +190,7 @@ function ArchivalPage() {
                         <Table dataSource={timelineEvents} className="align-bottom w-full" scroll={{y: 700}} ellipsis={true} columns={timelinTableCols}/>
                     </div>
                     <div className="h-full inline-block w-4/5">
-                        <h2 className="text-xl text-black">Videos Being Downloaded</h2>
+                        <h2 className="text-xl text-black">Videos Currently Being Downloaded</h2>
                         <Table dataSource={videosInProgress} className="align-bottom w-full" scroll={{y: 700}} ellipsis={true} columns={videoDLsCols}/>
                     </div>
                 </div>
