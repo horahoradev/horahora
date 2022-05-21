@@ -65,7 +65,7 @@ func main() {
 	numOfSubscribers := 5
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
-		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, cfg.SocksConnStr, cfg.MaxFS)
+		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, cfg.SocksConnStr, cfg.MaxFS, cfg.AcceptLanguage)
 		go func() {
 			err := dler.SubscribeAndDownload(ctx, m)
 			if err != nil {
