@@ -16,7 +16,7 @@ type VideoDLRequest struct {
 	DownloaddID int
 	URL         string
 	ParentURL   string
-	mut         redsync.Mutex
+	mut         *redsync.Mutex
 }
 
 func (v *VideoDLRequest) SetDownloaded() error {
