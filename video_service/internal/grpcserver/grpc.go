@@ -414,7 +414,7 @@ func (g GRPCServer) DownloadVideo(req *proto.VideoRequest, outputStream proto.Vi
 
 func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQueryConfig) (*proto.VideoList, error) {
 	switch queryConfig.OrderBy {
-	case proto.OrderCategory_rating, proto.OrderCategory_views, proto.OrderCategory_upload_date:
+	case proto.OrderCategory_rating, proto.OrderCategory_views, proto.OrderCategory_upload_date, proto.OrderCategory_my_ratings:
 		videos, err := g.VideoModel.GetVideoList(queryConfig.Direction, queryConfig.PageNumber,
 			queryConfig.FromUserID, queryConfig.SearchVal, queryConfig.ShowUnapproved, queryConfig.OrderBy)
 		if err != nil {
