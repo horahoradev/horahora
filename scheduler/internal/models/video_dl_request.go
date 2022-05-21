@@ -54,7 +54,8 @@ func (v *VideoDLRequest) AcquireLockForVideo() error {
 }
 
 func (v *VideoDLRequest) ReleaseLockForVideo() error {
-	return v.mut.Unlock()
+	_, err := v.mut.Unlock()
+	return err
 }
 
 type event string
