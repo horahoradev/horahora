@@ -9,9 +9,16 @@ service Scheduler {
     rpc listArchivalEntries(listArchivalEntriesRequest) returns (listArchivalEntriesResponse) {}
 
     rpc deleteArchivalRequest(deletionRequest) returns (Empty) {}
+
+    rpc retryArchivalRequestDownloadss(retryRequest) returns (Empty) {}
 }
 
 message Empty {}
+
+message retryRequest {
+    uint64 downloadID = 1;
+    uint64 userID = 2;
+}
 
 message deletionRequest {
     uint64 downloadID = 1;
@@ -47,5 +54,6 @@ message contentArchivalEntry {
     string LastSynced = 5;
     uint32 BackoffFactor = 6;
     uint64 downloadID = 7;
+    uint64 UndownloadableVideos = 8;
 }
 
