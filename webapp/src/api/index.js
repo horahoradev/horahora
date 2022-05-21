@@ -172,6 +172,18 @@ export async function deleteArchivalRequest(download_id) {
   return res.data;
 }
 
+export async function retryArchivalRequest(download_id) {
+  let form = new FormData();
+  form.append("download_id", download_id);
+
+  const res = await axios.post(e("retry-archiverequest"), form, {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+  });
+  return res.data;
+}
+
 export async function upvoteComment(commentID, upvoted_already) {
   let form = new FormData();
   form.append("comment_id", commentID);
