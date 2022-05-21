@@ -421,10 +421,6 @@ loop:
 }
 
 func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]string, error) {
-	maxFSString := ""
-	if d.maxFS != 0 {
-		maxFSString = fmt.Sprintf("--max-filesize %dm", d.maxFS)
-	}
 	acceptLanguageString := "Accept-Language:en"
 	if d.acceptLanguage != "" {
 		acceptLanguageString = fmt.Sprintf("Accept-Language:%s", d.acceptLanguage)
@@ -435,7 +431,6 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
-		maxFSString,
 		"--add-header",
 		"Accept:*/*",
 		// "Why do we need this?"
@@ -449,6 +444,10 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"-o",
 		// Some websites have two IDs per video, so I made it explicit just to avoid issues
 		fmt.Sprintf("%s/%s.%s", d.outputLoc, video.VideoID, "%(ext)s"),
+	}
+
+	if d.maxFS != 0 {
+		args = append(args, []string{fmt.Sprintf("--max-filesize %dm", d.maxFS)}...)
 	}
 
 	// FIXME: This is dumb
