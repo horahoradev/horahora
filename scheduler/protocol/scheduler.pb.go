@@ -20,6 +20,146 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type DownloadsInProgressRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DownloadsInProgressRequest) Reset() {
+	*x = DownloadsInProgressRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DownloadsInProgressRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadsInProgressRequest) ProtoMessage() {}
+
+func (x *DownloadsInProgressRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadsInProgressRequest.ProtoReflect.Descriptor instead.
+func (*DownloadsInProgressRequest) Descriptor() ([]byte, []int) {
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{0}
+}
+
+type DownloadsInProgressResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Videos []*Video `protobuf:"bytes,1,rep,name=videos,proto3" json:"videos,omitempty"`
+}
+
+func (x *DownloadsInProgressResponse) Reset() {
+	*x = DownloadsInProgressResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DownloadsInProgressResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadsInProgressResponse) ProtoMessage() {}
+
+func (x *DownloadsInProgressResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadsInProgressResponse.ProtoReflect.Descriptor instead.
+func (*DownloadsInProgressResponse) Descriptor() ([]byte, []int) {
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *DownloadsInProgressResponse) GetVideos() []*Video {
+	if x != nil {
+		return x.Videos
+	}
+	return nil
+}
+
+type Video struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	VideoID string `protobuf:"bytes,1,opt,name=VideoID,proto3" json:"VideoID,omitempty"`
+	Website string `protobuf:"bytes,2,opt,name=website,proto3" json:"website,omitempty"`
+}
+
+func (x *Video) Reset() {
+	*x = Video{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Video) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Video) ProtoMessage() {}
+
+func (x *Video) ProtoReflect() protoreflect.Message {
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Video.ProtoReflect.Descriptor instead.
+func (*Video) Descriptor() ([]byte, []int) {
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Video) GetVideoID() string {
+	if x != nil {
+		return x.VideoID
+	}
+	return ""
+}
+
+func (x *Video) GetWebsite() string {
+	if x != nil {
+		return x.Website
+	}
+	return ""
+}
+
 type Empty struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -29,7 +169,7 @@ type Empty struct {
 func (x *Empty) Reset() {
 	*x = Empty{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[0]
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -42,7 +182,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[0]
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +195,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{0}
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{3}
 }
 
 type RetryRequest struct {
@@ -70,7 +210,7 @@ type RetryRequest struct {
 func (x *RetryRequest) Reset() {
 	*x = RetryRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[1]
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -83,7 +223,7 @@ func (x *RetryRequest) String() string {
 func (*RetryRequest) ProtoMessage() {}
 
 func (x *RetryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[1]
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -96,7 +236,7 @@ func (x *RetryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RetryRequest.ProtoReflect.Descriptor instead.
 func (*RetryRequest) Descriptor() ([]byte, []int) {
-	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{1}
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *RetryRequest) GetDownloadID() uint64 {
@@ -125,7 +265,7 @@ type DeletionRequest struct {
 func (x *DeletionRequest) Reset() {
 	*x = DeletionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[2]
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -138,7 +278,7 @@ func (x *DeletionRequest) String() string {
 func (*DeletionRequest) ProtoMessage() {}
 
 func (x *DeletionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[2]
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -151,7 +291,7 @@ func (x *DeletionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletionRequest.ProtoReflect.Descriptor instead.
 func (*DeletionRequest) Descriptor() ([]byte, []int) {
-	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{2}
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *DeletionRequest) GetDownloadID() uint64 {
@@ -179,7 +319,7 @@ type ListArchivalEntriesRequest struct {
 func (x *ListArchivalEntriesRequest) Reset() {
 	*x = ListArchivalEntriesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[3]
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -192,7 +332,7 @@ func (x *ListArchivalEntriesRequest) String() string {
 func (*ListArchivalEntriesRequest) ProtoMessage() {}
 
 func (x *ListArchivalEntriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[3]
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -205,7 +345,7 @@ func (x *ListArchivalEntriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListArchivalEntriesRequest.ProtoReflect.Descriptor instead.
 func (*ListArchivalEntriesRequest) Descriptor() ([]byte, []int) {
-	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{3}
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListArchivalEntriesRequest) GetUserID() int64 {
@@ -227,7 +367,7 @@ type ListArchivalEntriesResponse struct {
 func (x *ListArchivalEntriesResponse) Reset() {
 	*x = ListArchivalEntriesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[4]
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -240,7 +380,7 @@ func (x *ListArchivalEntriesResponse) String() string {
 func (*ListArchivalEntriesResponse) ProtoMessage() {}
 
 func (x *ListArchivalEntriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[4]
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -253,7 +393,7 @@ func (x *ListArchivalEntriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListArchivalEntriesResponse.ProtoReflect.Descriptor instead.
 func (*ListArchivalEntriesResponse) Descriptor() ([]byte, []int) {
-	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{4}
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListArchivalEntriesResponse) GetEntries() []*ContentArchivalEntry {
@@ -284,7 +424,7 @@ type ArchivalEvent struct {
 func (x *ArchivalEvent) Reset() {
 	*x = ArchivalEvent{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[5]
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -297,7 +437,7 @@ func (x *ArchivalEvent) String() string {
 func (*ArchivalEvent) ProtoMessage() {}
 
 func (x *ArchivalEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[5]
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -310,7 +450,7 @@ func (x *ArchivalEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ArchivalEvent.ProtoReflect.Descriptor instead.
 func (*ArchivalEvent) Descriptor() ([]byte, []int) {
-	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{5}
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ArchivalEvent) GetVideoUrl() string {
@@ -353,7 +493,7 @@ type URLRequest struct {
 func (x *URLRequest) Reset() {
 	*x = URLRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[6]
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -366,7 +506,7 @@ func (x *URLRequest) String() string {
 func (*URLRequest) ProtoMessage() {}
 
 func (x *URLRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[6]
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -379,7 +519,7 @@ func (x *URLRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use URLRequest.ProtoReflect.Descriptor instead.
 func (*URLRequest) Descriptor() ([]byte, []int) {
-	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{6}
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *URLRequest) GetUrl() string {
@@ -414,7 +554,7 @@ type ContentArchivalEntry struct {
 func (x *ContentArchivalEntry) Reset() {
 	*x = ContentArchivalEntry{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[7]
+		mi := &file_scheduler_protocol_scheduler_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -427,7 +567,7 @@ func (x *ContentArchivalEntry) String() string {
 func (*ContentArchivalEntry) ProtoMessage() {}
 
 func (x *ContentArchivalEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[7]
+	mi := &file_scheduler_protocol_scheduler_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -440,7 +580,7 @@ func (x *ContentArchivalEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ContentArchivalEntry.ProtoReflect.Descriptor instead.
 func (*ContentArchivalEntry) Descriptor() ([]byte, []int) {
-	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{7}
+	return file_scheduler_protocol_scheduler_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ContentArchivalEntry) GetUserID() int64 {
@@ -504,7 +644,17 @@ var File_scheduler_protocol_scheduler_proto protoreflect.FileDescriptor
 var file_scheduler_protocol_scheduler_proto_rawDesc = []byte{
 	0x0a, 0x22, 0x73, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x63, 0x6f, 0x6c, 0x2f, 0x73, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x72, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x07, 0x0a, 0x05, 0x45,
+	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x1c, 0x0a, 0x1a, 0x64,
+	0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x73, 0x49, 0x6e, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x65,
+	0x73, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x43, 0x0a, 0x1b, 0x64, 0x6f, 0x77,
+	0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x73, 0x49, 0x6e, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x65, 0x73, 0x73,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x24, 0x0a, 0x06, 0x76, 0x69, 0x64, 0x65,
+	0x6f, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2e, 0x56, 0x69, 0x64, 0x65, 0x6f, 0x52, 0x06, 0x76, 0x69, 0x64, 0x65, 0x6f, 0x73, 0x22, 0x3b,
+	0x0a, 0x05, 0x56, 0x69, 0x64, 0x65, 0x6f, 0x12, 0x18, 0x0a, 0x07, 0x56, 0x69, 0x64, 0x65, 0x6f,
+	0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x56, 0x69, 0x64, 0x65, 0x6f, 0x49,
+	0x44, 0x12, 0x18, 0x0a, 0x07, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x07, 0x77, 0x65, 0x62, 0x73, 0x69, 0x74, 0x65, 0x22, 0x07, 0x0a, 0x05, 0x45,
 	0x6d, 0x70, 0x74, 0x79, 0x22, 0x46, 0x0a, 0x0c, 0x72, 0x65, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x12, 0x1e, 0x0a, 0x0a, 0x64, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64,
 	0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0a, 0x64, 0x6f, 0x77, 0x6e, 0x6c, 0x6f,
@@ -557,7 +707,7 @@ var file_scheduler_protocol_scheduler_proto_rawDesc = []byte{
 	0x44, 0x12, 0x32, 0x0a, 0x14, 0x55, 0x6e, 0x64, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x61,
 	0x62, 0x6c, 0x65, 0x56, 0x69, 0x64, 0x65, 0x6f, 0x73, 0x18, 0x08, 0x20, 0x01, 0x28, 0x04, 0x52,
 	0x14, 0x55, 0x6e, 0x64, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x61, 0x62, 0x6c, 0x65, 0x56,
-	0x69, 0x64, 0x65, 0x6f, 0x73, 0x32, 0x9f, 0x02, 0x0a, 0x09, 0x53, 0x63, 0x68, 0x65, 0x64, 0x75,
+	0x69, 0x64, 0x65, 0x6f, 0x73, 0x32, 0x82, 0x03, 0x0a, 0x09, 0x53, 0x63, 0x68, 0x65, 0x64, 0x75,
 	0x6c, 0x65, 0x72, 0x12, 0x2a, 0x0a, 0x05, 0x64, 0x6c, 0x55, 0x52, 0x4c, 0x12, 0x11, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x55, 0x52, 0x4c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
 	0x0c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12,
@@ -575,11 +725,17 @@ var file_scheduler_protocol_scheduler_proto_rawDesc = []byte{
 	0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64,
 	0x73, 0x73, 0x12, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x72, 0x65, 0x74, 0x72, 0x79,
 	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
-	0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x42, 0x34, 0x5a, 0x32, 0x67, 0x69, 0x74, 0x68, 0x75,
-	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x6f, 0x72, 0x61, 0x68, 0x6f, 0x72, 0x61, 0x64, 0x65,
-	0x76, 0x2f, 0x68, 0x6f, 0x72, 0x61, 0x68, 0x6f, 0x72, 0x61, 0x2f, 0x73, 0x63, 0x68, 0x65, 0x64,
-	0x75, 0x6c, 0x65, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x45, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x00, 0x12, 0x61, 0x0a, 0x16, 0x67, 0x65, 0x74, 0x44, 0x6f,
+	0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x73, 0x49, 0x6e, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x65, 0x73,
+	0x73, 0x12, 0x21, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x64, 0x6f, 0x77, 0x6e, 0x6c, 0x6f,
+	0x61, 0x64, 0x73, 0x49, 0x6e, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x64, 0x6f, 0x77,
+	0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x73, 0x49, 0x6e, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x65, 0x73, 0x73,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x34, 0x5a, 0x32, 0x67, 0x69,
+	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x68, 0x6f, 0x72, 0x61, 0x68, 0x6f, 0x72,
+	0x61, 0x64, 0x65, 0x76, 0x2f, 0x68, 0x6f, 0x72, 0x61, 0x68, 0x6f, 0x72, 0x61, 0x2f, 0x73, 0x63,
+	0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -594,33 +750,39 @@ func file_scheduler_protocol_scheduler_proto_rawDescGZIP() []byte {
 	return file_scheduler_protocol_scheduler_proto_rawDescData
 }
 
-var file_scheduler_protocol_scheduler_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_scheduler_protocol_scheduler_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_scheduler_protocol_scheduler_proto_goTypes = []interface{}{
-	(*Empty)(nil),                       // 0: proto.Empty
-	(*RetryRequest)(nil),                // 1: proto.retryRequest
-	(*DeletionRequest)(nil),             // 2: proto.deletionRequest
-	(*ListArchivalEntriesRequest)(nil),  // 3: proto.listArchivalEntriesRequest
-	(*ListArchivalEntriesResponse)(nil), // 4: proto.listArchivalEntriesResponse
-	(*ArchivalEvent)(nil),               // 5: proto.archivalEvent
-	(*URLRequest)(nil),                  // 6: proto.URLRequest
-	(*ContentArchivalEntry)(nil),        // 7: proto.contentArchivalEntry
+	(*DownloadsInProgressRequest)(nil),  // 0: proto.downloadsInProgressRequest
+	(*DownloadsInProgressResponse)(nil), // 1: proto.downloadsInProgressResponse
+	(*Video)(nil),                       // 2: proto.Video
+	(*Empty)(nil),                       // 3: proto.Empty
+	(*RetryRequest)(nil),                // 4: proto.retryRequest
+	(*DeletionRequest)(nil),             // 5: proto.deletionRequest
+	(*ListArchivalEntriesRequest)(nil),  // 6: proto.listArchivalEntriesRequest
+	(*ListArchivalEntriesResponse)(nil), // 7: proto.listArchivalEntriesResponse
+	(*ArchivalEvent)(nil),               // 8: proto.archivalEvent
+	(*URLRequest)(nil),                  // 9: proto.URLRequest
+	(*ContentArchivalEntry)(nil),        // 10: proto.contentArchivalEntry
 }
 var file_scheduler_protocol_scheduler_proto_depIdxs = []int32{
-	7, // 0: proto.listArchivalEntriesResponse.entries:type_name -> proto.contentArchivalEntry
-	5, // 1: proto.listArchivalEntriesResponse.events:type_name -> proto.archivalEvent
-	6, // 2: proto.Scheduler.dlURL:input_type -> proto.URLRequest
-	3, // 3: proto.Scheduler.listArchivalEntries:input_type -> proto.listArchivalEntriesRequest
-	2, // 4: proto.Scheduler.deleteArchivalRequest:input_type -> proto.deletionRequest
-	1, // 5: proto.Scheduler.retryArchivalRequestDownloadss:input_type -> proto.retryRequest
-	0, // 6: proto.Scheduler.dlURL:output_type -> proto.Empty
-	4, // 7: proto.Scheduler.listArchivalEntries:output_type -> proto.listArchivalEntriesResponse
-	0, // 8: proto.Scheduler.deleteArchivalRequest:output_type -> proto.Empty
-	0, // 9: proto.Scheduler.retryArchivalRequestDownloadss:output_type -> proto.Empty
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	2,  // 0: proto.downloadsInProgressResponse.videos:type_name -> proto.Video
+	10, // 1: proto.listArchivalEntriesResponse.entries:type_name -> proto.contentArchivalEntry
+	8,  // 2: proto.listArchivalEntriesResponse.events:type_name -> proto.archivalEvent
+	9,  // 3: proto.Scheduler.dlURL:input_type -> proto.URLRequest
+	6,  // 4: proto.Scheduler.listArchivalEntries:input_type -> proto.listArchivalEntriesRequest
+	5,  // 5: proto.Scheduler.deleteArchivalRequest:input_type -> proto.deletionRequest
+	4,  // 6: proto.Scheduler.retryArchivalRequestDownloadss:input_type -> proto.retryRequest
+	0,  // 7: proto.Scheduler.getDownloadsInProgress:input_type -> proto.downloadsInProgressRequest
+	3,  // 8: proto.Scheduler.dlURL:output_type -> proto.Empty
+	7,  // 9: proto.Scheduler.listArchivalEntries:output_type -> proto.listArchivalEntriesResponse
+	3,  // 10: proto.Scheduler.deleteArchivalRequest:output_type -> proto.Empty
+	3,  // 11: proto.Scheduler.retryArchivalRequestDownloadss:output_type -> proto.Empty
+	1,  // 12: proto.Scheduler.getDownloadsInProgress:output_type -> proto.downloadsInProgressResponse
+	8,  // [8:13] is the sub-list for method output_type
+	3,  // [3:8] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_scheduler_protocol_scheduler_proto_init() }
@@ -630,7 +792,7 @@ func file_scheduler_protocol_scheduler_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_scheduler_protocol_scheduler_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Empty); i {
+			switch v := v.(*DownloadsInProgressRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -642,7 +804,7 @@ func file_scheduler_protocol_scheduler_proto_init() {
 			}
 		}
 		file_scheduler_protocol_scheduler_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RetryRequest); i {
+			switch v := v.(*DownloadsInProgressResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -654,7 +816,7 @@ func file_scheduler_protocol_scheduler_proto_init() {
 			}
 		}
 		file_scheduler_protocol_scheduler_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeletionRequest); i {
+			switch v := v.(*Video); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -666,7 +828,7 @@ func file_scheduler_protocol_scheduler_proto_init() {
 			}
 		}
 		file_scheduler_protocol_scheduler_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListArchivalEntriesRequest); i {
+			switch v := v.(*Empty); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -678,7 +840,7 @@ func file_scheduler_protocol_scheduler_proto_init() {
 			}
 		}
 		file_scheduler_protocol_scheduler_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListArchivalEntriesResponse); i {
+			switch v := v.(*RetryRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -690,7 +852,7 @@ func file_scheduler_protocol_scheduler_proto_init() {
 			}
 		}
 		file_scheduler_protocol_scheduler_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ArchivalEvent); i {
+			switch v := v.(*DeletionRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -702,7 +864,7 @@ func file_scheduler_protocol_scheduler_proto_init() {
 			}
 		}
 		file_scheduler_protocol_scheduler_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*URLRequest); i {
+			switch v := v.(*ListArchivalEntriesRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -714,6 +876,42 @@ func file_scheduler_protocol_scheduler_proto_init() {
 			}
 		}
 		file_scheduler_protocol_scheduler_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListArchivalEntriesResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_scheduler_protocol_scheduler_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ArchivalEvent); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_scheduler_protocol_scheduler_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*URLRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_scheduler_protocol_scheduler_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ContentArchivalEntry); i {
 			case 0:
 				return &v.state
@@ -732,7 +930,7 @@ func file_scheduler_protocol_scheduler_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_scheduler_protocol_scheduler_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

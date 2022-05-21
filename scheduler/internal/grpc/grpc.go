@@ -108,3 +108,21 @@ func (s schedulerServer) RetryArchivalRequestDownloadss(ctx context.Context, req
 
 	return ret, err
 }
+
+func (s schedulerServer) getDownloadsInProgress(ctx context.Context, req *proto.DownloadsInProgressRequest) (*proto.DownloadsInProgressResponse, error) {
+	videos, err := s.M.GetDownloadsInProgress()
+	if err != nil {
+		return nil, err
+	}
+
+	var ret []*proto.Video
+	for _, video := range videos {
+		vid := proto.Video{
+			VideoID: video.ID,
+			Website: video.Website,
+		}
+		ret = append(ret, &vid)
+	}
+
+	return &proto.DownloadsInProgressResponse{Videos: ret}, nil
+}
