@@ -3,6 +3,7 @@ package schedule
 import "C"
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"time"
 
@@ -62,7 +63,10 @@ var FailedToFetch = errors.New("failed to retrieve desired number of items")
 func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	// TODO: put this in a repo later
 
-	tx, err := p.Db.BeginTx(context.Background(), nil)
+	// Precautionary timeout
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*30)
+
+	tx, err := p.Db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
 		return nil, err
 	}
@@ -70,6 +74,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	log.Info("Fetching categories")
 	urls, err := p.getURLs()
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 

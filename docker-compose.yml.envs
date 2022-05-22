@@ -38,7 +38,7 @@ services:
       - NumberOfRetries=1
       - SocksConn=$SOCKS_ADDR
       - SyncPollDelay=1m
-      - MaxDLFileSize=300
+      - MaxDLFileSize=1
       - AcceptLanguage=en
   videoservice:
     $VIDEOSERVICE_BUILD_DIRECTIVE

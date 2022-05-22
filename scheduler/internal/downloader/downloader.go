@@ -132,7 +132,8 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 		m.Unlock()
 	}()
 
-	errCh := make(chan error, d.numberOfRetries)
+	// The + 10 is just a precaution against channel blockages in case i've overlooked something
+	errCh := make(chan error, d.numberOfRetries+10)
 currVideoLoop:
 	for currentRetryNum := 1; currentRetryNum <= d.numberOfRetries+1; currentRetryNum++ {
 		select {
