@@ -65,6 +65,7 @@ services:
       - StorageAPIKey=$STORAGE_API_KEY
       - StorageEndpoint=$STORAGE_ENDPOINT
       - ApprovalThreshold=1
+      - MaxDLFileSize=300
     volumes:
     - $HOME/.aws/:/root/.aws/:ro
   userservice:
