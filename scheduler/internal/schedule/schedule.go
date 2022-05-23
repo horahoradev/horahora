@@ -3,7 +3,6 @@ package schedule
 import "C"
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"time"
 
@@ -63,18 +62,9 @@ var FailedToFetch = errors.New("failed to retrieve desired number of items")
 func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	// TODO: put this in a repo later
 
-	// Precautionary timeout
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*30)
-
-	tx, err := p.Db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
-	if err != nil {
-		return nil, err
-	}
-
 	log.Info("Fetching categories")
 	urls, err := p.getURLs()
 	if err != nil {
-		tx.Rollback()
 		return nil, err
 	}
 
@@ -85,15 +75,9 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 
 	var ret []*models.VideoDLRequest
 	for _, url := range urls {
-		sql := "SELECT v.id, v.video_id, v.url, downloads.id FROM downloads " +
-			"INNER JOIN downloads_to_videos d ON downloads.id = d.download_id " +
-			"INNER JOIN videos v ON d.video_id = v.id " +
-			"WHERE downloads.url = $1 AND v.dlStatus = 0 " +
-			"ORDER BY CHAR_LENGTH(v.video_ID) DESC, v.video_ID desc LIMIT 1 " +
-			"OFFSET random() * LEAST(1000, (select count(*) from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id  WHERE downloads.url = $1 AND v.dlStatus = 0)) "
-		res, err := tx.Query(sql, url)
+		sql := "WITH  j AS (SELECT v.id, v.video_id, v.url, downloads.id AS download_id FROM downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id WHERE downloads.url = $1 AND v.dlStatus = 0 LIMIT 1), up as (UPDATE videos SET dlStatus=3 WHERE videos.id IN (select j.id FROM j) RETURNING videos.id)  SELECT id, j.video_id, j.URL, j.download_id FROM j WHERE j.id IN (select * from up);"
+		res, err := p.Db.Query(sql, url)
 		if err != nil {
-			tx.Rollback()
 			return nil, err
 		}
 
@@ -106,12 +90,10 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 
 			err = res.Scan(&req.ID, &req.VideoID, &req.URL, &req.DownloaddID)
 			if err != nil {
-				tx.Rollback()
 				return nil, err
 			}
 
 			if req.VideoID == "" {
-				tx.Rollback()
 				log.Errorf("Could not set video ID. Returning...")
 				return nil, errors.New("failed to set video id")
 			}
@@ -120,15 +102,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 		}
 	}
 
-	for _, req := range ret {
-		err = req.SetDownloadInProgress(tx)
-		if err != nil {
-			tx.Rollback()
-			return nil, err
-		}
-	}
-
-	return ret, tx.Commit()
+	return ret, nil
 }
 
 func (p *poller) getURLs() ([]string, error) {
