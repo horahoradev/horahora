@@ -21,6 +21,7 @@
     "form-data": "^4.0.0",
     "formik": "^2.2.9",
     "http-proxy-middleware": "^2.0.0",
+    "nightwind": "^1.1.12",
     "patch-package": "^6.4.7",
     "postcss-flexbugs-fixes": "^4.2.1",
     "prettier": "^2.3.1",
@@ -70,7 +71,6 @@
   },
   "devDependencies": {
     "autoprefixer": "^9.8.8",
-    "nightwind": "^1.1.12",
     "postcss": "^7.0.39",
     "postcss-preset-env": "^6.7.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
