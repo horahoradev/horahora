@@ -31,7 +31,7 @@ WORKDIR /yt-dlp
 RUN pip install -r requirements.txt
 COPY --from=pyinstaller-builder /pyinstaller /pyinstaller
 # we provide --paths here because for some reason pyinstaller doesnt figure that out on its own
-RUN /pyinstaller/env/bin/python /pyinstaller/pyinstaller.py --paths /usr/local/lib/python3.9/site-packages --onefile -n yt-dlp yt_dlp/__main__.py
+RUN /pyinstaller/env/bin/python /pyinstaller/pyinstaller.py --paths /usr/local/lib/python3.9/site-packages --hidden-import=yt_dlp.compat._legacy --onefile -n yt-dlp yt_dlp/__main__.py
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
