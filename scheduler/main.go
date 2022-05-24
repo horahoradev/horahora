@@ -81,6 +81,12 @@ func main() {
 
 		repo := models.NewArchiveRequest(cfg.Conn, cfg.Redlock)
 
+		// Wipe the in-progress downloads that didn't finish
+		err := repo.WipeDownloadsInProgress()
+		if err != nil {
+			log.Fatal("Could not wipe downloads in progress. Err: %s", err)
+		}
+
 		// TODDO: sync worker exit becausse schcema isn't up yet
 		worker, err := syncmanager.NewWorker(repo, cfg.SocksConnStr, cfg.SyncPollDelay)
 		if err != nil {
