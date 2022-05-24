@@ -192,6 +192,12 @@ func (m *ArchiveRequestRepo) GetDownloadsInProgress() ([]Video, error) {
 	return videos, err
 }
 
+func (m *ArchiveRequestRepo) WipeDownloadsInProgress() error {
+	sql := "UPDATE videos SET dlStatus = 0 WHERE dlStatus = 3"
+	_, err := m.Db.Exec(sql)
+	return err
+}
+
 func GetWebsiteFromURL(u string) (string, error) {
 	urlParsed, err := url.Parse(u)
 	if err != nil {
