@@ -51,8 +51,8 @@ type GRPCServer struct {
 // TODO: API is getting bloated
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
 	redisClient *redis.Client, client userproto.UserServiceClient, tracer opentracing.Tracer,
-	storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string) error {
-	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, storageEndpoint)
+	storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) error {
+	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, storageEndpoint, MaxDLFileSize)
 	if err != nil {
 		return err
 	}
@@ -63,7 +63,7 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 	}
 
 	// TODO: context and return
-	go g.transcodeAndUploadVideos()
+	go g.transcodeAndUploadVideos(MaxDLFileSize)
 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 		otgrpc.OpenTracingServerInterceptor(tracer))))
@@ -72,7 +72,7 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 }
 
 func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
-	redisClient *redis.Client, originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string) (*GRPCServer, error) {
+	redisClient *redis.Client, originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) (*GRPCServer, error) {
 
 	g := &GRPCServer{
 		Local:      local,
@@ -292,7 +292,7 @@ func (g GRPCServer) ForeignVideoExists(ctx context.Context, foreignVideoCheck *p
 const NUM_TRANSCODING_WORKERS = 1
 
 // TODO: graceful shutdown or something, lock video acquisition
-func (g GRPCServer) transcodeAndUploadVideos() {
+func (g GRPCServer) transcodeAndUploadVideos(MaxDLFileSize int64) {
 	for {
 		<-time.After(time.Second * 10)
 		videos, err := g.VideoModel.GetUnencodedVideos()
@@ -327,23 +327,24 @@ func (g GRPCServer) transcodeAndUploadVideos() {
 					}()
 				}
 
-				s, err := vid.Stat()
-				if err != nil {
-					log.Errorf("Could not stat video to encode. Err: %s", err)
-					return
-				}
-
-				if s.Size() >= 1024*1024*300 {
-					err = g.VideoModel.MarkVideoAsTooBig(video)
+				if MaxDLFileSize != 0 {
+					s, err := vid.Stat()
 					if err != nil {
-						log.Errorf("failed to mark video as too big. Err: %s", err)
+						log.Errorf("Could not stat video to encode. Err: %s", err)
 						return
 					}
 
-					log.Errorf("Video %d greater than 300mb, skipping and marking as too big", v.ID)
-					return
-				}
+					if s.Size() >= 1024*1024*MaxDLFileSize {
+						err = g.VideoModel.MarkVideoAsTooBig(video)
+						if err != nil {
+							log.Errorf("failed to mark video as too big. Err: %s", err)
+							return
+						}
 
+						log.Errorf("Video %d greater than 300mb, skipping and marking as too big", v.ID)
+						return
+					}
+				}
 				_, err = vid.Seek(0, 0)
 				if err != nil {
 					log.Errorf("Could not seek to 0 for video to encode. Err: %s", err)
