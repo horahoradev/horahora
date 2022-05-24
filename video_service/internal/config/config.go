@@ -50,8 +50,9 @@ type config struct {
 	StorageBackend    string `env:"StorageBackend,required"`
 	StorageAPIID      string `env:"StorageAPIID"`
 	StorageAPIKey     string `env:"StorageAPIKey"`
-	StorageEndpoint     string `env:"StorageEndpoint"`
+	StorageEndpoint   string `env:"StorageEndpoint"`
 	ApprovalThreshold int    `env:"ApprovalThreshold,required"`
+	MaxDLFileSize     int64 `env:"MaxDLFileSize,required"`
 }
 
 func New() (*config, error) {
