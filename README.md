@@ -32,7 +32,7 @@ Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 That's it for basic usage, and should work. If that doesn't work, bug me on Discord.
 
 ## Contributing
-Contributions are always welcome (and quite needed atm). If you'd like to contribute, and either aren't sure where to start, or lack familiarity with the relevant components of the project, please send me a message on Discord, and I'll help you out as best I can.
+Contributions are always welcome. Please see [CONTRIBUTING.md](https://github.com/horahoradev/horahora/blob/master/CONTRIBUTING.md) for details, including an architectural rundown.
 
 ## Designs
 Designs are listed here:
