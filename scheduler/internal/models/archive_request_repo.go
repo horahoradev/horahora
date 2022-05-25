@@ -140,8 +140,8 @@ func (m *ArchiveRequestRepo) New(url string, userID int64) error {
 
 func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLRequest, error) {
 	// Fetch all unsynced downloads, irrespective of priority
-	res, err := m.Db.Query("SELECT id, Url FROM downloads " +
-		"WHERE last_synced IS NULL or last_synced + interval '1 day' * backoff_factor < Now()")
+	res, err := m.Db.Query("SELECT downloads.id, Url FROM downloads INNER JOIN user_download_subscriptions s ON downloads.id = s.download_id " +
+		"WHERE last_synced IS NULL or last_synced + interval '1 day' * backoff_factor < Now() GROUP BY downloads.id")
 	if err != nil {
 		return nil, err
 	}
