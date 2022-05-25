@@ -1,5 +1,15 @@
 # syntax=docker/dockerfile:1.2
 
+FROM alpine:3.14 as ffmpeg-builder
+LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
+
+RUN apk add --update --no-cache wget
+# RUN wget https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz
+# TODO(ivan): Using my server temporarily because johnvansickle's site is very slow
+RUN wget https://media.sq10.net/ffmpeg-git-amd64-static.tar.xz
+RUN tar -xvf ffmpeg-git-amd64-static.tar.xz
+RUN cd ffmpeg-git-*-amd64-static && cp ffmpeg /usr/local/bin/ffmpeg
+
 # Using parts of https://github.com/six8/pyinstaller-alpine/blob/develop/python3.7.Dockerfile as reference
 # For alpine, we need to build pyinstaller manually so its supported on alpine
 FROM python:3.9-alpine as pyinstaller-builder
@@ -60,6 +70,7 @@ LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
 WORKDIR /horahora/scheduler
 
+COPY --from=ffmpeg-builder /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=ytdlp-builder /yt-dlp/dist/yt-dlp /usr/local/bin/yt-dlp
 COPY --from=builder /scheduler.bin /scheduler.bin
 
