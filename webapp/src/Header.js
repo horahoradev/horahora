@@ -55,7 +55,7 @@ function Search() {
                       <option value="my_ratings">my ratings</option>
                   </select>
                   <br></br>
-                    <input type="radio" id="desc" name="order" onChange={()=>true} checked="checked" value="desc"></input>
+                    <input type="radio" id="desc" name="order" defaultChecked={true} value="desc"></input>
                           <label htmlFor="desc">Desc</label>
                     <input type="radio" id="asc" name="order" value="asc"></input>
                             <label htmlFor="asc">Asc</label>
