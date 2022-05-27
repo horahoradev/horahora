@@ -120,7 +120,8 @@ message Room {
     string title = 1;
     string ownerUsername = 2;
     int roomID = 3;
-}```
+}
+```
 
 Upon connecting to a room, the client will establish a websocket to front_api, and will first send the ID of the room that they've connected to. On receiving this, front_api will establish a GRPC stream using the Chat RPC to communityservice, first sending the ID of the room (received in the prior websocket message) to communityservice as a TopicSubscription message. On receiving the TopicSubscription message, communityservice will retrieve all messages for the room's history from the relevant Kafka topic (and start consuming from that topic), and send them to front_api, which will relay them to the client. The client will display all messages in order. 
 On the client sending a message to front_api, front_api will send a ChatMessage into the corresponding GRPC stream. CommunityService, on this message's receipt, will immediately broadcast perform the following steps:
