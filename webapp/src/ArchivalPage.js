@@ -37,20 +37,38 @@ function ArchivalPage() {
  
           client.onConnect = function(frame) {
 
-          if (videoInProgressDataset) {
-                videoInProgressDataset.map(function (video, idx) {                
-                  client.subscribe(`/queue/${video.VideoID}`, function(message) { 
-                      let videos_deepcopy = JSON.parse(JSON.stringify(videoInProgressDataset))
-                      let body = JSON.parse(message.body);
-                      let total_bytes = body.total_bytes || body.total_bytes_estimate;
-                      let progress = 100 * parseFloat(body.downloaded_bytes || total_bytes) / total_bytes;
-                      videos_deepcopy[idx].progress = progress;
-                      // This is a hack!
-                      setVideoInProgressDataset(videos_deepcopy);
-                      message.ack();
-                  }, {'ack': 'client', 'prefetch-count': 1});
+            // Videos in progress subscriptions
+            client.subscribe('/queue/videosinprogress', function(message) {
+                let body = JSON.parse(message.body);
+                let videos = videoinProgressDataset;
+
+                if (body.type == "delete") {
+                    console.log("Got delete")
+                    videos = videos.filter((item)=>item.VideoID != message.video.VideoID);
+                    // Delete it from the list
+                } else if (body.type =="insert") {
+                    console.log("Got insert")
+                    videos.push(message.video);
+                }
+
             });
-        }
+        
+
+            if (videoInProgressDataset) {
+                    videoInProgressDataset.map(function (video, idx) {                
+                    client.subscribe(`/queue/${video.VideoID}`, function(message) { 
+                        let videos_copy =  videoInProgressDataset
+                        let body = JSON.parse(message.body);
+                        let total_bytes = body.total_bytes || body.total_bytes_estimate;
+                        let progress = 100 * parseFloat(body.downloaded_bytes || total_bytes) / total_bytes;
+                        videos_copy[idx].progress = progress;
+                        console.log(`progress; ${progress}`);
+                        // This is a hack!
+                        setVideoInProgressDataset(videos_copy);
+                        message.ack();
+                    }, {'ack': 'client', 'prefetch-count': 1});
+                });
+            }
           };
 
           client.onStompError = function (frame) {
@@ -118,16 +136,9 @@ function ArchivalPage() {
         }
     }
 
-    // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
-    useEffect(() => {
-        let ignore = false;
+    /*
+                let videos = await API.getDownloadsInProgress();
 
-        let fetchData = async () => {
-            let userData = await API.getUserdata();
-            if (!ignore) setUserData(userData);
-
-            let subscriptionData = await API.getArchivalSubscriptions();
-            let videos = await API.getDownloadsInProgress();
             for (var i = 0; i < videos ? videos.length : 0; i++) {
                 videos[i].progress = 0;
                 for (var j = 0; j < videoInProgressDataset ? videoInProgressDataset.length : 0; j++) {
@@ -137,14 +148,26 @@ function ArchivalPage() {
                 }
             }
 
+            setVideoInProgress(videos); // todo just make an artificial hook or something here
+            setVideoInProgressDataset(videos);
+    */
+
+    // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
+    useEffect(() => {
+        let ignore = false;
+
+        let fetchData = async () => {
+            let userData = await API.getUserdata();
+            if (!ignore) setUserData(userData);
+
+            let subscriptionData = await API.getArchivalSubscriptions();
+
             // videos.map((video, idx) => video.progress = videoInProgressDataset && videoInProgressDataset[idx] ? videoInProgressDataset[idx].progress : 0);
 
             // TODO: diff downloads in progress vs old downloads state, and unsubscribe!
             if (!ignore) {
                 setArchivalSubscriptions(subscriptionData.ArchivalRequests);
                 setTimelineEvents(subscriptionData.ArchivalEvents);
-                setVideoInProgress(videos); // todo just make an artificial hook or something here
-                setVideoInProgressDataset(videos);
             }
         };
 

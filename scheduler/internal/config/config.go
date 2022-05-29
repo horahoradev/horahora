@@ -1,12 +1,14 @@
 package config
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/caarlos0/env"
 	"github.com/go-redsync/redsync"
+	stomp "github.com/go-stomp/stomp/v3"
 	"github.com/gomodule/redigo/redis"
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	proto "github.com/horahoradev/horahora/video_service/protocol"
@@ -29,9 +31,18 @@ type RedisInfo struct {
 	Password string `env:"redis_pass,required"`
 }
 
+type RabbitmqInfo struct {
+	Hostname string `env:"rabbit_host,required"`
+	Port     int    `env:"rabbit_port,required"`
+	Username string `env:"rabbit_user,required"`
+	Password string `env:"rabbit_pass,required"`
+}
+
 type config struct {
 	PostgresInfo
 	RedisInfo
+	RabbitmqInfo
+	RabbitConn              *stomp.Conn
 	RedisPool               *redis.Pool
 	Redlock                 *redsync.Redsync
 	VideoOutputLoc          string
@@ -68,6 +79,20 @@ func New() (*config, error) {
 	}
 
 	config.Conn.SetMaxOpenConns(50)
+
+	// Rabbitmq
+	var options []func(*stomp.Conn) error = []func(*stomp.Conn) error{
+		stomp.ConnOpt.Login(config.RabbitmqInfo.Username, config.RabbitmqInfo.Password),
+		stomp.ConnOpt.Host("/"),
+	}
+	var serverAddr = flag.String("server", fmt.Sprintf("%s:%d", config.RabbitmqInfo.Hostname, config.RabbitmqInfo.Port),
+		"STOMP server endpoint")
+
+	conn, err := stomp.Dial("tcp", *serverAddr, options...)
+	if err != nil {
+		return nil, err
+	}
+	config.RabbitConn = conn
 
 	err = env.Parse(&config.RedisInfo)
 	if err != nil {

@@ -181,19 +181,20 @@ func (m *ArchiveRequestRepo) RetryArchivalRequest(userID, downloadID uint64) err
 }
 
 type Video struct {
-	ID      string `db:"video_id"`
-	Website string `db:"website"`
+	ID       string `db:"video_id"`
+	Website  string `db:"website"`
+	DlStatus int    `db:'dlStatus"`
 }
 
 func (m *ArchiveRequestRepo) GetDownloadsInProgress() ([]Video, error) {
 	var videos []Video
-	sql := "select video_id, website FROM videos WHERE dlStatus = 3"
+	sql := "select video_id, website, dlStatus FROM videos WHERE dlStatus >= 3"
 	err := m.Db.Select(&videos, sql)
 	return videos, err
 }
 
 func (m *ArchiveRequestRepo) WipeDownloadsInProgress() error {
-	sql := "UPDATE videos SET dlStatus = 0 WHERE dlStatus = 3"
+	sql := "UPDATE videos SET dlStatus = 0 WHERE dlStatus >= 3"
 	_, err := m.Db.Exec(sql)
 	return err
 }

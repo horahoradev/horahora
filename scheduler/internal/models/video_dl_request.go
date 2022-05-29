@@ -1,16 +1,18 @@
 package models
 
 import (
-	"database/sql"
+	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/go-redsync/redsync"
+	"github.com/go-stomp/stomp/v3"
 	"github.com/jmoiron/sqlx"
 )
 
 type VideoDLRequest struct {
 	Redsync     *redsync.Redsync
+	Rabbitmq    *stomp.Conn
 	Db          *sqlx.DB
 	VideoID     string // Foreign ID
 	ID          int    // Domestic ID
@@ -23,20 +25,78 @@ type VideoDLRequest struct {
 func (v *VideoDLRequest) SetDownloadSucceeded() error {
 	sql := "UPDATE videos SET dlStatus = 1 WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.ID)
-	return err
+	if err != nil {
+		return err
+	}
+	// Publish into rabbitmq
+	return v.PublishVideoInprogress(1, "deletion")
 }
 
 func (v *VideoDLRequest) SetDownloadFailed() error {
 	sql := "UPDATE videos SET dlStatus = 2 WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.ID)
-	return err
+	if err != nil {
+		return err
+	}
+	// Publish into rabbitmq
+	return v.PublishVideoInprogress(2, "deletion")
+}
+
+const queueName = "/queue/videosinprogress"
+
+func (v *VideoDLRequest) SetDownloadInProgress() error {
+	sql := "UPDATE videos SET dlStatus = 3 WHERE id = $1"
+	_, err := v.Db.Exec(sql, v.ID)
+	if err != nil {
+		return err
+	}
+	// Publish into rabbitmq
+	return v.PublishVideoInprogress(3, "insertion")
 }
 
 // have to pass a transaction for this one because it needs to be atomic with the scheduler query
-func (v *VideoDLRequest) SetDownloadInProgress(tx *sql.Tx) error {
-	sql := "UPDATE videos SET dlStatus = 3 WHERE id = $1"
-	_, err := tx.Exec(sql, v.ID)
-	return err
+func (v *VideoDLRequest) SetDownloadQueued() error {
+	sql := "UPDATE videos SET dlStatus = 4 WHERE id = $1"
+	_, err := v.Db.Exec(sql, v.ID)
+	if err != nil {
+		return err
+	}
+	// Publish into rabbitmq
+	return v.PublishVideoInprogress(4, "insertion")
+}
+
+type VideoProgress struct {
+	VideoID  string
+	Website  string
+	dlStatus int
+}
+
+type ProgressNotification struct {
+	Type  string
+	Video VideoProgress
+}
+
+func (v *VideoDLRequest) PublishVideoInprogress(dlStatus int, action string) error {
+	website, err := GetWebsiteFromURL(v.ParentURL)
+	if err != nil {
+		return err
+	}
+
+	p := ProgressNotification{
+		Video: VideoProgress{
+			VideoID:  v.VideoID,
+			Website:  website,
+			dlStatus: dlStatus,
+		},
+		Type: action, // insertion or deletion
+	}
+
+	payload, err := json.Marshal(&p)
+	if err != nil {
+		return err
+	}
+
+	return v.Rabbitmq.Send(queueName, "text/plain", payload, nil)
 }
 
 func (v *VideoDLRequest) AcquireLockForVideo() error {
