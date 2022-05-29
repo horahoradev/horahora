@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Input, Tag, Table, Timeline, Button, Space} from "antd";
 import { CheckOutlined, SyncOutlined } from '@ant-design/icons';
-
+import * as Stomp from '@stomp/stompjs';
 
 import * as API from "./api";
 import Header from "./Header";
-import Footer from "./Footer";
 
 
 
@@ -14,6 +13,61 @@ function ArchivalPage() {
     const [archivalSubscriptions, setArchivalSubscriptions] = useState([]);
     const [timelineEvents, setTimelineEvents] = useState([]);
     const [videosInProgress, setVideoInProgress] = useState([]);
+    const [videoInProgressDataset, setVideoInProgressDataset] = useState([]);
+
+    // const [inProgress, setInProgress] = useState([]);
+    
+    // TODO: currently ocnnects every time the videos in progress changes
+    var client = null;
+    useEffect(() => {
+         client = new Stomp.Client({
+            brokerURL: 'ws://localhost:15674/ws',
+            connectHeaders: {
+              login: 'guest', // TODO
+              passcode: 'guest',
+              'client-id': 'my-client-id'
+            },
+            // debug: function (str) {
+            //     console.log(str);
+            //   },
+            reconnectDelay: 5000,
+            heartbeatIncoming: 4000,
+            heartbeatOutgoing: 4000,
+          });
+ 
+          client.onConnect = function(frame) {
+
+          if (videoInProgressDataset) {
+                videoInProgressDataset.map(function (video, idx) {                
+                  client.subscribe(`/queue/${video.VideoID}`, function(message) { 
+                      let videos_deepcopy = JSON.parse(JSON.stringify(videoInProgressDataset))
+                      let body = JSON.parse(message.body);
+                      let total_bytes = body.total_bytes || body.total_bytes_estimate;
+                      let progress = 100 * parseFloat(body.downloaded_bytes || total_bytes) / total_bytes;
+                      videos_deepcopy[idx].progress = progress;
+                      // This is a hack!
+                      setVideoInProgressDataset(videos_deepcopy);
+                      message.ack();
+                  }, {'ack': 'client', 'prefetch-count': 1);
+            });
+        }
+          };
+
+          client.onStompError = function (frame) {
+            // Will be invoked in case of error encountered at Broker
+            // Bad login/passcode typically will cause an error
+            // Complaint brokers will set `message` header with a brief message. Body may contain details.
+            // Compliant brokers will terminate the connection after any error
+            console.log('Broker reported error: ' + frame.headers['message']);
+            console.log('Additional details: ' + frame.body);
+          };
+          client.activate();
+          // wow
+
+        return () => client.deactivate();
+      }, [videosInProgress]);
+
+    
 
     // I think this is a hack? looks okay to me though!
     const [timerVal, setTimerVal] = useState(0);
@@ -74,10 +128,23 @@ function ArchivalPage() {
 
             let subscriptionData = await API.getArchivalSubscriptions();
             let videos = await API.getDownloadsInProgress();
+            for (var i = 0; i < videos ? videos.length : 0; i++) {
+                videos[i].progress = 0;
+                for (var j = 0; j < videoInProgressDataset ? videoInProgressDataset.length : 0; j++) {
+                    if (videos[i].VideoID == videoInProgressDataset[j].VideoID) {
+                        videos[i] = videoInProgressDataset[j].progress;
+                    }
+                }
+            }
+
+            // videos.map((video, idx) => video.progress = videoInProgressDataset && videoInProgressDataset[idx] ? videoInProgressDataset[idx].progress : 0);
+
+            // TODO: diff downloads in progress vs old downloads state, and unsubscribe!
             if (!ignore) {
                 setArchivalSubscriptions(subscriptionData.ArchivalRequests);
                 setTimelineEvents(subscriptionData.ArchivalEvents);
-                setVideoInProgress(videos);
+                setVideoInProgress(videos); // todo just make an artificial hook or something here
+                setVideoInProgressDataset(videos);
             }
         };
 
@@ -163,6 +230,11 @@ function ArchivalPage() {
             title: 'Website',
             'dataIndex': 'Website',
             key: 'website',
+        },
+        {
+            title: 'Progress',
+            dataIndex: 'progress',
+            key: 'progress',
         }
     ];
 
@@ -191,7 +263,7 @@ function ArchivalPage() {
                     </div>
                     <div className="h-full inline-block w-4/5">
                         <h2 className="text-xl text-black">Videos Currently Being Downloaded</h2>
-                        <Table dataSource={videosInProgress} className="align-bottom w-full" scroll={{y: 700}} ellipsis={true} columns={videoDLsCols}/>
+                        <Table dataSource={videoInProgressDataset} className="align-bottom w-full" scroll={{y: 700}} ellipsis={true} columns={videoDLsCols}/>
                     </div>
                 </div>
                 </div>
