@@ -134,6 +134,13 @@ $JWT_KEYPAIR
     volumes:
       - ./static:/etc/nginx/html/static/images
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+  rabbitmq:
+    build: rabbitmq
+    restart: always
+    ports:
+      - "15674:15674"
+      - "15672:15672"
+      - "61613:61613"
 volumes:
   postgresdata:
 
