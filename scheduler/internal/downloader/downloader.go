@@ -81,12 +81,9 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 		return nil
 	}
 
-	// VideoJSON does not yet exist, try to acquire lock
-	err := video.AcquireLockForVideo()
+	err := video.SetDownloadInProgress()
 	if err != nil {
-		// If we can't get the lock, just skip the video in the current archive request
-		log.Errorf("Could not acquire redis lock for video VideoID %s during download of content parent URL %s. Err: %s", video.VideoID, video.URL, video.ParentURL, err)
-		return nil
+		log.Errorf("Failed to set download in progress")
 	}
 
 	defer func() {
@@ -430,6 +427,8 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"--write-thumbnail",
 		"--add-header",
 		"Accept:*/*",
+		"--limit-rate",
+		"1k",
 		// "Why do we need this?"
 		// Previously ffprobe would stall indefinitely if nico's cookies were invalidated by the time it made a request
 		// (or something like that).

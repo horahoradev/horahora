@@ -37,8 +37,11 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 			if err != nil {
 				if err != FailedToFetch {
 					log.Errorf("failed to get items. Err: %s", err)
+				} else if err == FailedToFetch {
+					// Back off
+					time.Sleep(p.PollingDelay)
 				}
-				break // try again lol
+				break // try again
 			}
 
 			for _, item := range itemsToSchedule {
@@ -51,10 +54,7 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 				videoQueue <- item
 			}
 		}
-		time.Sleep(p.PollingDelay)
 	}
-
-	return nil
 }
 
 var FailedToFetch = errors.New("failed to retrieve desired number of items")
@@ -75,7 +75,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 
 	var ret []*models.VideoDLRequest
 	for _, url := range urls {
-		sql := "WITH  j AS (SELECT v.id, v.video_id, v.url, downloads.id AS download_id FROM downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id WHERE downloads.url = $1 AND v.dlStatus = 0 LIMIT 1), up as (UPDATE videos SET dlStatus=3 WHERE videos.id IN (select j.id FROM j) RETURNING videos.id)  SELECT id, j.video_id, j.URL, j.download_id FROM j WHERE j.id IN (select * from up);"
+		sql := "WITH  j AS (SELECT v.id, v.video_id, v.url, downloads.id AS download_id FROM downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id WHERE downloads.url = $1 AND v.dlStatus = 0 LIMIT 10), up as (UPDATE videos SET dlStatus=3 WHERE videos.id IN (select j.id FROM j) RETURNING videos.id)  SELECT id, j.video_id, j.URL, j.download_id FROM j WHERE j.id IN (select * from up);"
 		res, err := p.Db.Query(sql, url)
 		if err != nil {
 			return nil, err
@@ -91,6 +91,11 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 			err = res.Scan(&req.ID, &req.VideoID, &req.URL, &req.DownloaddID)
 			if err != nil {
 				return nil, err
+			}
+
+			err = req.SetDownloadQueued()
+			if err != nil {
+				log.Errorf("Failed to set download queued")
 			}
 
 			if req.VideoID == "" {
