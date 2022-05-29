@@ -48,7 +48,7 @@ function ArchivalPage() {
                       // This is a hack!
                       setVideoInProgressDataset(videos_deepcopy);
                       message.ack();
-                  }, {'ack': 'client', 'prefetch-count': 1);
+                  }, {'ack': 'client', 'prefetch-count': 1});
             });
         }
           };
