@@ -188,7 +188,7 @@ type Video struct {
 
 func (m *ArchiveRequestRepo) GetDownloadsInProgress() ([]Video, error) {
 	var videos []Video
-	sql := "select video_id, website, dlStatus FROM videos WHERE dlStatus >= 3"
+	sql := "select video_id, website, dlStatus FROM videos WHERE dlStatus >= 3 ORDER BY dlStatus ASC"
 	err := m.Db.Select(&videos, sql)
 	return videos, err
 }
