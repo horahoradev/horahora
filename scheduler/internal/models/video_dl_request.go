@@ -6,6 +6,7 @@ import (
 	"time"
 
 	stomp "github.com/go-stomp/stomp/v3"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
@@ -69,7 +70,7 @@ func (v *VideoDLRequest) SetDownloadQueued() error {
 type VideoProgress struct {
 	VideoID  string
 	Website  string
-	dlStatus int
+	DlStatus int
 }
 
 type ProgressNotification struct {
@@ -87,10 +88,12 @@ func (v *VideoDLRequest) PublishVideoInprogress(dlStatus int, action string) err
 		Video: VideoProgress{
 			VideoID:  v.VideoID,
 			Website:  website,
-			dlStatus: dlStatus,
+			DlStatus: dlStatus,
 		},
 		Type: action, // insertion or deletion
 	}
+
+	log.Infof("Publishing %s", p)
 
 	payload, err := json.Marshal(&p)
 	if err != nil {
@@ -106,8 +109,12 @@ func (v *VideoDLRequest) AcquireLockForVideo() error {
 }
 
 func (v *VideoDLRequest) ReleaseLockForVideo() error {
-	_, err := v.mut.Unlock()
-	return err
+	if v.mut != nil {
+		_, err := v.mut.Unlock()
+		return err
+	}
+	return nil
+
 }
 
 type event string
