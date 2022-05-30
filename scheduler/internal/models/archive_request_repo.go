@@ -183,7 +183,7 @@ func (m *ArchiveRequestRepo) RetryArchivalRequest(userID, downloadID uint64) err
 type Video struct {
 	ID       string `db:"video_id"`
 	Website  string `db:"website"`
-	DlStatus int    `db:'dlStatus"`
+	DlStatus int    `db:"dlstatus"` // postgres lowercased it, lol
 }
 
 func (m *ArchiveRequestRepo) GetDownloadsInProgress() ([]Video, error) {

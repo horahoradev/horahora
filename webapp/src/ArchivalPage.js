@@ -7,83 +7,123 @@ import * as API from "./api";
 import Header from "./Header";
 
 
-
+let id =  Math.floor(Math.random() * 1000);
 function ArchivalPage() {
     const [userData, setUserData] = useState(null);
     const [archivalSubscriptions, setArchivalSubscriptions] = useState([]);
     const [timelineEvents, setTimelineEvents] = useState([]);
-    const [videosInProgress, setVideoInProgress] = useState([]);
     const [videoInProgressDataset, setVideoInProgressDataset] = useState([]);
+    const [conn, setConn] = useState(null);
+    const [initialDLDoneFlag, setDLDone] = useState(false);
+    const latest = useRef(videoInProgressDataset);
 
-    // const [inProgress, setInProgress] = useState([]);
+    // TODO: currently connects every time the videos in progress changes
+    useEffect(()=> {
+            var client = new Stomp.Client({
+                brokerURL: 'ws://localhost:15674/ws', // TODO
+                connectHeaders: {
+                  login: 'guest', // TODO
+                  passcode: 'guest',
+                },
+                // debug: function (str) {
+                //     console.log(str);
+                //   },
+                reconnectDelay: 5000,
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000,
+              });
+              client.activate();
+
+              client.onConnect = function(frame) {
+                setConn(client);
+              };
+              
+              client.onStompError = function (frame) {
+                // Will be invoked in case of error encountered at Broker
+                // Bad login/passcode typically will cause an error
+                // Complaint brokers will set `message` header with a brief message. Body may contain details.
+                // Compliant brokers will terminate the connection after any error
+                console.log('Broker reported error: ' + frame.headers['message']);
+                console.log('Additional details: ' + frame.body);
+              };
+              
+
+            //   return () => client.deactivate();
     
-    // TODO: currently ocnnects every time the videos in progress changes
-    var client = null;
+    }, []);
+
+      function processMessage(message, dataset1) {
+          message.ack();
+        let dataset = JSON.parse(JSON.stringify(videoInProgressDataset));
+        let body = JSON.parse(message.body);
+        let total_bytes = body.total_bytes || body.total_bytes_estimate;
+        let progress = 100 * parseFloat(body.downloaded_bytes || total_bytes) / total_bytes;
+        console.log(progress);
+        let idx = dataset.findIndex((video)=>video.VideoID == body.info_dict.id);
+        if (idx == -1 ) {
+            return;
+        }
+        dataset[idx].progress = progress;
+        // This is a hack!
+        setVideoInProgressDataset(dataset);
+    }
+    
+
+    useEffect(async() => {
+        let videos = await API.getDownloadsInProgress();
+        for (var i = 0; i < (videos != null ? videos.length : 0); i++) {
+            videos[i].progress = 0;
+        }
+        setVideoInProgressDataset(videos);
+        setDLDone(true);
+    }, [])
+
+    // Get initial downloads in progress
+    useEffect(async () => {
+        if (!initialDLDoneFlag){
+            return
+        }
+        let unsub = [];
+        for (var i = 0; i < (videoInProgressDataset != null ? videoInProgressDataset.length : 0); i++) {
+            let videoID = videoInProgressDataset[i].VideoID;
+            if (conn != null) {
+                let ret = conn.subscribe(`/topic/${videoID}`, processMessage, {'prefetch-count': 1, 'ack': 'client'});
+                unsub.push(ret);
+            }
+        }
+
+        return ()=> unsub.map((fn)=>fn.unsubscribe());
+
+    }, [conn, initialDLDoneFlag]);
+
+
     useEffect(() => {
-         client = new Stomp.Client({
-            brokerURL: 'ws://localhost:15674/ws',
-            connectHeaders: {
-              login: 'guest', // TODO
-              passcode: 'guest',
-              'client-id': 'my-client-id'
-            },
-            // debug: function (str) {
-            //     console.log(str);
-            //   },
-            reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000,
-          });
- 
-          client.onConnect = function(frame) {
-
             // Videos in progress subscriptions
-            client.subscribe('/queue/videosinprogress', function(message) {
+            conn != null && conn.subscribe('/topic/videosinprogress', function(message) {
                 let body = JSON.parse(message.body);
-                let videos = videoinProgressDataset;
-
-                if (body.type == "delete") {
+                let videos = videoInProgressDataset;
+                if (body.Type == "deletion") {
                     console.log("Got delete")
                     videos = videos.filter((item)=>item.VideoID != message.video.VideoID);
                     // Delete it from the list
-                } else if (body.type =="insert") {
-                    console.log("Got insert")
+                } else if (body.Type =="insertion") {
+                    console.log("Got insert");
+                    // Does it already exist? If not, subscribe
+                    let videosID = videos.filter((item)=>item.VideoID != message.video.VideoID);
+                    if (videosID.length == 0) { // unsubscribing isn't important here
+                        conn.subscribe(`/topic/${message.video.VideoID}`, processMessage, {'prefetch-count': 1, 'ack': 'client'});
+                    }
+
+                    // Needed for upsert, filter it out if it's in there with a different dlStatus
+                    videos = videos.filter((item)=>item.VideoID != message.video.VideoID || message.video.DlStatus != item.DlStatus);
+                    message.video.progress = 0;
                     videos.push(message.video);
                 }
-
+                setVideoInProgressDataset(videos);
             });
-        
+            return conn;
 
-            if (videoInProgressDataset) {
-                    videoInProgressDataset.map(function (video, idx) {                
-                    client.subscribe(`/queue/${video.VideoID}`, function(message) { 
-                        let videos_copy =  videoInProgressDataset
-                        let body = JSON.parse(message.body);
-                        let total_bytes = body.total_bytes || body.total_bytes_estimate;
-                        let progress = 100 * parseFloat(body.downloaded_bytes || total_bytes) / total_bytes;
-                        videos_copy[idx].progress = progress;
-                        console.log(`progress; ${progress}`);
-                        // This is a hack!
-                        setVideoInProgressDataset(videos_copy);
-                        message.ack();
-                    }, {'ack': 'client', 'prefetch-count': 1});
-                });
-            }
-          };
-
-          client.onStompError = function (frame) {
-            // Will be invoked in case of error encountered at Broker
-            // Bad login/passcode typically will cause an error
-            // Complaint brokers will set `message` header with a brief message. Body may contain details.
-            // Compliant brokers will terminate the connection after any error
-            console.log('Broker reported error: ' + frame.headers['message']);
-            console.log('Additional details: ' + frame.body);
-          };
-          client.activate();
-          // wow
-
-        return () => client.deactivate();
-      }, [videosInProgress]);
+      }, [conn]);
 
     
 
@@ -135,22 +175,6 @@ function ArchivalPage() {
             );
         }
     }
-
-    /*
-                let videos = await API.getDownloadsInProgress();
-
-            for (var i = 0; i < videos ? videos.length : 0; i++) {
-                videos[i].progress = 0;
-                for (var j = 0; j < videoInProgressDataset ? videoInProgressDataset.length : 0; j++) {
-                    if (videos[i].VideoID == videoInProgressDataset[j].VideoID) {
-                        videos[i] = videoInProgressDataset[j].progress;
-                    }
-                }
-            }
-
-            setVideoInProgress(videos); // todo just make an artificial hook or something here
-            setVideoInProgressDataset(videos);
-    */
 
     // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
     useEffect(() => {
