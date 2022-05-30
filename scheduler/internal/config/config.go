@@ -81,6 +81,11 @@ func New() (*config, error) {
 	config.Conn.SetMaxOpenConns(50)
 
 	// Rabbitmq
+	err = env.Parse(&config.RabbitmqInfo)
+	if err != nil {
+		return nil, err
+	}
+
 	var options []func(*stomp.Conn) error = []func(*stomp.Conn) error{
 		stomp.ConnOpt.Login(config.RabbitmqInfo.Username, config.RabbitmqInfo.Password),
 		stomp.ConnOpt.Host("/"),

@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	stomp "github.com/go-stomp/stomp/v3"
+
 	"github.com/go-redsync/redsync"
-	"github.com/go-stomp/stomp/v3"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -42,7 +43,7 @@ func (v *VideoDLRequest) SetDownloadFailed() error {
 	return v.PublishVideoInprogress(2, "deletion")
 }
 
-const queueName = "/queue/videosinprogress"
+const queueName = "/topic/videosinprogress"
 
 func (v *VideoDLRequest) SetDownloadInProgress() error {
 	sql := "UPDATE videos SET dlStatus = 3 WHERE id = $1"

@@ -7,7 +7,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./webapp:/webapp
+      - ./webapp/src:/webapp/src
   frontapi:
     $FRONT_API_BUILD_DIRECTIVE
     restart: always
@@ -40,6 +40,10 @@ services:
       - SyncPollDelay=1m
       - MaxDLFileSize=300
       - AcceptLanguage=ja
+      - rabbit_host=rabbitmq
+      - rabbit_port=61613
+      - rabbit_user=guest
+      - rabbit_pass=guest
   videoservice:
     $VIDEOSERVICE_BUILD_DIRECTIVE
     restart: always

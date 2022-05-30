@@ -3,8 +3,11 @@ package schedule
 import "C"
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"time"
+
+	stomp "github.com/go-stomp/stomp/v3"
 
 	"github.com/go-redsync/redsync"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
@@ -19,10 +22,11 @@ type poller struct {
 	Db           *sqlx.DB
 	PollingDelay time.Duration
 	Redsync      *redsync.Redsync
+	Rabbit       *stomp.Conn
 }
 
-func NewPoller(db *sqlx.DB, redsync *redsync.Redsync) (poller, error) {
-	return poller{Db: db, PollingDelay: time.Second * 15, Redsync: redsync}, nil
+func NewPoller(db *sqlx.DB, redsync *redsync.Redsync, rabbitmq *stomp.Conn) (poller, error) {
+	return poller{Db: db, PollingDelay: time.Second * 15, Redsync: redsync, Rabbit: rabbitmq}, nil
 }
 
 func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue chan *models.VideoDLRequest) error {
@@ -35,10 +39,11 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 		default:
 			itemsToSchedule, err := p.getVideos()
 			if err != nil {
-				if err != FailedToFetch {
+				if err != sql.ErrNoRows {
 					log.Errorf("failed to get items. Err: %s", err)
-				} else if err == FailedToFetch {
+				} else if err == sql.ErrNoRows {
 					// Back off
+					log.Errorf("failed to get items. Backing off...")
 					time.Sleep(p.PollingDelay)
 				}
 				break // try again
@@ -56,8 +61,6 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 		}
 	}
 }
-
-var FailedToFetch = errors.New("failed to retrieve desired number of items")
 
 func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 	// TODO: put this in a repo later
@@ -86,6 +89,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 				ParentURL: url,
 				Redsync:   p.Redsync,
 				Db:        p.Db,
+				Rabbitmq:  p.Rabbit,
 			}
 
 			err = res.Scan(&req.ID, &req.VideoID, &req.URL, &req.DownloaddID)
