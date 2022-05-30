@@ -8994,6 +8994,11 @@
     "regenerator-runtime" "^0.13.9"
     "whatwg-fetch" "^3.6.2"
 
+"react-context-mutex@^2.0.0":
+  "integrity" "sha512-Qss0YfJAKQ/+CYdVjHB3w7wRLdeetSrp2IMEEouXEpoTdohaCXIKZtFyNMMKDytLVWqHiiXg0RDA2kj/DQbeMQ=="
+  "resolved" "https://registry.npmjs.org/react-context-mutex/-/react-context-mutex-2.0.0.tgz"
+  "version" "2.0.0"
+
 "react-css-theme-switcher@^0.3.0":
   "integrity" "sha512-RV+fJ6mSbtsLOgIgeL4Q8MEH4Hyl72tQvGpCFBbk3ia6ie3KzXO1gfbKTV2q1ryP3hBpmyy1qrX+6E1f937A1A=="
   "resolved" "https://registry.npmjs.org/react-css-theme-switcher/-/react-css-theme-switcher-0.3.0.tgz"
@@ -9168,7 +9173,7 @@
   optionalDependencies:
     "fsevents" "^2.3.2"
 
-"react@^17.0.2", "react@>=16":
+"react@^17.0.0", "react@^17.0.2", "react@>=16":
   "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
   "version" "17.0.2"

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Input, Tag, Table, Timeline, Progress, Button, Space} from "antd";
 import { CheckOutlined, SyncOutlined,  } from '@ant-design/icons';
 import * as Stomp from '@stomp/stompjs';
+import { useMutex } from 'react-context-mutex';
 
 import * as API from "./api";
 import Header from "./Header";
@@ -20,6 +21,10 @@ function ArchivalPage() {
 
     const [progress, setProgress] = useState(new Map());
     const [progFlag, setProgFlag] = useState(false);
+
+    const MutexRunner = useMutex();
+    const mutex = new MutexRunner('messageHandler');
+
     // TODO: currently connects every time the videos in progress changes
     useEffect(()=> {
             var client = new Stomp.Client({
@@ -56,15 +61,16 @@ function ArchivalPage() {
     }, []);
 
       function processMessage(message) {
+        mutex.lock();
         let body = JSON.parse(message.body);
         let total_bytes = body.total_bytes || body.total_bytes_estimate;
         let prog = 100 * parseFloat(body.downloaded_bytes || total_bytes) / total_bytes;
-       
         var poggers = progress;
         poggers[body.info_dict.id] =  prog;
         setProgress(poggers);
         setProgFlag(Math.random() * 100);
         message.ack();
+        mutex.unlock();
     }
     
 
@@ -87,7 +93,7 @@ function ArchivalPage() {
         for (var i = 0; i < (videoInProgressDataset != null ? videoInProgressDataset.length : 0); i++) {
             let videoID = videoInProgressDataset[i].VideoID;
             if (conn != null) {
-                let ret = conn.subscribe(`/topic/${videoID}`, (message)=>processMessage(message), {'prefetch-count': 1, 'ack': 'client'});
+                let ret = conn.subscribe(`/topic/${videoID}`, processMessage, {'prefetch-count': 1, 'ack': 'client-individual'});
                 unsub.push(ret);
             }
         }
@@ -100,27 +106,34 @@ function ArchivalPage() {
     useEffect(() => {
             // Videos in progress subscriptions
             conn != null && conn.subscribe('/topic/videosinprogress', function(message) {
+                mutex.lock();
                 let body = JSON.parse(message.body);
                 let videos = JSON.parse(JSON.stringify(videoInProgressDataset));
+                message.ack();
                 if (body.Type == "deletion") {
-                    console.log("Got delete")
-                    videos = videos.filter((item)=>item.VideoID != message.video.VideoID);
+                    console.log(`Got delete ${body.Video.VideoID}`);
+                    console.log(videos.length);
+                    videos = videos.filter((item)=>item.VideoID != body.Video.VideoID);
+                    console.log(videos.length);
                     // Delete it from the list
                 } else if (body.Type =="insertion") {
-                    console.log("Got insert");
+                    console.log(`Got insert ${body.Video.VideoID}`);
                     // Does it already exist? If not, subscribe
-                    let videosID = videos.filter((item)=>item.VideoID != message.video.VideoID);
-                    if (videosID.length == 0) { // unsubscribing isn't important here
-                        conn.subscribe(`/topic/${message.video.VideoID}`, processMessage, {'prefetch-count': 1, 'ack': 'client'});
+                    let videosID = videos.filter((item)=>item.VideoID == body.Video.VideoID);
+                    if (videosID.length == 1) { // unsubscribing isn't important here
+                        console.log("SUBBING");
+                        conn.subscribe(`/topic/${body.Video.VideoID}`, processMessage, {'prefetch-count': 1, 'ack': 'client'});
                     }
 
                     // Needed for upsert, filter it out if it's in there with a different dlStatus
-                    videos = videos.filter((item)=>item.VideoID != message.video.VideoID || message.video.DlStatus != item.DlStatus);
-                    message.video.progress = 0;
-                    videos.push(message.video);
+                    videos = videos.filter((item)=>item.VideoID != body.Video.VideoID || body.Video.DlStatus != item.DlStatus);
+                    body.Video.progress = 0;
+                    videos.push(body.Video);
                 }
                 setVideoInProgressDataset(videos);
-            });
+                setProgFlag
+                mutex.unlock();
+            }, {'prefetch-count': 1, 'ack': 'client'});
             return conn;
 
       }, [conn]);
@@ -152,12 +165,17 @@ function ArchivalPage() {
         return () => clearInterval(interval);
       }, []);
 
-    useEffect(()=> {
+
+    function replaceProgressValues() {
         let wow = JSON.parse(JSON.stringify(videoInProgressDataset));
         for (var i = 0; i < (videoInProgressDataset != null ? videoInProgressDataset.length : 0); i++) {
             wow[i].progress = progress[wow[i].VideoID] || 0;
         }
         setVideoInProgressDataset(wow);
+    }
+
+    useEffect(()=> {
+        replaceProgressValues();
     }, [progress, progFlag]);
 
     function createNewArchival() {
