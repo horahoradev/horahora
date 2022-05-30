@@ -305,12 +305,20 @@ function ArchivalPage() {
             key: 'website',
         },
         {
+            title: 'Download Status',
+            key: 'DlStatus',
+            render: (text, record) => (
+                 <space size="middle">
+                     { record.DlStatus == "Queued" || record.DlStatus == 4 ? "Queued" : "Downloading"}
+                 </space>
+             ),   
+        },
+        {
             title: 'Progress',
             key: 'progress',
             render: (text, record) => (
                  <Progress percent={Math.floor(record.progress)} size="small" />
-              ),
-            
+              ),   
         }
     ];
 
