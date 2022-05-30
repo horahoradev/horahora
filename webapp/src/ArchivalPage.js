@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Input, Tag, Table, Timeline, Button, Space} from "antd";
-import { CheckOutlined, SyncOutlined } from '@ant-design/icons';
+import { Input, Tag, Table, Timeline, Progress, Button, Space} from "antd";
+import { CheckOutlined, SyncOutlined,  } from '@ant-design/icons';
 import * as Stomp from '@stomp/stompjs';
 
 import * as API from "./api";
 import Header from "./Header";
+import cloneDeep from 'lodash/cloneDeep';
 
 
 let id =  Math.floor(Math.random() * 1000);
@@ -17,6 +18,8 @@ function ArchivalPage() {
     const [initialDLDoneFlag, setDLDone] = useState(false);
     const latest = useRef(videoInProgressDataset);
 
+    const [progress, setProgress] = useState(new Map());
+    const [progFlag, setProgFlag] = useState(false);
     // TODO: currently connects every time the videos in progress changes
     useEffect(()=> {
             var client = new Stomp.Client({
@@ -52,24 +55,21 @@ function ArchivalPage() {
     
     }, []);
 
-      function processMessage(message, dataset1) {
-          message.ack();
-        let dataset = JSON.parse(JSON.stringify(videoInProgressDataset));
+      function processMessage(message) {
         let body = JSON.parse(message.body);
         let total_bytes = body.total_bytes || body.total_bytes_estimate;
-        let progress = 100 * parseFloat(body.downloaded_bytes || total_bytes) / total_bytes;
-        console.log(progress);
-        let idx = dataset.findIndex((video)=>video.VideoID == body.info_dict.id);
-        if (idx == -1 ) {
-            return;
-        }
-        dataset[idx].progress = progress;
-        // This is a hack!
-        setVideoInProgressDataset(dataset);
+        let prog = 100 * parseFloat(body.downloaded_bytes || total_bytes) / total_bytes;
+       
+        var poggers = progress;
+        poggers[body.info_dict.id] =  prog;
+        setProgress(poggers);
+        setProgFlag(Math.random() * 100);
+        message.ack();
     }
     
 
     useEffect(async() => {
+        
         let videos = await API.getDownloadsInProgress();
         for (var i = 0; i < (videos != null ? videos.length : 0); i++) {
             videos[i].progress = 0;
@@ -79,7 +79,7 @@ function ArchivalPage() {
     }, [])
 
     // Get initial downloads in progress
-    useEffect(async () => {
+    useEffect( () => {
         if (!initialDLDoneFlag){
             return
         }
@@ -87,7 +87,7 @@ function ArchivalPage() {
         for (var i = 0; i < (videoInProgressDataset != null ? videoInProgressDataset.length : 0); i++) {
             let videoID = videoInProgressDataset[i].VideoID;
             if (conn != null) {
-                let ret = conn.subscribe(`/topic/${videoID}`, processMessage, {'prefetch-count': 1, 'ack': 'client'});
+                let ret = conn.subscribe(`/topic/${videoID}`, (message)=>processMessage(message), {'prefetch-count': 1, 'ack': 'client'});
                 unsub.push(ret);
             }
         }
@@ -101,7 +101,7 @@ function ArchivalPage() {
             // Videos in progress subscriptions
             conn != null && conn.subscribe('/topic/videosinprogress', function(message) {
                 let body = JSON.parse(message.body);
-                let videos = videoInProgressDataset;
+                let videos = JSON.parse(JSON.stringify(videoInProgressDataset));
                 if (body.Type == "deletion") {
                     console.log("Got delete")
                     videos = videos.filter((item)=>item.VideoID != message.video.VideoID);
@@ -151,6 +151,14 @@ function ArchivalPage() {
 
         return () => clearInterval(interval);
       }, []);
+
+    useEffect(()=> {
+        let wow = JSON.parse(JSON.stringify(videoInProgressDataset));
+        for (var i = 0; i < (videoInProgressDataset != null ? videoInProgressDataset.length : 0); i++) {
+            wow[i].progress = progress[wow[i].VideoID] || 0;
+        }
+        setVideoInProgressDataset(wow);
+    }, [progress, progFlag]);
 
     function createNewArchival() {
         const url = document.getElementById('url').value;
@@ -280,8 +288,11 @@ function ArchivalPage() {
         },
         {
             title: 'Progress',
-            dataIndex: 'progress',
             key: 'progress',
+            render: (text, record) => (
+                 <Progress percent={Math.floor(record.progress)} size="small" />
+              ),
+            
         }
     ];
 
