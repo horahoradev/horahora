@@ -70,7 +70,7 @@ func (v *VideoDLRequest) SetDownloadQueued() error {
 type VideoProgress struct {
 	VideoID  string
 	Website  string
-	DlStatus int
+	DlStatus string
 }
 
 type ProgressNotification struct {
@@ -84,11 +84,18 @@ func (v *VideoDLRequest) PublishVideoInprogress(dlStatus int, action string) err
 		return err
 	}
 
+	dlStatusString := ""
+	if dlStatus == 3 {
+		dlStatusString = "Downloading"
+	} else if dlStatus == 4 {
+		dlStatusString = "Queued"
+	}
+
 	p := ProgressNotification{
 		Video: VideoProgress{
 			VideoID:  v.VideoID,
 			Website:  website,
-			DlStatus: dlStatus,
+			DlStatus: dlStatusString,
 		},
 		Type: action, // insertion or deletion
 	}
