@@ -87,7 +87,7 @@ func (b *BayesianTagSum) getRecommendations(uid int64) ([]*videoproto.VideoRec, 
 	// left join from video scores returns some random videos by default
 	sql := "WITH tag_ratings AS (select tag, coalesce(avg(ratings.rating), 0.00) AS tag_score from ratings INNER JOIN tags ON ratings.video_id = tags.video_id WHERE ratings.user_id = $1 GROUP BY tag), " +
 		"video_scores AS (SELECT tags.video_id, coalesce(avg(tag_score), 0.00) AS video_score from  tags INNER JOIN tag_ratings ON tag_ratings.tag = tags.tag GROUP BY tags.video_id ORDER BY video_score DESC, tags.video_id LIMIT 50) " +
-		"SELECT videos.id, title, newLink from video_scores INNER JOIN videos ON video_scores.video_id = videos.id WHERE videos.is_deleted IS false AND videos.transcoded IS true AND videos.id NOT IN (SELECT video_id FROM ratings WHERE ratings.user_id = $1) limit 10"
+		"SELECT videos.id, title, newLink from video_scores INNER JOIN videos ON video_scores.video_id = videos.id WHERE videos.is_deleted IS false AND videos.is_approved IS true AND videos.transcoded IS true AND videos.id NOT IN (SELECT video_id FROM ratings WHERE ratings.user_id = $1) limit 10"
 	rows, err := b.db.Query(sql, uid)
 	if err != nil {
 		return nil, err

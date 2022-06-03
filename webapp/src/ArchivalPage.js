@@ -135,7 +135,7 @@ function ArchivalPage() {
                         dataset = dataset.filter((item)=>item.VideoID != body.Video.VideoID || body.Video.DlStatus != item.DlStatus);
                         body.Video.progress = 0;
                         // If it's downloading, it goes at the beginning
-                        if (body.Video.DlStatus == 3) {
+                        if (body.Video.DlStatus == "Downloading") {
                             dataset.unshift(body.Video);
                         } else {
                            // else it goes at the end
@@ -301,17 +301,13 @@ function ArchivalPage() {
         },
         {
             title: 'Website',
-            'dataIndex': 'Website',
+            dataIndex: 'Website',
             key: 'website',
         },
         {
             title: 'Download Status',
             key: 'DlStatus',
-            render: (text, record) => (
-                 <space size="middle">
-                     { record.DlStatus == "Queued" || record.DlStatus == 4 ? "Queued" : "Downloading"}
-                 </space>
-             ),   
+            dataIndex: 'DlStatus',
         },
         {
             title: 'Progress',
