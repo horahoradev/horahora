@@ -142,9 +142,13 @@ $JWT_KEYPAIR
     build: rabbitmq
     restart: always
     ports:
-      - "15674:15674"
-      - "15672:15672"
       - "61613:61613"
+      - "15675:15674"
+  stomp_proxy:
+    build: stomp_proxy
+    restart: always
+    ports:
+      - "15674:15674"
 volumes:
   postgresdata:
 

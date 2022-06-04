@@ -24,23 +24,33 @@ function ArchivalPage() {
     // TODO: currently connects every time the videos in progress changes
     useEffect(()=> {
             var client = new Stomp.Client({
-                brokerURL: 'ws://localhost:15674/ws', // TODO
-                connectHeaders: {
-                  login: 'guest', // TODO
-                  passcode: 'guest',
+                 webSocketFactory: function () {
+                  return new WebSocket("ws://localhost:15674/ws");
                 },
-                // debug: function (str) {
-                //     console.log(str);
-                //   },
+                debug: function (str) {
+                    console.log(str);
+                  },
+                  connectHeaders: {
+                    login: 'guest', // TODO
+                    passcode: 'guest',
+                  },
                 reconnectDelay: 5000,
                 heartbeatIncoming: 4000,
                 heartbeatOutgoing: 4000,
+                connectionTimeout: 5000,
               });
-              client.activate();
 
               client.onConnect = function(frame) {
                 setConn(client);
               };
+              client.onWebSocketClose = async (evt: any) => {
+                console.log(`onWebSocketClose(): ${JSON.stringify(evt)}`, 'WS');
+            };
+            
+
+              client.onWebSocketError = async (error: any) => {
+                console.log(`onWebSocketError ${JSON.stringify(error)}`, 'WS');
+            };
               
               client.onStompError = function (frame) {
                 // Will be invoked in case of error encountered at Broker
@@ -50,9 +60,9 @@ function ArchivalPage() {
                 console.log('Broker reported error: ' + frame.headers['message']);
                 console.log('Additional details: ' + frame.body);
               };
-              
+              client.activate();
 
-            //   return () => client.deactivate();
+              return () => client.deactivate();
     
     }, []);
 
