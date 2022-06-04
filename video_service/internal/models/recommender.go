@@ -44,15 +44,9 @@ func (b *BayesianTagSum) GetRecommendations(uid int64) ([]*videoproto.VideoRec, 
 		return items, nil
 	default:
 		// otherwise, compute new results and store them
-		results, err := b.getRecommendations(uid)
+		results, err := b.getFallbackRecs(uid)
 		if err != nil {
 			return nil, err
-		}
-		if len(results) == 0 {
-			results, err = b.getFallbackRecs(uid)
-			if err != nil {
-				return nil, err
-			}
 		}
 		b.mut.Lock()
 		b.storedResults[uid] = results
@@ -114,7 +108,7 @@ func (b *BayesianTagSum) getRecommendations(uid int64) ([]*videoproto.VideoRec, 
 func (b *BayesianTagSum) getFallbackRecs(uid int64) ([]*videoproto.VideoRec, error) {
 	// Videos which have been viewed and not rated are implicitly rated 0
 	// left join from video scores returns some random videos by default
-	sql := "SELECT videos.id, title, newLink from videos WHERE videos.is_deleted IS false AND videos.transcoded IS true AND videos.id NOT IN (SELECT video_id FROM ratings WHERE ratings.user_id = $1) limit 10"
+	sql := "SELECT videos.id, title, newLink from videos WHERE videos.is_deleted IS false AND videos.is_approved IS true AND videos.transcoded IS true AND videos.id NOT IN (SELECT video_id FROM ratings WHERE ratings.user_id = $1) limit 10"
 	rows, err := b.db.Query(sql, uid)
 	if err != nil {
 		return nil, err
