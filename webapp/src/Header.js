@@ -45,7 +45,7 @@ function Search() {
             <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
           }
         />
-              <div id="hidden-search-modal" className="absolute text-black bg-white w-full max-w-sm p-5 space-y-3 invisible">
+              <div id="hidden-search-modal" className="absolute hidden text-black bg-white w-full max-w-sm p-5 space-y-3">
                   <h1 className="text-black text-base" >SEARCH OPTIONS</h1>
                   <b className="text-black text-base" >Order by: </b>
                   <select name="category" className="bg-white" id="category">
@@ -55,7 +55,7 @@ function Search() {
                       <option value="my_ratings">my ratings</option>
                   </select>
                   <br></br>
-                    <input type="radio" id="desc" name="order" onChange={()=>true} checked="checked" value="desc"></input>
+                    <input type="radio" id="desc" name="order" defaultChecked={true} value="desc"></input>
                           <label htmlFor="desc">Desc</label>
                     <input type="radio" id="asc" name="order" value="asc"></input>
                             <label htmlFor="asc">Asc</label>
@@ -203,11 +203,11 @@ function UserNav(props) {
 }
 
 function showModal(){
-    document.getElementById('hidden-search-modal').style.setProperty("visibility", 'visible', 'important');
+    document.getElementById('hidden-search-modal').style.setProperty('display', 'block', 'important');
 }
 
 function hideModal(){
-    document.getElementById('hidden-search-modal').style.setProperty("visibility", 'hidden', 'important');
+    document.getElementById('hidden-search-modal').style.setProperty('display', 'none', 'important');
 }
 
 function Header(props) {
