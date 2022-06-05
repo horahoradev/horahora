@@ -121,6 +121,13 @@ func (s schedulerServer) GetDownloadsInProgress(ctx context.Context, req *proto.
 			VideoID: video.ID,
 			Website: video.Website,
 		}
+		if video.DlStatus == 3 {
+			// downloading
+			vid.DlStatus = proto.Video_Downloading
+		} else if video.DlStatus == 4 {
+			// queued
+			vid.DlStatus = proto.Video_Queued
+		}
 		ret = append(ret, &vid)
 	}
 

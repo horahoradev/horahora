@@ -79,8 +79,9 @@ type Comment struct {
 }
 
 type VideoInProgress struct {
-	Website string
-	VideoID string
+	Website  string
+	VideoID  string
+	DlStatus string
 }
 
 type VideoDetail struct {
