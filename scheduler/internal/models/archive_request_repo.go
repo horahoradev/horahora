@@ -78,9 +78,9 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 		// FIXME
 		_, ok := urlMap[archive.Url]
 		if !ok {
-			progressSql := "WITH numerator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1 AND dlstatus>0 AND dlStatus <3), " +
+			progressSql := "WITH numerator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id WHERE downloads_to_videos.download_id = $1 AND dlstatus>0 AND dlstatus <3), " +
 				"denominator AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1), " +
-				"undownloadable AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1 AND videos.dlStatus=2) " +
+				"undownloadable AS (select count(*) from videos LEFT JOIN downloads_to_videos ON videos.id = downloads_to_videos.video_id  WHERE downloads_to_videos.download_id = $1 AND videos.dlstatus=2) " +
 				"SELECT (select * from numerator) as numerator, (select * from denominator) as denominator, (select * from undownloadable) AS undownloadable"
 
 			row := m.Db.QueryRow(progressSql, archive.DownloadID)
@@ -175,25 +175,27 @@ func (m *ArchiveRequestRepo) DeleteArchivalRequest(userID, downloadID uint64) er
 }
 
 func (m *ArchiveRequestRepo) RetryArchivalRequest(userID, downloadID uint64) error {
-	sql := "UPDATE videos SET dlStatus = 0 WHERE videos.id IN (SELECT videos.id FROM videos INNER JOIN downloads_to_videos ON downloads_to_videos.video_id = videos.id INNER JOIN user_download_subscriptions ON downloads_to_videos.download_id = user_download_subscriptions.download_id WHERE user_download_subscriptions.download_id = $1 AND user_download_subscriptions.user_id = $2 AND dlStatus = 2)"
+	sql := "UPDATE videos SET dlstatus = 0 WHERE videos.id IN (SELECT videos.id FROM videos INNER JOIN downloads_to_videos ON downloads_to_videos.video_id = videos.id INNER JOIN user_download_subscriptions ON downloads_to_videos.download_id = user_download_subscriptions.download_id WHERE user_download_subscriptions.download_id = $1 AND user_download_subscriptions.user_id = $2 AND dlstatus = 2)"
 	_, err := m.Db.Exec(sql, downloadID, userID)
 	return err
 }
 
 type Video struct {
-	ID      string `db:"video_id"`
-	Website string `db:"website"`
+	ID       string `db:"video_id"`
+	Website  string `db:"website"`
+	DlStatus int    `db:"dlstatus"` // postgres lowercased it, lol
 }
 
 func (m *ArchiveRequestRepo) GetDownloadsInProgress() ([]Video, error) {
 	var videos []Video
-	sql := "select video_id, website FROM videos WHERE dlStatus = 3"
+	sql := "select video_id, website, dlStatus FROM videos WHERE dlstatus >= 3 ORDER BY dlStatus ASC"
+
 	err := m.Db.Select(&videos, sql)
 	return videos, err
 }
 
 func (m *ArchiveRequestRepo) WipeDownloadsInProgress() error {
-	sql := "UPDATE videos SET dlStatus = 0 WHERE dlStatus = 3"
+	sql := "UPDATE videos SET dlStatus = 0 WHERE dlStatus >= 3"
 	_, err := m.Db.Exec(sql)
 	return err
 }
