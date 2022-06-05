@@ -6,7 +6,6 @@ import (
 	"time"
 
 	stomp "github.com/go-stomp/stomp/v3"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
@@ -56,7 +55,6 @@ func (v *VideoDLRequest) SetDownloadInProgress() error {
 	return v.PublishVideoInprogress(3, "insertion")
 }
 
-// have to pass a transaction for this one because it needs to be atomic with the scheduler query
 func (v *VideoDLRequest) SetDownloadQueued() error {
 	sql := "UPDATE videos SET dlStatus = 4 WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.ID)
@@ -99,8 +97,6 @@ func (v *VideoDLRequest) PublishVideoInprogress(dlStatus int, action string) err
 		},
 		Type: action, // insertion or deletion
 	}
-
-	log.Infof("Publishing %s", p)
 
 	payload, err := json.Marshal(&p)
 	if err != nil {
