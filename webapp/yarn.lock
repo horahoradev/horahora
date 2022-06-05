@@ -1632,6 +1632,11 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@stomp/stompjs@^6.1.2":
+  "integrity" "sha512-FHDTrIFM5Ospi4L3Xhj6v2+NzCVAeNDcBe95YjUWhWiRMrBF6uN3I7AUOlRgT6jU/2WQvvYK8ZaIxFfxFp+uHQ=="
+  "resolved" "https://registry.npmjs.org/@stomp/stompjs/-/stompjs-6.1.2.tgz"
+  "version" "6.1.2"
+
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   "integrity" "sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ=="
   "resolved" "https://registry.npmjs.org/@surma/rollup-plugin-off-main-thread/-/rollup-plugin-off-main-thread-2.2.3.tgz"
@@ -7046,6 +7051,11 @@
   "resolved" "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   "version" "2.6.2"
 
+"net@^1.0.2":
+  "integrity" "sha1-0XV+yaf7I3HYPPR1XOPifhCCk4g="
+  "resolved" "https://registry.npmjs.org/net/-/net-1.0.2.tgz"
+  "version" "1.0.2"
+
 "nice-try@^1.0.4":
   "integrity" "sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ=="
   "resolved" "https://registry.npmjs.org/nice-try/-/nice-try-1.0.5.tgz"
@@ -8984,6 +8994,11 @@
     "regenerator-runtime" "^0.13.9"
     "whatwg-fetch" "^3.6.2"
 
+"react-context-mutex@^2.0.0":
+  "integrity" "sha512-Qss0YfJAKQ/+CYdVjHB3w7wRLdeetSrp2IMEEouXEpoTdohaCXIKZtFyNMMKDytLVWqHiiXg0RDA2kj/DQbeMQ=="
+  "resolved" "https://registry.npmjs.org/react-context-mutex/-/react-context-mutex-2.0.0.tgz"
+  "version" "2.0.0"
+
 "react-css-theme-switcher@^0.3.0":
   "integrity" "sha512-RV+fJ6mSbtsLOgIgeL4Q8MEH4Hyl72tQvGpCFBbk3ia6ie3KzXO1gfbKTV2q1ryP3hBpmyy1qrX+6E1f937A1A=="
   "resolved" "https://registry.npmjs.org/react-css-theme-switcher/-/react-css-theme-switcher-0.3.0.tgz"
@@ -9158,7 +9173,7 @@
   optionalDependencies:
     "fsevents" "^2.3.2"
 
-"react@^17.0.2", "react@>=16":
+"react@^17.0.0", "react@^17.0.2", "react@>=16":
   "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
   "version" "17.0.2"
@@ -9947,6 +9962,11 @@
   "resolved" "https://registry.npmjs.org/stealthy-require/-/stealthy-require-1.1.1.tgz"
   "version" "1.1.1"
 
+"stomp-js@^0.1.3":
+  "integrity" "sha1-r56fG5km5IxhdOsch50zU9aAcGc="
+  "resolved" "https://registry.npmjs.org/stomp-js/-/stomp-js-0.1.3.tgz"
+  "version" "0.1.3"
+
 "string_decoder@^1.1.1":
   "integrity" "sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA=="
   "resolved" "https://registry.npmjs.org/string_decoder/-/string_decoder-1.3.0.tgz"
@@ -10369,6 +10389,11 @@
   "integrity" "sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA=="
   "resolved" "https://registry.npmjs.org/tiny-warning/-/tiny-warning-1.0.3.tgz"
   "version" "1.0.3"
+
+"tls@^0.0.1":
+  "integrity" "sha1-CrK/WWjXHfL4wOFRXSSiJAuYqsg="
+  "resolved" "https://registry.npmjs.org/tls/-/tls-0.0.1.tgz"
+  "version" "0.0.1"
 
 "tmp@^0.0.33":
   "integrity" "sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw=="
