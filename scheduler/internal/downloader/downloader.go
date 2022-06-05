@@ -427,8 +427,6 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"--write-thumbnail",
 		"--add-header",
 		"Accept:*/*",
-		"--limit-rate",
-		"100k",
 		// "Why do we need this?"
 		// Previously ffprobe would stall indefinitely if nico's cookies were invalidated by the time it made a request
 		// (or something like that).
