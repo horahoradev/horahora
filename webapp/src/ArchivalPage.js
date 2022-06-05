@@ -244,7 +244,7 @@ function ArchivalPage() {
     const columns = [
         {
             title: 'Status',
-            key: 'Url',
+            key: 'Status',
             render: (text, record) => (
                 <span>
                    {Status(record)}
@@ -254,12 +254,10 @@ function ArchivalPage() {
         {
             title: 'URL',
             dataIndex: 'Url',
-            key: 'Url',
         },
         {
             title: 'Last synced',
-            'dataIndex': 'LastSynced',
-            key: 'LastSynced',
+            dataIndex: 'LastSynced',
         },
         // {
         //     title: 'Days until next sync',
@@ -277,7 +275,7 @@ function ArchivalPage() {
         },
         {
             title: 'Actions',
-            key: 'action',
+            key: 'Actions',
             render: (text, record) => (
                 <Space size="middle">
                   <Button className="background-blue" onClick={()=>retryArchivalRequest(record.DownloadID)}>Retry {record.DownloadID}</Button>
@@ -291,12 +289,10 @@ function ArchivalPage() {
         {
             title: 'Timestamp',
             dataIndex: 'timestamp',
-            key: 'timestamp',
         },
         {
             title: 'Event Message',
-            'dataIndex': 'message',
-            key: 'message',
+            dataIndex: 'message',
         }
     ];
 
@@ -304,21 +300,18 @@ function ArchivalPage() {
         {
             title: 'Video ID',
             dataIndex: 'VideoID',
-            key: 'videoID',
         },
         {
             title: 'Website',
             dataIndex: 'Website',
-            key: 'website',
         },
         {
             title: 'Download Status',
-            key: 'DlStatus',
             dataIndex: 'DlStatus',
         },
         {
             title: 'Progress',
-            key: 'progress',
+            key: 'Progress',
             render: (text, record) => (
                  <Progress percent={Math.floor(record.progress)} size="small" />
               ),   

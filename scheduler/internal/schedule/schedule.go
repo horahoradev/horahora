@@ -41,7 +41,7 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 			if err != nil {
 				if err != sql.ErrNoRows {
 					log.Errorf("failed to get items. Err: %s", err)
-				} else if err == sql.ErrNoRows {
+				} else {
 					// Back off
 					log.Errorf("failed to get items. Backing off...")
 					time.Sleep(p.PollingDelay)
