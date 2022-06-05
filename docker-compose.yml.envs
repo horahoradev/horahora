@@ -1,6 +1,13 @@
 version: "3"
 
 services:
+  react_app:
+    build: webapp
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./webapp/src:/webapp/src
   frontapi:
     $FRONT_API_BUILD_DIRECTIVE
     restart: always
