@@ -142,8 +142,6 @@ $JWT_KEYPAIR
   rabbitmq:
     build: activemq
     restart: always
-    ports:
-#      - "8161:8161" # activemq management port
   stomp_proxy:
     build: stomp_proxy
     restart: always
