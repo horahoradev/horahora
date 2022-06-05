@@ -5,10 +5,13 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"context"
 	"flag"
+	"io"
+	"net"
 	"net/http"
-	"time"
 
 	frame "github.com/go-stomp/stomp/v3/frame"
 	"github.com/gorilla/websocket"
@@ -17,13 +20,9 @@ import (
 
 var addr = flag.String("addr", "0.0.0.0:15674", "http service address")
 
-var upgrader = websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }} // use default options
-
-var cstDialer = websocket.Dialer{
-	ReadBufferSize:   4096,
-	WriteBufferSize:  4096,
-	HandshakeTimeout: 30 * time.Second,
-}
+var upgrader = websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true },
+	ReadBufferSize:  8192,
+	WriteBufferSize: 8192}
 
 func echo(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
@@ -32,7 +31,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rabbitConn, _, err := cstDialer.Dial("ws://rabbitmq:15674/ws", nil)
+	rabbitConn, err := net.Dial("tcp", "rabbitmq:61613")
 	if err != nil {
 		log.Errorf("amqp dial: %v", err)
 		return
@@ -41,27 +40,26 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	// client <- rabbitmq
-	go func() {
+	go func(rabbitConn net.Conn, c *websocket.Conn) {
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			default:
-				mt, msg, err := rabbitConn.ReadMessage()
+				buf := make([]byte, 4096)
+				_, err := rabbitConn.Read(buf)
 				if err != nil {
-					log.Errorf("reader: %v", err)
+					log.Errorf("read: %v", err)
 					return
 				}
 
-				writer, err := c.NextWriter(mt)
+				writer, err := c.NextWriter(1)
 				if err != nil {
 					log.Errorf("nextwriter: %v", err)
 					return
 				}
 
-				log.Infof("rabbit->client: %v", msg)
-
-				_, err = writer.Write(msg)
+				_, err = writer.Write(buf)
 				if err != nil {
 					writer.Close()
 					log.Errorf("write: %v", err)
@@ -70,64 +68,62 @@ func echo(w http.ResponseWriter, r *http.Request) {
 				writer.Close()
 			}
 		}
-	}()
+	}(rabbitConn, c)
 
 	// client -> rabbitmq
 	for {
-		mt, wsReader, err := c.NextReader()
+		_, wsReader, err := c.NextReader()
 		if err != nil {
 			log.Errorf("ws reader: %v", err)
-			return
-		}
-
-		wsWriter, err := rabbitConn.NextWriter(mt)
-		if err != nil {
-			log.Errorf("ws writer: %v", err)
 			return
 		}
 
 		frameReader := frame.NewReader(wsReader)
 		if err != nil {
 			log.Errorf("new reader: %v", err)
-			wsWriter.Close()
 			return
 		}
-
-		frameMsg, err := frameReader.Read()
-		if err != nil {
-			log.Errorf("frame reader: %v", err)
-			wsWriter.Close()
-			return
-		}
-
-		log.Info("Client -> rabbitmq: %v", frameMsg)
-
-		// What type of frame is this? If relevant, check user permissions (this will happen later)
-		// nil is ok, just a heartbeat
-		if frameMsg != nil {
-			switch frameMsg.Command {
-			case frame.CONNECT, frame.CONNECTED, frame.STOMP, frame.SUBSCRIBE, frame.ACK, frame.NACK, frame.DISCONNECT:
+		for {
+			frameMsg, err := frameReader.Read()
+			if err == io.EOF {
 				break
-			case frame.BEGIN, frame.COMMIT, frame.ABORT, frame.SEND:
-				wsWriter.Close()
-				log.Errorf("Client tried to use forbidden command %v", frameMsg.Command)
+			} else if err != nil {
+				log.Errorf("frame reader: %v", err)
 				return
-			default:
-				// anything else? no
-				wsWriter.Close()
-				log.Errorf("Client tried to use unhandled command %v", frameMsg.Command)
+			}
+
+			// What type of frame is this? If relevant, check user permissions (this will happen later)
+			// nil is ok, just a heartbeat
+			if frameMsg != nil {
+				switch frameMsg.Command {
+				case frame.SUBSCRIBE:
+					f := frameMsg.Header
+					log.Infof("Subscribing to %v", f)
+					break
+				case frame.CONNECT, frame.CONNECTED, frame.STOMP, frame.ACK, frame.NACK, frame.DISCONNECT:
+					break
+				case frame.BEGIN, frame.COMMIT, frame.ABORT, frame.SEND:
+					log.Errorf("Client tried to use forbidden command %v", frameMsg.Command)
+					return
+				default:
+					// anything else? no
+					log.Errorf("Client tried to use unhandled command %v", frameMsg.Command)
+					return
+				}
+
+			}
+
+			var b bytes.Buffer
+			foo := bufio.NewWriter(&b)
+			frameWriter := frame.NewWriter(foo)
+			frameWriter.Write(frameMsg)
+
+			_, err = rabbitConn.Write(b.Bytes())
+			if err != nil {
+				log.Errorf("frame write: %v", err)
 				return
 			}
 		}
-
-		frameWriter := frame.NewWriter(wsWriter)
-		err = frameWriter.Write(frameMsg)
-		if err != nil {
-			wsWriter.Close()
-			log.Errorf("frame write: %v", err)
-			return
-		}
-		wsWriter.Close()
 	}
 
 }

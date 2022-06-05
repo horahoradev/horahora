@@ -35,7 +35,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build go build -o /scheduler.bin
 FROM python:3.9-alpine AS runtime
 LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
-RUN apk add --update --no-cache zlib-dev musl-dev libc-dev libffi-dev gcc g++ git pwgen && git clone -b STOMP_progress --depth 1 https://github.com/horahoradev/yt-dlp.git yt-dlp
+RUN apk add --update --no-cache zlib-dev musl-dev libc-dev libffi-dev gcc g++ git pwgen && git clone -b STOMP_progress --depth 5 https://github.com/horahoradev/yt-dlp.git yt-dlp
 
 # download yt-dlp and prepare it for usage
 WORKDIR /yt-dlp

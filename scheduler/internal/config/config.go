@@ -3,8 +3,9 @@ package config
 import (
 	"flag"
 	"fmt"
-	"log"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/caarlos0/env"
 	"github.com/go-redsync/redsync"
@@ -89,6 +90,7 @@ func New() (*config, error) {
 	var options []func(*stomp.Conn) error = []func(*stomp.Conn) error{
 		stomp.ConnOpt.Login(config.RabbitmqInfo.Username, config.RabbitmqInfo.Password),
 		stomp.ConnOpt.Host("/"),
+		stomp.ConnOpt.HeartBeatGracePeriodMultiplier(5),
 	}
 	var serverAddr = flag.String("server", fmt.Sprintf("%s:%d", config.RabbitmqInfo.Hostname, config.RabbitmqInfo.Port),
 		"STOMP server endpoint")

@@ -24,8 +24,9 @@ function ArchivalPage() {
     // TODO: currently connects every time the videos in progress changes
     useEffect(()=> {
             var client = new Stomp.Client({
+                // brokerURL: "ws://localhost:61614/ws",
                  webSocketFactory: function () {
-                  return new WebSocket("ws://localhost:80/ws");
+                  return new WebSocket("ws://localhost/ws");
                 },
                   connectHeaders: {
                     login: 'guest', // TODO
@@ -80,7 +81,6 @@ function ArchivalPage() {
         dataset[idx].progress = progress;
         return dataset;
       });
-
       message.ack();
       mutex.unlock();
   }
@@ -99,7 +99,7 @@ function ArchivalPage() {
         for (var i = 0; i < (videos != null ? videos.length : 0); i++) {
             let videoID = videos[i].VideoID;
             if (conn != null) {
-                let ret = conn.subscribe(`/topic/${videoID}`, processMessage, {'prefetch-count': 1, 'ack': 'client-individual'});
+                let ret = conn.subscribe(`/topic/${videoID}`, processMessage, {'prefetch-count': 100, 'ack': 'client-individual', 'id': String(Math.random() * 1000)});
                 unsub.push(ret);
             }
         }
@@ -112,7 +112,7 @@ function ArchivalPage() {
 
     useEffect(() => {
             // Videos in progress subscriptions
-            conn != null && conn.subscribe('/topic/videosinprogress', function(message) {
+            conn != null && conn.subscribe(`/topic/state`, function(message) {
                 mutex.lock();
                 let body = JSON.parse(message.body);
                 message.ack();
@@ -135,7 +135,7 @@ function ArchivalPage() {
                         // // Does it already exist? If not, subscribe
                         let videosID = dataset.filter((item)=>item.VideoID == body.Video.VideoID);
                         if (videosID.length == 1) { // unsubscribing isn't important here
-                            conn.subscribe(`/topic/${body.Video.VideoID}`, processMessage, {'prefetch-count': 1, 'ack': 'client-individual'});
+                            conn.subscribe(`/topic/${body.Video.VideoID}`, processMessage, {'prefetch-count': 100, 'ack': 'client-individual'});
                         }
 
                         // Needed for upsert, filter it out if it's in there with a different dlStatus
@@ -153,7 +153,7 @@ function ArchivalPage() {
                     });
                 }
                 mutex.unlock();
-            }, {'prefetch-count': 1, 'ack': 'client'});
+            }, {'prefetch-count': 100, 'ack': 'client-individual', 'id': String(Math.random() * 1000)});
             return conn;
 
       }, [conn]);
