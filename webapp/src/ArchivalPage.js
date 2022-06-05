@@ -25,11 +25,8 @@ function ArchivalPage() {
     useEffect(()=> {
             var client = new Stomp.Client({
                  webSocketFactory: function () {
-                  return new WebSocket("ws://localhost:15674/ws");
+                  return new WebSocket("ws://localhost:80/ws");
                 },
-                debug: function (str) {
-                    console.log(str);
-                  },
                   connectHeaders: {
                     login: 'guest', // TODO
                     passcode: 'guest',
@@ -43,10 +40,10 @@ function ArchivalPage() {
               client.onConnect = function(frame) {
                 setConn(client);
               };
-              client.onWebSocketClose = async (evt: any) => {
-                console.log(`onWebSocketClose(): ${JSON.stringify(evt)}`, 'WS');
-            };
-            
+
+              client.onDisconnect = function(frame) {
+                setConn(null);
+              }
 
               client.onWebSocketError = async (error: any) => {
                 console.log(`onWebSocketError ${JSON.stringify(error)}`, 'WS');
@@ -99,8 +96,8 @@ function ArchivalPage() {
         setVideoInProgressDataset(videos);
 
         let unsub = [];
-        for (var i = 0; i < (videoInProgressDataset != null ? videoInProgressDataset.length : 0); i++) {
-            let videoID = videoInProgressDataset[i].VideoID;
+        for (var i = 0; i < (videos != null ? videos.length : 0); i++) {
+            let videoID = videos[i].VideoID;
             if (conn != null) {
                 let ret = conn.subscribe(`/topic/${videoID}`, processMessage, {'prefetch-count': 1, 'ack': 'client-individual'});
                 unsub.push(ret);

@@ -143,7 +143,7 @@ $JWT_KEYPAIR
     restart: always
     ports:
       - "61613:61613"
-      - "15675:15674"
+      - "15672:15672"
   stomp_proxy:
     build: stomp_proxy
     restart: always
