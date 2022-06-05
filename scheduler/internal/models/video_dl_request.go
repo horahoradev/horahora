@@ -44,7 +44,7 @@ func (v *VideoDLRequest) SetDownloadFailed() error {
 	return v.PublishVideoInprogress(2, "deletion")
 }
 
-const queueName = "/topic/videosinprogress"
+const queueName = "/topic/state"
 
 func (v *VideoDLRequest) SetDownloadInProgress() error {
 	sql := "UPDATE videos SET dlStatus = 3 WHERE id = $1"
@@ -107,7 +107,12 @@ func (v *VideoDLRequest) PublishVideoInprogress(dlStatus int, action string) err
 		return err
 	}
 
-	return v.Rabbitmq.Send(queueName, "text/plain", payload, nil)
+	err = v.Rabbitmq.Send("/topic/state", "text/json", payload, stomp.SendOpt.Receipt)
+	if err != nil {
+		return fmt.Errorf("Publish: %v", err)
+	}
+
+	return nil
 }
 
 func (v *VideoDLRequest) AcquireLockForVideo() error {
