@@ -21,20 +21,20 @@ type VideoDLRequest struct {
 }
 
 func (v *VideoDLRequest) SetDownloadSucceeded() error {
-	sql := "UPDATE videos SET dlStatus = 1 WHERE id = $1"
+	sql := "UPDATE videos SET dlstatus = 1 WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.ID)
 	return err
 }
 
 func (v *VideoDLRequest) SetDownloadFailed() error {
-	sql := "UPDATE videos SET dlStatus = 2 WHERE id = $1"
+	sql := "UPDATE videos SET dlstatus = 2 WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.ID)
 	return err
 }
 
 // have to pass a transaction for this one because it needs to be atomic with the scheduler query
 func (v *VideoDLRequest) SetDownloadInProgress(tx *sql.Tx) error {
-	sql := "UPDATE videos SET dlStatus = 3 WHERE id = $1"
+	sql := "UPDATE videos SET dlstatus = 3 WHERE id = $1"
 	_, err := tx.Exec(sql, v.ID)
 	return err
 }
