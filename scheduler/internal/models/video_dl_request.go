@@ -24,7 +24,7 @@ type VideoDLRequest struct {
 }
 
 func (v *VideoDLRequest) SetDownloadSucceeded() error {
-	sql := "UPDATE videos SET dlStatus = 1 WHERE id = $1"
+	sql := "UPDATE videos SET dlstatus = 1 WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.ID)
 	if err != nil {
 		return err
@@ -34,7 +34,7 @@ func (v *VideoDLRequest) SetDownloadSucceeded() error {
 }
 
 func (v *VideoDLRequest) SetDownloadFailed() error {
-	sql := "UPDATE videos SET dlStatus = 2 WHERE id = $1"
+	sql := "UPDATE videos SET dlstatus = 2 WHERE id = $1"
 	_, err := v.Db.Exec(sql, v.ID)
 	if err != nil {
 		return err
