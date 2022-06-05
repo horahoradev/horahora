@@ -47,17 +47,19 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			case <-ctx.Done():
 				return
 			default:
-				msgType, msg, err := rabbitConn.ReadMessage()
+				mt, msg, err := rabbitConn.ReadMessage()
 				if err != nil {
 					log.Errorf("reader: %v", err)
 					return
 				}
 
-				writer, err := c.NextWriter(msgType)
+				writer, err := c.NextWriter(mt)
 				if err != nil {
 					log.Errorf("nextwriter: %v", err)
 					return
 				}
+
+				log.Infof("rabbit->client: %v", msg)
 
 				_, err = writer.Write(msg)
 				if err != nil {
@@ -87,16 +89,37 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		frameReader := frame.NewReader(wsReader)
 		if err != nil {
 			log.Errorf("new reader: %v", err)
+			wsWriter.Close()
 			return
 		}
 
 		frameMsg, err := frameReader.Read()
 		if err != nil {
 			log.Errorf("frame reader: %v", err)
+			wsWriter.Close()
 			return
 		}
 
-		log.Infof("write %v", frameMsg)
+		log.Info("Client -> rabbitmq: %v", frameMsg)
+
+		// What type of frame is this? If relevant, check user permissions (this will happen later)
+		// nil is ok, just a heartbeat
+		if frameMsg != nil {
+			switch frameMsg.Command {
+			case frame.CONNECT, frame.CONNECTED, frame.STOMP, frame.SUBSCRIBE, frame.ACK, frame.NACK, frame.DISCONNECT:
+				break
+			case frame.BEGIN, frame.COMMIT, frame.ABORT, frame.SEND:
+				wsWriter.Close()
+				log.Errorf("Client tried to use forbidden command %v", frameMsg.Command)
+				return
+			default:
+				// anything else? no
+				wsWriter.Close()
+				log.Errorf("Client tried to use unhandled command %v", frameMsg.Command)
+				return
+			}
+		}
+
 		frameWriter := frame.NewWriter(wsWriter)
 		err = frameWriter.Write(frameMsg)
 		if err != nil {
