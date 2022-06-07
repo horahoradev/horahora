@@ -104,8 +104,6 @@ $JWT_KEYPAIR
   minio:
     build: minio
     restart: always
-    ports:
-      - "9000:9000"
     environment:
       BUCKET_NAME: otomads
       MINIO_ROOT_USER: minioadmin
@@ -129,6 +127,7 @@ $JWT_KEYPAIR
     restart: always
     ports:
       - "80:80"
+      - "9000:80" # backwards compatibility issue
       - "443:443"
     depends_on:
       - frontapi
@@ -139,6 +138,7 @@ $JWT_KEYPAIR
     volumes:
       - ./static:/etc/nginx/html/static/images
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./videos/otomads:/etc/nginx/html/otomads
   rabbitmq:
     build: activemq
     restart: always
