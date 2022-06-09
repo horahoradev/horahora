@@ -1,4 +1,5 @@
 # Horahora
+## Locally archive, browse, and share videos from nearly any site
 
 Horahora is a collaborative archival management tool.
 
