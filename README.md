@@ -1,5 +1,4 @@
 # Horahora
-## Self-hosted Video-hosting Website and yt-dlp Video Archival Manager for Niconico, Bilibili, and Youtube
 
 Horahora is a collaborative archival management tool.
 
