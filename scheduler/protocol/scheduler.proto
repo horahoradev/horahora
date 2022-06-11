@@ -25,6 +25,11 @@ message downloadsInProgressResponse {
 message Video  {
     string VideoID = 1;
     string website = 2;
+    enum downloadStatus {
+        Queued = 0;
+        Downloading = 1;
+    }
+    downloadStatus dlStatus = 3;
 }
 
 message Empty {}

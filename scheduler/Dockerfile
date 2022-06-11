@@ -1,37 +1,14 @@
 # syntax=docker/dockerfile:1.2
 
-# Using parts of https://github.com/six8/pyinstaller-alpine/blob/develop/python3.7.Dockerfile as reference
-# For alpine, we need to build pyinstaller manually so its supported on alpine
-FROM python:3.9-alpine as pyinstaller-builder
+FROM alpine:3.14 as ffmpeg-builder
 LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
-RUN apk add --update --no-cache zlib-dev musl-dev libc-dev libffi-dev gcc g++ git pwgen
-RUN pip install pycrypto
-
-RUN git clone --depth 1 --branch v4.5.1 https://github.com/pyinstaller/pyinstaller.git /pyinstaller
-WORKDIR /pyinstaller
-# install pyinstaller into a virtualenv (so we can copy the env to the other stages)
-RUN python -m venv env
-RUN . ./env/bin/activate && \
-    cd bootloader && \
-    CFLAGS="-Wno-stringop-overflow -Wno-stringop-truncation" python ./waf configure --no-lsb all && \
-    pip install -r ../requirements.txt
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-FROM python:3.9-alpine as ytdlp-builder
-LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
-
-WORKDIR /
-
-# download yt-dlp and prepare it for usage
-RUN apk add --update --no-cache git gcc musl-dev
-RUN git clone --depth 2 https://github.com/horahoradev/yt-dlp.git yt-dlp
-WORKDIR /yt-dlp
-RUN pip install -r requirements.txt
-COPY --from=pyinstaller-builder /pyinstaller /pyinstaller
-# we provide --paths here because for some reason pyinstaller doesnt figure that out on its own
-RUN /pyinstaller/env/bin/python /pyinstaller/pyinstaller.py --paths /usr/local/lib/python3.9/site-packages --hidden-import=yt_dlp.compat._legacy --onefile -n yt-dlp yt_dlp/__main__.py
+RUN apk add --update --no-cache wget
+# RUN wget https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz
+# TODO(ivan): Using my server temporarily because johnvansickle's site is very slow
+RUN wget https://media.sq10.net/ffmpeg-git-amd64-static.tar.xz
+RUN tar -xvf ffmpeg-git-amd64-static.tar.xz
+RUN cd ffmpeg-git-*-amd64-static && cp ffmpeg /usr/local/bin/ffmpeg
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -55,12 +32,18 @@ RUN --mount=type=cache,target=/root/.cache/go-build go build -o /scheduler.bin
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-FROM alpine:3.14 AS runtime
+FROM python:3.9-alpine AS runtime
 LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
+
+RUN apk add --update --no-cache zlib-dev musl-dev libc-dev libffi-dev gcc g++ git pwgen && git clone -b STOMP_progress --depth 5 https://github.com/horahoradev/yt-dlp.git yt-dlp
+
+# download yt-dlp and prepare it for usage
+WORKDIR /yt-dlp
+RUN pip install -r requirements.txt && ln -s /yt-dlp/yt-dlp.sh /usr/local/bin/yt-dlp
 
 WORKDIR /horahora/scheduler
 
-COPY --from=ytdlp-builder /yt-dlp/dist/yt-dlp /usr/local/bin/yt-dlp
 COPY --from=builder /scheduler.bin /scheduler.bin
+COPY --from=ffmpeg-builder /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 
 ENTRYPOINT ["/scheduler.bin"]

@@ -26,8 +26,9 @@ func (v RouteHandler) handleGetDownloadsInProgress(c echo.Context) error {
 	var videos []VideoInProgress
 	for _, video := range resp.Videos {
 		vid := VideoInProgress{
-			Website: video.Website,
-			VideoID: video.VideoID,
+			Website:  video.Website,
+			VideoID:  video.VideoID,
+			DlStatus: video.DlStatus.String(),
 		}
 		videos = append(videos, vid)
 	}
