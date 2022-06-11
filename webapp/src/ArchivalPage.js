@@ -1,19 +1,164 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Input, Tag, Table, Timeline, Button, Space} from "antd";
-import { CheckOutlined, SyncOutlined } from '@ant-design/icons';
-
+import { Input, Tag, Table, Timeline, Progress, Button, Space} from "antd";
+import { CheckOutlined, SyncOutlined,  } from '@ant-design/icons';
+import * as Stomp from '@stomp/stompjs';
+import { useMutex } from 'react-context-mutex';
 
 import * as API from "./api";
 import Header from "./Header";
-import Footer from "./Footer";
+import cloneDeep from 'lodash/cloneDeep';
 
 
-
+let id =  Math.floor(Math.random() * 1000);
 function ArchivalPage() {
     const [userData, setUserData] = useState(null);
     const [archivalSubscriptions, setArchivalSubscriptions] = useState([]);
     const [timelineEvents, setTimelineEvents] = useState([]);
-    const [videosInProgress, setVideoInProgress] = useState([]);
+    const [videoInProgressDataset, setVideoInProgressDataset] = useState([]);
+    const [conn, setConn] = useState(null);
+    const latest = useRef(videoInProgressDataset);
+
+    const MutexRunner = useMutex();
+    const mutex = new MutexRunner('messageHandler');
+
+    // TODO: currently connects every time the videos in progress changes
+    useEffect(()=> {
+            var client = new Stomp.Client({
+                // brokerURL: "ws://localhost:61614/ws",
+                 webSocketFactory: function () {
+                  return new WebSocket("ws://localhost/ws");
+                },
+                  connectHeaders: {
+                    login: 'guest', // TODO
+                    passcode: 'guest',
+                  },
+                reconnectDelay: 5000,
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000,
+                connectionTimeout: 5000,
+              });
+
+              client.onConnect = function(frame) {
+                setConn(client);
+              };
+
+              client.onDisconnect = function(frame) {
+                setConn(null);
+              }
+
+              client.onWebSocketError = async (error: any) => {
+                console.log(`onWebSocketError ${JSON.stringify(error)}`, 'WS');
+            };
+              
+              client.onStompError = function (frame) {
+                // Will be invoked in case of error encountered at Broker
+                // Bad login/passcode typically will cause an error
+                // Complaint brokers will set `message` header with a brief message. Body may contain details.
+                // Compliant brokers will terminate the connection after any error
+                console.log('Broker reported error: ' + frame.headers['message']);
+                console.log('Additional details: ' + frame.body);
+              };
+              client.activate();
+
+              return () => client.deactivate();
+    
+    }, []);
+
+    function processMessage(message) {
+      mutex.lock();
+      setVideoInProgressDataset(videosInProg => {
+          if (videosInProg == null) {
+              return videosInProg;
+          }
+        let dataset = JSON.parse(JSON.stringify(videosInProg))
+        let body = JSON.parse(message.body);
+        let total_bytes = body.total_bytes || body.total_bytes_estimate;
+        let progress = 100 * parseFloat(body.downloaded_bytes || total_bytes) / total_bytes;
+        let idx = dataset.findIndex((video)=>video.VideoID == body.info_dict.id);
+        if (idx == -1 ) {
+            return dataset;
+        }
+        dataset[idx].progress = progress;
+        return dataset;
+      });
+      message.ack();
+      mutex.unlock();
+  }
+
+
+    // Get initial downloads in progress
+    useEffect( async () => {
+
+        let videos = await API.getDownloadsInProgress();
+        for (var i = 0; i < (videos != null ? videos.length : 0); i++) {
+            videos[i].progress = 0;
+        }
+        setVideoInProgressDataset(videos);
+
+        let unsub = [];
+        for (var i = 0; i < (videos != null ? videos.length : 0); i++) {
+            let videoID = videos[i].VideoID;
+            if (conn != null) {
+                let ret = conn.subscribe(`/topic/${videoID}`, processMessage, {'prefetch-count': 100, 'ack': 'client-individual', 'id': String(Math.random() * 1000)});
+                unsub.push(ret);
+            }
+        }
+
+
+        return ()=> unsub.map((fn)=>fn.unsubscribe());
+
+    }, [conn]);
+
+
+    useEffect(() => {
+            // Videos in progress subscriptions
+            conn != null && conn.subscribe(`/topic/state`, function(message) {
+                mutex.lock();
+                let body = JSON.parse(message.body);
+                message.ack();
+                if (body.Type == "deletion") {
+                    console.log(`Got delete ${body.Video.VideoID}`);
+                    setVideoInProgressDataset(videosInProg => {
+                        if (videosInProg == null) { return videosInProg; }
+                        let dataset = JSON.parse(JSON.stringify(videosInProg))
+                        dataset = dataset.filter((item)=>item.VideoID != body.Video.VideoID);
+                        return dataset;
+                    });
+                    // Delete it from the list
+                } else if (body.Type =="insertion") {
+                    console.log(`Got insert ${body.Video.VideoID}`);
+
+                    setVideoInProgressDataset(videosInProg => {
+                        if (videosInProg == null) { return videosInProg; }
+                        let dataset = JSON.parse(JSON.stringify(videosInProg))
+
+                        // // Does it already exist? If not, subscribe
+                        let videosID = dataset.filter((item)=>item.VideoID == body.Video.VideoID);
+                        if (videosID.length == 1) { // unsubscribing isn't important here
+                            conn.subscribe(`/topic/${body.Video.VideoID}`, processMessage, {'prefetch-count': 100, 'ack': 'client-individual'});
+                        }
+
+                        // Needed for upsert, filter it out if it's in there with a different dlStatus
+                        dataset = dataset.filter((item)=>item.VideoID != body.Video.VideoID || body.Video.DlStatus != item.DlStatus);
+                        body.Video.progress = 0;
+                        // If it's downloading, it goes at the beginning
+                        if (body.Video.DlStatus == "Downloading") {
+                            dataset.unshift(body.Video);
+                        } else {
+                           // else it goes at the end
+                           dataset.push(body.Video);
+                        }
+                        
+                        return dataset;
+                    });
+                }
+                mutex.unlock();
+            }, {'prefetch-count': 100, 'ack': 'client-individual', 'id': String(Math.random() * 1000)});
+            return conn;
+
+      }, [conn]);
+
+    
 
     // I think this is a hack? looks okay to me though!
     const [timerVal, setTimerVal] = useState(0);
@@ -73,11 +218,13 @@ function ArchivalPage() {
             if (!ignore) setUserData(userData);
 
             let subscriptionData = await API.getArchivalSubscriptions();
-            let videos = await API.getDownloadsInProgress();
+
+            // videos.map((video, idx) => video.progress = videoInProgressDataset && videoInProgressDataset[idx] ? videoInProgressDataset[idx].progress : 0);
+
+            // TODO: diff downloads in progress vs old downloads state, and unsubscribe!
             if (!ignore) {
                 setArchivalSubscriptions(subscriptionData.ArchivalRequests);
                 setTimelineEvents(subscriptionData.ArchivalEvents);
-                setVideoInProgress(videos);
             }
         };
 
@@ -97,7 +244,7 @@ function ArchivalPage() {
     const columns = [
         {
             title: 'Status',
-            key: 'Url',
+            key: 'Status',
             render: (text, record) => (
                 <span>
                    {Status(record)}
@@ -107,12 +254,10 @@ function ArchivalPage() {
         {
             title: 'URL',
             dataIndex: 'Url',
-            key: 'Url',
         },
         {
             title: 'Last synced',
-            'dataIndex': 'LastSynced',
-            key: 'LastSynced',
+            dataIndex: 'LastSynced',
         },
         // {
         //     title: 'Days until next sync',
@@ -130,7 +275,7 @@ function ArchivalPage() {
         },
         {
             title: 'Actions',
-            key: 'action',
+            key: 'Actions',
             render: (text, record) => (
                 <Space size="middle">
                   <Button className="background-blue" onClick={()=>retryArchivalRequest(record.DownloadID)}>Retry {record.DownloadID}</Button>
@@ -144,12 +289,10 @@ function ArchivalPage() {
         {
             title: 'Timestamp',
             dataIndex: 'timestamp',
-            key: 'timestamp',
         },
         {
             title: 'Event Message',
-            'dataIndex': 'message',
-            key: 'message',
+            dataIndex: 'message',
         }
     ];
 
@@ -157,12 +300,21 @@ function ArchivalPage() {
         {
             title: 'Video ID',
             dataIndex: 'VideoID',
-            key: 'videoID',
         },
         {
             title: 'Website',
-            'dataIndex': 'Website',
-            key: 'website',
+            dataIndex: 'Website',
+        },
+        {
+            title: 'Download Status',
+            dataIndex: 'DlStatus',
+        },
+        {
+            title: 'Progress',
+            key: 'Progress',
+            render: (text, record) => (
+                 <Progress percent={Math.floor(record.progress)} size="small" />
+              ),   
         }
     ];
 
@@ -191,7 +343,7 @@ function ArchivalPage() {
                     </div>
                     <div className="h-full inline-block w-4/5">
                         <h2 className="text-xl text-black">Videos Currently Being Downloaded</h2>
-                        <Table dataSource={videosInProgress} className="align-bottom w-full" scroll={{y: 700}} ellipsis={true} columns={videoDLsCols}/>
+                        <Table dataSource={videoInProgressDataset} className="align-bottom w-full" scroll={{y: 700}} ellipsis={true} columns={videoDLsCols}/>
                     </div>
                 </div>
                 </div>

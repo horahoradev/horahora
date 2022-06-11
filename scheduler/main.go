@@ -45,7 +45,7 @@ func main() {
 	// Start one publisher goroutine to poll postgres and send download requests into the channel
 	// could potentially expand this to multiple publishers
 	wg.Add(1)
-	poller, err := schedule.NewPoller(cfg.Conn, cfg.Redlock)
+	poller, err := schedule.NewPoller(cfg.Conn, cfg.Redlock, cfg.RabbitConn)
 	if err != nil {
 		log.Fatalf("Could not create poller. Err: %s", err)
 	}
@@ -61,8 +61,8 @@ func main() {
 	}()
 
 	m := &sync.Mutex{}
-	// Start three goroutines to subscribe to channel and download items
-	numOfSubscribers := 5
+	// Start n goroutines to subscribe to channel and download items
+	numOfSubscribers := 7
 	for i := 0; i < numOfSubscribers; i++ {
 		wg.Add(1)
 		dler := downloader.New(dlQueue, cfg.VideoOutputLoc, cfg.Client, cfg.NumberOfRetries, cfg.SocksConnStr, cfg.MaxFS, cfg.AcceptLanguage)
@@ -80,6 +80,12 @@ func main() {
 		defer wg.Done()
 
 		repo := models.NewArchiveRequest(cfg.Conn, cfg.Redlock)
+
+		// Wipe the in-progress downloads that didn't finish
+		err := repo.WipeDownloadsInProgress()
+		if err != nil {
+			log.Fatal("Could not wipe downloads in progress. Err: %s", err)
+		}
 
 		// TODDO: sync worker exit becausse schcema isn't up yet
 		worker, err := syncmanager.NewWorker(repo, cfg.SocksConnStr, cfg.SyncPollDelay)
