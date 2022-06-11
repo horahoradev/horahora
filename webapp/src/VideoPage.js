@@ -195,7 +195,7 @@ function VideoView(props) {
       
       </div>
   
-      {data.L && data.L.rank === UserRank.ADMIN && <VideoAdminControls></VideoAdminControls>}
+      {data.L && data.L.rank === UserRank.ADMIN && <VideoAdminControls data={data}></VideoAdminControls>}
 
       <hr></hr>
       <List
@@ -294,8 +294,8 @@ function VideoPage() {
         <div className="max-w-screen-lg w-screen my-6 z-0">
           <VideoView data={pageData} videoComments={comments} id={id} refreshComments={refreshComments} setRating={setRating} next_video={navigate_to_next_video}/>
         </div>
-        <div className="inline-block ml-4 mt-2 w-44 align-top float-right">
-          <VideoList videos={pageData.RecommendedVideos} title="Recommendations" />
+        <div className="inline-block ml-4 mt-2 w-100 align-top float-right">
+          <VideoList videos={pageData.RecommendedVideos} title="Recommendations" inline={true}/>
         </div>
       </div>
     </>
