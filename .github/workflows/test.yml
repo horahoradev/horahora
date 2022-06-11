@@ -22,7 +22,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build the stack
-        run: make up
+        run: ./up.sh
       - name: Run integration tests
         run: cd tests && go run main.go
         if: always()
