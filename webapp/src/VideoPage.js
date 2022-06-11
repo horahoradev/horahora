@@ -110,7 +110,7 @@ function VideoAdminControls(props) {
 }
 
 function VideoView(props) {
-  let { data, id, setRating, next_video, videoComments, refreshComments} = props;
+  let { rating, data, id, setRating, next_video, videoComments, refreshComments} = props;
 
   // video_id, content (content of comment), and parent (parent comment id if a reply)
   let formik = useFormik({
@@ -131,12 +131,12 @@ function VideoView(props) {
     await refreshComments();
   };
 
-  function rate(rating) {
+  async function rate(rating) {
     if (id == 0) {
       // TODO: throw
       return;
     }
-    API.postRating(id, rating);
+    await API.postRating(id, rating);
     setRating(rating);
   }
 
@@ -150,7 +150,7 @@ function VideoView(props) {
           <span className="float-right">
             <span className="text-black">{data.Views} Views</span>
           </span>
-          <div className="inline-block relative top-5 float-right left-16 mr-2"><Rate allowHalf={true} value={data.Rating} onChange={rate}></Rate></div>
+          <div className="inline-block relative top-5 float-right left-16 mr-2"><Rate allowHalf={true} value={rating} onChange={rate}></Rate></div>
           <br />
           <span className="text-gray-600 text-xs">{data.UploadDate}</span>
         </div>
@@ -269,8 +269,8 @@ function VideoPage() {
 
     let fetchData = async () => {
       let data = await API.getVideo(id);
+      if (data) setRating(data.Rating);
       if (!ignore) setPageData(data);
-      if (!ignore) setRating(data.Rating);
 
       let userData = await API.getUserdata();
       if (!ignore) setUserData(userData);
@@ -283,7 +283,7 @@ function VideoPage() {
     return () => {
       ignore = true;
     };
-  }, [id, rating]);
+  }, [id]);
 
   if (pageData == null) return null;
 
@@ -292,7 +292,7 @@ function VideoPage() {
       <Header userData={userData} />
       <div className="flex justify-center mx-4">
         <div className=" w-screen my-6 z-0 min-w-400">
-          <VideoView data={pageData} videoComments={comments} id={id} refreshComments={refreshComments} setRating={setRating} next_video={navigate_to_next_video}/>
+          <VideoView data={pageData} videoComments={comments} id={id} refreshComments={refreshComments} setRating={setRating} rating={rating} next_video={navigate_to_next_video}/>
         </div>
         <div className="ml-4 mt-2 w-100 align-top float-right">
           <VideoList videos={pageData.RecommendedVideos} title="Recommendations" inline={true}/>
