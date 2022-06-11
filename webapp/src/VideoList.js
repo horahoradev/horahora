@@ -8,7 +8,7 @@ function Video(props) {
   const { video, inline} = props;
 
   return (
-      <div className={inline ? "h-24 w-96 relative inline-block m-1" : "px-2 h-44 w-44 m-1"}>
+      <div className={inline ? "h-24 w-80 relative inline-block m-1" : "px-2 h-44 w-44 m-1"}>
             <Link to={`/videos/${video.VideoID}`}>
         <div className="rounded relative inline-block w-44">
           <img
@@ -21,10 +21,10 @@ function Video(props) {
           </div>
         {/* TODO(ivan): deal with text truncation (hoping to have a multi-line text truncation,
                         which can't be done purely in css) */}
-        <div className={inline ? "inline-block w-36 align-top h-44 inline-flex ml-2 justify-between  h-24 flex-col" : ""}>
+        <div className={inline ? "inline-block align-top h-44 inline-flex ml-2 justify-between  h-24 flex-col" : ""}>
           <div className="text-xs font-bold text-blue-500  py-1 text-black">{video.Title}</div>
           <div className="text-xs text-black">Views: {video.Views}</div>
-          <Rate className={"z-30 w-full"} allowHalf={true} disabled={true} value={video.Rating}></Rate>
+          <Rate className={"z-30"} allowHalf={true} disabled={true} value={video.Rating}></Rate>
         </div>
         </Link>
       </div>
