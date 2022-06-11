@@ -41,7 +41,7 @@ function VideoPlayer(props) {
       <video
           ref={videoRef}
           id="my-player"
-          className="bg-black dark:bg-black w-full object-contain object-center z-0"
+          className="bg-black dark:bg-black w-full max-w-screen-lg object-contain object-center z-0"
           style={{ height: `${VIDEO_HEIGHT}rem` }}
           onEnded={next_video}
           controls
@@ -195,7 +195,7 @@ function VideoView(props) {
       
       </div>
   
-      {data.L && data.L.rank === UserRank.ADMIN && <VideoAdminControls></VideoAdminControls>}
+      {data.L && data.L.rank === UserRank.ADMIN && <VideoAdminControls data={data}></VideoAdminControls>}
 
       <hr></hr>
       <List
@@ -291,11 +291,11 @@ function VideoPage() {
     <>
       <Header userData={userData} />
       <div className="flex justify-center mx-4">
-        <div className="max-w-screen-lg w-screen my-6 z-0">
+        <div className=" w-screen my-6 z-0 min-w-400">
           <VideoView data={pageData} videoComments={comments} id={id} refreshComments={refreshComments} setRating={setRating} next_video={navigate_to_next_video}/>
         </div>
-        <div className="inline-block ml-4 mt-2 w-44 align-top float-right">
-          <VideoList videos={pageData.RecommendedVideos} title="Recommendations" />
+        <div className="ml-4 mt-2 w-100 align-top float-right">
+          <VideoList videos={pageData.RecommendedVideos} title="Recommendations" inline={true}/>
         </div>
       </div>
     </>
