@@ -103,7 +103,7 @@ func (v *VideoDLRequest) PublishVideoInprogress(dlStatus int, action string) err
 		return err
 	}
 
-	err = v.Rabbitmq.Send("/topic/state", "text/json", payload, stomp.SendOpt.Receipt)
+	err = v.Rabbitmq.Send("/topic/state", "text/json", payload, stomp.SendOpt.Receipt, stomp.SendOpt.Header("persistent", "false"), stomp.SendOpt.Header("expires", fmt.Sprintf("%d", time.Now().Local().UnixMilli()+30000)))
 	if err != nil {
 		return fmt.Errorf("Publish: %v", err)
 	}
