@@ -115,7 +115,6 @@ function ArchivalPage() {
             conn != null && conn.subscribe(`/topic/state`, function(message) {
                 mutex.lock();
                 let body = JSON.parse(message.body);
-                message.ack();
                 if (body.Type == "deletion") {
                     console.log(`Got delete ${body.Video.VideoID}`);
                     setVideoInProgressDataset(videosInProg => {
@@ -129,8 +128,7 @@ function ArchivalPage() {
                     console.log(`Got insert ${body.Video.VideoID}`);
 
                     setVideoInProgressDataset(videosInProg => {
-                        if (videosInProg == null) { return videosInProg; }
-                        let dataset = JSON.parse(JSON.stringify(videosInProg))
+                        let dataset = videosInProg != null ? JSON.parse(JSON.stringify(videosInProg)) : [];
 
                         // // Does it already exist? If not, subscribe
                         let videosID = dataset.filter((item)=>item.VideoID == body.Video.VideoID);
@@ -139,7 +137,7 @@ function ArchivalPage() {
                         }
 
                         // Needed for upsert, filter it out if it's in there with a different dlStatus
-                        dataset = dataset.filter((item)=>item.VideoID != body.Video.VideoID || body.Video.DlStatus != item.DlStatus);
+                        dataset = dataset.filter((item)=>item.VideoID != body.Video.VideoID || body.Video.DlStatus == item.DlStatus);
                         body.Video.progress = 0;
                         // If it's downloading, it goes at the beginning
                         if (body.Video.DlStatus == "Downloading") {
@@ -152,9 +150,10 @@ function ArchivalPage() {
                         return dataset;
                     });
                 }
+                message.ack();
+
                 mutex.unlock();
-            }, {'prefetch-count': 100, 'ack': 'client-individual', 'id': String(Math.random() * 1000)});
-            return conn;
+            }, {'prefetch-count': 1, 'ack': 'client-individual', 'id': String(Math.random() * 1000)});
 
       }, [conn]);
 
