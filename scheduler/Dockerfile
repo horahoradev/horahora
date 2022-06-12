@@ -12,7 +12,7 @@ RUN cd ffmpeg-git-*-amd64-static && cp ffmpeg /usr/local/bin/ffmpeg
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-FROM golang:1.16-alpine as builder
+FROM golang:1.17-alpine as builder
 LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
 WORKDIR /horahora/scheduler
@@ -35,7 +35,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build go build -o /scheduler.bin
 FROM python:3.9-alpine AS runtime
 LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
-RUN apk add --update --no-cache zlib-dev musl-dev libc-dev libffi-dev gcc g++ git pwgen && git clone -b STOMP_progress --depth 5 https://github.com/horahoradev/yt-dlp.git yt-dlp
+RUN apk add --update --no-cache zlib-dev musl-dev libc-dev libffi-dev gcc g++ git pwgen && git clone -b STOMP_progress --depth 2 https://github.com/horahoradev/yt-dlp.git yt-dlp
 
 # download yt-dlp and prepare it for usage
 WORKDIR /yt-dlp
