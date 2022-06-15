@@ -4,3 +4,4 @@ data*
 secrets.env
 docker-compose.yml
 sql/backup*
+/videos
