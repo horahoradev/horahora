@@ -1,8 +1,7 @@
 FROM node:14-alpine
 
 # https://nodejs.org/docs/latest-v14.x/api/corepack.html#corepack_enabling_the_feature
-RUN corepack enable && \
-    corepack prepare yarn@1.22.18 
+RUN corepack enable
 
 WORKDIR /webapp
 
