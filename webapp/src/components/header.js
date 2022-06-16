@@ -1,4 +1,4 @@
-import {useCallback, useState} from "react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -40,22 +40,22 @@ export function Header({ userData, dataless }) {
 }
 
 function Search() {
-    const [redirectVal, setRedirectVal] = useState(null);
+  const [redirectVal, setRedirectVal] = useState(null);
 
-    let onSubmit = useCallback((e) => {
-        e.preventDefault();
-        const category = document.getElementById('category').value;
-        const order = document.querySelector('input[name="order"]:checked').value;
-        const search = document.querySelector('input[name="search"]').value;
+  let onSubmit = useCallback((e) => {
+    e.preventDefault();
+    const category = document.getElementById('category').value;
+    const order = document.querySelector('input[name="order"]:checked').value;
+    const search = document.querySelector('input[name="search"]').value;
 
-        setRedirectVal(`/?search=${search}&order=${order}&category=${category}`)
-    }, []);
+    setRedirectVal(`/?search=${search}&order=${order}&category=${category}`)
+  }, []);
 
-    const history = useHistory();
-    if (redirectVal){
-        history.push(redirectVal);
-        setRedirectVal(null);
-    }
+  const history = useHistory();
+  if (redirectVal) {
+    history.push(redirectVal);
+    setRedirectVal(null);
+  }
 
   return (
     <>
@@ -68,26 +68,38 @@ function Search() {
             <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
           }
         />
-              <div id="hidden-search-modal" className="absolute hidden text-black bg-white w-full max-w-sm p-5 space-y-3">
-                  <h1 className="text-black text-base" >SEARCH OPTIONS</h1>
-                  <b className="text-black text-base" >Order by: </b>
-                  <select name="category" className="bg-white" id="category">
-                      <option value="upload_date">upload date</option>
-                      <option value="rating">rating</option>
-                      <option value="views">views</option>
-                      <option value="my_ratings">my ratings</option>
-                  </select>
-                  <br></br>
-                    <input type="radio" id="desc" name="order" defaultChecked={true} value="desc"></input>
-                          <label htmlFor="desc">Desc</label>
-                    <input type="radio" id="asc" name="order" value="asc"></input>
-                            <label htmlFor="asc">Asc</label>
-                  <br></br>
-                  <Button block type="primary" htmlType="submit" size="large">Submit</Button>
-              </div>
+        <div id="hidden-search-modal" className="absolute hidden text-black bg-white w-full max-w-sm p-5 space-y-3">
+          <h1 className="text-black text-base" >SEARCH OPTIONS</h1>
+          <b className="text-black text-base" >Order by: </b>
+          <select name="category" className="bg-white" id="category">
+            <option value="upload_date">upload date</option>
+            <option value="rating">rating</option>
+            <option value="views">views</option>
+            <option value="my_ratings">my ratings</option>
+          </select>
+          <br></br>
+          <input type="radio" id="desc" name="order" defaultChecked={true} value="desc"></input>
+          <label htmlFor="desc">Desc</label>
+          <input type="radio" id="asc" name="order" value="asc"></input>
+          <label htmlFor="asc">Asc</label>
+          <br></br>
+          <Button block type="primary" htmlType="submit" size="large">Submit</Button>
+        </div>
       </form>
     </>
   );
+}
+
+function UserNav(props) {
+  const { userData } = props;
+
+  if (userData && userData.username && userData.rank == UserRank.ADMIN) {
+    return <LoggedInAdminNav userData={userData} />;
+  } else if (userData && userData.username) {
+    return <LoggedInUserNav userData={userData} />;
+  } else {
+    return <LoggedOutUserNav />;
+  }
 }
 
 function LoggedInUserNav(props) {
@@ -121,7 +133,7 @@ function LoggedInUserNav(props) {
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
-        <b className="text-blue-500">{userData.username}</b>
+          <b className="text-blue-500">{userData.username}</b>
           <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
         </Button>
       </Dropdown>
@@ -134,7 +146,7 @@ function LoggedInAdminNav(props) {
   const [darkMode, setDarkMode] = useState(true);
   const { switcher, themes, currentTheme, status } = useThemeSwitcher();
 
-  let toggleDarkmode = function() {
+  let toggleDarkmode = function () {
     // must be capture by value or something goiong on here
     switcher({ theme: !darkMode ? themes.dark : themes.light });
     nightwind.toggle();
@@ -158,11 +170,11 @@ function LoggedInAdminNav(props) {
 
 
       <Menu.Item key="darkmode" icon={<FontAwesomeIcon icon={faSun} />}>
-        <Switch onChange={()=>toggleDarkmode()}></Switch>
+        <Switch onChange={() => toggleDarkmode()}></Switch>
       </Menu.Item>
 
       <Menu.Divider />
-       
+
 
       <Menu.Item
         key="password-reset"
@@ -192,7 +204,7 @@ function LoggedInAdminNav(props) {
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
-        <b className="text-blue-500">{userData.username}</b>
+          <b className="text-blue-500">{userData.username}</b>
           <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
         </Button>
       </Dropdown>
@@ -213,22 +225,12 @@ function LoggedOutUserNav() {
   );
 }
 
-function UserNav(props) {
-  const { userData } = props;
 
-  if (userData && userData.username &&  userData.rank == UserRank.ADMIN ) {
-    return <LoggedInAdminNav userData={userData} />;
-  } else if(userData && userData.username) {
-    return <LoggedInUserNav userData={userData} />;
-  } else {
-    return <LoggedOutUserNav />;
-  }
+
+function showModal() {
+  document.getElementById('hidden-search-modal').style.setProperty('display', 'block', 'important');
 }
 
-function showModal(){
-    document.getElementById('hidden-search-modal').style.setProperty('display', 'block', 'important');
-}
-
-function hideModal(){
-    document.getElementById('hidden-search-modal').style.setProperty('display', 'none', 'important');
+function hideModal() {
+  document.getElementById('hidden-search-modal').style.setProperty('display', 'none', 'important');
 }
