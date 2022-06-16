@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import Footer from "./Footer";
 
-import Header from "./Header";
+import { Header } from "./components/header";
 
 import * as API from "./api";
 

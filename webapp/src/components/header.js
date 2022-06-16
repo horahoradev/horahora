@@ -16,6 +16,29 @@ import { UserRank } from "../api/types";
 import nightwind from "nightwind/helper"
 import { useThemeSwitcher } from 'react-css-theme-switcher';
 
+export function Header({ userData, dataless }) {
+
+  return (
+    <nav className="h-16 bg-white shadow flex justify-center">
+      <div className="max-w-screen-lg w-screen flex justify-start items-center mx-4">
+        <div className="flex justify-start flex-grow-0">
+          <Link to="/" className="text-2xl font-black text-blue-500">
+            Horahora
+          </Link>
+        </div>
+        <div className="flex-grow flex mx-8">
+          <Search />
+        </div>
+        {!dataless && (
+          <div className="flex-grow-0">
+            <UserNav userData={userData} />
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+}
+
 function Search() {
     const [redirectVal, setRedirectVal] = useState(null);
 
@@ -209,29 +232,3 @@ function showModal(){
 function hideModal(){
     document.getElementById('hidden-search-modal').style.setProperty('display', 'none', 'important');
 }
-
-function Header(props) {
-  const { userData, dataless } = props;
-
-  return (
-    <nav className="h-16 bg-white shadow flex justify-center">
-      <div className="max-w-screen-lg w-screen flex justify-start items-center mx-4">
-        <div className="flex justify-start flex-grow-0">
-          <Link to="/" className="text-2xl font-black text-blue-500">
-            Horahora
-          </Link>
-        </div>
-        <div className="flex-grow flex mx-8">
-          <Search />
-        </div>
-        {!dataless && (
-          <div className="flex-grow-0">
-            <UserNav userData={userData} />
-          </div>
-        )}
-      </div>
-    </nav>
-  );
-}
-
-export default Header;

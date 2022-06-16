@@ -10,7 +10,7 @@ import {
     faUser,
   } from "@fortawesome/free-solid-svg-icons";
 import * as API from "./api";
-import Header from "./Header";
+import { Header } from "./components/header";
 import VideoList from "./VideoList";
 import Paginatione from "./Pagination";
 import Footer from "./Footer";
