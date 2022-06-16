@@ -15,22 +15,21 @@ import { Switch, Button, Dropdown, Input, Menu } from "antd";
 import { UserRank } from "../api/types";
 import nightwind from "nightwind/helper"
 import { useThemeSwitcher } from 'react-css-theme-switcher';
+import { onParentBlur } from "../lib/dom"
 
 export function Header({ userData, dataless }) {
 
   return (
     <nav className="h-16 bg-white shadow flex justify-center">
-      <div className="max-w-screen-lg w-screen flex justify-start items-center mx-4">
+      <div className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
         <div className="flex justify-start flex-grow-0">
           <Link to="/" className="text-2xl font-black text-blue-500">
             Horahora
           </Link>
         </div>
-        <div className="flex-grow flex mx-8">
-          <Search />
-        </div>
+        <Search />
         {!dataless && (
-          <div className="flex-grow-0">
+          <div className="flex-grow-0 ml-auto">
             <UserNav userData={userData} />
           </div>
         )}
@@ -41,14 +40,21 @@ export function Header({ userData, dataless }) {
 
 function Search() {
   const [redirectVal, setRedirectVal] = useState(null);
+  const [isFocused, switchFocus] = useState(false);
 
-  let onSubmit = useCallback((e) => {
+  let handleSearch = useCallback((e) => {
     e.preventDefault();
     const category = document.getElementById('category').value;
     const order = document.querySelector('input[name="order"]:checked').value;
     const search = document.querySelector('input[name="search"]').value;
 
-    setRedirectVal(`/?search=${search}&order=${order}&category=${category}`)
+    const params = new URLSearchParams([
+      ["category", category],
+      ["order", order],
+      ["search", search],
+    ]);
+
+    setRedirectVal(`/?${params.toString()}`)
   }, []);
 
   const history = useHistory();
@@ -58,35 +64,51 @@ function Search() {
   }
 
   return (
-    <>
-      <form onSubmit={onSubmit} className="w-full max-w-sm z-50" onMouseEnter={showModal} onMouseLeave={hideModal}>
-        <Input
-          name="search"
-          size="large"
-          placeholder="Search"
-          prefix={
-            <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
-          }
-        />
-        <div id="hidden-search-modal" className="absolute hidden text-black bg-white w-full max-w-sm p-5 space-y-3">
-          <h1 className="text-black text-base" >SEARCH OPTIONS</h1>
-          <b className="text-black text-base" >Order by: </b>
-          <select name="category" className="bg-white" id="category">
-            <option value="upload_date">upload date</option>
-            <option value="rating">rating</option>
-            <option value="views">views</option>
-            <option value="my_ratings">my ratings</option>
-          </select>
-          <br></br>
-          <input type="radio" id="desc" name="order" defaultChecked={true} value="desc"></input>
-          <label htmlFor="desc">Desc</label>
-          <input type="radio" id="asc" name="order" value="asc"></input>
-          <label htmlFor="asc">Asc</label>
-          <br></br>
-          <Button block type="primary" htmlType="submit" size="large">Submit</Button>
-        </div>
-      </form>
-    </>
+    <form
+      onSubmit={handleSearch}
+      className="flex-grow flex flex-col w-full max-w-sm"
+      onBlur={onParentBlur(() => {
+        switchFocus(false)
+      })}
+    >
+      <Input
+        name="search"
+        size="large"
+        placeholder="Search"
+        prefix={
+          <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
+        }
+        onFocus={() => {
+          switchFocus(true)
+        }}
+        onBlur={(event) => {
+          event.preventDefault()
+        }}
+      />
+      <div 
+        className={
+          isFocused
+            ? "absolute top-14 z-10 text-black bg-white w-full max-w-sm p-4 visible opacity-1 duration-250 transition-opacity transition-visibility"
+            : "absolute top-14 z-10 text-black bg-white w-full max-w-sm p-4 invisible opacity-0 duration-250 transition-opacity transition-visibility"
+        } 
+        tabIndex={0}
+      >
+        <label htmlFor="category" className="text-black text-base" >Order by: </label>
+        <select name="category" className="bg-white" id="category">
+          <option value="upload_date">upload date</option>
+          <option value="rating">rating</option>
+          <option value="views">views</option>
+          <option value="my_ratings">my ratings</option>
+        </select>
+        <br/>
+        <input type="radio" id="desc" name="order" defaultChecked={true} value="desc"></input>
+        <label htmlFor="desc">Desc</label>
+        <input type="radio" id="asc" name="order" value="asc"></input>
+        <label htmlFor="asc">Asc</label>
+        <br/>
+        <Button block type="primary" htmlType="submit" size="large">Submit</Button>
+      </div>
+    </form>
   );
 }
 
