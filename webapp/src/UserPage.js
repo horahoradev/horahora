@@ -8,7 +8,7 @@ import Footer from "./Footer";
 import { UserOutlined } from '@ant-design/icons';
 
 import * as API from "./api";
-import Header from "./Header";
+import { Header } from "./components/header";
 import { UserRank } from "./api/types";
 import VideoList from "./VideoList";
 import Paginatione from "./Pagination";

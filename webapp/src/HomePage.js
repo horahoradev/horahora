@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from 'react-router';
 
 import * as API from "./api";
-import Header from "./Header";
+import { Header } from "./components/header";
 import VideoList from "./VideoList";
 import Paginatione from "./Pagination";
 import { useHistory } from "react-router-dom";

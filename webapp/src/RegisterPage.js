@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import PrivacyPolicy from "./PrivacyPolicy";
 import TermsOfService from "./TOS";
-import Header from "./Header";
+import { Header } from "./components/header";
 
 import Footer from "./Footer";
 import * as API from "./api";

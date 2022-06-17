@@ -5,7 +5,7 @@ import * as Stomp from '@stomp/stompjs';
 import { useMutex } from 'react-context-mutex';
 
 import * as API from "./api";
-import Header from "./Header";
+import { Header } from "./components/header";
 import cloneDeep from 'lodash/cloneDeep';
 
 
