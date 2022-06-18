@@ -9,6 +9,19 @@ import Footer from "./Footer";
 import { Header } from "./components/header";
 import * as API from "./api";
 
+export function PasswordResetPage() {
+  return (
+    <>
+      <Header dataless />
+      <div className="flex justify-center mx-4">
+        <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
+          <PasswordResetForm />
+        </div>
+      </div>
+    </>
+  );
+}
+
 function PasswordResetForm() {
   let history = useHistory();
   // TODO(ivan): validation, form errors
@@ -70,18 +83,3 @@ function PasswordResetForm() {
     </div>
   );
 }
-
-function PasswordResetPage() {
-  return (
-    <>
-      <Header dataless />
-      <div className="flex justify-center mx-4">
-        <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
-          <PasswordResetForm />
-        </div>
-      </div>
-    </>
-  );
-}
-
-export default PasswordResetPage;

@@ -4,11 +4,11 @@ import { HomePage } from "./home";
 import { LoginPage } from "./login";
 import { LogoutPage } from "./logout";
 import { VideoPage } from "./video";
-import { UserPage } from "./UserPage";
+import { UserPage } from "./user";
 import { ArchivalPage } from "./archival";
 import { RegisterPage } from "./register";
-import PasswordResetPage from "./Passwordreset";
-import { AuditPage } from "./AuditPage";
+import { PasswordResetPage } from "./password-reset";
+import { AuditPage } from "./audit";
 
 export function Pages() {
   return (
