@@ -2,7 +2,7 @@ import { Route, Switch } from "react-router";
 
 import { HomePage } from "./home";
 import { LoginPage } from "./login";
-import LogoutPage from "./LogoutPage";
+import { LogoutPage } from "./logout";
 import VideoPage from "./VideoPage";
 import UserPage from "./UserPage";
 import { ArchivalPage } from "./archival";
