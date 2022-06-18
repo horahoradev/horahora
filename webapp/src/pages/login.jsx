@@ -4,11 +4,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import Footer from "./Footer";
+import Footer from "../Footer";
 
-import { Header } from "./components/header";
+import { Header } from "../components/header";
 
-import * as API from "./api";
+import * as API from "../api";
+
+export function LoginPage() {
+  return (
+    <>
+      <Header dataless />
+      <div className="flex justify-center mx-4">
+        <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
+          <LoginForm />
+        </div>
+      </div>
+    </>
+  );
+}
 
 function LoginForm() {
   let history = useHistory();
@@ -72,17 +85,4 @@ function LoginForm() {
   );
 }
 
-function LoginPage() {
-  return (
-    <>
-      <Header dataless />
-      <div className="flex justify-center mx-4">
-        <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
-          <LoginForm />
-        </div>
-      </div>
-    </>
-  );
-}
 
-export default LoginPage;

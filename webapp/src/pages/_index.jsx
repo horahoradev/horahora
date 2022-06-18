@@ -1,14 +1,14 @@
 import { Route, Switch } from "react-router";
 
 import { HomePage } from "./home";
-import LoginPage from "./LoginPage";
+import { LoginPage } from "./login";
 import LogoutPage from "./LogoutPage";
 import VideoPage from "./VideoPage";
 import UserPage from "./UserPage";
 import { ArchivalPage } from "./archival";
 import RegisterPage from "./RegisterPage";
 import PasswordResetPage from "./Passwordreset";
-import {AuditPage} from "./AuditPage";
+import { AuditPage } from "./AuditPage";
 
 export function Pages() {
   return (
