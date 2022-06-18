@@ -1,0 +1,59 @@
+{
+	"folders": [
+		{
+			"name": "horahora",
+			"path": "."
+		},
+		{
+			"name": "front_api",
+			"path": "front_api"
+		},
+		{
+			"name": "backup_service",
+			"path": "backup_service"
+		},
+		{
+			"name": "scheduler",
+			"path": "scheduler"
+		},
+		{
+			"name": "stomp_proxy",
+			"path": "stomp_proxy"
+		},
+		{
+			"name": "tests",
+			"path": "tests"
+		},
+		{
+			"name": "user_service",
+			"path": "user_service"
+		},
+		{
+			"name": "video_service",
+			"path": "video_service"
+		},
+		{
+			"name": "webapp",
+			"path": "webapp"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/.svn": true,
+			"**/.hg": true,
+			"**/CVS": true,
+			"**/.DS_Store": true,
+			"**/Thumbs.db": true,
+			"**/node_modules": true,
+			"front_api": true,
+			"backup_service": true,
+			"scheduler": true,
+			"stomp_proxy": true,
+			"tests": true,
+			"user_service": true,
+			"video_service": true,
+			"webapp": true
+		}
+	}
+}

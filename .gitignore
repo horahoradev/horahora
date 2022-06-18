@@ -1,3 +1,6 @@
+# vscode files
+*.code-workspace
+
 youtube-dl*
 packer/vpn_conf*
 data*

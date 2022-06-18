@@ -1,0 +1,11 @@
+{
+  "gopls": {
+    "ui.semanticTokens": true,
+  },
+  "[json]": {
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.tabSize": 2
+  }
+}
