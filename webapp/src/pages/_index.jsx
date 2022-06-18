@@ -6,7 +6,7 @@ import { LogoutPage } from "./logout";
 import VideoPage from "./VideoPage";
 import UserPage from "./UserPage";
 import { ArchivalPage } from "./archival";
-import RegisterPage from "./RegisterPage";
+import { RegisterPage } from "./register";
 import PasswordResetPage from "./Passwordreset";
 import { AuditPage } from "./AuditPage";
 

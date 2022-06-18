@@ -4,14 +4,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import PrivacyPolicy from "./PrivacyPolicy";
-import TermsOfService from "./TOS";
-import { Header } from "./components/header";
+import PrivacyPolicy from "../PrivacyPolicy";
+import TermsOfService from "../TOS";
+import { Header } from "../components/header";
 
-import Footer from "./Footer";
-import * as API from "./api";
+import Footer from "../Footer";
+import * as API from "../api";
 
-function RegistrationForm() {
+export function RegistrationForm() {
   let history = useHistory();
   // TODO(ivan): validation, form errors
   // TODO(ivan): submitting state
@@ -98,5 +98,3 @@ function RegisterPage() {
     </>
   );
 }
-
-export default RegisterPage;
