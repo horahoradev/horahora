@@ -4,7 +4,7 @@ import { HomePage } from "./home";
 import { LoginPage } from "./login";
 import { LogoutPage } from "./logout";
 import { VideoPage } from "./video";
-import UserPage from "./UserPage";
+import { UserPage } from "./UserPage";
 import { ArchivalPage } from "./archival";
 import { RegisterPage } from "./register";
 import PasswordResetPage from "./Passwordreset";
