@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useLocation } from 'react-router';
 
-import * as API from "./api";
-import { Header } from "./components/header";
-import VideoList from "./VideoList";
-import Paginatione from "./Pagination";
+import * as API from "../api";
+import { Header } from "../components/header";
+import VideoList from "../VideoList";
+import Paginatione from "../Pagination";
 import { useHistory } from "react-router-dom";
 
-import Footer from "./Footer";
+import Footer from "../Footer";
 
-function HomePage() {
+export function HomePage() {
   let history = useHistory();
 
   const [pageData, setPageData] = useState(null);
