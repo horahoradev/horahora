@@ -8,7 +8,7 @@ import UserPage from "./UserPage";
 import { ArchivalPage } from "./archival";
 import RegisterPage from "./RegisterPage";
 import PasswordResetPage from "./Passwordreset";
-import AuditPage from "./AuditPage";
+import {AuditPage} from "./AuditPage";
 
 export function Pages() {
   return (

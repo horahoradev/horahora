@@ -1,4 +1,4 @@
-
+import { Pages } from "./pages/_index"
 import Footer from "./Footer";
 import { ThemeSwitcherProvider } from 'react-css-theme-switcher';
 
@@ -11,10 +11,10 @@ function App() {
 
   return (
     <ThemeSwitcherProvider defaultTheme="dark" themeMap={themes}>
-    <div className=" bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
-      
-    </div>
-    <Footer></Footer>
+      <div className=" bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
+        <Pages />
+      </div>
+      <Footer></Footer>
     </ThemeSwitcherProvider>
   );
 }
