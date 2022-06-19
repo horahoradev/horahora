@@ -24,6 +24,7 @@ func main() {
 
 	var client *http.Client
 	var err error
+authloop:
 	for start := time.Now(); time.Since(start) < time.Minute*5; time.Sleep(time.Second * 30) {
 		client, err = authenticate("admin", "admin")
 		if err != nil {
@@ -42,7 +43,7 @@ func main() {
 			err := makeArchiveRequest(client, url)
 			if err != nil {
 				fmt.Errorf("Failed to make archival request. Err: %s", err)
-				continue
+				goto authloop
 			}
 		}
 		break
