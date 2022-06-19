@@ -4,16 +4,77 @@ import {Link, useHistory, useParams} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faThumbsDown, faUserCircle, faUser} from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
-import Footer from "./Footer";
+import Footer from "../Footer";
 
-import * as API from "./api";
-import { Header } from "./components/header";
-import { UserRank } from "./api/types";
-import VideoList from "./VideoList";
+import * as API from "../api";
+import { Header } from "../components/header";
+import { UserRank } from "../api/types";
+import VideoList from "../VideoList";
 import { UserOutlined } from "@ant-design/icons";
 
 const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
+
+export function VideoPage() {
+  let history = useHistory();
+
+
+  let { id } = useParams();
+
+  const [pageData, setPageData] = useState(null);
+  const [rating, setRating] = useState(0.0);
+  const [comments, setComments] = useState([]);
+  const [userData, setUserData] = useState(null);
+
+  function navigate_to_next_video(){
+    if (!pageData || !pageData.RecommendedVideos) return;
+    history.push("/videos/" + pageData.RecommendedVideos[0].VideoID);
+  };
+
+  async function refreshComments(){
+    let videoComments = await API.getComments(id);
+    setComments(videoComments);
+  }
+
+
+  // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
+  useEffect(() => {
+    let ignore = false;
+
+    let fetchData = async () => {
+      let data = await API.getVideo(id);
+      if (data) setRating(data.Rating);
+      if (!ignore) setPageData(data);
+
+      let userData = await API.getUserdata();
+      if (!ignore) setUserData(userData);
+
+      await refreshComments();
+    };
+
+    fetchData();
+
+    return () => {
+      ignore = true;
+    };
+  }, [id]);
+
+  if (pageData == null) return null;
+
+  return (
+    <>
+      <Header userData={userData} />
+      <div className="flex justify-center mx-4">
+        <div className=" w-screen my-6 z-0 min-w-400">
+          <VideoView data={pageData} videoComments={comments} id={id} refreshComments={refreshComments} setRating={setRating} rating={rating} next_video={navigate_to_next_video}/>
+        </div>
+        <div className="ml-4 mt-2 w-100 align-top float-right">
+          <VideoList videos={pageData.RecommendedVideos} title="Recommendations" inline={true}/>
+        </div>
+      </div>
+    </>
+  );
+}
 
 function VideoPlayer(props) {
   let { url, next_video} = props;
@@ -241,65 +302,4 @@ function VideoView(props) {
   );
 }
 
-function VideoPage() {
-  let history = useHistory();
 
-
-  let { id } = useParams();
-
-  const [pageData, setPageData] = useState(null);
-  const [rating, setRating] = useState(0.0);
-  const [comments, setComments] = useState([]);
-  const [userData, setUserData] = useState(null);
-
-  function navigate_to_next_video(){
-    if (!pageData || !pageData.RecommendedVideos) return;
-    history.push("/videos/" + pageData.RecommendedVideos[0].VideoID);
-  };
-
-  async function refreshComments(){
-    let videoComments = await API.getComments(id);
-    setComments(videoComments);
-  }
-
-
-  // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
-  useEffect(() => {
-    let ignore = false;
-
-    let fetchData = async () => {
-      let data = await API.getVideo(id);
-      if (data) setRating(data.Rating);
-      if (!ignore) setPageData(data);
-
-      let userData = await API.getUserdata();
-      if (!ignore) setUserData(userData);
-
-      await refreshComments();
-    };
-
-    fetchData();
-
-    return () => {
-      ignore = true;
-    };
-  }, [id]);
-
-  if (pageData == null) return null;
-
-  return (
-    <>
-      <Header userData={userData} />
-      <div className="flex justify-center mx-4">
-        <div className=" w-screen my-6 z-0 min-w-400">
-          <VideoView data={pageData} videoComments={comments} id={id} refreshComments={refreshComments} setRating={setRating} rating={rating} next_video={navigate_to_next_video}/>
-        </div>
-        <div className="ml-4 mt-2 w-100 align-top float-right">
-          <VideoList videos={pageData.RecommendedVideos} title="Recommendations" inline={true}/>
-        </div>
-      </div>
-    </>
-  );
-}
-
-export default VideoPage;
