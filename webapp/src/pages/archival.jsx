@@ -4,13 +4,13 @@ import { CheckOutlined, SyncOutlined,  } from '@ant-design/icons';
 import * as Stomp from '@stomp/stompjs';
 import { useMutex } from 'react-context-mutex';
 
-import * as API from "./api";
-import { Header } from "./components/header";
+import * as API from "../api";
+import { Header } from "../components/header";
 import cloneDeep from 'lodash/cloneDeep';
 
 
 let id =  Math.floor(Math.random() * 1000);
-function ArchivalPage() {
+export function ArchivalPage() {
     const [userData, setUserData] = useState(null);
     const [archivalSubscriptions, setArchivalSubscriptions] = useState([]);
     const [timelineEvents, setTimelineEvents] = useState([]);
@@ -352,5 +352,3 @@ function ArchivalPage() {
                   </>
     );
 }
-
-export default ArchivalPage;
