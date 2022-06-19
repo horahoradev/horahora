@@ -29,7 +29,7 @@ export function Pages() {
         <UserPage />
       </Route>
       <Route exact path="/register">
-        <RegisterPage></RegisterPage>
+        <RegisterPage/>
       </Route>
       <Route exact path="/archive-requests">
         <ArchivalPage />

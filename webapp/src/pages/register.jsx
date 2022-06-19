@@ -11,7 +11,20 @@ import { Header } from "../components/header";
 import Footer from "../Footer";
 import * as API from "../api";
 
-export function RegistrationForm() {
+export function RegisterPage() {
+  return (
+    <>
+      <Header dataless />
+      <div className="flex justify-center mx-4">
+        <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
+          <RegistrationForm />
+        </div>
+      </div>
+    </>
+  );
+}
+
+function RegistrationForm() {
   let history = useHistory();
   // TODO(ivan): validation, form errors
   // TODO(ivan): submitting state
@@ -83,18 +96,5 @@ export function RegistrationForm() {
         </Input.Group>
       </form>
     </div>
-  );
-}
-
-function RegisterPage() {
-  return (
-    <>
-      <Header dataless />
-      <div className="flex justify-center mx-4">
-        <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
-          <RegistrationForm />
-        </div>
-      </div>
-    </>
   );
 }

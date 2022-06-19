@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import Footer from "./Footer";
+import Footer from "../Footer";
 
-import { Header } from "./components/header";
-import * as API from "./api";
+import { Header } from "../components/header";
+import * as API from "../api";
 
 export function PasswordResetPage() {
   return (
