@@ -24,7 +24,7 @@ function Video(props) {
         <div className={inline ? "inline-block align-top h-44 inline-flex ml-2 justify-between  h-24 flex-col" : ""}>
           <div className="text-xs font-bold text-blue-500  py-1 text-black">{video.Title}</div>
           <div className="text-xs text-black">Views: {video.Views}</div>
-          <Rate className={"z-30"} allowHalf={true} disabled={true} value={video.Rating}></Rate>
+          {inline && <Rate className={"z-30"} allowHalf={true} disabled={true} value={video.Rating}></Rate>}
         </div>
         </Link>
       </div>
