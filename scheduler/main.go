@@ -79,7 +79,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 
-		repo := models.NewArchiveRequest(cfg.Conn, cfg.Redlock)
+		repo := models.NewArchiveRequest(cfg.Conn)
 
 		// Wipe the in-progress downloads that didn't finish
 		err := repo.WipeDownloadsInProgress()
@@ -103,7 +103,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 
-		err := grpcserver.NewGRPCServer(ctx, cfg.Conn, cfg.Redlock, 7777)
+		err := grpcserver.NewGRPCServer(ctx, cfg.Conn, 7777)
 		if err != nil {
 			log.Error(err)
 		}

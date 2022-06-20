@@ -87,7 +87,6 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 		for res.Next() {
 			req := models.VideoDLRequest{
 				ParentURL: url,
-				Redsync:   p.Redsync,
 				Db:        p.Db,
 				Rabbitmq:  p.Rabbit,
 			}

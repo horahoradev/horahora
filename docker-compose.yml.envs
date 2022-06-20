@@ -4,15 +4,11 @@ services:
   react_app:
     build: webapp
     restart: always
-    ports:
-      - "3000:3000"
     volumes:
       - ./webapp/src:/webapp/src
   frontapi:
     $FRONT_API_BUILD_DIRECTIVE
     restart: always
-    ports:
-      - "8083:8083"
     environment:
       - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - UserServiceGRPCAddress=userservice:7777
@@ -29,9 +25,6 @@ services:
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=scheduler
-      - redis_host=redis
-      - redis_port=6379
-      - redis_pass=
       # TODO(ivan): probably should add this to config
       - GRPCPort=7777
       - VideoServiceGRPCAddress=videoservice:7777
@@ -54,9 +47,6 @@ services:
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=videoservice
-      - redis_host=redis
-      - redis_port=6379
-      - redis_pass=
       - GRPCPort=7777
       - UserServiceGRPCAddress=userservice:7777
       - BucketName=$BUCKET_NAME
@@ -86,16 +76,11 @@ services:
         RSA_KEYPAIR=
 $JWT_KEYPAIR
       - GRPCPort=7777
-  redis:
-    image: "redis:alpine"
-    restart: always
   postgres:
     build:
       context: .
       dockerfile: Dockerfile.postgres
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -135,6 +120,7 @@ $JWT_KEYPAIR
       - scheduler
       - videoservice
       - stomp_proxy
+      - minio
     volumes:
       - ./static:/etc/nginx/html/static/images
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf

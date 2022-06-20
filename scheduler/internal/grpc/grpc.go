@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/go-redsync/redsync"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
 
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -18,8 +17,8 @@ type schedulerServer struct {
 	M *models.ArchiveRequestRepo
 }
 
-func NewGRPCServer(ctx context.Context, conn *sqlx.DB, rs *redsync.Redsync, port int) error {
-	schedulerServer := initializeSchedulerServer(conn, rs)
+func NewGRPCServer(ctx context.Context, conn *sqlx.DB, port int) error {
+	schedulerServer := initializeSchedulerServer(conn)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
@@ -37,9 +36,9 @@ func NewGRPCServer(ctx context.Context, conn *sqlx.DB, rs *redsync.Redsync, port
 	return serv.Serve(lis)
 }
 
-func initializeSchedulerServer(conn *sqlx.DB, rs *redsync.Redsync) schedulerServer {
+func initializeSchedulerServer(conn *sqlx.DB) schedulerServer {
 	return schedulerServer{
-		M: models.NewArchiveRequest(conn, rs),
+		M: models.NewArchiveRequest(conn),
 	}
 }
 
