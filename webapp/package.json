@@ -38,8 +38,7 @@
     "tailwind-children": "^0.5.0",
     "tls": "^0.0.1",
     "video.js": "^7.15.4",
-    "web-vitals": "^1.0.1",
-    "yarn": "^1.22.18"
+    "web-vitals": "^1.0.1"
   },
   "scripts": {
     "postinstall": "patch-package",
