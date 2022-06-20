@@ -1,9 +1,9 @@
 **/.dockerignore
-**/.env
 **/.git
 **/.gitignore
 **/.vscode
 **/Dockerfile*
 **/build
 **/node_modules
+**/.yarn
 README.md
