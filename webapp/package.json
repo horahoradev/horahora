@@ -3,15 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "patch-package",
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
-    "@craco/craco": "^6.4.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
@@ -31,9 +29,7 @@
     "http-proxy-middleware": "^2.0.0",
     "net": "^1.0.2",
     "nightwind": "^1.1.12",
-    "patch-package": "^6.4.7",
     "postcss-flexbugs-fixes": "^4.2.1",
-    "prettier": "^2.3.1",
     "react": "^17.0.2",
     "react-context-mutex": "^2.0.0",
     "react-css-theme-switcher": "^0.3.0",
@@ -74,6 +70,7 @@
     ]
   },
   "devDependencies": {
+    "prettier": "^2.3.1",
     "autoprefixer": "^9.8.8",
     "postcss": "^7.0.39",
     "postcss-preset-env": "^6.7.1",
