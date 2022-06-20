@@ -13,7 +13,6 @@ import {
 import { useHistory } from 'react-router-dom';
 import { Switch, Button, Dropdown, Input, Menu } from "antd";
 import { UserRank } from "../api/types";
-import nightwind from "nightwind/helper"
 import { useThemeSwitcher } from 'react-css-theme-switcher';
 import { onParentBlur } from "../lib/dom"
 
@@ -171,7 +170,6 @@ function LoggedInAdminNav(props) {
   let toggleDarkmode = function () {
     // must be capture by value or something goiong on here
     switcher({ theme: !darkMode ? themes.dark : themes.light });
-    nightwind.toggle();
     setDarkMode(!darkMode);
   };
 

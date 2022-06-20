@@ -4,8 +4,6 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "antd/dist/antd.css";
 import "./index.css";
 import App from "./App";
-import nightwind from "nightwind/helper";
-nightwind.toggle();
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,6 +1,6 @@
 FROM node:14-alpine
 
-RUN apk add --update npm
+RUN npm install --global npm@8.12
 
 WORKDIR /webapp
 

@@ -6,7 +6,7 @@ const tailwindConfig = {
   theme: {
     extend: {},
   },
-  plugins: [require("nightwind")],
+  plugins: [],
 };
 
 module.exports = tailwindConfig;
