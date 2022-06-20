@@ -5,12 +5,9 @@ RUN apk add --update npm
 WORKDIR /webapp
 
 # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy
-COPY ["package.json", "yarn.lock", "/webapp"]
+COPY ["package.json", "package-lock.json", "/webapp"]
 
-RUN cd /webapp && \ 
-    npm install && \
-    npm install -D tailwindcss@npm:@tailwindcss/postcss7-compat postcss@^7 autoprefixer@^9 && \
-    npm install @craco/craco
+RUN npm install
 
 COPY . .
 
