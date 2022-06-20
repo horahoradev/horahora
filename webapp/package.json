@@ -2,6 +2,13 @@
   "name": "webapp",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "postinstall": "patch-package",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@craco/craco": "^6.4.3",
@@ -39,13 +46,6 @@
     "tls": "^0.0.1",
     "video.js": "^7.15.4",
     "web-vitals": "^1.0.1"
-  },
-  "scripts": {
-    "postinstall": "patch-package",
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
-    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
