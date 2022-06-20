@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Tag, Avatar, Button } from "antd";
 import { Link, useParams } from "react-router-dom";
-import dashjs from "dashjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../Footer";

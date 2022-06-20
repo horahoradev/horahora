@@ -14,22 +14,11 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@stomp/stompjs": "^6.1.2",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
     "antd": "^4.16.2",
-    "assert": "^2.0.0",
     "axios": "^0.21.2",
-    "buffer": "^6.0.3",
-    "classnames": "^2.3.1",
-    "dashjs": "^3.2.2",
-    "eslint-plugin-import": "^2.23.4",
     "form-data": "^4.0.0",
     "formik": "^2.2.9",
-    "http-proxy-middleware": "^2.0.0",
-    "net": "^1.0.2",
     "nightwind": "^1.1.12",
-    "postcss-flexbugs-fixes": "^4.2.1",
     "react": "^17.0.2",
     "react-context-mutex": "^2.0.0",
     "react-css-theme-switcher": "^0.3.0",
@@ -39,9 +28,7 @@
     "react-scripts": "^5.0.1",
     "stomp-js": "^0.1.3",
     "tailwind-children": "^0.5.0",
-    "tls": "^0.0.1",
-    "video.js": "^7.15.4",
-    "web-vitals": "^1.0.1"
+    "video.js": "^7.15.4"
   },
   "eslintConfig": {
     "extends": [
@@ -70,10 +57,8 @@
     ]
   },
   "devDependencies": {
+    "eslint-plugin-import": "^2.23.4",
     "prettier": "^2.3.1",
-    "autoprefixer": "^9.8.8",
-    "postcss": "^7.0.39",
-    "postcss-preset-env": "^6.7.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
   }
 }
