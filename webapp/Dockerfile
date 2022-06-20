@@ -1,14 +1,16 @@
 FROM node:14-alpine
 
-# https://nodejs.org/docs/latest-v14.x/api/corepack.html#corepack_enabling_the_feature
-RUN corepack enable
+RUN apk add --update npm
 
 WORKDIR /webapp
 
 # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy
 COPY ["package.json", "yarn.lock", "/webapp"]
 
-RUN yarn install
+RUN cd /webapp && \ 
+    npm install && \
+    npm install -D tailwindcss@npm:@tailwindcss/postcss7-compat postcss@^7 autoprefixer@^9 && \
+    npm install @craco/craco
 
 COPY . .
 
