@@ -12,13 +12,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from 'react-router-dom';
 import { Switch, Button, Dropdown, Input, Menu } from "antd";
+
 import { UserRank } from "../api/types";
 import { onParentBlur } from "../lib/dom"
 
 export function Header({ userData, dataless }) {
 
   return (
-    <nav className="h-16 bg-white shadow flex justify-center">
+    <nav className="h-16 bg-white dark:bg-gray-800 shadow flex justify-center">
       <div className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
         <div className="flex justify-start flex-grow-0">
           <Link to="/" className="text-2xl font-black text-blue-500">
@@ -113,7 +114,7 @@ function Search() {
 function UserNav(props) {
   const { userData } = props;
 
-  if (userData && userData.username && userData.rank == UserRank.ADMIN) {
+  if (userData && userData.username && userData.rank === UserRank.ADMIN) {
     return <LoggedInAdminNav userData={userData} />;
   } else if (userData && userData.username) {
     return <LoggedInUserNav userData={userData} />;
@@ -236,14 +237,4 @@ function LoggedOutUserNav() {
       </Link>
     </>
   );
-}
-
-
-
-function showModal() {
-  document.getElementById('hidden-search-modal').style.setProperty('display', 'block', 'important');
-}
-
-function hideModal() {
-  document.getElementById('hidden-search-modal').style.setProperty('display', 'none', 'important');
 }
