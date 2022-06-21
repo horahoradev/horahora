@@ -48,7 +48,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}_userservice
           labels: ${{ steps.meta.outputs.labels }}_userservice
-        if: github.ref == 'refs/heads/master'
       - name: Build and push Docker image for videoservice
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -56,7 +55,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}_videoservice
           labels: ${{ steps.meta.outputs.labels }}_videoservice
-        if: github.ref == 'refs/heads/master'
       - name: Build and push Docker image for scheduler
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -64,4 +62,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}_scheduler
           labels: ${{ steps.meta.outputs.labels }}_scheduler
-        if: github.ref == 'refs/heads/master'
