@@ -4,7 +4,6 @@ import {Link, useHistory, useParams} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faThumbsDown, faUserCircle, faUser} from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
-import Footer from "../Footer";
 
 import * as API from "../api";
 import { Header } from "../components/header";

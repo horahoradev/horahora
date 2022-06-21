@@ -13,7 +13,6 @@ import * as API from "../api";
 import { Header } from "../components/header";
 import { VideoList } from "../components/video-list";
 import Paginatione from "../Pagination";
-import Footer from "../Footer";
 
 export function AuditPage() {
   const [pageData, setPageData] = useState(null);

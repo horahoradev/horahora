@@ -3,7 +3,6 @@ import { Tag, Avatar, Button } from "antd";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import Footer from "../Footer";
 import { UserOutlined } from '@ant-design/icons';
 
 import * as API from "../api";

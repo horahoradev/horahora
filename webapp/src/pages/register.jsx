@@ -4,11 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import PrivacyPolicy from "../PrivacyPolicy";
-import TermsOfService from "../TOS";
+import {PrivacyPolicy} from "../components/privacy-policy";
+import {TermsOfService} from "../components/terms-of-service";
 import { Header } from "../components/header";
 
-import Footer from "../Footer";
 import * as API from "../api";
 
 export function RegisterPage() {
