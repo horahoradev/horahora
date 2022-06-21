@@ -9,7 +9,7 @@ import Footer from "../Footer";
 import * as API from "../api";
 import { Header } from "../components/header";
 import { UserRank } from "../api/types";
-import VideoList from "../VideoList";
+import { VideoList } from "../components/video-list";
 import { UserOutlined } from "@ant-design/icons";
 
 const VIDEO_WIDTH = 44;

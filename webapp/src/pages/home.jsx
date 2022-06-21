@@ -3,7 +3,7 @@ import { useLocation } from 'react-router';
 
 import * as API from "../api";
 import { Header } from "../components/header";
-import VideoList from "../VideoList";
+import { VideoList } from "../components/video-list";
 import Paginatione from "../Pagination";
 import { useHistory } from "react-router-dom";
 
