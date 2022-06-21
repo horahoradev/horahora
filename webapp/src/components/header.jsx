@@ -87,13 +87,13 @@ function Search() {
       <div 
         className={
           isFocused
-            ? "absolute top-14 z-10 text-black bg-white w-full max-w-sm p-4 visible opacity-1 duration-250 transition-opacity transition-visibility"
-            : "absolute top-14 z-10 text-black bg-white w-full max-w-sm p-4 invisible opacity-0 duration-250 transition-opacity transition-visibility"
+            ? "absolute top-14 z-10 text-black bg-white dark:text-white dark:bg-black  w-full max-w-sm p-4 visible opacity-1 duration-250 transition-opacity transition-visibility"
+            : "absolute top-14 z-10 text-black bg-white dark:text-white dark:bg-black w-full max-w-sm p-4 invisible opacity-0 duration-250 transition-opacity transition-visibility"
         } 
         tabIndex={0}
       >
-        <label htmlFor="category" className="text-black text-base" >Order by: </label>
-        <select name="category" className="bg-white" id="category">
+        <label htmlFor="category" className="text-black dark:text-white text-base" >Order by: </label>
+        <select name="category" className="bg-white dark:bg-black" id="category">
           <option value="upload_date">upload date</option>
           <option value="rating">rating</option>
           <option value="views">views</option>
