@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-redis/redis"
 	"github.com/google/uuid"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
@@ -50,9 +49,9 @@ type GRPCServer struct {
 
 // TODO: API is getting bloated
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
-	redisClient *redis.Client, client userproto.UserServiceClient, tracer opentracing.Tracer,
-	storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) error {
-	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, storageEndpoint, MaxDLFileSize)
+	client userproto.UserServiceClient, tracer opentracing.Tracer, storageBackend, apiID,
+	apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) error {
+	g, err := initGRPCServer(bucketName, db, client, local, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, storageEndpoint, MaxDLFileSize)
 	if err != nil {
 		return err
 	}
@@ -72,7 +71,7 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 }
 
 func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
-	redisClient *redis.Client, originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) (*GRPCServer, error) {
+	originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) (*GRPCServer, error) {
 
 	g := &GRPCServer{
 		Local:      local,
@@ -103,7 +102,7 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 		return nil, fmt.Errorf("Unknown storage backend %s", storageBackend)
 	}
 
-	g.VideoModel, err = models.NewVideoModel(db, client, redisClient, approvalThreshold)
+	g.VideoModel, err = models.NewVideoModel(db, client, approvalThreshold)
 	if err != nil {
 		return nil, err
 	}

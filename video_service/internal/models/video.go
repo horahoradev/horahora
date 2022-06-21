@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/go-redis/redis"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/horahoradev/horahora/user_service/errors"
@@ -35,13 +33,12 @@ const (
 type VideoModel struct {
 	db *sqlx.DB
 	// TODO: do we really need a grpc client here? bad cohesion ;(
-	grpcClient proto.UserServiceClient
-	//redisClient *redis.Client
+	grpcClient        proto.UserServiceClient
 	ApprovalThreshold int
 	r                 Recommender
 }
 
-func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *redis.Client, approvalThreshold int) (*VideoModel, error) {
+func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, approvalThreshold int) (*VideoModel, error) {
 	rec := NewBayesianTagSum(db)
 
 	return &VideoModel{db: db,
@@ -357,9 +354,9 @@ func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pa
 
 	case videoproto.OrderCategory_my_ratings:
 		ds = ds.LeftJoin(
-						goqu.T("ratings"),
-						goqu.On(goqu.Ex{"videos.id": goqu.I("ratings.video_id")})).
-						Where(goqu.I("user_id").Eq(fromUserID))
+			goqu.T("ratings"),
+			goqu.On(goqu.Ex{"videos.id": goqu.I("ratings.video_id")})).
+			Where(goqu.I("user_id").Eq(fromUserID))
 		switch direction {
 		case videoproto.SortDirection_asc:
 			ds = ds.Order(goqu.I("ratings.rating").Asc())

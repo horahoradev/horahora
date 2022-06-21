@@ -12,7 +12,7 @@ RUN cd ffmpeg-git-*-amd64-static && cp ffmpeg /usr/local/bin/ffmpeg
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-FROM golang:1.17-alpine as builder
+FROM golang:1.18.1-alpine as builder
 LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
 WORKDIR /horahora/scheduler

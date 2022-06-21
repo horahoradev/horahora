@@ -7,22 +7,19 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
 )
 
 // ArchiveRequest is the model for the creation of new archive requests
 // It's very similar to video_dl_request, but video_dl_request has different utility.
 type ArchiveRequestRepo struct {
-	Db      *sqlx.DB
-	Redsync *redsync.Redsync
+	Db *sqlx.DB
 }
 
 // FIXME: this API feels a little dumb
 
-func NewArchiveRequest(db *sqlx.DB, rs *redsync.Redsync) *ArchiveRequestRepo {
-	return &ArchiveRequestRepo{Db: db,
-		Redsync: rs}
+func NewArchiveRequest(db *sqlx.DB) *ArchiveRequestRepo {
+	return &ArchiveRequestRepo{Db: db}
 }
 
 type Archival struct {
@@ -148,7 +145,7 @@ func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLReques
 
 	var ret []CategoryDLRequest
 	for res.Next() {
-		c := CategoryDLRequest{Redsync: m.Redsync, Db: m.Db}
+		c := CategoryDLRequest{Db: m.Db}
 
 		err = res.Scan(&c.Id, &c.Url)
 		if err != nil {

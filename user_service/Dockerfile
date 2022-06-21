@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.2
 
-FROM golang:1.16-alpine as builder
+FROM golang:1.18.1-alpine as builder
 LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
 WORKDIR /horahora/userservice

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	baseURL    = "http://localhost:8083/api"
+	baseURL    = "http://localhost/api"
 	sm9TestTag = "今年レンコンコマンダー常盤"
 )
 

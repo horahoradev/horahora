@@ -25,7 +25,7 @@ RUN cp bin/gcc/MP4Box /usr/local/bin/MP4Box
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-FROM golang:1.16-alpine as builder
+FROM golang:1.18.1-alpine as builder
 LABEL org.opencontainers.image.source=https://github.com/horahoradev/horahora
 
 WORKDIR /horahora/videoservice

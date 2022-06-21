@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package models
@@ -34,7 +35,7 @@ func init() {
 		}
 	}
 
-	v, err = NewVideoModel(cfg.SqlClient, cfg.UserClient, cfg.RedisConn)
+	v, err = NewVideoModel(cfg.SqlClient, cfg.UserClient)
 	if err != nil {
 		log.Panic(err)
 	}

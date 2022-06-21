@@ -7,12 +7,10 @@ import (
 
 	stomp "github.com/go-stomp/stomp/v3"
 
-	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
 )
 
 type VideoDLRequest struct {
-	Redsync     *redsync.Redsync
 	Rabbitmq    *stomp.Conn
 	Db          *sqlx.DB
 	VideoID     string // Foreign ID
@@ -20,7 +18,6 @@ type VideoDLRequest struct {
 	DownloaddID int
 	URL         string
 	ParentURL   string
-	mut         *redsync.Mutex
 }
 
 func (v *VideoDLRequest) SetDownloadSucceeded() error {
@@ -109,20 +106,6 @@ func (v *VideoDLRequest) PublishVideoInprogress(dlStatus int, action string) err
 	}
 
 	return nil
-}
-
-func (v *VideoDLRequest) AcquireLockForVideo() error {
-	v.mut = v.Redsync.NewMutex(v.VideoID, redsync.SetExpiry(time.Minute*10))
-	return v.mut.Lock()
-}
-
-func (v *VideoDLRequest) ReleaseLockForVideo() error {
-	if v.mut != nil {
-		_, err := v.mut.Unlock()
-		return err
-	}
-	return nil
-
 }
 
 type event string
