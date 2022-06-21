@@ -6,6 +6,8 @@ services:
     restart: always
     volumes:
       - ./webapp/src:/webapp/src
+    ports:
+      - "3000:3000"
   frontapi:
     $FRONT_API_BUILD_DIRECTIVE
     restart: always

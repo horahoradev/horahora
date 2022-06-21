@@ -37,8 +37,7 @@ export function HomePage() {
         }
       }
 
-      let userData = await API.getUserdata();
-      if (!ignore) setUserData(userData);
+      
     };
 
     fetchData();
@@ -46,7 +45,20 @@ export function HomePage() {
       ignore = true;
     };
   }, [currPage, category, order, search]);
-
+  
+  useEffect(() => {
+    let ignore = false;
+    
+    (async () => {
+      let userData = await API.getUserdata();
+      if (!ignore) setUserData(userData);
+    })()
+    
+    return () => {
+      ignore = true;
+    }
+  },[])
+  
   return (
     <>
       <Header userData={userData} />
