@@ -13,7 +13,6 @@ import {
 import { useHistory } from 'react-router-dom';
 import { Switch, Button, Dropdown, Input, Menu } from "antd";
 import { UserRank } from "../api/types";
-import { useThemeSwitcher } from 'react-css-theme-switcher';
 import { onParentBlur } from "../lib/dom"
 
 export function Header({ userData, dataless }) {

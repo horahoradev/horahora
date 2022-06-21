@@ -20,7 +20,6 @@
     "formik": "^2.2.9",
     "react": "^17.0.2",
     "react-context-mutex": "^2.0.0",
-    "react-css-theme-switcher": "^0.3.0",
     "react-dom": "^17.0.2",
     "react-modal": "^3.14.3",
     "react-router-dom": "^5.2.0",
