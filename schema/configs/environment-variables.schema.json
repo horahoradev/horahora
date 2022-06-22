@@ -1,0 +1,87 @@
+{
+  "$id": "https://horahora-schemas.org/configs/environment-variables.schema.json",
+  "title": "EnvironmentVariables",
+  "description": "The environment variables used by Horahora project.",
+  "required": [],
+  "properties": {
+    "BUCKET_NAME": {
+      "type": "string",
+      "default": "otomads"
+    },
+    "ORIGIN_FQDN": {
+      "type": "string",
+      "description": "For non-local applications, should be the public address of the server (if minio) or storage origin",
+      "default": "http://localhost:9000/$BUCKET_NAME"
+    },
+    "STORAGE_BACKEND": {
+      "type": "string",
+      "default": "s3"
+    },
+    "STORAGE_API_ID": {
+      "type": "string",
+      "default": "minioadmin"
+    },
+    "STORAGE_API_KEY": {
+      "type": "string",
+      "default": "minioadmin"
+    },
+    "STORAGE_ENDPOINT": {
+      "type": "string",
+      "default": "http://minio:9000"
+    },
+    "BUILD_LOCAL_IMAGES": {
+      "type": "boolean",
+      "default": false
+    },
+    "USE_CUSTOM_KEYPAIR": {
+      "type": "boolean",
+      "default": true
+    },
+    "USE_VPN_CONFIG": {
+      "type": "boolean",
+      "default": false
+    },
+    "VPN_PROVIDER": {
+      "type": "string",
+      "default": "mullvad"
+    },
+    "VPN_IP": {
+      "type": "string",
+      "default": "10.64.168.1/32"
+    },
+    "WIREGUARD_PRIVATE_KEY": {
+      "type": "string"
+    },
+    "VPN_CITIES": {
+      "type": "string",
+      "default": "Tokyo"
+    },
+    "FRONTEND_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: frontend"
+    },
+    "VIDEOSERVICE_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: video_service"
+    },
+    "USERSERVICE_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: user_service"
+    },
+    "SCHEDULER_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: scheduler"
+    },
+    "FRONT_API_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: front_api"
+    },
+    "SOCKS_ADDR": {
+      "type": "string",
+      "default": "http://gluetun:8888"
+    },
+    "JWT_KEYPAIR": {
+      "type": "string"
+    }
+  }
+}
