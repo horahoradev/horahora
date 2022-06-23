@@ -1,23 +1,18 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
-// helloCmd represents the hello command
-var helloCmd = &cobra.Command{
-	Use:   "hello",
-	Short: "Show hello world",
-	Long:  `Hello world Invocator.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("HELLO WORLD!")
-	},
+// envCmd represents the `env` command
+var envCmd = &cobra.Command{
+	Use:   "env",
+	Short: "Manage environment variables",
+	Long:  `Environment variables manager for Horahora.`,
 }
 
 func init() {
-	rootCmd.AddCommand(helloCmd)
+	envCmd.AddCommand(envInitCMD)
 
 	// Here you will define your flags and configuration settings.
 
