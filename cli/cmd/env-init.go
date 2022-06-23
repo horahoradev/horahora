@@ -17,7 +17,7 @@ const defaultKeyPairFileName string = "default_keypair.pem"
 // envInitCMD represents the `env init` command
 var envInitCMD = &cobra.Command{
 	Use:   "init",
-	Short: "Initialize environment variables file",
+	Short: "Initialize environment variables",
 	Long:  `Environment variables initiaizer for Horahora.`,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Initializing environment variables...")
@@ -38,13 +38,9 @@ func initEnvVars(cmd *cobra.Command, args []string) {
 
 	envFilePath := filepath.Join(workingFolder, inputEnvFileName)
 	envMap := resolveEnvTemplate(envFilePath)
-	envMapErr := modifyEnvMap(envMap)
 
-	if envMapErr != nil {
-		panic(envMapErr)
-	}
-
-	writeComponseConfig()
+	composeContent := resolveComposeConfigTemplate(envMap)
+	writeComponseConfig(composeContent)
 }
 
 // Analyzes the input env file and returns it as a map.
@@ -58,6 +54,12 @@ func resolveEnvTemplate(filePath string) map[string]string {
 	defer file.Close()
 
 	envMap := make(map[string]string)
+
+	envMapErr := modifyEnvMap(envMap)
+
+	if envMapErr != nil {
+		panic(envMapErr)
+	}
 
 	return envMap
 }
@@ -90,14 +92,17 @@ func modifyEnvMap(envMap map[string]string) error {
 	return nil
 }
 
+// Creates jwt key or returns a default one.
 func createJWTKeyPair(isDefault bool) string {
 	return defaultKeyPairFileName
 }
 
-func resolveComposeConfigTemplate() string {
+// Resolves the template of compsoe config with env variables.
+func resolveComposeConfigTemplate(envMap map[string]string) string {
 	return inputComposeFileName
 }
 
-func writeComponseConfig() string {
+// Saves the final compose config or updates the existing one.
+func writeComponseConfig(composeContent string) string {
 	return outputComposeFileName
 }
