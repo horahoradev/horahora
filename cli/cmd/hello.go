@@ -1,7 +1,3 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
@@ -14,7 +10,7 @@ import (
 var helloCmd = &cobra.Command{
 	Use:   "hello",
 	Short: "Show hello world",
-	Long:  `Hello world Invocator`,
+	Long:  `Hello world Invocator.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("HELLO WORLD!")
 	},
