@@ -14,7 +14,7 @@ func ReadFolder(dirPath string) []fs.DirEntry {
 }
 
 // Reads the entire file at provided location
-// and returns its content as a string
+// and returns its content as a string.
 func ReadFile(filePath string) string {
 	data, err := os.ReadFile(filePath)
 	CheckError(err)
@@ -22,7 +22,7 @@ func ReadFile(filePath string) string {
 	return string(data)
 }
 
-// Save the content of the string at provided file location
+// Saves the content of the string at provided file location.
 func WriteFile(filePath string, content string) {
 	fileContent := []byte(content)
 	err := os.WriteFile(filePath, fileContent, 0644)

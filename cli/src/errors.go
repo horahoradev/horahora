@@ -1,7 +1,7 @@
 package lib
 
-func CheckError(e error) {
-	if e != nil {
-		panic(e)
+func CheckError(err error) {
+	if err != nil {
+		panic(err)
 	}
 }
