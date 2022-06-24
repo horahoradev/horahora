@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"horahora/cli/src/lib/errors"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -31,10 +32,7 @@ var envInitCMD = &cobra.Command{
 // Initializes `docker-compose` config off files.
 func initEnvVars(cmd *cobra.Command, args []string) {
 	workingFolder, pathErr := os.Getwd()
-
-	if pathErr != nil {
-		panic(pathErr)
-	}
+	errors.CheckError(pathErr)
 
 	envFilePath := filepath.Join(workingFolder, inputEnvFileName)
 	envMap := resolveEnvTemplate(envFilePath)
@@ -56,10 +54,7 @@ func resolveEnvTemplate(filePath string) map[string]string {
 	envMap := make(map[string]string)
 
 	envMapErr := modifyEnvMap(envMap)
-
-	if envMapErr != nil {
-		panic(envMapErr)
-	}
+	errors.CheckError(envMapErr)
 
 	return envMap
 }
