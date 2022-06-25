@@ -1,11 +1,17 @@
 {
   "gopls": {
-    "ui.semanticTokens": true,
+    "ui.semanticTokens": true
   },
   "[json]": {
     "editor.tabSize": 2
   },
   "[jsonc]": {
     "editor.tabSize": 2
-  }
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["schema/**/*schema.json"],
+      "url": "./schema/meta.schema.json"
+    }
+  ]
 }
