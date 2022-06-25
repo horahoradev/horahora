@@ -5,28 +5,28 @@
   "required": [],
   "additionalProperties": false,
   "properties": {
-    "userID": {
+    "UserID": {
       "type": "integer"
     },
-    "url": {
+    "Url": {
       "type": "string"
     },
-    "archivedvideos": {
+    "ArchivedVideos": {
       "type": "integer"
     },
-    "currenttotalvideos": {
+    "CurrentTotalVideos": {
       "type": "integer"
     },
-    "lastsynced": {
+    "LastSynced": {
       "type": "string"
     },
-    "backofffactor": {
+    "BackoffFactor": {
       "type": "integer"
     },
-    "downloadID": {
+    "DownloadID": {
       "type": "integer"
     },
-    "undownloadablevideos": {
+    "UndownloadableVideos": {
       "type": "integer"
     }
   }
