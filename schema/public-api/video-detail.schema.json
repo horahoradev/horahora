@@ -1,0 +1,61 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/video-detail.schema.json",
+  "title": "VideoDetail",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "Title": {
+      "type": "string"
+    },
+    "MPDLoc": {
+      "type": "string"
+    },
+    "Views": {
+      "type": "integer"
+    },
+    "Rating": {
+      "type": "number"
+    },
+    "VideoID": {
+      "type": "integer"
+    },
+    "AuthorID": {
+      "type": "integer"
+    },
+    "Username": {
+      "type": "string"
+    },
+    "UserDescription": {
+      "type": "string"
+    },
+    "VideoDescription": {
+      "type": "string"
+    },
+    "UserSubscribers": {
+      "type": "integer"
+    },
+    "ProfilePicture": {
+      "type": "string"
+    },
+    "UploadDate": {
+      "type": "string",
+      "description": "should be a datetime"
+    },
+    "Tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "RecommendedVideos": {
+      "type": "array",
+      "items": {
+        "$ref": "https://horahora-schemas.org/public-api/video.schema.json"
+      }
+    },
+    "L": {
+      "$ref": "https://horahora-schemas.org/public-api/current-user-profile.schema.json"
+    }
+  }
+}
