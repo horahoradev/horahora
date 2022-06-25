@@ -1,0 +1,33 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/archival-request.schema.json",
+  "title": "ArchivalRequest",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "userID": {
+      "type": "integer"
+    },
+    "url": {
+      "type": "string"
+    },
+    "archivedvideos": {
+      "type": "integer"
+    },
+    "currenttotalvideos": {
+      "type": "integer"
+    },
+    "lastsynced": {
+      "type": "string"
+    },
+    "backofffactor": {
+      "type": "integer"
+    },
+    "downloadID": {
+      "type": "integer"
+    },
+    "undownloadablevideos": {
+      "type": "integer"
+    }
+  }
+}
