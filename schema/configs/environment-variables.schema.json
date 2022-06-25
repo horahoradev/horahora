@@ -2,6 +2,7 @@
   "$id": "https://horahora-schemas.org/configs/environment-variables.schema.json",
   "title": "EnvironmentVariables",
   "description": "The environment variables used by Horahora project.",
+  "type": "object",
   "required": [],
   "properties": {
     "BUCKET_NAME": {
