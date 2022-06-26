@@ -205,7 +205,7 @@ function LoggedInAdminNav(props) {
   let toggleDarkmode = function () {};
 
   let menu = (
-    <Menu className="bg-white dark:bg-black ">
+    <Menu className="bg-white dark:bg-black">
       <Menu.Item
         key="profile"
         icon={
