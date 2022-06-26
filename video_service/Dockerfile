@@ -20,7 +20,7 @@ RUN apk add --update --no-cache git gcc make musl-dev zlib-dev zlib-static
 RUN git clone --depth 1 https://github.com/gpac/gpac
 WORKDIR /gpac
 RUN ./configure --static-bin
-RUN make -j
+RUN make
 RUN cp bin/gcc/MP4Box /usr/local/bin/MP4Box
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
