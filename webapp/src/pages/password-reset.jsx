@@ -43,8 +43,8 @@ function PasswordResetForm() {
   }, [usernameInputRef]);
 
   return (
-    <div className="max-w-xs w-full border rounded shadow bg-white p-4">
-      <h2 className="text-xl mb-4">Reset Password</h2>
+    <div className="max-w-xs w-full border rounded shadow bg-white dark:bg-black p-4">
+      <h2 className="text-xl text-black dark:text-white mb-4">Reset Password</h2>
       <form onSubmit={formik.handleSubmit}>
       <Input.Group>
           <Input
