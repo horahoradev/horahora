@@ -10,14 +10,13 @@ import {
   faUser,
   faSun,
 } from "@fortawesome/free-solid-svg-icons";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import { Switch, Button, Dropdown, Input, Menu } from "antd";
 
 import { UserRank } from "../api/types";
-import { onParentBlur } from "../lib/dom"
+import { onParentBlur } from "../lib/dom";
 
 export function Header({ userData, dataless }) {
-
   return (
     <nav className="h-16 bg-white dark:bg-gray-800 shadow flex justify-center">
       <div className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
@@ -43,7 +42,7 @@ function Search() {
 
   let handleSearch = useCallback((e) => {
     e.preventDefault();
-    const category = document.getElementById('category').value;
+    const category = document.getElementById("category").value;
     const order = document.querySelector('input[name="order"]:checked').value;
     const search = document.querySelector('input[name="search"]').value;
 
@@ -53,7 +52,7 @@ function Search() {
       ["search", search],
     ]);
 
-    setRedirectVal(`/?${params.toString()}`)
+    setRedirectVal(`/?${params.toString()}`);
   }, []);
 
   const history = useHistory();
@@ -67,7 +66,7 @@ function Search() {
       onSubmit={handleSearch}
       className="flex-grow flex flex-col w-full max-w-sm"
       onBlur={onParentBlur(() => {
-        switchFocus(false)
+        switchFocus(false);
       })}
     >
       <Input
@@ -78,34 +77,51 @@ function Search() {
           <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
         }
         onFocus={() => {
-          switchFocus(true)
+          switchFocus(true);
         }}
         onBlur={(event) => {
-          event.preventDefault()
+          event.preventDefault();
         }}
       />
-      <div 
+      <div
         className={
           isFocused
             ? "absolute top-14 z-10 text-black bg-white dark:text-white dark:bg-black  w-full max-w-sm p-4 visible opacity-1 duration-250 transition-opacity transition-visibility"
             : "absolute top-14 z-10 text-black bg-white dark:text-white dark:bg-black w-full max-w-sm p-4 invisible opacity-0 duration-250 transition-opacity transition-visibility"
-        } 
+        }
         tabIndex={0}
       >
-        <label htmlFor="category" className="text-black dark:text-white text-base" >Order by: </label>
-        <select name="category" className="bg-white dark:bg-black" id="category">
+        <label
+          htmlFor="category"
+          className="text-black dark:text-white text-base"
+        >
+          Order by:{" "}
+        </label>
+        <select
+          name="category"
+          className="bg-white dark:bg-black"
+          id="category"
+        >
           <option value="upload_date">upload date</option>
           <option value="rating">rating</option>
           <option value="views">views</option>
           <option value="my_ratings">my ratings</option>
         </select>
-        <br/>
-        <input type="radio" id="desc" name="order" defaultChecked={true} value="desc"></input>
+        <br />
+        <input
+          type="radio"
+          id="desc"
+          name="order"
+          defaultChecked={true}
+          value="desc"
+        ></input>
         <label htmlFor="desc">Desc</label>
         <input type="radio" id="asc" name="order" value="asc"></input>
         <label htmlFor="asc">Asc</label>
-        <br/>
-        <Button block type="primary" htmlType="submit" size="large">Submit</Button>
+        <br />
+        <Button block type="primary" htmlType="submit" size="large">
+          Submit
+        </Button>
       </div>
     </form>
   );
@@ -127,25 +143,46 @@ function LoggedInUserNav(props) {
   const { userData } = props;
 
   let menu = (
-    <Menu>
-      <Menu.Item key="profile" icon={<FontAwesomeIcon icon={faUser} />}>
-        <Link to={`/users/${userData.userID}`}>Profile page</Link>
+    <Menu className="bg-white dark:bg-black">
+      <Menu.Item
+        key="profile"
+        icon={
+          <FontAwesomeIcon
+            className="text-black dark:text-white"
+            icon={faUser}
+          />
+        }
+      >
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          to={`/users/${userData.userID}`}
+        >
+          Profile page
+        </Link>
       </Menu.Item>
       <Menu.Divider />
 
       <Menu.Item
         key="password-reset"
-        icon={<FontAwesomeIcon icon={faKey} />}
+        icon={
+          <FontAwesomeIcon
+            className="text-black dark:text-white"
+            icon={faKey}
+          />
+        }
       >
-
-        <Link to="/password-reset">Reset Password</Link>
+        <Link className="text-black dark:text-white" to="/password-reset">
+          Reset Password
+        </Link>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
         key="logout"
         icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
       >
-        <Link to="/logout">Logout</Link>
+        <Link className="text-black dark:text-white" to="/logout">
+          Logout
+        </Link>
       </Menu.Item>
     </Menu>
   );
@@ -168,48 +205,93 @@ function LoggedInAdminNav(props) {
   let toggleDarkmode = function () {};
 
   let menu = (
-    <Menu>
-      <Menu.Item key="profile" icon={<FontAwesomeIcon icon={faUser} />}>
-        <Link to={`/users/${userData.userID}`}>Profile page</Link>
+    <Menu className="bg-white dark:bg-black ">
+      <Menu.Item
+        key="profile"
+        icon={
+          <FontAwesomeIcon
+            className="text-black dark:text-white"
+            icon={faUser}
+          />
+        }
+      >
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          to={`/users/${userData.userID}`}
+        >
+          Profile page
+        </Link>
       </Menu.Item>
 
       <Menu.Divider />
       <Menu.Item
         key="archive-requests"
-        icon={<FontAwesomeIcon icon={faArchive} />}
+        icon={
+          <FontAwesomeIcon
+            className="text-black dark:text-white"
+            icon={faArchive}
+          />
+        }
       >
-        <Link to="/archive-requests">Archive Requests</Link>
+        <Link className="text-black dark:text-white dark:hover:text-black" to="/archive-requests">
+          Archive Requests
+        </Link>
       </Menu.Item>
       <Menu.Divider />
 
-
-      <Menu.Item key="darkmode" icon={<FontAwesomeIcon icon={faSun} />}>
-        <Switch onChange={() => toggleDarkmode()}></Switch>
+      <Menu.Item
+        key="darkmode"
+        icon={
+          <FontAwesomeIcon
+            className="text-black dark:text-white"
+            icon={faSun}
+          />
+        }
+      >
+        <Switch
+          className="text-black dark:text-white "
+          onChange={() => toggleDarkmode()}
+        ></Switch>
       </Menu.Item>
 
       <Menu.Divider />
-
 
       <Menu.Item
         key="password-reset"
-        icon={<FontAwesomeIcon icon={faKey} />}
+        icon={
+          <FontAwesomeIcon
+            className="text-black dark:text-white"
+            icon={faKey}
+          />
+        }
       >
-        <Link to="/password-reset">Password Reset</Link>
+        <Link className="text-black dark:text-white dark:hover:text-black" to="/password-reset">
+          Password Reset
+        </Link>
       </Menu.Item>
 
       <Menu.Divider />
       <Menu.Item
         key="audits"
-        icon={<FontAwesomeIcon icon={faArchive} />}
+        icon={
+          <FontAwesomeIcon
+            className="text-black dark:text-white"
+            icon={faArchive}
+          />
+        }
       >
-        <Link to="/audits">Audit Logs</Link>
+        <Link className="text-black dark:text-white dark:hover:text-black" to="/audits">
+          Audit Logs
+        </Link>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
         key="logout"
         icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
       >
-        <Link to="/logout">Logout</Link>
+        <Link className="text-black dark:text-white" to="/logout">
+          Logout
+        </Link>
       </Menu.Item>
     </Menu>
   );
