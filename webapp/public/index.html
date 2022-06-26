@@ -1,9 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Horahora</title>
+    <!-- set up the theme -->
+    <script id="theme-setup" async >
+      const theme = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("theme="));
+      const value = theme ? theme.split("=")[1] : "dark";
+      document.documentElement.dataset.theme = value;
+    </script>
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="horahora" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
@@ -21,7 +30,6 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Horahora</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
