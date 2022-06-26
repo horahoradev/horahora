@@ -6,6 +6,9 @@ import { getCookie, setCookie } from "../store/cookie";
 
 export const DEFAULT_THEME = "dark";
 
+/**
+ * @returns {ITheme}
+ */
 export function getTheme() {
   /**
    * @typedef {ITheme}
@@ -28,4 +31,6 @@ export function getTheme() {
 export function setTheme(theme) {
   document.documentElement.dataset.theme = theme;
   setCookie("theme", theme);
+  
+  return theme;
 }

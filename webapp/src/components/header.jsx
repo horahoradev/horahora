@@ -15,6 +15,7 @@ import { Switch, Button, Dropdown, Input, Menu } from "antd";
 
 import { UserRank } from "../api/types";
 import { onParentBlur } from "../lib/dom";
+import { ThemeSwitcher } from "./theme-switcher";
 
 export function Header({ userData, dataless }) {
   return (
@@ -202,8 +203,6 @@ function LoggedInUserNav(props) {
 function LoggedInAdminNav(props) {
   const { userData } = props;
 
-  let toggleDarkmode = function () {};
-
   let menu = (
     <Menu className="bg-white dark:bg-black">
       <Menu.Item
@@ -239,20 +238,7 @@ function LoggedInAdminNav(props) {
       </Menu.Item>
       <Menu.Divider />
 
-      <Menu.Item
-        key="darkmode"
-        icon={
-          <FontAwesomeIcon
-            className="text-black dark:text-white"
-            icon={faSun}
-          />
-        }
-      >
-        <Switch
-          className="text-black dark:text-white "
-          onChange={() => toggleDarkmode()}
-        ></Switch>
-      </Menu.Item>
+      <ThemeSwitcher/>
 
       <Menu.Divider />
 
