@@ -34,7 +34,9 @@ export function VideoList(props) {
           : "my-4 rounded border p-4 bg-white dark:bg-stone-800 flex flex-wrap min-h-screen"
       }
     >
-      {title ? <h1 className="ml-1 text-xl">{title}</h1> : <></>}
+      {title && (
+        <h1 className="text-black dark:text-white ml-1 text-xl">{title}</h1>
+      )}
       {elements}
     </div>
   );

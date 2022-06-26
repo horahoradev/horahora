@@ -301,7 +301,7 @@ function LoggedInAdminNav(props) {
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
           <b className="text-blue-500">{userData.username}</b>
-          <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
+          <FontAwesomeIcon className="text-xs ml-2 text-black dark:text-white dark:hover:text-black" icon={faBars} />
         </Button>
       </Dropdown>
     </>

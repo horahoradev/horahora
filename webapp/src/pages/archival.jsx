@@ -386,7 +386,7 @@ export function ArchivalPage() {
                 <div className="border-gray-50 border-b-4">
                   <Input
                     type="text"
-                    className="w-4/5 font-black text-base text-black dark:text-white"
+                    className="w-4/5 font-black text-base text-black"
                     placeholder="Paste URL to archive here"
                     id="url"
                   ></Input>
