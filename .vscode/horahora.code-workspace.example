@@ -35,6 +35,10 @@
 		{
 			"name": "webapp",
 			"path": "webapp"
+		},
+		{
+			"name": "schema",
+			"path": "schema"
 		}
 	],
 	"settings": {
@@ -53,7 +57,8 @@
 			"tests": true,
 			"user_service": true,
 			"video_service": true,
-			"webapp": true
+			"webapp": true,
+			"schema": true
 		}
 	}
 }
