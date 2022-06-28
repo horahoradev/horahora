@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
 import { Table, Timeline, Button, Space, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,7 +12,7 @@ import {
 import * as API from "../api";
 import { Header } from "../components/header";
 import { VideoList } from "../components/video-list";
-import Paginatione from "../Pagination";
+import Paginatione from "../components/pagination";
 
 function AuditsPage() {
   const [pageData, setPageData] = useState(null);

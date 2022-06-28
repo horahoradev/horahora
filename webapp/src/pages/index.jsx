@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import * as API from "../api";
 import { Header } from "../components/header";
 import { VideoList } from "../components/video-list";
-import Paginatione from "../Pagination";
+import Paginatione from "../components/pagination";
 
 export function HomePage() {
   const router = useRouter();
@@ -12,17 +12,13 @@ export function HomePage() {
   const [userData, setUserData] = useState(null);
   const [currPage, setPage] = useState(1);
 
-  let s = window.location.search;
-  let searchParams = new URLSearchParams(s);
-  let order = searchParams.get("order") || "";
-  let category = searchParams.get("category") || "";
-  let search = searchParams.get("search") || "";
-
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
     let ignore = false;
 
     let fetchData = async () => {
+      const { order, category, search } = router.query;
+
       try {
         let data = await API.getHome(currPage, search, order, category);
         if (!ignore) setPageData(data);
@@ -38,7 +34,7 @@ export function HomePage() {
     return () => {
       ignore = true;
     };
-  }, [currPage, category, order, search]);
+  }, [currPage]);
 
   useEffect(() => {
     let ignore = false;

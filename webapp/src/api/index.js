@@ -1,16 +1,21 @@
 import axios from "axios";
 import FormData from "form-data";
 
-const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
-if (API_ENDPOINT == null)
-  throw new Error("No REACT_APP_API_ENDPOINT provided!");
+import { API_ENDPOINT } from "../../environment/vars";
 
 function e(name) {
   return `${API_ENDPOINT}${name}`;
 }
 
-export async function getHome(page=1, search="", order="", category="") {
-  const res = await axios.get(e(`home?page=${page}&search=${search}&order=${order}&category=${category}`));
+export async function getHome(
+  page = 1,
+  search = "",
+  order = "",
+  category = ""
+) {
+  const res = await axios.get(
+    e(`home?page=${page}&search=${search}&order=${order}&category=${category}`)
+  );
   return res.data;
 }
 
@@ -32,7 +37,7 @@ export async function getArchivalSubscriptions() {
 
 export async function postArchival(url) {
   let form = new FormData();
-  form.append("url", url)
+  form.append("url", url);
 
   const res = await axios.post(e("archiverequests"), form, {
     headers: {
@@ -40,7 +45,7 @@ export async function postArchival(url) {
     },
   });
 
-    return res.data;
+  return res.data;
 }
 
 export async function postRegister(data) {
@@ -48,7 +53,6 @@ export async function postRegister(data) {
   form.append("username", data.username);
   form.append("password", data.password);
   form.append("email", data.email);
-
 
   const res = await axios.post(e("register"), form, {
     headers: {
@@ -109,7 +113,6 @@ export async function postPasswordReset(data) {
   });
   return res.data;
 }
-
 
 export async function getVideo(videoId) {
   const res = await axios.get(e(`videos/${videoId}`));

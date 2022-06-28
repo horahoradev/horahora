@@ -9,7 +9,7 @@ import * as API from "../../api";
 import { Header } from "../../components/header";
 import { UserRank } from "../../api/types";
 import { VideoList } from "../../components/video-list";
-import Paginatione from "../Pagination";
+import Paginatione from "../../components/pagination";
 
 // {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":11,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 

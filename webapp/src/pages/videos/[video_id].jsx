@@ -12,10 +12,10 @@ import { useFormik } from "formik";
 import { UserOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 
-import * as API from "../api";
-import { Header } from "../components/header";
-import { UserRank } from "../api/types";
-import { VideoList } from "../components/video-list";
+import * as API from "../../api";
+import { Header } from "../../components/header";
+import { UserRank } from "../../api/types";
+import { VideoList } from "../../components/video-list";
 
 const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
