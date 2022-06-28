@@ -10,6 +10,7 @@ RUN wget https://media.sq10.net/ffmpeg-git-amd64-static.tar.xz
 RUN tar -xvf ffmpeg-git-amd64-static.tar.xz
 RUN cd ffmpeg-git-*-amd64-static && cp ffmpeg /usr/local/bin/ffmpeg
 
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 FROM golang:1.18.1-alpine as builder

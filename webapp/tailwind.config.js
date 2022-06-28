@@ -1,19 +1,12 @@
-module.exports = {
-  darkMode: 'class',
+/** @type {import('tailwindcss').Config} */
+const tailwindConfig = {
+  content: ["./public/**/*.html", "./src/**/*.{js,jsx,ts,tsx}"],
   important: true,
-  mode: "jit",
-  purge: [
-    "./public/**/*.html",
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
+  darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     extend: {},
   },
-  variants: {
-    extend: {},
-  },
-  plugins: [
-    require("nightwind"),
-  ],
-  
+  plugins: [],
 };
+
+module.exports = tailwindConfig;

@@ -4,11 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import PrivacyPolicy from "../PrivacyPolicy";
-import TermsOfService from "../TOS";
+import { PrivacyPolicy } from "../components/privacy-policy";
+import { TermsOfService } from "../components/terms-of-service";
 import { Header } from "../components/header";
 
-import Footer from "../Footer";
 import * as API from "../api";
 
 export function RegisterPage() {
@@ -47,10 +46,10 @@ function RegistrationForm() {
   }, [usernameInputRef]);
 
   return (
-    <div className="max-w-xs w-full border rounded shadow bg-white p-4">
-      <h2 className="text-xl mb-4">Register</h2>
+    <div className="max-w-xs w-full border rounded shadow bg-white dark:bg-gray-800 p-4">
+      <h2 className="text-xl text-black dark:text-white mb-4">Register</h2>
       <form onSubmit={formik.handleSubmit}>
-      <Input.Group>
+        <Input.Group>
           <Input
             name="email"
             values={formik.values.email}
@@ -62,7 +61,7 @@ function RegistrationForm() {
               <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
             }
           />
-          </Input.Group>
+        </Input.Group>
         <Input.Group>
           <Input
             name="username"
@@ -88,7 +87,10 @@ function RegistrationForm() {
             }
           />
         </Input.Group>
-        By submitting, you agree to the <PrivacyPolicy></PrivacyPolicy> and <TermsOfService></TermsOfService>
+        <div className="text-black dark:text-white">
+          By submitting, you agree to the <PrivacyPolicy /> and{" "}
+          <TermsOfService />
+        </div>
         <Input.Group>
           <Button block type="primary" htmlType="submit" size="large">
             Submit
