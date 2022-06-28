@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Rate } from "antd";
 
 const VIDEO_ELEMENT_WIDTH = "w-44";
@@ -51,7 +51,7 @@ function Video(props) {
         inline ? "h-24 w-80 relative inline-block m-1" : "px-2 h-44 w-44 m-1"
       }
     >
-      <Link to={`/videos/${video.VideoID}`}>
+      <Link href={`/videos/${video.VideoID}`}>
         <div className="rounded relative inline-block w-44">
           <img
             className="block w-44 h-24 object-cover object-center"

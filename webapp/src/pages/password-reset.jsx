@@ -3,7 +3,7 @@ import { Button, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import { useRouter } from "next/router";
 
 import { Header } from "../components/header";
 import * as API from "../api";
@@ -22,7 +22,7 @@ function PasswordResetPage() {
 }
 
 function PasswordResetForm() {
-  let history = useHistory();
+  const router = useRouter();
   // TODO(ivan): validation, form errors
   // TODO(ivan): submitting state
   let formik = useFormik({
@@ -32,7 +32,7 @@ function PasswordResetForm() {
     },
     onSubmit: async (values) => {
       await API.postPasswordReset(values);
-      history.push("/");
+      router.push("/");
     },
   });
 

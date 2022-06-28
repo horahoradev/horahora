@@ -3,7 +3,7 @@ import { Button, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import { useRouter } from "next/router";
 
 import { PrivacyPolicy } from "../components/privacy-policy";
 import { TermsOfService } from "../components/terms-of-service";
@@ -24,7 +24,7 @@ function RegisterPage() {
 }
 
 function RegistrationForm() {
-  let history = useHistory();
+  const router = useRouter();
   // TODO(ivan): validation, form errors
   // TODO(ivan): submitting state
   let formik = useFormik({
@@ -35,7 +35,7 @@ function RegistrationForm() {
     },
     onSubmit: async (values) => {
       await API.postRegister(values);
-      history.push("/");
+      router.push("/");
     },
   });
 

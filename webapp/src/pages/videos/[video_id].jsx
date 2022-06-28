@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Tag, Avatar, Button, Input, Rate, Comment, List } from "antd";
-import { Link, useHistory, useParams } from "react-router-dom";
+import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThumbsUp,
@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
 import { UserOutlined } from "@ant-design/icons";
+import { useRouter } from "next/router";
 
 import * as API from "../api";
 import { Header } from "../components/header";
@@ -20,9 +21,8 @@ const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
 
 function VideosPage() {
-  let history = useHistory();
-
-  let { id } = useParams();
+  const router = useRouter();
+  let { id } = router.query;
 
   const [pageData, setPageData] = useState(null);
   const [rating, setRating] = useState(0.0);
@@ -31,7 +31,7 @@ function VideosPage() {
 
   function navigate_to_next_video() {
     if (!pageData || !pageData.RecommendedVideos) return;
-    history.push("/videos/" + pageData.RecommendedVideos[0].VideoID);
+    router.push("/videos/" + pageData.RecommendedVideos[0].VideoID);
   }
 
   async function refreshComments() {
@@ -141,11 +141,11 @@ function VideoPlayer(props) {
 }
 
 function VideoAdminControls(props) {
+  const router = useRouter();
   let { data } = props;
   let [approvedVideo, setApprovedVideo] = useState(false);
   let approvingVideo = useRef(false);
   let deletingVideo = useRef(false);
-  let history = useHistory();
 
   let deleteVideo = () => {
     if (deletingVideo.current) return;
@@ -153,7 +153,7 @@ function VideoAdminControls(props) {
     let run = async () => {
       await API.deleteVideo(data.VideoID);
       deletingVideo.current = false;
-      history.push("/");
+      router.push("/");
     };
     run();
     // TODO: error future handler
@@ -266,7 +266,7 @@ function VideoView(props) {
                   // TODO(ivan): add links to tags
                   return (
                     <div key={idx} className="my-1 inline-block">
-                      <Link to={`/?search=${tag}`}>
+                      <Link href={`/?search=${tag}`}>
                         <Tag color="blue">{tag}</Tag>
                       </Link>
                     </div>
@@ -279,7 +279,7 @@ function VideoView(props) {
         <div className="my-4">
           <div>
             <span className="h-20 w-20 inline-block">
-              <Link to={`/users/${data.AuthorID}`}>
+              <Link href={`/users/${data.AuthorID}`}>
                 <Avatar
                   size={80}
                   icon={<FontAwesomeIcon icon={faUserCircle} />}
@@ -287,7 +287,7 @@ function VideoView(props) {
               </Link>
             </span>
             <span className="ml-2 pl-1 mt-2 inline-block align-top">
-              <Link to={`/users/${data.AuthorID}`}>
+              <Link href={`/users/${data.AuthorID}`}>
                 <b className="font-black text-blue-500 text-xl">
                   {data.Username}
                 </b>

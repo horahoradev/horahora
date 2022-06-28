@@ -3,8 +3,8 @@ import { Button, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
-import Link from "next/link"
-import { useHistory } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { Header } from "../components/header";
 import * as API from "../api";
@@ -23,7 +23,7 @@ function LoginPage() {
 }
 
 function LoginForm() {
-  let history = useHistory();
+  const router = useRouter();
   // TODO(ivan): validation, form errors
   // TODO(ivan): submitting state
   let formik = useFormik({
@@ -33,7 +33,7 @@ function LoginForm() {
     },
     onSubmit: async (values) => {
       await API.postLogin(values);
-      history.push("/");
+      router.push("/");
     },
   });
 

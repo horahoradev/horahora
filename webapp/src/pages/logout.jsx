@@ -1,24 +1,24 @@
+import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
 
 import * as API from "../api";
 
 function LogoutPage() {
-  let history = useHistory();
+  const router = useRouter();
 
   useEffect(() => {
     let ignore = false;
 
     let fetchData = async () => {
       await API.postLogout();
-      if (!ignore) history.push("/");
+      if (!ignore) router.push("/");
     };
 
     fetchData();
     return () => {
       ignore = true;
     };
-  }, [history]);
+  }, [router]);
 
   return <></>;
 }

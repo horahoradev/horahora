@@ -1,5 +1,6 @@
+import { useRouter } from "next/router";
+import Link from "next/link";
 import { useCallback, useState } from "react";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArchive,
@@ -10,7 +11,6 @@ import {
   faUser,
   faSun,
 } from "@fortawesome/free-solid-svg-icons";
-import { useHistory } from "react-router-dom";
 import { Switch, Button, Dropdown, Input, Menu } from "antd";
 
 import { UserRank } from "../api/types";
@@ -23,7 +23,7 @@ export function Header({ userData, dataless }) {
     <nav className="h-16 bg-white dark:bg-gray-800 shadow flex justify-center">
       <div className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
         <div className="flex justify-start flex-grow-0">
-          <Link to="/" className="text-2xl font-black text-blue-500">
+          <Link className="text-2xl font-black text-blue-500" href="/">
             Horahora
           </Link>
         </div>
@@ -39,6 +39,7 @@ export function Header({ userData, dataless }) {
 }
 
 function Search() {
+  const router = useRouter();
   const [redirectVal, setRedirectVal] = useState(null);
   const [isFocused, switchFocus] = useState(false);
 
@@ -57,9 +58,8 @@ function Search() {
     setRedirectVal(`/?${params.toString()}`);
   }, []);
 
-  const history = useHistory();
   if (redirectVal) {
-    history.push(redirectVal);
+    router.push(redirectVal);
     setRedirectVal(null);
   }
 
@@ -157,7 +157,7 @@ function LoggedInUserNav(props) {
       >
         <Link
           className="text-black dark:text-white dark:hover:text-black"
-          to={`/users/${userData.userID}`}
+          href={`/users/${userData.userID}`}
         >
           Profile page
         </Link>
@@ -173,7 +173,7 @@ function LoggedInUserNav(props) {
           />
         }
       >
-        <Link className="text-black dark:text-white" to="/password-reset">
+        <Link className="text-black dark:text-white" href="/password-reset">
           Reset Password
         </Link>
       </Menu.Item>
@@ -182,7 +182,7 @@ function LoggedInUserNav(props) {
         key="logout"
         icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
       >
-        <Link className="text-black dark:text-white" to="/logout">
+        <Link className="text-black dark:text-white" href="/logout">
           Logout
         </Link>
       </Menu.Item>
@@ -217,7 +217,7 @@ function LoggedInAdminNav(props) {
       >
         <Link
           className="text-black dark:text-white dark:hover:text-black"
-          to={`/users/${userData.userID}`}
+          href={`/users/${userData.userID}`}
         >
           Profile page
         </Link>
@@ -235,7 +235,7 @@ function LoggedInAdminNav(props) {
       >
         <Link
           className="text-black dark:text-white dark:hover:text-black"
-          to="/archive-requests"
+          href="/archive-requests"
         >
           Archive Requests
         </Link>
@@ -257,7 +257,7 @@ function LoggedInAdminNav(props) {
       >
         <Link
           className="text-black dark:text-white dark:hover:text-black"
-          to="/password-reset"
+          href="/password-reset"
         >
           Password Reset
         </Link>
@@ -275,7 +275,7 @@ function LoggedInAdminNav(props) {
       >
         <Link
           className="text-black dark:text-white dark:hover:text-black"
-          to="/audits"
+          href="/audits"
         >
           Audit Logs
         </Link>
@@ -285,7 +285,7 @@ function LoggedInAdminNav(props) {
         key="logout"
         icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
       >
-        <Link className="text-black dark:text-white" to="/logout">
+        <Link className="text-black dark:text-white" href="/logout">
           Logout
         </Link>
       </Menu.Item>
@@ -310,10 +310,10 @@ function LoggedInAdminNav(props) {
 function LoggedOutUserNav() {
   return (
     <>
-      <Link to="/login">
+      <Link href="/login">
         <Button>Login</Button>
       </Link>
-      <Link className="ml-2" to="/register">
+      <Link className="ml-2" href="/register">
         <Button type="primary">Register</Button>
       </Link>
     </>

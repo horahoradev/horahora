@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useRouter } from "next/router";
 
 import * as API from "../api";
 import { Header } from "../components/header";
@@ -7,8 +7,7 @@ import { VideoList } from "../components/video-list";
 import Paginatione from "../Pagination";
 
 export function HomePage() {
-  let history = useHistory();
-
+  const router = useRouter();
   const [pageData, setPageData] = useState(null);
   const [userData, setUserData] = useState(null);
   const [currPage, setPage] = useState(1);
@@ -30,7 +29,7 @@ export function HomePage() {
       } catch (error) {
         // Bad redirect if not authenticated
         if (error.response.status === 403) {
-          history.push("/login");
+          router.push("/login");
         }
       }
     };

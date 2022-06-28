@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Tag, Avatar, Button } from "antd";
-import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { UserOutlined } from "@ant-design/icons";
+import { useRouter } from "next/router";
 
 import * as API from "../../api";
 import { Header } from "../../components/header";
@@ -14,7 +14,9 @@ import Paginatione from "../Pagination";
 // {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":11,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 
 function UsersPage() {
-  let { id } = useParams();
+  const router = useRouter();
+  const { query } = router;
+  const { id } = query;
 
   const [userData, setUserData] = useState(null);
   const [pageUserData, setPageUserData] = useState({});
