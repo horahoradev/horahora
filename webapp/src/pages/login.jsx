@@ -64,7 +64,7 @@ function LoginForm() {
             placeholder="Username"
             ref={usernameInputRef}
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
+              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
             }
           />
         </Input.Group>
@@ -77,7 +77,7 @@ function LoginForm() {
             size="large"
             placeholder="Password"
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faKey} />
+              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faKey} />
             }
           />
         </Input.Group>

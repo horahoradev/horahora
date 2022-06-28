@@ -76,7 +76,7 @@ function Search() {
         size="large"
         placeholder="Search"
         prefix={
-          <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
+          <FontAwesomeIcon className="mr-1 text-gray-400 max-h-4" icon={faSearch} />
         }
         onFocus={() => {
           switchFocus(true);
