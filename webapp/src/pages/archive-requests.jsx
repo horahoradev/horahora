@@ -9,7 +9,8 @@ import { Header } from "../components/header";
 import cloneDeep from "lodash/cloneDeep";
 
 let id = Math.floor(Math.random() * 1000);
-export function ArchivalPage() {
+
+function ArchivalPage() {
   const [userData, setUserData] = useState(null);
   const [archivalSubscriptions, setArchivalSubscriptions] = useState([]);
   const [timelineEvents, setTimelineEvents] = useState([]);
@@ -437,3 +438,5 @@ export function ArchivalPage() {
     </>
   );
 }
+
+export default ArchivalPage;

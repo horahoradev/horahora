@@ -9,7 +9,7 @@ import { Header } from "../components/header";
 
 import * as API from "../api";
 
-export function LoginPage() {
+function LoginPage() {
   return (
     <>
       <Header dataless />
@@ -45,7 +45,15 @@ function LoginForm() {
 
   return (
     <div className="max-w-xs w-full border rounded shadow bg-white dark:bg-gray-800 p-4">
-      <h2 className="text-xl text-black dark:text-white mb-4 inline-block">Welcome back!</h2> <a className="float-right -top-5 text-black dark:text-white" href="/register">register</a>
+      <h2 className="text-xl text-black dark:text-white mb-4 inline-block">
+        Welcome back!
+      </h2>{" "}
+      <a
+        className="float-right -top-5 text-black dark:text-white"
+        href="/register"
+      >
+        register
+      </a>
       <form onSubmit={formik.handleSubmit}>
         <Input.Group>
           <Input
@@ -84,4 +92,4 @@ function LoginForm() {
   );
 }
 
-
+export default LoginPage;

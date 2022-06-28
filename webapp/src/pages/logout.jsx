@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 
 import * as API from "../api";
 
-export function LogoutPage() {
+function LogoutPage() {
   let history = useHistory();
 
   useEffect(() => {
@@ -23,3 +23,4 @@ export function LogoutPage() {
   return <></>;
 }
 
+export default LogoutPage;

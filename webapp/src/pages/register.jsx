@@ -10,7 +10,7 @@ import { Header } from "../components/header";
 
 import * as API from "../api";
 
-export function RegisterPage() {
+function RegisterPage() {
   return (
     <>
       <Header dataless />
@@ -100,3 +100,5 @@ function RegistrationForm() {
     </div>
   );
 }
+
+export default RegisterPage;

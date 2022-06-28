@@ -19,7 +19,7 @@ import { UserOutlined } from "@ant-design/icons";
 const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
 
-export function VideoPage() {
+function VideosPage() {
   let history = useHistory();
 
   let { id } = useParams();
@@ -172,7 +172,9 @@ function VideoAdminControls(props) {
     <>
       <hr />
       <div className="my-4">
-        <b className="text-2xl text-black dark:text-white ml-4">Admin controls:</b>
+        <b className="text-2xl text-black dark:text-white ml-4">
+          Admin controls:
+        </b>
         <Button
           type="primary"
           className="mx-4"
@@ -250,7 +252,9 @@ function VideoView(props) {
         </div>
 
         <div className="my-2">
-          <span className="text-xs font-bold text-black dark:text-white mb-2">Tags</span>
+          <span className="text-xs font-bold text-black dark:text-white mb-2">
+            Tags
+          </span>
           <div className="border px-2 py-1">
             {!data.Tags
               ? "None"
@@ -325,7 +329,9 @@ function VideoView(props) {
                   icon={faThumbsUp}
                 />,
               ]}
-              author={<b className="text-black dark:text-white">{item.fullname}</b>}
+              author={
+                <b className="text-black dark:text-white">{item.fullname}</b>
+              }
               avatar={
                 <Avatar
                   className="ml-4"
@@ -363,3 +369,5 @@ function VideoView(props) {
     </div>
   );
 }
+
+export default VideosPage;

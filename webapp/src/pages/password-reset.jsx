@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 import { Header } from "../components/header";
 import * as API from "../api";
 
-export function PasswordResetPage() {
+function PasswordResetPage() {
   return (
     <>
       <Header dataless />
@@ -44,9 +44,11 @@ function PasswordResetForm() {
 
   return (
     <div className="max-w-xs w-full border rounded shadow bg-white dark:bg-black p-4">
-      <h2 className="text-xl text-black dark:text-white mb-4">Reset Password</h2>
+      <h2 className="text-xl text-black dark:text-white mb-4">
+        Reset Password
+      </h2>
       <form onSubmit={formik.handleSubmit}>
-      <Input.Group>
+        <Input.Group>
           <Input
             name="old_password"
             values={formik.values.old_password}
@@ -58,7 +60,7 @@ function PasswordResetForm() {
               <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
             }
           />
-          </Input.Group>
+        </Input.Group>
         <Input.Group>
           <Input
             name="new_password"
@@ -82,3 +84,5 @@ function PasswordResetForm() {
     </div>
   );
 }
+
+export default PasswordResetPage;
