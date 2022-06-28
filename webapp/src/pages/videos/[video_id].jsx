@@ -9,12 +9,12 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
+import { UserOutlined } from "@ant-design/icons";
 
 import * as API from "../api";
 import { Header } from "../components/header";
 import { UserRank } from "../api/types";
 import { VideoList } from "../components/video-list";
-import { UserOutlined } from "@ant-design/icons";
 
 const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
@@ -127,7 +127,11 @@ function VideoPlayer(props) {
         <p className="vjs-no-js">
           To view this video please enable JavaScript, and consider upgrading to
           a web browser that
-          <a href="https://videojs.com/html5-video-support/" target="_blank">
+          <a
+            href="https://videojs.com/html5-video-support/"
+            target="_blank"
+            rel="noreferrer"
+          >
             supports HTML5 video
           </a>
         </p>
@@ -315,20 +319,25 @@ function VideoView(props) {
           <li>
             <Comment
               className="border-0 text-black dark:text-white shadow-none"
-              actions={[
-                <span className="text-black dark:text-white text-bold">
-                  {item.upvote_count}
-                </span>,
-                <FontAwesomeIcon
-                  onClick={() => upvoteComment(item.id, item.user_has_upvoted)}
-                  className={
-                    item.user_has_upvoted
-                      ? "mr-1 text-green-400"
-                      : "mr-1 text-gray-400"
-                  }
-                  icon={faThumbsUp}
-                />,
-              ]}
+              actions={
+                <>
+                  <span className="text-black dark:text-white text-bold">
+                    {item.upvote_count}
+                  </span>
+                  ,
+                  <FontAwesomeIcon
+                    onClick={() =>
+                      upvoteComment(item.id, item.user_has_upvoted)
+                    }
+                    className={
+                      item.user_has_upvoted
+                        ? "mr-1 text-green-400"
+                        : "mr-1 text-gray-400"
+                    }
+                    icon={faThumbsUp}
+                  />
+                </>
+              }
               author={
                 <b className="text-black dark:text-white">{item.fullname}</b>
               }

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import * as API from "../api";
 import { Header } from "../components/header";
 import { VideoList } from "../components/video-list";
 import Paginatione from "../Pagination";
-import { useHistory } from "react-router-dom";
 
 export function HomePage() {
   let history = useHistory();

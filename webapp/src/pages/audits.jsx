@@ -9,6 +9,7 @@ import {
   faSignOutAlt,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+
 import * as API from "../api";
 import { Header } from "../components/header";
 import { VideoList } from "../components/video-list";

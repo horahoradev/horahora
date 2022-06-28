@@ -1,11 +1,12 @@
 {
-  "extends": "next/core-web-vitals",
+  "extends": ["next/core-web-vitals", "prettier"],
   "rules": {
     "import/order": [
       "warn",
       {
         "newlines-between": "always"
       }
-    ]
+    ],
+    "@next/next/no-img-element": "off"
   }
 }

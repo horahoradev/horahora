@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Switch, Menu } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun } from "@fortawesome/free-solid-svg-icons";
+
 import { DEFAULT_THEME, getTheme, setTheme } from "../lib/theme";
 
 /**

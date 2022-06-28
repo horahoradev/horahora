@@ -3,10 +3,10 @@ import { Input, Tag, Table, Timeline, Progress, Button, Space } from "antd";
 import { CheckOutlined, SyncOutlined } from "@ant-design/icons";
 import * as Stomp from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
+import cloneDeep from "lodash/cloneDeep";
 
 import * as API from "../api";
 import { Header } from "../components/header";
-import cloneDeep from "lodash/cloneDeep";
 
 let id = Math.floor(Math.random() * 1000);
 
@@ -278,7 +278,7 @@ function ArchivalPage() {
   if (timelineEvents) {
     timelineElements = [
       timelineEvents.map((event, idx) => (
-        <Timeline.Item>
+        <Timeline.Item key={idx}>
           {event.message}
           <br></br>
           {event.timestamp}

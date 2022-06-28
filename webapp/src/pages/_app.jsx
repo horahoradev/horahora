@@ -2,6 +2,7 @@ import "antd/dist/antd.css";
 import "../styles/index.css";
 
 import Head from "next";
+
 import { Footer } from "./footer";
 
 function MyApp({ Component, pageProps }) {

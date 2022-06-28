@@ -15,6 +15,7 @@ import { Switch, Button, Dropdown, Input, Menu } from "antd";
 
 import { UserRank } from "../api/types";
 import { onParentBlur } from "../lib/dom";
+
 import { ThemeSwitcher } from "./theme-switcher";
 
 export function Header({ userData, dataless }) {
@@ -232,13 +233,16 @@ function LoggedInAdminNav(props) {
           />
         }
       >
-        <Link className="text-black dark:text-white dark:hover:text-black" to="/archive-requests">
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          to="/archive-requests"
+        >
           Archive Requests
         </Link>
       </Menu.Item>
       <Menu.Divider />
 
-      <ThemeSwitcher/>
+      <ThemeSwitcher />
 
       <Menu.Divider />
 
@@ -251,7 +255,10 @@ function LoggedInAdminNav(props) {
           />
         }
       >
-        <Link className="text-black dark:text-white dark:hover:text-black" to="/password-reset">
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          to="/password-reset"
+        >
           Password Reset
         </Link>
       </Menu.Item>
@@ -266,7 +273,10 @@ function LoggedInAdminNav(props) {
           />
         }
       >
-        <Link className="text-black dark:text-white dark:hover:text-black" to="/audits">
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          to="/audits"
+        >
           Audit Logs
         </Link>
       </Menu.Item>
@@ -287,7 +297,10 @@ function LoggedInAdminNav(props) {
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
           <b className="text-blue-500">{userData.username}</b>
-          <FontAwesomeIcon className="text-xs ml-2 text-black dark:text-white dark:hover:text-black" icon={faBars} />
+          <FontAwesomeIcon
+            className="text-xs ml-2 text-black dark:text-white dark:hover:text-black"
+            icon={faBars}
+          />
         </Button>
       </Dropdown>
     </>
