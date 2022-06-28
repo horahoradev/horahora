@@ -6,6 +6,9 @@ const nextJSConfig = {
   swcMinify: true,
   eslint: {
     dirs: ["environment", "src"]
+  },
+  experimental: {
+    newNextLinkBehavior: true
   }
 };
 

@@ -21,7 +21,7 @@ export function ThemeSwitcher() {
       key="darkmode"
       className="bg-white dark:bg-black"
       icon={
-        <FontAwesomeIcon className="text-black dark:text-white" icon={faSun} />
+        <FontAwesomeIcon className="max-h-4 text-black dark:text-white" icon={faSun} />
       }
     >
       <Switch

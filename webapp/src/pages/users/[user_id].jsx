@@ -15,8 +15,8 @@ import Paginatione from "../../components/pagination";
 
 function UsersPage() {
   const router = useRouter();
-  const { query } = router;
-  const { id } = query;
+  const { query, isReady } = router
+  const { user_id } = query;
 
   const [userData, setUserData] = useState(null);
   const [pageUserData, setPageUserData] = useState({});
@@ -24,10 +24,14 @@ function UsersPage() {
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
+    if (!isReady) {
+      return
+    }
+
     let ignore = false;
 
     let fetchData = async () => {
-      let pageUserData = await API.getUser(id, currPage);
+      let pageUserData = await API.getUser(user_id, currPage);
       if (!ignore) setPageUserData(pageUserData);
 
       let userData = await API.getUserdata();
@@ -38,7 +42,7 @@ function UsersPage() {
     return () => {
       ignore = true;
     };
-  }, [id, currPage]);
+  }, [user_id, currPage, isReady]);
 
   return (
     <>

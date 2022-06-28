@@ -150,7 +150,7 @@ function LoggedInUserNav(props) {
         key="profile"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faUser}
           />
         }
@@ -168,7 +168,7 @@ function LoggedInUserNav(props) {
         key="password-reset"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faKey}
           />
         }
@@ -180,7 +180,7 @@ function LoggedInUserNav(props) {
       <Menu.Divider />
       <Menu.Item
         key="logout"
-        icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
+        icon={<FontAwesomeIcon className="max-h-4 text-red-600" icon={faSignOutAlt} />}
       >
         <Link className="text-black dark:text-white" href="/logout">
           Logout
@@ -194,7 +194,7 @@ function LoggedInUserNav(props) {
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
           <b className="text-blue-500">{userData.username}</b>
-          <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
+          <FontAwesomeIcon className="max-h-4 text-xs ml-2" icon={faBars} />
         </Button>
       </Dropdown>
     </>
@@ -210,7 +210,7 @@ function LoggedInAdminNav(props) {
         key="profile"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faUser}
           />
         }
@@ -228,7 +228,7 @@ function LoggedInAdminNav(props) {
         key="archive-requests"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faArchive}
           />
         }
@@ -250,7 +250,7 @@ function LoggedInAdminNav(props) {
         key="password-reset"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faKey}
           />
         }
@@ -268,7 +268,7 @@ function LoggedInAdminNav(props) {
         key="audits"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faArchive}
           />
         }
@@ -283,9 +283,9 @@ function LoggedInAdminNav(props) {
       <Menu.Divider />
       <Menu.Item
         key="logout"
-        icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
+        icon={<FontAwesomeIcon className="max-h-4 text-red-600" icon={faSignOutAlt} />}
       >
-        <Link className="text-black dark:text-white" href="/logout">
+        <Link className="text-black dark:text-white dark:hover:text-black" href="/logout">
           Logout
         </Link>
       </Menu.Item>
@@ -295,10 +295,10 @@ function LoggedInAdminNav(props) {
   return (
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
-        <Button>
+        <Button className="flex flex-row flex-nowrap items-center">
           <b className="text-blue-500">{userData.username}</b>
           <FontAwesomeIcon
-            className="text-xs ml-2 text-black dark:text-white dark:hover:text-black"
+            className="text-xs max-h-4 ml-2 text-black dark:text-white dark:hover:text-black"
             icon={faBars}
           />
         </Button>

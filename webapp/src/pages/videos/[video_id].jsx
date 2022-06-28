@@ -22,7 +22,8 @@ const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
 
 function VideosPage() {
   const router = useRouter();
-  let { id } = router.query;
+  const { query, isReady } = router
+  let { video_id } = query;
 
   const [pageData, setPageData] = useState(null);
   const [rating, setRating] = useState(0.0);
@@ -35,16 +36,19 @@ function VideosPage() {
   }
 
   async function refreshComments() {
-    let videoComments = await API.getComments(id);
+    let videoComments = await API.getComments(video_id);
     setComments(videoComments);
   }
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
+    if (!isReady) {
+      return
+    }
     let ignore = false;
 
     let fetchData = async () => {
-      let data = await API.getVideo(id);
+      let data = await API.getVideo(video_id);
       if (data) setRating(data.Rating);
       if (!ignore) setPageData(data);
 
@@ -59,7 +63,7 @@ function VideosPage() {
     return () => {
       ignore = true;
     };
-  }, [id]);
+  }, [video_id, isReady]);
 
   if (pageData == null) return null;
 
@@ -71,7 +75,7 @@ function VideosPage() {
           <VideoView
             data={pageData}
             videoComments={comments}
-            id={id}
+            id={video_id}
             refreshComments={refreshComments}
             setRating={setRating}
             rating={rating}
