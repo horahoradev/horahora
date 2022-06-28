@@ -2,7 +2,11 @@
  * @type {import("next").NextConfig}
  */
 const nextJSConfig = {
-  swcMinify: true
+  reactStrictMode: true,
+  swcMinify: true,
+  eslint: {
+    dirs: ["environment", "src"]
+  }
 };
 
 module.exports = nextJSConfig;
