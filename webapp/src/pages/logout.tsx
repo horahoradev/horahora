@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-import * as API from "../api";
+import { postLogout } from "#api/index";
 
 function LogoutPage() {
   const router = useRouter();
@@ -10,11 +10,12 @@ function LogoutPage() {
     let ignore = false;
 
     let fetchData = async () => {
-      await API.postLogout();
+      await postLogout();
       if (!ignore) router.push("/");
     };
 
     fetchData();
+
     return () => {
       ignore = true;
     };
