@@ -8,16 +8,21 @@ import Paginatione from "../components/pagination";
 
 export function HomePage() {
   const router = useRouter();
+  const { query, isReady } = router;
   const [pageData, setPageData] = useState(null);
   const [userData, setUserData] = useState(null);
   const [currPage, setPage] = useState(1);
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+
     let ignore = false;
 
     let fetchData = async () => {
-      const { order, category, search } = router.query;
+      const { order, category, search } = query;
 
       try {
         let data = await API.getHome(currPage, search, order, category);
@@ -34,7 +39,7 @@ export function HomePage() {
     return () => {
       ignore = true;
     };
-  }, [currPage]);
+  }, [currPage, isReady]);
 
   useEffect(() => {
     let ignore = false;
