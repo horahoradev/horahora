@@ -388,8 +388,8 @@ function VideoView(props: IVideoViewProps) {
                   onClick={() => upvoteComment(item.id, item.user_has_upvoted)}
                   className={
                     item.user_has_upvoted
-                      ? "mr-1 text-green-400"
-                      : "mr-1 text-gray-400"
+                      ? "max-h-4 mr-1 text-green-400"
+                      : "max-h-4 mr-1 text-gray-400"
                   }
                   icon={faThumbsUp}
                 />,
@@ -422,7 +422,7 @@ function VideoView(props: IVideoViewProps) {
             size="large"
             placeholder="<your comment here>"
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
+              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
             }
           />
         </Input.Group>

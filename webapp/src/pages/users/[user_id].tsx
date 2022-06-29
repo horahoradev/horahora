@@ -68,7 +68,7 @@ function UsersPage() {
           <Avatar shape="square" size={96} icon={<UserOutlined />} />
         </div>
 
-        <h1 className={"flex justify-center text-black"}>
+        <h1 className={"flex justify-center text-black dark:text-white"}>
           {pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
         </h1>
         {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (

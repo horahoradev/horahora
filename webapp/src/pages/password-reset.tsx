@@ -60,7 +60,7 @@ function PasswordResetForm() {
             placeholder="current password"
             ref={usernameInputRef}
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
+              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
             }
           />
         </Input.Group>
@@ -74,7 +74,7 @@ function PasswordResetForm() {
             placeholder="new password"
             ref={usernameInputRef}
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
+              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
             }
           />
         </Input.Group>
