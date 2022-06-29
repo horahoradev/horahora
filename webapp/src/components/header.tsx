@@ -13,12 +13,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Switch, Button, Dropdown, Input, Menu } from "antd";
 
-import { UserRank } from "../api/types";
-import { onParentBlur } from "../lib/dom";
-
 import { ThemeSwitcher } from "./theme-switcher";
 
-export function Header({ userData, dataless }) {
+import { UserRank } from "#api/types";
+import { onParentBlur } from "#lib/dom";
+
+
+interface IHeaderProps extends Record<string, unknown> {}
+export function Header({ userData, dataless }: IHeaderProps) {
   return (
     <nav className="h-16 bg-white dark:bg-gray-800 shadow flex justify-center">
       <div className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
@@ -40,14 +42,19 @@ export function Header({ userData, dataless }) {
 
 function Search() {
   const router = useRouter();
-  const [redirectVal, setRedirectVal] = useState(null);
+  const [redirectVal, setRedirectVal] = useState<string | null>(null);
   const [isFocused, switchFocus] = useState(false);
 
   let handleSearch = useCallback((e) => {
     e.preventDefault();
-    const category = document.getElementById("category").value;
-    const order = document.querySelector('input[name="order"]:checked').value;
-    const search = document.querySelector('input[name="search"]').value;
+    const category = (document.getElementById("category") as HTMLSelectElement)
+      .value;
+    const order = (
+      document.querySelector('input[name="order"]:checked') as HTMLInputElement
+    ).value;
+    const search = (
+      document.querySelector('input[name="search"]') as HTMLInputElement
+    ).value;
 
     const params = new URLSearchParams([
       ["category", category],
@@ -76,7 +83,10 @@ function Search() {
         size="large"
         placeholder="Search"
         prefix={
-          <FontAwesomeIcon className="mr-1 text-gray-400 max-h-4" icon={faSearch} />
+          <FontAwesomeIcon
+            className="mr-1 text-gray-400 max-h-4"
+            icon={faSearch}
+          />
         }
         onFocus={() => {
           switchFocus(true);
@@ -129,11 +139,15 @@ function Search() {
   );
 }
 
-function UserNav(props) {
+interface IUserNav extends Record<string, unknown> {}
+
+function UserNav(props: IUserNav) {
   const { userData } = props;
 
+  // @ts-expect-error figure `userData` shape
   if (userData && userData.username && userData.rank === UserRank.ADMIN) {
     return <LoggedInAdminNav userData={userData} />;
+    // @ts-expect-error figure `userData` shape
   } else if (userData && userData.username) {
     return <LoggedInUserNav userData={userData} />;
   } else {
@@ -141,7 +155,9 @@ function UserNav(props) {
   }
 }
 
-function LoggedInUserNav(props) {
+interface ILoggedInUserNav extends Record<string, unknown> {}
+
+function LoggedInUserNav(props: ILoggedInUserNav) {
   const { userData } = props;
 
   let menu = (
@@ -157,6 +173,7 @@ function LoggedInUserNav(props) {
       >
         <Link
           className="text-black dark:text-white dark:hover:text-black"
+          // @ts-expect-error figure `userData` shape
           href={`/users/${userData.userID}`}
         >
           Profile page
@@ -180,7 +197,12 @@ function LoggedInUserNav(props) {
       <Menu.Divider />
       <Menu.Item
         key="logout"
-        icon={<FontAwesomeIcon className="max-h-4 text-red-600" icon={faSignOutAlt} />}
+        icon={
+          <FontAwesomeIcon
+            className="max-h-4 text-red-600"
+            icon={faSignOutAlt}
+          />
+        }
       >
         <Link className="text-black dark:text-white" href="/logout">
           Logout
@@ -193,6 +215,7 @@ function LoggedInUserNav(props) {
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
+          {/* @ts-expect-error figure `userData` shape */}
           <b className="text-blue-500">{userData.username}</b>
           <FontAwesomeIcon className="max-h-4 text-xs ml-2" icon={faBars} />
         </Button>
@@ -201,7 +224,9 @@ function LoggedInUserNav(props) {
   );
 }
 
-function LoggedInAdminNav(props) {
+interface ILoggedInAdminNav extends Record<string, unknown> {}
+
+function LoggedInAdminNav(props: ILoggedInAdminNav) {
   const { userData } = props;
 
   let menu = (
@@ -217,6 +242,7 @@ function LoggedInAdminNav(props) {
       >
         <Link
           className="text-black dark:text-white dark:hover:text-black"
+          // @ts-expect-error figure `userData` shape
           href={`/users/${userData.userID}`}
         >
           Profile page
@@ -283,9 +309,17 @@ function LoggedInAdminNav(props) {
       <Menu.Divider />
       <Menu.Item
         key="logout"
-        icon={<FontAwesomeIcon className="max-h-4 text-red-600" icon={faSignOutAlt} />}
+        icon={
+          <FontAwesomeIcon
+            className="max-h-4 text-red-600"
+            icon={faSignOutAlt}
+          />
+        }
       >
-        <Link className="text-black dark:text-white dark:hover:text-black" href="/logout">
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          href="/logout"
+        >
           Logout
         </Link>
       </Menu.Item>
@@ -296,6 +330,7 @@ function LoggedInAdminNav(props) {
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button className="flex flex-row flex-nowrap items-center">
+          {/* @ts-expect-error figure `userData` shape */}
           <b className="text-blue-500">{userData.username}</b>
           <FontAwesomeIcon
             className="text-xs max-h-4 ml-2 text-black dark:text-white dark:hover:text-black"
