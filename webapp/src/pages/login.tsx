@@ -5,9 +5,10 @@ import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import type { InputRef } from "antd";
 
-import { Header } from "../components/header";
-import * as API from "../api";
+import { Header } from "#components/header";
+import { postLogin } from "#api/index";
 
 function LoginPage() {
   return (
@@ -32,13 +33,13 @@ function LoginForm() {
       password: "",
     },
     onSubmit: async (values) => {
-      await API.postLogin(values);
+      await postLogin(values);
       router.push("/");
     },
   });
 
   // automatically focus input on first input on render
-  let usernameInputRef = useRef();
+  let usernameInputRef = useRef<InputRef>(null);
   useEffect(() => {
     usernameInputRef.current && usernameInputRef.current.focus();
   }, [usernameInputRef]);
@@ -58,13 +59,17 @@ function LoginForm() {
         <Input.Group>
           <Input
             name="username"
+            // @ts-expect-error types
             values={formik.values.username}
             onChange={formik.handleChange}
             size="large"
             placeholder="Username"
             ref={usernameInputRef}
             prefix={
-              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
+              <FontAwesomeIcon
+                className="max-h-4 mr-1 text-gray-400"
+                icon={faUser}
+              />
             }
           />
         </Input.Group>
@@ -72,12 +77,16 @@ function LoginForm() {
         <Input.Group>
           <Input.Password
             name="password"
+            // @ts-expect-error types
             values={formik.values.username}
             onChange={formik.handleChange}
             size="large"
             placeholder="Password"
             prefix={
-              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faKey} />
+              <FontAwesomeIcon
+                className="max-h-4 mr-1 text-gray-400"
+                icon={faKey}
+              />
             }
           />
         </Input.Group>
