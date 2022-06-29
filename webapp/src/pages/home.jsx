@@ -3,11 +3,9 @@ import { useLocation } from 'react-router';
 
 import * as API from "../api";
 import { Header } from "../components/header";
-import VideoList from "../VideoList";
+import { VideoList } from "../components/video-list";
 import Paginatione from "../Pagination";
 import { useHistory } from "react-router-dom";
-
-import Footer from "../Footer";
 
 export function HomePage() {
   let history = useHistory();
@@ -39,8 +37,7 @@ export function HomePage() {
         }
       }
 
-      let userData = await API.getUserdata();
-      if (!ignore) setUserData(userData);
+      
     };
 
     fetchData();
@@ -48,14 +45,27 @@ export function HomePage() {
       ignore = true;
     };
   }, [currPage, category, order, search]);
-
+  
+  useEffect(() => {
+    let ignore = false;
+    
+    (async () => {
+      let userData = await API.getUserdata();
+      if (!ignore) setUserData(userData);
+    })()
+    
+    return () => {
+      ignore = true;
+    }
+  },[])
+  
   return (
     <>
       <Header userData={userData} />
 
       <div className="flex justify-center mx-4 min-h-screen py-4">
         <div className="max-w-screen-lg w-screen">
-          <h1 className="bold text-2xl text-black">Number of videos: {pageData ? pageData.PaginationData.NumberOfItems : 0}</h1>
+          <h1 className="bold text-2xl text-black dark:text-white">Number of videos: {pageData ? pageData.PaginationData.NumberOfItems : 0}</h1>
           <VideoList videos={pageData ? pageData.Videos : []} />
           <Paginatione paginationData={pageData ? pageData.PaginationData : []} onPageChange={setPage}/>
         </div>

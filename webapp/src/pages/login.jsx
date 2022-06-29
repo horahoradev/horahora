@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import Footer from "../Footer";
 
 import { Header } from "../components/header";
 
@@ -45,8 +44,8 @@ function LoginForm() {
   }, [usernameInputRef]);
 
   return (
-    <div className="max-w-xs w-full border rounded shadow bg-white p-4">
-      <h2 className="text-xl mb-4 inline-block">Welcome back!</h2> <a className="float-right -top-5" href="/register">register</a>
+    <div className="max-w-xs w-full border rounded shadow bg-white dark:bg-gray-800 p-4">
+      <h2 className="text-xl text-black dark:text-white mb-4 inline-block">Welcome back!</h2> <a className="float-right -top-5 text-black dark:text-white" href="/register">register</a>
       <form onSubmit={formik.handleSubmit}>
         <Input.Group>
           <Input

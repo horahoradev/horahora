@@ -1,5 +1,8 @@
 {
     "recommendations": [
-        "dbaeumer.vscode-eslint"
+        // https://eslint.org/docs/user-guide/integrations#editors
+        "dbaeumer.vscode-eslint",
+        // https://tailwindcss.com/docs/editor-setup#intelli-sense-for-vs-code
+        "bradlc.vscode-tailwindcss"
     ]
 }
