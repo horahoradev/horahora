@@ -1,11 +1,13 @@
 import "antd/dist/antd.css";
-import "../styles/index.css";
+import "#styles/index.css";
 
 import Head from "next/head";
+import type { AppProps } from 'next/app'
 
-import { Footer } from "../components/footer";
+import { Footer } from "#components/footer";
 
-function MyApp({ Component, pageProps }) {
+
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
@@ -28,7 +30,7 @@ function MyApp({ Component, pageProps }) {
         ></script>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/logo192.png" />
-        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+        <link rel="manifest" href="/manifest.json" />
       </Head>
       <div className="bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
         <Component {...pageProps} />
