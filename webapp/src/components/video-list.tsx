@@ -3,12 +3,19 @@ import { Rate } from "antd";
 
 const VIDEO_ELEMENT_WIDTH = "w-44";
 
-export function VideoList(props) {
+interface IVideoListProps extends Record<string, unknown> {
+  title: string;
+  videos: IVideo[];
+}
+
+export function VideoList(props: IVideoListProps) {
   const { videos, title, inline } = props;
 
-  let elements = [];
+  let elements: JSX.Element[] = [];
+
   if (videos) {
     elements = [
+      // @ts-expect-error add spread
       videos.map((video, idx) => (
         <Video inline={inline} key={idx} video={video} />
       )),
@@ -42,7 +49,19 @@ export function VideoList(props) {
   );
 }
 
-function Video(props) {
+interface IVideoProps extends Record<string, unknown> {
+  video: IVideo
+}
+
+interface IVideo {
+  VideoID: unknown
+  Title: string
+  ThumbnailLoc: string
+  Rating: number
+  Views: unknown
+}
+
+function Video(props: IVideoProps) {
   const { video, inline } = props;
 
   return (
@@ -59,8 +78,8 @@ function Video(props) {
               alt={video.Title}
               src={`${video.ThumbnailLoc}`}
               onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = `${video.ThumbnailLoc.slice(0, -6)}.jpg`;
+                (e.target as HTMLImageElement).onerror = null;
+                (e.target as HTMLImageElement).src = `${video.ThumbnailLoc.slice(0, -6)}.jpg`;
               }}
             />
             {!inline && (
