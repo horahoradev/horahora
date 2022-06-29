@@ -8,14 +8,18 @@ import {
   faSignOutAlt,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import type { ChangeEvent } from "react";
 
-import * as API from "../api";
-import { Header } from "../components/header";
-import { VideoList } from "../components/video-list";
-import Paginatione from "../components/pagination";
+import { getAudits, getUserdata } from "#api/index";
+import { Header } from "#components/header";
+import { VideoList } from "#components/video-list";
+import Paginatione from "#components/pagination";
 
 function AuditsPage() {
-  const [pageData, setPageData] = useState(null);
+  const [pageData, setPageData] = useState<{
+    Events: Record<string, unknown>[];
+    Length: number;
+  } | null>(null);
   const [userData, setUserData] = useState(null);
   const [userID, setUserID] = useState(-1);
   const [currPage, setPage] = useState(1);
@@ -43,8 +47,8 @@ function AuditsPage() {
     },
   ];
 
-  function UserIDFFromSearch(e) {
-    setUserID(e.currentTarget.value);
+  function UserIDFFromSearch(e: ChangeEvent<HTMLInputElement>) {
+    setUserID(Number(e.currentTarget.value));
   }
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
@@ -52,10 +56,10 @@ function AuditsPage() {
     let ignore = false;
 
     let fetchData = async () => {
-      let data = await API.getAudits(userID, currPage);
+      let data = await getAudits(userID, currPage);
       if (!ignore) setPageData(data);
 
-      let userData = await API.getUserdata();
+      let userData = await getUserdata();
       if (!ignore) setUserData(userData);
     };
 
@@ -76,7 +80,9 @@ function AuditsPage() {
         size="large"
         placeholder="Search for user ID"
         className="bg-white children:m-5 w-full text-black font-bold"
-        onChange={UserIDFFromSearch}
+        onChange={(event) => {
+          UserIDFFromSearch;
+        }}
         prefix={
           <FontAwesomeIcon
             className="mr-1 text-gray-400 dark:text-white"
