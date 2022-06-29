@@ -1,36 +1,25 @@
 import { getCookie, setCookie } from "../store/cookie";
 
-/**
- * @typedef {"dark" | "light"} ITheme
- */
+type ITheme = "dark" | "light";
 
 export const DEFAULT_THEME = "dark";
 
-/**
- * @returns {ITheme}
- */
-export function getTheme() {
-  /**
-   * @typedef {ITheme}
-   */
-  let currentTheme = undefined;
+export function getTheme(): ITheme {
+  let currentTheme: string | undefined = undefined;
 
   try {
     currentTheme = getCookie("theme");
   } catch (error) {
     currentTheme = document.documentElement.dataset.theme;
-    setCookie("theme", currentTheme);
+    setCookie("theme", currentTheme as ITheme);
   }
 
-  return currentTheme;
+  return currentTheme as ITheme;
 }
 
-/**
- * @param {ITheme} theme
- */
-export function setTheme(theme) {
+export function setTheme(theme: ITheme): ITheme {
   document.documentElement.dataset.theme = theme;
   setCookie("theme", theme);
-  
+
   return theme;
 }
