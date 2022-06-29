@@ -11,21 +11,35 @@ import {
 import { useFormik } from "formik";
 import { UserOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
+import type { SyntheticEvent } from "react";
 
-import * as API from "../../api";
-import { Header } from "../../components/header";
-import { UserRank } from "../../api/types";
-import { VideoList } from "../../components/video-list";
+import {
+  getComments,
+  getVideo,
+  getUserdata,
+  deleteVideo as apiDeleteVideo,
+  approveVideo as apiApproveVideo,
+  postComment,
+  upvoteComment as apiUpvoteComment,
+  postRating,
+} from "#api/index";
+import { UserRank } from "#api/types";
+import { VideoList } from "#components/video-list";
+import { Header } from "#components/header";
 
 const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
 
+interface IPageData extends Record<string, unknown> {
+  RecommendedVideos: Record<string, unknown>[];
+}
+
 function VideosPage() {
   const router = useRouter();
-  const { query, isReady } = router
-  let { video_id } = query;
+  const { query, isReady } = router;
+  let video_id = Number(query.video_id);
 
-  const [pageData, setPageData] = useState(null);
+  const [pageData, setPageData] = useState<IPageData | null>(null);
   const [rating, setRating] = useState(0.0);
   const [comments, setComments] = useState([]);
   const [userData, setUserData] = useState(null);
@@ -36,23 +50,23 @@ function VideosPage() {
   }
 
   async function refreshComments() {
-    let videoComments = await API.getComments(video_id);
+    let videoComments = await getComments(video_id);
     setComments(videoComments);
   }
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
     if (!isReady) {
-      return
+      return;
     }
     let ignore = false;
 
     let fetchData = async () => {
-      let data = await API.getVideo(video_id);
+      let data = await getVideo(video_id);
       if (data) setRating(data.Rating);
       if (!ignore) setPageData(data);
 
-      let userData = await API.getUserdata();
+      let userData = await getUserdata();
       if (!ignore) setUserData(userData);
 
       await refreshComments();
@@ -73,6 +87,7 @@ function VideosPage() {
       <div className="flex justify-center mx-4">
         <div className="w-screen my-6 z-0 min-w-400">
           <VideoView
+            // @ts-expect-error typing
             data={pageData}
             videoComments={comments}
             id={video_id}
@@ -84,6 +99,7 @@ function VideosPage() {
         </div>
         <div className="ml-4 mt-2 w-100 align-top float-right">
           <VideoList
+            // @ts-expect-error types
             videos={pageData.RecommendedVideos}
             title="Recommendations"
             inline={true}
@@ -94,9 +110,14 @@ function VideosPage() {
   );
 }
 
-function VideoPlayer(props) {
+interface IVideoPlayerProps extends Record<string, unknown> {
+  url: string;
+  next_video: (event: SyntheticEvent<HTMLVideoElement, Event>) => void;
+}
+
+function VideoPlayer(props: IVideoPlayerProps) {
   let { url, next_video } = props;
-  let videoRef = useRef();
+  let videoRef = useRef<HTMLVideoElement>(null);
   var url_without_mpd = url.slice(0, -4);
 
   useEffect(() => {
@@ -106,13 +127,6 @@ function VideoPlayer(props) {
     video.load();
     video.play();
   }, [videoRef, url]);
-
-  function set_on_end() {
-    var video = document.getElementById("my-player");
-    video.on("ended", () => {
-      next_video();
-    });
-  }
 
   return (
     <>
@@ -144,7 +158,13 @@ function VideoPlayer(props) {
   );
 }
 
-function VideoAdminControls(props) {
+interface IVideoAdminControls extends Record<string, unknown> {
+  data: {
+    VideoID: number;
+  };
+}
+
+function VideoAdminControls(props: IVideoAdminControls) {
   const router = useRouter();
   let { data } = props;
   let [approvedVideo, setApprovedVideo] = useState(false);
@@ -153,9 +173,11 @@ function VideoAdminControls(props) {
 
   let deleteVideo = () => {
     if (deletingVideo.current) return;
+
     deletingVideo.current = true;
+
     let run = async () => {
-      await API.deleteVideo(data.VideoID);
+      await apiDeleteVideo(data.VideoID);
       deletingVideo.current = false;
       router.push("/");
     };
@@ -165,11 +187,13 @@ function VideoAdminControls(props) {
 
   let approveVideo = useCallback(() => {
     if (approvingVideo.current) return;
+
     let run = async () => {
-      await API.approveVideo(data.VideoID);
+      await apiApproveVideo(data.VideoID);
       setApprovedVideo(true);
     };
     approvingVideo.current = true;
+
     run().finally(() => {
       approvingVideo.current = false;
     });
@@ -199,7 +223,37 @@ function VideoAdminControls(props) {
   );
 }
 
-function VideoView(props) {
+interface IVideoViewProps extends Record<string, unknown> {
+  id: number;
+  data: {
+    MPDLoc: string;
+    Title: string;
+    Views: string;
+    UploadDate: string;
+    Tags: string[];
+    AuthorID: number;
+    Username: string;
+    VideoDescription: string;
+    L: {
+      rank: number;
+    };
+  };
+  videoComments: {
+    upvote_count: number;
+    id: number;
+    user_has_upvoted: boolean;
+    content: string;
+    created: string;
+    fullname: string;
+  }[];
+
+  rating: number;
+  refreshComments: () => Promise<unknown>;
+  setRating: (rating: number) => void;
+  next_video: () => void;
+}
+
+function VideoView(props: IVideoViewProps) {
   let {
     rating,
     data,
@@ -219,22 +273,22 @@ function VideoView(props) {
     },
     enableReinitialize: true,
     onSubmit: async (values) => {
-      await API.postComment(values);
+      await postComment(values);
       await refreshComments();
     },
   });
 
-  async function upvoteComment(commentID, has_upvoted) {
-    await API.upvoteComment(commentID, !has_upvoted);
+  async function upvoteComment(commentID: number, has_upvoted: boolean) {
+    await apiUpvoteComment(commentID, !has_upvoted);
     await refreshComments();
   }
 
-  async function rate(rating) {
+  async function rate(rating: number) {
     if (id == 0) {
       // TODO: throw
       return;
     }
-    await API.postRating(id, rating);
+    await postRating(id, rating);
     setRating(rating);
   }
 
@@ -300,11 +354,13 @@ function VideoView(props) {
             </span>
           </div>
           <div className="ml-20 pl-3 text-black dark:text-white">
+            {/* enjoy your XSS, bro */}
             <span dangerouslySetInnerHTML={{ __html: data.VideoDescription }} />
           </div>
         </div>
       </div>
       {data.L && data.L.rank === UserRank.ADMIN && (
+        // @ts-expect-error types
         <VideoAdminControls data={data}></VideoAdminControls>
       )}
       <hr></hr>
@@ -323,25 +379,21 @@ function VideoView(props) {
           <li>
             <Comment
               className="border-0 text-black dark:text-white shadow-none"
-              actions={
-                <>
-                  <span className="text-black dark:text-white text-bold">
-                    {item.upvote_count}
-                  </span>
-                  ,
-                  <FontAwesomeIcon
-                    onClick={() =>
-                      upvoteComment(item.id, item.user_has_upvoted)
-                    }
-                    className={
-                      item.user_has_upvoted
-                        ? "mr-1 text-green-400"
-                        : "mr-1 text-gray-400"
-                    }
-                    icon={faThumbsUp}
-                  />
-                </>
-              }
+              actions={[
+                <span key={1} className="text-black dark:text-white text-bold">
+                  {item.upvote_count}
+                </span>,
+                <FontAwesomeIcon
+                  key={2}
+                  onClick={() => upvoteComment(item.id, item.user_has_upvoted)}
+                  className={
+                    item.user_has_upvoted
+                      ? "mr-1 text-green-400"
+                      : "mr-1 text-gray-400"
+                  }
+                  icon={faThumbsUp}
+                />,
+              ]}
               author={
                 <b className="text-black dark:text-white">{item.fullname}</b>
               }
@@ -364,6 +416,7 @@ function VideoView(props) {
         <Input.Group>
           <Input
             name="content"
+            // @ts-expect-error types
             values={formik.values.content}
             onChange={formik.handleChange}
             size="large"

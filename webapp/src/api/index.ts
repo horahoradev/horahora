@@ -171,7 +171,7 @@ export async function getDownloadsInProgress() {
 }
 
 interface IPostCommentData {
-  video_id: string;
+  video_id: number;
   content: string;
   parent: string;
 }
