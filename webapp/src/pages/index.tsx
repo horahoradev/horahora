@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import axios from "axios";
 
-import * as API from "../api";
-import { Header } from "../components/header";
-import { VideoList } from "../components/video-list";
-import Paginatione from "../components/pagination";
+import { getHome, getUserdata } from "#api/index";
+import { Header } from "#components/header";
+import { VideoList } from "#components/video-list";
+import Paginatione from "#components/pagination";
+
+interface IPageData {
+  PaginationData: Record<string, unknown>;
+  Videos: Record<string, unknown>;
+}
 
 export function HomePage() {
   const router = useRouter();
   const { query, isReady } = router;
-  const [pageData, setPageData] = useState(null);
+  const [pageData, setPageData] = useState<IPageData | null>(null);
   const [userData, setUserData] = useState(null);
   const [currPage, setPage] = useState(1);
 
@@ -25,11 +31,16 @@ export function HomePage() {
       const { order, category, search } = query;
 
       try {
-        let data = await API.getHome(currPage, search, order, category);
+        let data = await getHome(
+          currPage,
+          search as string,
+          order as string,
+          category as string
+        );
         if (!ignore) setPageData(data);
       } catch (error) {
         // Bad redirect if not authenticated
-        if (error.response.status === 403) {
+        if (axios.isAxiosError(error) && error.response!.status === 403) {
           router.push("/login");
         }
       }
@@ -45,7 +56,7 @@ export function HomePage() {
     let ignore = false;
 
     (async () => {
-      let userData = await API.getUserdata();
+      let userData = await getUserdata();
       if (!ignore) setUserData(userData);
     })();
 
@@ -64,7 +75,10 @@ export function HomePage() {
             Number of videos:{" "}
             {pageData ? pageData.PaginationData.NumberOfItems : 0}
           </h1>
-          <VideoList videos={pageData ? pageData.Videos : []} />
+          <VideoList
+            // @ts-expect-error types
+            videos={pageData ? pageData.Videos : []}
+          />
           <Paginatione
             paginationData={pageData ? pageData.PaginationData : []}
             onPageChange={setPage}
