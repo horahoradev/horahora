@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
+import type { InputRef } from "antd";
 
-import { Header } from "../components/header";
-import * as API from "../api";
+import { Header } from "#components/header";
+import { postPasswordReset } from "#api/index";
 
 function PasswordResetPage() {
   return (
@@ -31,13 +32,14 @@ function PasswordResetForm() {
       new_password: "",
     },
     onSubmit: async (values) => {
-      await API.postPasswordReset(values);
+      await postPasswordReset(values);
       router.push("/");
     },
   });
 
   // automatically focus input on first input on render
-  let usernameInputRef = useRef();
+  let usernameInputRef = useRef<InputRef>(null);
+
   useEffect(() => {
     usernameInputRef.current && usernameInputRef.current.focus();
   }, [usernameInputRef]);
@@ -51,6 +53,7 @@ function PasswordResetForm() {
         <Input.Group>
           <Input
             name="old_password"
+            // @ts-expect-error form types
             values={formik.values.old_password}
             onChange={formik.handleChange}
             size="large"
@@ -64,6 +67,7 @@ function PasswordResetForm() {
         <Input.Group>
           <Input
             name="new_password"
+            // @ts-expect-error form types
             values={formik.values.new_password}
             onChange={formik.handleChange}
             size="large"
