@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Switch, Menu } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun } from "@fortawesome/free-solid-svg-icons";
-import { DEFAULT_THEME, getTheme, setTheme } from "../lib/theme";
+
+import { DEFAULT_THEME, getTheme, setTheme } from "#lib/theme";
 
 /**
  * @TODO more standalone markup.
@@ -12,7 +13,7 @@ export function ThemeSwitcher() {
 
   // initialize component on client
   useEffect(() => {
-    switchTheme(getTheme);
+    switchTheme(getTheme());
   }, []);
 
   return (
@@ -20,7 +21,10 @@ export function ThemeSwitcher() {
       key="darkmode"
       className="bg-white dark:bg-black"
       icon={
-        <FontAwesomeIcon className="text-black dark:text-white" icon={faSun} />
+        <FontAwesomeIcon
+          className="max-h-4 text-black dark:text-white"
+          icon={faSun}
+        />
       }
     >
       <Switch

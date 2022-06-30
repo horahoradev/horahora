@@ -1,7 +1,9 @@
 import { PrivacyPolicy } from "./privacy-policy";
 import { TermsOfService } from "./terms-of-service";
 
-export function Footer(props) {
+interface IFooterProps extends Record<string, unknown> {}
+
+export function Footer(props: IFooterProps) {
   const { userData, dataless } = props;
 
   return (

@@ -1,20 +1,25 @@
 import axios from "axios";
 import FormData from "form-data";
 
-const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
-if (API_ENDPOINT == null)
-  throw new Error("No REACT_APP_API_ENDPOINT provided!");
+import { API_ENDPOINT } from "#environment/vars";
 
-function e(name) {
+function e(name: string) {
   return `${API_ENDPOINT}${name}`;
 }
 
-export async function getHome(page=1, search="", order="", category="") {
-  const res = await axios.get(e(`home?page=${page}&search=${search}&order=${order}&category=${category}`));
+export async function getHome(
+  page: number = 1,
+  search: string = "",
+  order: string = "",
+  category: string = ""
+) {
+  const res = await axios.get(
+    e(`home?page=${page}&search=${search}&order=${order}&category=${category}`)
+  );
   return res.data;
 }
 
-export async function getUser(id, page) {
+export async function getUser(id: number, page: number) {
   const path = "users/" + id + "?page=" + page;
   const res = await axios.get(e(path));
   return res.data;
@@ -30,9 +35,9 @@ export async function getArchivalSubscriptions() {
   return res.data;
 }
 
-export async function postArchival(url) {
+export async function postArchival(url: string) {
   let form = new FormData();
-  form.append("url", url)
+  form.append("url", url);
 
   const res = await axios.post(e("archiverequests"), form, {
     headers: {
@@ -40,15 +45,20 @@ export async function postArchival(url) {
     },
   });
 
-    return res.data;
+  return res.data;
 }
 
-export async function postRegister(data) {
+interface IRegisterData {
+  username: string;
+  password: string;
+  email: string;
+}
+
+export async function postRegister(data: IRegisterData) {
   let form = new FormData();
   form.append("username", data.username);
   form.append("password", data.password);
   form.append("email", data.email);
-
 
   const res = await axios.post(e("register"), form, {
     headers: {
@@ -58,12 +68,17 @@ export async function postRegister(data) {
   return res.data;
 }
 
-export async function deleteVideo(videoId) {
+export async function deleteVideo(videoId: number) {
   const res = await axios.post(e(`delete/${videoId}`));
   return res.data;
 }
 
-export async function postLogin(data) {
+interface ILoginData {
+  username: string;
+  password: string;
+}
+
+export async function postLogin(data: ILoginData) {
   let form = new FormData();
   form.append("username", data.username);
   form.append("password", data.password);
@@ -76,7 +91,7 @@ export async function postLogin(data) {
   return res.data;
 }
 
-export async function postRating(videoID, rating) {
+export async function postRating(videoID: number, rating: number) {
   if (videoID == 0) {
     return;
     // TODO: throw
@@ -97,7 +112,12 @@ export async function postLogout() {
   return res.data;
 }
 
-export async function postPasswordReset(data) {
+interface IPasswordResetData {
+  old_password: string;
+  new_password: string;
+}
+
+export async function postPasswordReset(data: IPasswordResetData) {
   let form = new FormData();
   form.append("old_password", data.old_password);
   form.append("new_password", data.new_password);
@@ -110,38 +130,37 @@ export async function postPasswordReset(data) {
   return res.data;
 }
 
-
-export async function getVideo(videoId) {
+export async function getVideo(videoId: number) {
   const res = await axios.get(e(`videos/${videoId}`));
   return res.data;
 }
 
-export async function approveVideo(videoId) {
+export async function approveVideo(videoId: number) {
   const res = await axios.post(e(`approve/${videoId}`));
   return res.data;
 }
 
-export async function banUser(userID) {
+export async function banUser(userID: number) {
   const res = await axios.post(e(`ban/${userID}`));
   return res.data;
 }
 
-export async function setUserMod(userID) {
+export async function setUserMod(userID: number) {
   const res = await axios.post(e(`setrank/${userID}/1`));
   return res.data;
 }
 
-export async function setUserAdmin(userID) {
+export async function setUserAdmin(userID: number) {
   const res = await axios.post(e(`setrank/${userID}/2`));
   return res.data;
 }
 
-export async function getComments(videoID) {
+export async function getComments(videoID: number) {
   const res = await axios.get(e(`comments/${videoID}`));
   return res.data;
 }
 
-export async function getAudits(userID, page) {
+export async function getAudits(userID: number, page: number) {
   const res = await axios.get(e(`auditevents/${userID}?page=${page}`));
   return res.data;
 }
@@ -151,7 +170,13 @@ export async function getDownloadsInProgress() {
   return res.data;
 }
 
-export async function postComment(data) {
+interface IPostCommentData {
+  video_id: number;
+  content: string;
+  parent: string;
+}
+
+export async function postComment(data: IPostCommentData) {
   let form = new FormData();
   form.append("video_id", data.video_id);
   form.append("content", data.content);
@@ -165,7 +190,7 @@ export async function postComment(data) {
   return res.data;
 }
 
-export async function deleteArchivalRequest(download_id) {
+export async function deleteArchivalRequest(download_id: number) {
   let form = new FormData();
   form.append("download_id", download_id);
 
@@ -177,7 +202,7 @@ export async function deleteArchivalRequest(download_id) {
   return res.data;
 }
 
-export async function retryArchivalRequest(download_id) {
+export async function retryArchivalRequest(download_id: number) {
   let form = new FormData();
   form.append("download_id", download_id);
 
@@ -189,7 +214,10 @@ export async function retryArchivalRequest(download_id) {
   return res.data;
 }
 
-export async function upvoteComment(commentID, upvoted_already) {
+export async function upvoteComment(
+  commentID: number,
+  upvoted_already: boolean
+) {
   let form = new FormData();
   form.append("comment_id", commentID);
   form.append("user_has_upvoted", upvoted_already);

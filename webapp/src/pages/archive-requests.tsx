@@ -1,20 +1,39 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Input, Tag, Table, Timeline, Progress, Button, Space } from "antd";
 import { CheckOutlined, SyncOutlined } from "@ant-design/icons";
-import * as Stomp from "@stomp/stompjs";
+import { Client as StompClient, StompSubscription } from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
+import type { IMessage } from "@stomp/stompjs";
 
-import * as API from "../api";
-import { Header } from "../components/header";
-import cloneDeep from "lodash/cloneDeep";
+import {
+  getDownloadsInProgress,
+  deleteArchivalRequest as apiDeleteArchivalRequest,
+  retryArchivalRequest as apiRetryArchivalRequest,
+  postArchival,
+  getUserdata,
+  getArchivalSubscriptions,
+} from "#api/index";
+import { Header } from "#components/header";
 
 let id = Math.floor(Math.random() * 1000);
-export function ArchivalPage() {
+
+function ArchivalPage() {
   const [userData, setUserData] = useState(null);
-  const [archivalSubscriptions, setArchivalSubscriptions] = useState([]);
-  const [timelineEvents, setTimelineEvents] = useState([]);
-  const [videoInProgressDataset, setVideoInProgressDataset] = useState([]);
-  const [conn, setConn] = useState(null);
+  const [archivalSubscriptions, setArchivalSubscriptions] = useState<
+    {
+      Url: string;
+      ArchivedVideos: number;
+      CurrentTotalVideos: number;
+      BackoffFactor: number;
+    }[]
+  >([]);
+  const [timelineEvents, setTimelineEvents] = useState<
+    { message: string; timestamp: string }[]
+  >([]);
+  const [videoInProgressDataset, setVideoInProgressDataset] = useState<
+    { VideoID: number; progress: number }[] | null
+  >([]);
+  const [conn, setConn] = useState<StompClient | null>(null);
   const latest = useRef(videoInProgressDataset);
 
   const MutexRunner = useMutex();
@@ -22,7 +41,7 @@ export function ArchivalPage() {
 
   // TODO: currently connects every time the videos in progress changes
   useEffect(() => {
-    var client = new Stomp.Client({
+    var client = new StompClient({
       // brokerURL: "ws://localhost:61614/ws",
       webSocketFactory: function () {
         return new WebSocket("ws://localhost/ws");
@@ -59,38 +78,47 @@ export function ArchivalPage() {
     };
     client.activate();
 
-    return () => client.deactivate();
+    return () => {
+      (async () => {
+        client.deactivate();
+      })();
+    };
   }, []);
 
-  function processMessage(message) {
+  function processMessage(message: IMessage) {
     mutex.lock();
-    setVideoInProgressDataset((videosInProg) => {
-      if (videosInProg == null) {
-        return videosInProg;
-      }
-      let dataset = JSON.parse(JSON.stringify(videosInProg));
-      let body = JSON.parse(message.body);
-      let total_bytes = body.total_bytes || body.total_bytes_estimate;
-      let progress =
-        (100 * parseFloat(body.downloaded_bytes || total_bytes)) / total_bytes;
-      let idx = dataset.findIndex(
-        (video) => video.VideoID == body.info_dict.id
-      );
-      if (idx == -1) {
+    setVideoInProgressDataset(
+      (videosInProg: { VideoID: number; progress: number }[] | null) => {
+        if (videosInProg == null) {
+          return videosInProg;
+        }
+        let dataset: { VideoID: number; progress: number }[] = JSON.parse(
+          JSON.stringify(videosInProg)
+        );
+        let body = JSON.parse(message.body);
+        let total_bytes = body.total_bytes || body.total_bytes_estimate;
+        let progress =
+          (100 * parseFloat(body.downloaded_bytes || total_bytes)) /
+          total_bytes;
+        let idx = dataset.findIndex(
+          (video) => video.VideoID == body.info_dict.id
+        );
+        if (idx == -1) {
+          return dataset;
+        }
+        dataset[idx].progress = progress;
         return dataset;
       }
-      dataset[idx].progress = progress;
-      return dataset;
-    });
+    );
     message.ack();
     mutex.unlock();
   }
 
   // Get initial downloads in progress
   useEffect(() => {
-    let unsub = [];
+    let unsub: StompSubscription[] = [];
     (async () => {
-      let videos = await API.getDownloadsInProgress();
+      let videos = await getDownloadsInProgress();
       for (var i = 0; i < (videos != null ? videos.length : 0); i++) {
         videos[i].progress = 0;
       }
@@ -100,7 +128,7 @@ export function ArchivalPage() {
         let videoID = videos[i].VideoID;
         if (conn != null) {
           let ret = conn.subscribe(`/topic/${videoID}`, processMessage, {
-            "prefetch-count": 100,
+            "prefetch-count": String(100),
             ack: "client-individual",
             id: String(Math.random() * 1000),
           });
@@ -109,7 +137,9 @@ export function ArchivalPage() {
       }
     })();
 
-    return () => unsub.map((fn) => fn.unsubscribe());
+    return () => {
+      unsub.map((fn) => fn.unsubscribe());
+    };
   }, [conn]);
 
   useEffect(() => {
@@ -130,6 +160,7 @@ export function ArchivalPage() {
             }
             let dataset = JSON.parse(JSON.stringify(videosInProg));
             dataset = dataset.filter(
+              // @ts-expect-error types
               (item) => item.VideoID != body.Video.VideoID
             );
             return dataset;
@@ -146,18 +177,20 @@ export function ArchivalPage() {
 
             // // Does it already exist? If not, subscribe
             let videosID = dataset.filter(
+              // @ts-expect-error types
               (item) => item.VideoID == body.Video.VideoID
             );
             if (videosID.length == 1) {
               // unsubscribing isn't important here
               conn.subscribe(`/topic/${body.Video.VideoID}`, processMessage, {
-                "prefetch-count": 100,
+                "prefetch-count": String(100),
                 ack: "client-individual",
               });
             }
 
             // Needed for upsert, filter it out if it's in there with a different dlStatus
             dataset = dataset.filter(
+              // @ts-expect-error types
               (item) =>
                 item.VideoID != body.Video.VideoID ||
                 body.Video.DlStatus == item.DlStatus
@@ -179,7 +212,7 @@ export function ArchivalPage() {
         mutex.unlock();
       },
       {
-        "prefetch-count": 1,
+        "prefetch-count": String(1),
         ack: "client-individual",
         id: String(Math.random() * 1000),
       }
@@ -193,27 +226,27 @@ export function ArchivalPage() {
     setTimerVal((timerVal) => timerVal + 1);
   }
 
-  async function deleteArchivalRequest(download_id) {
-    await API.deleteArchivalRequest(download_id);
+  async function deleteArchivalRequest(download_id: number) {
+    await apiDeleteArchivalRequest(download_id);
     reloadPage();
   }
 
-  async function retryArchivalRequest(download_id) {
-    await API.retryArchivalRequest(download_id);
+  async function retryArchivalRequest(download_id: number) {
+    await apiRetryArchivalRequest(download_id);
     reloadPage();
   }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      reloadPage(timerVal);
+      reloadPage();
     }, 30000);
 
     return () => clearInterval(interval);
   }, []);
 
   function createNewArchival() {
-    const url = document.getElementById("url").value;
-    API.postArchival(url);
+    const url = (document.getElementById("url") as HTMLInputElement).value;
+    postArchival(url);
     let subs = archivalSubscriptions ? archivalSubscriptions : [];
     let newList = [
       { Url: url, ArchivedVideos: 0, CurrentTotalVideos: 0, BackoffFactor: 1 },
@@ -222,7 +255,11 @@ export function ArchivalPage() {
     setArchivalSubscriptions(newList);
   }
 
-  function Status(record) {
+  function Status(record: {
+    ArchivedVideos: number;
+    CurrentTotalVideos: number;
+    LastSynced: null;
+  }) {
     if (
       record.ArchivedVideos == record.CurrentTotalVideos &&
       record.CurrentTotalVideos != 0
@@ -253,10 +290,10 @@ export function ArchivalPage() {
     let ignore = false;
 
     let fetchData = async () => {
-      let userData = await API.getUserdata();
+      let userData = await getUserdata();
       if (!ignore) setUserData(userData);
 
-      let subscriptionData = await API.getArchivalSubscriptions();
+      let subscriptionData = await getArchivalSubscriptions();
 
       // videos.map((video, idx) => video.progress = videoInProgressDataset && videoInProgressDataset[idx] ? videoInProgressDataset[idx].progress : 0);
 
@@ -274,10 +311,11 @@ export function ArchivalPage() {
   }, [timerVal]);
 
   let timelineElements = [];
+
   if (timelineEvents) {
     timelineElements = [
       timelineEvents.map((event, idx) => (
-        <Timeline.Item>
+        <Timeline.Item key={idx}>
           {event.message}
           <br></br>
           {event.timestamp}
@@ -290,7 +328,14 @@ export function ArchivalPage() {
     {
       title: "Status",
       key: "Status",
-      render: (text, record) => <span>{Status(record)}</span>,
+      render: (
+        text: string,
+        record: {
+          ArchivedVideos: number;
+          CurrentTotalVideos: number;
+          LastSynced: null;
+        }
+      ) => <span>{Status(record)}</span>,
     },
     {
       title: "URL",
@@ -308,7 +353,15 @@ export function ArchivalPage() {
     {
       title: "Downloaded",
       key: "Downloaded",
-      render: (text, record) => (
+      render: (
+        text: string,
+        record: {
+          ArchivedVideos: number;
+          CurrentTotalVideos: number;
+          LastSynced: null;
+          UndownloadableVideos: number;
+        }
+      ) => (
         <span>
           <b>{record.ArchivedVideos + "/" + record.CurrentTotalVideos}</b>{" "}
           videos ({record.UndownloadableVideos} undownloadable)
@@ -318,7 +371,15 @@ export function ArchivalPage() {
     {
       title: "Actions",
       key: "Actions",
-      render: (text, record) => (
+      render: (
+        text: string,
+        record: {
+          ArchivedVideos: number;
+          CurrentTotalVideos: number;
+          LastSynced: null;
+          DownloadID: number;
+        }
+      ) => (
         <Space size="middle">
           <Button
             className="background-blue"
@@ -364,7 +425,7 @@ export function ArchivalPage() {
     {
       title: "Progress",
       key: "Progress",
-      render: (text, record) => (
+      render: (text: string, record: { progress: number }) => (
         <Progress percent={Math.floor(record.progress)} size="small" />
       ),
     },
@@ -399,10 +460,12 @@ export function ArchivalPage() {
                   </Button>
                 </div>
                 <Table
+                  // @ts-expect-error types
                   dataSource={archivalSubscriptions}
                   scroll={{ y: 700 }}
                   className="align-bottom w-full "
                   ellipsis={true}
+                  // @ts-expect-error types
                   columns={columns}
                 />
               </div>
@@ -414,6 +477,7 @@ export function ArchivalPage() {
                   dataSource={timelineEvents}
                   className="align-bottom w-full"
                   scroll={{ y: 700 }}
+                  // @ts-expect-error types
                   ellipsis={true}
                   columns={timelinTableCols}
                 />
@@ -423,6 +487,7 @@ export function ArchivalPage() {
                   Videos Currently Being Downloaded
                 </h2>
                 <Table
+                  // @ts-expect-error types
                   dataSource={videoInProgressDataset}
                   className="align-bottom w-full"
                   scroll={{ y: 700 }}
@@ -437,3 +502,5 @@ export function ArchivalPage() {
     </>
   );
 }
+
+export default ArchivalPage;

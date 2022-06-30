@@ -3,7 +3,8 @@
 **/.gitignore
 **/.vscode
 **/Dockerfile*
-**/build
 **/node_modules
 **/.yarn
+/build
+/.next
 README.md
