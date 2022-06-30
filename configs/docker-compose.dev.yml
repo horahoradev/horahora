@@ -1,0 +1,139 @@
+version: "3"
+
+services:
+  react_app:
+    build: webapp
+    restart: always
+    volumes:
+      - ./webapp/src:/webapp/src
+      - ./webapp/public:/webapp/public
+    ports:
+      - "3000:3000"
+  frontapi:
+    $FRONT_API_BUILD_DIRECTIVE
+    restart: always
+    environment:
+      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
+      - UserServiceGRPCAddress=userservice:7777
+      - VideoServiceGRPCAddress=videoservice:7777
+      - SchedulerServiceGRPCAddress=scheduler:7777
+      - JaegerAddress=
+  scheduler:
+    $SCHEDULER_BUILD_DIRECTIVE
+    restart: always
+    environment:
+      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
+      - pgs_host=postgres
+      - pgs_port=5432
+      - pgs_user=admin
+      - pgs_pass=password
+      - pgs_db=scheduler
+      # TODO(ivan): probably should add this to config
+      - GRPCPort=7777
+      - VideoServiceGRPCAddress=videoservice:7777
+      - NumberOfRetries=1
+      - SocksConn=$SOCKS_ADDR
+      - SyncPollDelay=1m
+      - MaxDLFileSize=300
+      - AcceptLanguage=ja
+      - rabbit_host=rabbitmq
+      - rabbit_port=61613
+      - rabbit_user=guest
+      - rabbit_pass=guest
+  videoservice:
+    $VIDEOSERVICE_BUILD_DIRECTIVE
+    restart: always
+    environment:
+      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
+      - pgs_host=postgres
+      - pgs_port=5432
+      - pgs_user=admin
+      - pgs_pass=password
+      - pgs_db=videoservice
+      - GRPCPort=7777
+      - UserServiceGRPCAddress=userservice:7777
+      - BucketName=$BUCKET_NAME
+      - Local=false
+      - OriginFQDN=$ORIGIN_FQDN
+      - AWS_DEFAULT_REGION=
+      - JaegerAddress=
+      - StorageBackend=$STORAGE_BACKEND
+      - StorageAPIID=$STORAGE_API_ID
+      - StorageAPIKey=$STORAGE_API_KEY
+      - StorageEndpoint=$STORAGE_ENDPOINT
+      - ApprovalThreshold=1
+      - MaxDLFileSize=300
+    volumes:
+    - $HOME/.aws/:/root/.aws/:ro
+  userservice:
+    $USERSERVICE_BUILD_DIRECTIVE
+    restart: always
+    environment:
+      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
+      - pgs_host=postgres
+      - pgs_port=5432
+      - pgs_user=admin
+      - pgs_pass=password
+      - pgs_db=userservice
+      - |
+        RSA_KEYPAIR=
+$JWT_KEYPAIR
+      - GRPCPort=7777
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+  minio:
+    build: minio
+    restart: always
+    environment:
+      BUCKET_NAME: otomads
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./videos:/data
+  gluetun:
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_SERVICE_PROVIDER=$VPN_PROVIDER
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=$WIREGUARD_PRIVATE_KEY
+      - WIREGUARD_ADDRESSES=$VPN_IP
+      - SERVER_CITIES=$VPN_CITIES
+      - HTTPPROXY=on
+      - HTTPPROXY_LOG=on
+  nginx:
+    image: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "9000:80" # backwards compatibility issue
+      - "443:443"
+    depends_on:
+      - frontapi
+      - userservice
+      - scheduler
+      - videoservice
+      - stomp_proxy
+      - minio
+    volumes:
+      - ./static:/etc/nginx/html/static/images
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./videos/otomads:/etc/nginx/html/otomads
+  rabbitmq:
+    build: activemq
+    restart: always
+  stomp_proxy:
+    build: stomp_proxy
+    restart: always
+volumes:
+  postgresdata:
+
