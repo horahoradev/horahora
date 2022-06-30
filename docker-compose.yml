@@ -4,35 +4,37 @@ services:
   react_app:
     build: webapp
     restart: always
+    env_file:
+      - ./.env
     volumes:
       - ./webapp/src:/webapp/src
       - ./webapp/public:/webapp/public
     ports:
       - "3000:3000"
   frontapi:
-    $FRONT_API_BUILD_DIRECTIVE
+    image: ghcr.io/horahoradev/horahora:master_frontend
     restart: always
+    env_file:
+      - ./.env
     environment:
-      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
-      - UserServiceGRPCAddress=userservice:7777
-      - VideoServiceGRPCAddress=videoservice:7777
-      - SchedulerServiceGRPCAddress=scheduler:7777
+      - UserServiceGRPCAddress=userservice:${GRPCPort}
+      - VideoServiceGRPCAddress=videoservice:${GRPCPort}
+      - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
       - JaegerAddress=
   scheduler:
-    $SCHEDULER_BUILD_DIRECTIVE
+    image: ghcr.io/horahoradev/horahora:master_scheduler
     restart: always
+    env_file:
+      - ./.env
     environment:
-      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - pgs_host=postgres
       - pgs_port=5432
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=scheduler
-      # TODO(ivan): probably should add this to config
-      - GRPCPort=7777
-      - VideoServiceGRPCAddress=videoservice:7777
+      - VideoServiceGRPCAddress=videoservice:${GRPCPort}
       - NumberOfRetries=1
-      - SocksConn=$SOCKS_ADDR
+      - SocksConn=${SOCKS_ADDR}
       - SyncPollDelay=1m
       - MaxDLFileSize=300
       - AcceptLanguage=ja
@@ -41,44 +43,42 @@ services:
       - rabbit_user=guest
       - rabbit_pass=guest
   videoservice:
-    $VIDEOSERVICE_BUILD_DIRECTIVE
+    image: ghcr.io/horahoradev/horahora:master_videoservice
     restart: always
+    env_file:
+      - ./.env
     environment:
-      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - pgs_host=postgres
       - pgs_port=5432
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=videoservice
-      - GRPCPort=7777
-      - UserServiceGRPCAddress=userservice:7777
-      - BucketName=$BUCKET_NAME
+      - UserServiceGRPCAddress=userservice:${GRPCPort}
+      - BucketName=${BUCKET_NAME}
       - Local=false
-      - OriginFQDN=$ORIGIN_FQDN
+      - OriginFQDN=${ORIGIN_FQDN}
       - AWS_DEFAULT_REGION=
       - JaegerAddress=
-      - StorageBackend=$STORAGE_BACKEND
-      - StorageAPIID=$STORAGE_API_ID
-      - StorageAPIKey=$STORAGE_API_KEY
-      - StorageEndpoint=$STORAGE_ENDPOINT
+      - StorageBackend=${STORAGE_BACKEND}
+      - StorageAPIID=${STORAGE_API_ID}
+      - StorageAPIKey=${STORAGE_API_KEY}
+      - StorageEndpoint=${STORAGE_ENDPOINT}
       - ApprovalThreshold=1
       - MaxDLFileSize=300
     volumes:
-    - $HOME/.aws/:/root/.aws/:ro
+      - $HOME/.aws/:/root/.aws/:ro
   userservice:
-    $USERSERVICE_BUILD_DIRECTIVE
+    image: ghcr.io/horahoradev/horahora:master_userservice
     restart: always
+    env_file:
+      - ./.env
     environment:
-      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - pgs_host=postgres
       - pgs_port=5432
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=userservice
-      - |
-        RSA_KEYPAIR=
-$JWT_KEYPAIR
-      - GRPCPort=7777
+      - RSA_KEYPAIR=${JWT_KEYPAIR}
   postgres:
     build:
       context: .
@@ -92,8 +92,9 @@ $JWT_KEYPAIR
   minio:
     build: minio
     restart: always
+    env_file:
+      - ./.env
     environment:
-      BUCKET_NAME: otomads
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
@@ -102,11 +103,12 @@ $JWT_KEYPAIR
     image: qmcgaw/gluetun
     cap_add:
       - NET_ADMIN
+    env_file:
+      - ./.env
     environment:
-      - VPN_SERVICE_PROVIDER=$VPN_PROVIDER
+      - VPN_SERVICE_PROVIDER=${VPN_PROVIDER}
       - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=$WIREGUARD_PRIVATE_KEY
-      - WIREGUARD_ADDRESSES=$VPN_IP
+      - WIREGUARD_ADDRESSES=${VPN_IP}
       - SERVER_CITIES=$VPN_CITIES
       - HTTPPROXY=on
       - HTTPPROXY_LOG=on
@@ -136,4 +138,3 @@ $JWT_KEYPAIR
     restart: always
 volumes:
   postgresdata:
-

@@ -5,6 +5,8 @@ youtube-dl*
 packer/vpn_conf*
 data*
 secrets.env
-docker-compose.yml
 sql/backup*
 /videos
+
+# env file is used for the docker compose
+/.env
