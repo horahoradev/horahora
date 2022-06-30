@@ -1,5 +1,4 @@
 #!/bin/bash
 set -euo pipefail
 
-# TODO pay attention to linting lol
-cd /webapp && npm start
+cd /webapp && npm run dev

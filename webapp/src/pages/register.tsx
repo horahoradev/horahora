@@ -3,14 +3,15 @@ import { Button, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
-import { useHistory } from "react-router-dom";
-import { PrivacyPolicy } from "../components/privacy-policy";
-import { TermsOfService } from "../components/terms-of-service";
-import { Header } from "../components/header";
+import { useRouter } from "next/router";
+import type { InputRef } from "antd";
 
-import * as API from "../api";
+import { PrivacyPolicy } from "#components/privacy-policy";
+import { TermsOfService } from "#components/terms-of-service";
+import { Header } from "#components/header";
+import { postRegister } from "#api/index";
 
-export function RegisterPage() {
+function RegisterPage() {
   return (
     <>
       <Header dataless />
@@ -24,7 +25,7 @@ export function RegisterPage() {
 }
 
 function RegistrationForm() {
-  let history = useHistory();
+  const router = useRouter();
   // TODO(ivan): validation, form errors
   // TODO(ivan): submitting state
   let formik = useFormik({
@@ -34,13 +35,13 @@ function RegistrationForm() {
       password: "",
     },
     onSubmit: async (values) => {
-      await API.postRegister(values);
-      history.push("/");
+      await postRegister(values);
+      router.push("/");
     },
   });
 
   // automatically focus input on first input on render
-  let usernameInputRef = useRef();
+  let usernameInputRef = useRef<InputRef>(null);
   useEffect(() => {
     usernameInputRef.current && usernameInputRef.current.focus();
   }, [usernameInputRef]);
@@ -52,38 +53,50 @@ function RegistrationForm() {
         <Input.Group>
           <Input
             name="email"
+            // @ts-expect-error form types
             values={formik.values.email}
             onChange={formik.handleChange}
             size="large"
             placeholder="email"
             ref={usernameInputRef}
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
+              <FontAwesomeIcon
+                className="max-h-4 mr-1 text-gray-400"
+                icon={faUser}
+              />
             }
           />
         </Input.Group>
         <Input.Group>
           <Input
             name="username"
+            // @ts-expect-error form types
             values={formik.values.username}
             onChange={formik.handleChange}
             size="large"
             placeholder="Username"
             ref={usernameInputRef}
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
+              <FontAwesomeIcon
+                className="max-h-4 mr-1 text-gray-400"
+                icon={faUser}
+              />
             }
           />
         </Input.Group>
         <Input.Group>
           <Input.Password
             name="password"
+            // @ts-expect-error form types
             values={formik.values.password}
             onChange={formik.handleChange}
             size="large"
             placeholder="Password"
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faKey} />
+              <FontAwesomeIcon
+                className="max-h-4 mr-1 text-gray-400"
+                icon={faKey}
+              />
             }
           />
         </Input.Group>
@@ -100,3 +113,5 @@ function RegistrationForm() {
     </div>
   );
 }
+
+export default RegisterPage;

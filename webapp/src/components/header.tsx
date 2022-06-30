@@ -1,5 +1,6 @@
+import { useRouter } from "next/router";
+import Link from "next/link";
 import { useCallback, useState } from "react";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArchive,
@@ -10,19 +11,21 @@ import {
   faUser,
   faSun,
 } from "@fortawesome/free-solid-svg-icons";
-import { useHistory } from "react-router-dom";
 import { Switch, Button, Dropdown, Input, Menu } from "antd";
 
-import { UserRank } from "../api/types";
-import { onParentBlur } from "../lib/dom";
 import { ThemeSwitcher } from "./theme-switcher";
 
-export function Header({ userData, dataless }) {
+import { UserRank } from "#api/types";
+import { onParentBlur } from "#lib/dom";
+
+
+interface IHeaderProps extends Record<string, unknown> {}
+export function Header({ userData, dataless }: IHeaderProps) {
   return (
     <nav className="h-16 bg-white dark:bg-gray-800 shadow flex justify-center">
       <div className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
         <div className="flex justify-start flex-grow-0">
-          <Link to="/" className="text-2xl font-black text-blue-500">
+          <Link className="text-2xl font-black text-blue-500" href="/">
             Horahora
           </Link>
         </div>
@@ -38,14 +41,20 @@ export function Header({ userData, dataless }) {
 }
 
 function Search() {
-  const [redirectVal, setRedirectVal] = useState(null);
+  const router = useRouter();
+  const [redirectVal, setRedirectVal] = useState<string | null>(null);
   const [isFocused, switchFocus] = useState(false);
 
   let handleSearch = useCallback((e) => {
     e.preventDefault();
-    const category = document.getElementById("category").value;
-    const order = document.querySelector('input[name="order"]:checked').value;
-    const search = document.querySelector('input[name="search"]').value;
+    const category = (document.getElementById("category") as HTMLSelectElement)
+      .value;
+    const order = (
+      document.querySelector('input[name="order"]:checked') as HTMLInputElement
+    ).value;
+    const search = (
+      document.querySelector('input[name="search"]') as HTMLInputElement
+    ).value;
 
     const params = new URLSearchParams([
       ["category", category],
@@ -56,9 +65,8 @@ function Search() {
     setRedirectVal(`/?${params.toString()}`);
   }, []);
 
-  const history = useHistory();
   if (redirectVal) {
-    history.push(redirectVal);
+    router.push(redirectVal);
     setRedirectVal(null);
   }
 
@@ -75,7 +83,10 @@ function Search() {
         size="large"
         placeholder="Search"
         prefix={
-          <FontAwesomeIcon className="mr-1 text-gray-400" icon={faSearch} />
+          <FontAwesomeIcon
+            className="mr-1 text-gray-400 max-h-4"
+            icon={faSearch}
+          />
         }
         onFocus={() => {
           switchFocus(true);
@@ -128,11 +139,15 @@ function Search() {
   );
 }
 
-function UserNav(props) {
+interface IUserNav extends Record<string, unknown> {}
+
+function UserNav(props: IUserNav) {
   const { userData } = props;
 
+  // @ts-expect-error figure `userData` shape
   if (userData && userData.username && userData.rank === UserRank.ADMIN) {
     return <LoggedInAdminNav userData={userData} />;
+    // @ts-expect-error figure `userData` shape
   } else if (userData && userData.username) {
     return <LoggedInUserNav userData={userData} />;
   } else {
@@ -140,7 +155,9 @@ function UserNav(props) {
   }
 }
 
-function LoggedInUserNav(props) {
+interface ILoggedInUserNav extends Record<string, unknown> {}
+
+function LoggedInUserNav(props: ILoggedInUserNav) {
   const { userData } = props;
 
   let menu = (
@@ -149,14 +166,15 @@ function LoggedInUserNav(props) {
         key="profile"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faUser}
           />
         }
       >
         <Link
           className="text-black dark:text-white dark:hover:text-black"
-          to={`/users/${userData.userID}`}
+          // @ts-expect-error figure `userData` shape
+          href={`/users/${userData.userID}`}
         >
           Profile page
         </Link>
@@ -167,21 +185,26 @@ function LoggedInUserNav(props) {
         key="password-reset"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faKey}
           />
         }
       >
-        <Link className="text-black dark:text-white" to="/password-reset">
+        <Link className="text-black dark:text-white" href="/password-reset">
           Reset Password
         </Link>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
         key="logout"
-        icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
+        icon={
+          <FontAwesomeIcon
+            className="max-h-4 text-red-600"
+            icon={faSignOutAlt}
+          />
+        }
       >
-        <Link className="text-black dark:text-white" to="/logout">
+        <Link className="text-black dark:text-white" href="/logout">
           Logout
         </Link>
       </Menu.Item>
@@ -192,15 +215,18 @@ function LoggedInUserNav(props) {
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button>
+          {/* @ts-expect-error figure `userData` shape */}
           <b className="text-blue-500">{userData.username}</b>
-          <FontAwesomeIcon className="text-xs ml-2" icon={faBars} />
+          <FontAwesomeIcon className="max-h-4 text-xs ml-2" icon={faBars} />
         </Button>
       </Dropdown>
     </>
   );
 }
 
-function LoggedInAdminNav(props) {
+interface ILoggedInAdminNav extends Record<string, unknown> {}
+
+function LoggedInAdminNav(props: ILoggedInAdminNav) {
   const { userData } = props;
 
   let menu = (
@@ -209,14 +235,15 @@ function LoggedInAdminNav(props) {
         key="profile"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faUser}
           />
         }
       >
         <Link
           className="text-black dark:text-white dark:hover:text-black"
-          to={`/users/${userData.userID}`}
+          // @ts-expect-error figure `userData` shape
+          href={`/users/${userData.userID}`}
         >
           Profile page
         </Link>
@@ -227,18 +254,21 @@ function LoggedInAdminNav(props) {
         key="archive-requests"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faArchive}
           />
         }
       >
-        <Link className="text-black dark:text-white dark:hover:text-black" to="/archive-requests">
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          href="/archive-requests"
+        >
           Archive Requests
         </Link>
       </Menu.Item>
       <Menu.Divider />
 
-      <ThemeSwitcher/>
+      <ThemeSwitcher />
 
       <Menu.Divider />
 
@@ -246,12 +276,15 @@ function LoggedInAdminNav(props) {
         key="password-reset"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faKey}
           />
         }
       >
-        <Link className="text-black dark:text-white dark:hover:text-black" to="/password-reset">
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          href="/password-reset"
+        >
           Password Reset
         </Link>
       </Menu.Item>
@@ -261,21 +294,32 @@ function LoggedInAdminNav(props) {
         key="audits"
         icon={
           <FontAwesomeIcon
-            className="text-black dark:text-white"
+            className="max-h-4 text-black dark:text-white"
             icon={faArchive}
           />
         }
       >
-        <Link className="text-black dark:text-white dark:hover:text-black" to="/audits">
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          href="/audits"
+        >
           Audit Logs
         </Link>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
         key="logout"
-        icon={<FontAwesomeIcon className="text-red-600" icon={faSignOutAlt} />}
+        icon={
+          <FontAwesomeIcon
+            className="max-h-4 text-red-600"
+            icon={faSignOutAlt}
+          />
+        }
       >
-        <Link className="text-black dark:text-white" to="/logout">
+        <Link
+          className="text-black dark:text-white dark:hover:text-black"
+          href="/logout"
+        >
           Logout
         </Link>
       </Menu.Item>
@@ -285,9 +329,13 @@ function LoggedInAdminNav(props) {
   return (
     <>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
-        <Button>
+        <Button className="flex flex-row flex-nowrap items-center">
+          {/* @ts-expect-error figure `userData` shape */}
           <b className="text-blue-500">{userData.username}</b>
-          <FontAwesomeIcon className="text-xs ml-2 text-black dark:text-white dark:hover:text-black" icon={faBars} />
+          <FontAwesomeIcon
+            className="text-xs max-h-4 ml-2 text-black dark:text-white dark:hover:text-black"
+            icon={faBars}
+          />
         </Button>
       </Dropdown>
     </>
@@ -297,10 +345,10 @@ function LoggedInAdminNav(props) {
 function LoggedOutUserNav() {
   return (
     <>
-      <Link to="/login">
+      <Link href="/login">
         <Button>Login</Button>
       </Link>
-      <Link className="ml-2" to="/register">
+      <Link className="ml-2" href="/register">
         <Button type="primary">Register</Button>
       </Link>
     </>

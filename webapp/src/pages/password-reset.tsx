@@ -1,75 +1,80 @@
 import { useFormik } from "formik";
-import { Link, Button, Input } from "antd";
+import { Button, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import { useRouter } from "next/router";
+import type { InputRef } from "antd";
 
-import { Header } from "../components/header";
+import { Header } from "#components/header";
+import { postPasswordReset } from "#api/index";
 
-import * as API from "../api";
-
-export function LoginPage() {
+function PasswordResetPage() {
   return (
     <>
       <Header dataless />
       <div className="flex justify-center mx-4">
         <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
-          <LoginForm />
+          <PasswordResetForm />
         </div>
       </div>
     </>
   );
 }
 
-function LoginForm() {
-  let history = useHistory();
+function PasswordResetForm() {
+  const router = useRouter();
   // TODO(ivan): validation, form errors
   // TODO(ivan): submitting state
   let formik = useFormik({
     initialValues: {
-      username: "",
-      password: "",
+      old_password: "",
+      new_password: "",
     },
     onSubmit: async (values) => {
-      await API.postLogin(values);
-      history.push("/");
+      await postPasswordReset(values);
+      router.push("/");
     },
   });
 
   // automatically focus input on first input on render
-  let usernameInputRef = useRef();
+  let usernameInputRef = useRef<InputRef>(null);
+
   useEffect(() => {
     usernameInputRef.current && usernameInputRef.current.focus();
   }, [usernameInputRef]);
 
   return (
-    <div className="max-w-xs w-full border rounded shadow bg-white dark:bg-gray-800 p-4">
-      <h2 className="text-xl text-black dark:text-white mb-4 inline-block">Welcome back!</h2> <a className="float-right -top-5 text-black dark:text-white" href="/register">register</a>
+    <div className="max-w-xs w-full border rounded shadow bg-white dark:bg-black p-4">
+      <h2 className="text-xl text-black dark:text-white mb-4">
+        Reset Password
+      </h2>
       <form onSubmit={formik.handleSubmit}>
         <Input.Group>
           <Input
-            name="username"
-            values={formik.values.username}
+            name="old_password"
+            // @ts-expect-error form types
+            values={formik.values.old_password}
             onChange={formik.handleChange}
             size="large"
-            placeholder="Username"
+            placeholder="current password"
             ref={usernameInputRef}
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faUser} />
+              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
             }
           />
         </Input.Group>
-        <br />
         <Input.Group>
-          <Input.Password
-            name="password"
-            values={formik.values.username}
+          <Input
+            name="new_password"
+            // @ts-expect-error form types
+            values={formik.values.new_password}
             onChange={formik.handleChange}
             size="large"
-            placeholder="Password"
+            placeholder="new password"
+            ref={usernameInputRef}
             prefix={
-              <FontAwesomeIcon className="mr-1 text-gray-400" icon={faKey} />
+              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
             }
           />
         </Input.Group>
@@ -84,4 +89,4 @@ function LoginForm() {
   );
 }
 
-
+export default PasswordResetPage;
