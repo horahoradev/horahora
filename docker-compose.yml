@@ -42,6 +42,9 @@ services:
       - rabbit_port=61613
       - rabbit_user=guest
       - rabbit_pass=guest
+      - redis_host=redis
+      - redis_port=6379
+      - redis_pass=
   videoservice:
     image: ghcr.io/horahoradev/horahora:master_videoservice
     restart: always
@@ -65,6 +68,9 @@ services:
       - StorageEndpoint=${STORAGE_ENDPOINT}
       - ApprovalThreshold=1
       - MaxDLFileSize=300
+      - redis_host=redis
+      - redis_port=6379
+      - redis_pass=
     volumes:
       - $HOME/.aws/:/root/.aws/:ro
   userservice:
@@ -79,6 +85,9 @@ services:
       - pgs_pass=password
       - pgs_db=userservice
       - RSA_KEYPAIR=${JWT_KEYPAIR}
+  redis:
+    image: "redis:alpine"
+    restart: always
   postgres:
     build:
       context: .
