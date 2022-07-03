@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { IFormElements, ISubmitEvent } from "./types";
 
 import { toJSON } from "#lib/json";
+import { uploadFile } from "#api/upload";
 
 const FIELD_NAMES = {
   TITLE: "title",
@@ -15,9 +16,12 @@ type IFieldName = typeof FIELD_NAMES[keyof typeof FIELD_NAMES];
 
 export function UploadForm() {
   const [isSubmitting, switchSubmit] = useState(false);
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, changeErrors] = useState<string[]>([]);
+  const [newVideoID, changeVideoID] = useState<number>();
 
   async function handleFileUpload(event: ISubmitEvent) {
+    event.preventDefault();
+
     // do not resubmit while the current one is pending
     if (isSubmitting) {
       return;
@@ -37,7 +41,6 @@ export function UploadForm() {
               break;
             }
 
-            
             case FIELD_NAMES.TAGS: {
               const tagsElement = fields[fieldName];
               // the endpoint requires a json array string
@@ -55,7 +58,7 @@ export function UploadForm() {
                 throw new Error(message);
               }
 
-              formData.set(fieldName, fileElement.files[0])
+              formData.set(fieldName, fileElement.files[0]);
 
               break;
             }
@@ -71,10 +74,10 @@ export function UploadForm() {
         new FormData()
       );
 
-      
-
+      const newID = await uploadFile(formData);
+      changeVideoID(newID);
     } catch (error) {
-      setErrors([String(error)]);
+      changeErrors([String(error)]);
     } finally {
       // enable submit again regardless of outcome of the current submit
       switchSubmit(false);
@@ -106,11 +109,15 @@ export function UploadForm() {
         <input id="file-upload-file" type="file" name="file[1]" />
       </div>
       <div>
-        <ul>
-          {errors.map((message, index) => (
-            <li key={index}>{message}</li>
-          ))}
-        </ul>
+        {!newVideoID ? (
+          <ul>
+            {errors.map((message, index) => (
+              <li key={index}>{message}</li>
+            ))}
+          </ul>
+        ) : (
+          <p></p>
+        )}
       </div>
       <div>
         <button type="submit">Submit</button>
