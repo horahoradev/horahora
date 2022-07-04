@@ -7,7 +7,7 @@ export interface IFormSectionProps extends IBlockProps<"div"> {}
  */
 export function FormSection({ children, ...blockProps }: IFormSectionProps) {
   return (
-    <div className="py-2" {...blockProps}>
+    <div {...blockProps}>
       {children}
     </div>
   );

@@ -38,7 +38,7 @@ export function Form({ onSubmit, children, ...blockProps }: IFormProps) {
 
   return (
     <form
-      className="text-black dark:text-white"
+      className="flex flex-col gap-2 max-w-md text-black dark:text-white bg-slate-50 dark:bg-stone-800 rounded-lg px-4 py-2 mx-auto"
       onSubmit={handleSubmit}
       {...blockProps}
     >
