@@ -4,6 +4,7 @@ import { FormSection } from "./section";
 import { type ISubmitEvent } from "./types";
 
 import { type IBlockProps } from "#components/meta";
+import { ButtonSubmit } from "#components/buttons";
 
 export interface IFormProps extends IBlockProps<"form"> {
   onSubmit?: (event: ISubmitEvent) => Promise<void> | void;
@@ -26,6 +27,7 @@ export function Form({ onSubmit, children, ...blockProps }: IFormProps) {
       if (onSubmit) {
         await onSubmit(event);
       }
+      
       changeErrors([]);
     } catch (error) {
       event.preventDefault();
@@ -53,7 +55,7 @@ export function Form({ onSubmit, children, ...blockProps }: IFormProps) {
         </ul>
       </FormSection>
       <FormSection>
-        <button type="submit">Submit</button>
+        <ButtonSubmit>Submit</ButtonSubmit>
       </FormSection>
     </form>
   );

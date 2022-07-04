@@ -11,14 +11,13 @@ import {
   faUser,
   faUpload,
 } from "@fortawesome/free-solid-svg-icons";
-import { Switch, Button, Dropdown, Input, Menu } from "antd";
+import { Button, Dropdown, Input, Menu } from "antd";
 
 import { ThemeSwitcher } from "./theme-switcher";
 import { LinkInternal } from "./links/internal";
 
 import { UserRank } from "#api/types";
 import { onParentBlur } from "#lib/dom";
-import { IS_DEVELOPMENT } from "#environment/derived";
 import { Icon } from "#components/icons";
 
 interface IHeaderProps extends Record<string, unknown> {}
@@ -342,11 +341,6 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
 function LoggedOutUserNav() {
   return (
     <>
-      {IS_DEVELOPMENT && (
-        <LinkInternal href="/account/upload">
-          <Icon icon={faUpload} /> Upload
-        </LinkInternal>
-      )}
       <Link href="/login">
         <Button>Login</Button>
       </Link>
