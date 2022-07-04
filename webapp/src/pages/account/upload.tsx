@@ -3,13 +3,13 @@ import { useState } from "react";
 import { Page } from "#components/page";
 import {
   FormClient,
-  FormSection,
   type IFormElements,
   type ISubmitEvent,
 } from "#components/forms";
 import { toJSON } from "#lib/json";
 import { uploadFile } from "#api/upload";
 import { Text, File, Tags } from "#components/inputs";
+import { LinkInternal } from "#components/links";
 
 const FIELD_NAMES = {
   TITLE: "title",
@@ -75,23 +75,27 @@ function UploadPage() {
 
   return (
     <Page>
-      <FormClient id="file-upload" onSubmit={handleFileUpload}>
-        <Text id="file-upload-title" name={FIELD_NAMES.TITLE}>
-          Title
-        </Text>
-        <Text id="file-upload-description" name={FIELD_NAMES.DESCRIPTION}>
-          Description
-        </Text>
-        <Tags id="file-upload-tags" name={FIELD_NAMES.TAGS}>
-          Tags
-        </Tags>
-        <File id="file-upload-thumb" name={FIELD_NAMES.THUMBNAIL}>
-          Thumbnail
-        </File>
-        <File id="file-upload-file" name={FIELD_NAMES.FILE}>
-          Video
-        </File>
-      </FormClient>
+      {newVideoID ? (
+        <p>New video is available at <LinkInternal href={`/videos/${newVideoID}`} /></p>
+      ) : (
+        <FormClient id="file-upload" onSubmit={handleFileUpload}>
+          <Text id="file-upload-title" name={FIELD_NAMES.TITLE}>
+            Title
+          </Text>
+          <Text id="file-upload-description" name={FIELD_NAMES.DESCRIPTION}>
+            Description
+          </Text>
+          <Tags id="file-upload-tags" name={FIELD_NAMES.TAGS}>
+            Tags
+          </Tags>
+          <File id="file-upload-thumb" name={FIELD_NAMES.THUMBNAIL}>
+            Thumbnail
+          </File>
+          <File id="file-upload-file" name={FIELD_NAMES.FILE}>
+            Video
+          </File>
+        </FormClient>
+      )}
     </Page>
   );
 }
