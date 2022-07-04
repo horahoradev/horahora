@@ -4,8 +4,8 @@
     "paths": {
       "#environment/*": ["./environment/*"],
       "#api/*": ["./src/api/*"],
-      "#lib/*": ["./src/lib/*"],
-      "#components/*": ["./src/components/*"],
+      "#lib/*": ["./src/lib/*/_index.ts", "./src/lib/*"],
+      "#components/*": ["./src/components/*/_index.ts", "./src/components/*"],
       "#pages/*": ["./src/pages/*"],
       "#store/*": ["./src/store/*"],
       "#styles/*": ["./src/styles/*"]
