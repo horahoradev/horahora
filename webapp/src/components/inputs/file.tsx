@@ -1,4 +1,4 @@
-import { type IFormSectionProps, FormSection } from "#components/forms";
+import { type IFormSectionProps, FormSection, Label } from "#components/forms";
 
 export interface IFileProps extends IFormSectionProps {
   id: string;
@@ -8,7 +8,7 @@ export interface IFileProps extends IFormSectionProps {
 export function File({ id, name, children }: IFileProps) {
   return (
     <FormSection>
-      <label htmlFor={id}>{children}</label>
+      <Label htmlFor={id}>{children}</Label>
       <input id={id} type="file" name={name} />
     </FormSection>
   );

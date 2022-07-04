@@ -1,4 +1,4 @@
-import { type IFormSectionProps, FormSection } from "#components/forms";
+import { type IFormSectionProps, FormSection, Label } from "#components/forms";
 
 export interface ITextProps extends IFormSectionProps {
   id: string;
@@ -8,7 +8,7 @@ export interface ITextProps extends IFormSectionProps {
 export function Text({ id, name, children }: ITextProps) {
   return (
     <FormSection>
-      <label htmlFor={id}>{children}</label>
+      <Label htmlFor={id}>{children}</Label>
       <input id={id} type="text" name={name} />
     </FormSection>
   );

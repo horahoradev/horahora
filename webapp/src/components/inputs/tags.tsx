@@ -1,4 +1,4 @@
-import { type IFormSectionProps, FormSection } from "#components/forms";
+import { type IFormSectionProps, FormSection, Label } from "#components/forms";
 
 export interface ITagsProps extends IFormSectionProps {
   id: string;
@@ -8,7 +8,7 @@ export interface ITagsProps extends IFormSectionProps {
 export function Tags({ id, name, children }: ITagsProps) {
   return (
     <FormSection>
-      <label htmlFor={id}>{children}</label>
+      <Label htmlFor={id}>{children}</Label>
       <textarea id={id} name={name}></textarea>
       <p>Space-separated list of tag names.</p>
     </FormSection>

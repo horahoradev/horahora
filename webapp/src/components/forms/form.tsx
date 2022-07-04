@@ -37,7 +37,11 @@ export function Form({ onSubmit, children, ...blockProps }: IFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} {...blockProps}>
+    <form
+      className="text-black dark:text-white"
+      onSubmit={handleSubmit}
+      {...blockProps}
+    >
       {children}
       <FormSection>
         <ul>
