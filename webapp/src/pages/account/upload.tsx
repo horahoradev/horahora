@@ -9,6 +9,7 @@ import {
 } from "#components/forms";
 import { toJSON } from "#lib/json";
 import { uploadFile } from "#api/upload";
+import { Text, File, Tags } from "#components/inputs";
 
 const FIELD_NAMES = {
   TITLE: "title",
@@ -75,28 +76,21 @@ function UploadPage() {
   return (
     <Page>
       <FormClient id="file-upload" onSubmit={handleFileUpload}>
-        <FormSection>
-          <label htmlFor="file-upload-title">Title</label>
-          <input id="file-upload-title" type="text" name="title" />
-        </FormSection>
-        <FormSection>
-          <label htmlFor="file-upload-description">Description</label>
-          <input id="file-upload-description" type="text" name="description" />
-        </FormSection>
-        {/* TODO: standalone component */}
-        <FormSection>
-          <label htmlFor="file-upload-tags">Tags</label>
-          <textarea id="file-upload-tags" name="tags"></textarea>
-          <p>Space-separated list of tag names.</p>
-        </FormSection>
-        <FormSection>
-          <label htmlFor="file-upload-thumb">Thumbnail</label>
-          <input id="file-upload-thumb" type="file" name="file[0]" />
-        </FormSection>
-        <FormSection>
-          <label htmlFor="file-upload-file">Video</label>
-          <input id="file-upload-file" type="file" name="file[1]" />
-        </FormSection>
+        <Text id="file-upload-title" name={FIELD_NAMES.TITLE}>
+          Title
+        </Text>
+        <Text id="file-upload-description" name={FIELD_NAMES.DESCRIPTION}>
+          Description
+        </Text>
+        <Tags id="file-upload-tags" name={FIELD_NAMES.TAGS}>
+          Tags
+        </Tags>
+        <File id="file-upload-thumb" name={FIELD_NAMES.THUMBNAIL}>
+          Thumbnail
+        </File>
+        <File id="file-upload-file" name={FIELD_NAMES.FILE}>
+          Video
+        </File>
       </FormClient>
     </Page>
   );

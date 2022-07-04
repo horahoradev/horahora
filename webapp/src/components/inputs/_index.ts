@@ -1,2 +1,6 @@
-export { InputText } from "./text";
-export type { IInputTextProps } from "./text";
+export { Text } from "./text";
+export type { ITextProps } from "./text";
+export { File } from "./file";
+export type { IFileProps } from "./file";
+export { Tags } from "./tags";
+export type { ITagsProps } from "./tags";

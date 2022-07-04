@@ -1,15 +1,15 @@
 import { type IFormSectionProps, FormSection } from "#components/forms";
 
-export interface ITextProps extends IFormSectionProps {
+export interface IFileProps extends IFormSectionProps {
   id: string;
   name: string;
 }
 
-export function Text({ id, name, children }: ITextProps) {
+export function File({ id, name, children }: IFileProps) {
   return (
     <FormSection>
       <label htmlFor={id}>{children}</label>
-      <input id={id} type="text" name={name} />
+      <input id={id} type="file" name={name} />
     </FormSection>
   );
 }
