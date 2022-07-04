@@ -12,7 +12,7 @@ services:
     ports:
       - "3000:3000"
   frontapi:
-    image: ghcr.io/horahoradev/horahora:master_frontend
+    image: ghcr.io/horahoradev/horahora:dev_front_api
     restart: always
     env_file:
       - ./.env
