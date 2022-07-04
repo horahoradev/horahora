@@ -1,3 +1,7 @@
+export { Input } from "./input";
+export type { IInputProps } from "./input";
+export { TextArea } from "./textarea";
+export type { ITextAreaProps } from "./textarea";
 export { Text } from "./text";
 export type { ITextProps } from "./text";
 export { File } from "./file";

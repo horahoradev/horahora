@@ -4,5 +4,5 @@ export type { IClientComponentProps } from "./client-component";
 export type {
   IFuncComponent as FuncComponent,
   IBlockProps,
-  IStylelessBlockProps,
+  IChildlessBlockProps,
 } from "./types";
