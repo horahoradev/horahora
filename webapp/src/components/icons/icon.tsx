@@ -8,8 +8,8 @@ export interface IIconProps extends FontAwesomeIconProps {}
 export function Icon({ ...blockProps }: IIconProps) {
   return (
     <FontAwesomeIcon
-      className="max-h-5 text-black dark:text-white"
       {...blockProps}
+      className="max-h-5 text-black dark:text-white"
     />
   );
 }

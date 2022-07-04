@@ -48,7 +48,7 @@ function UploadPage() {
           case FIELD_NAMES.FILE: {
             const fileElement = fields[fieldName];
 
-            if (!fileElement.files) {
+            if (!(fileElement.files && fileElement.files[0])) {
               const message = "No thumbnail or file was provided.";
               throw new Error(message);
             }
@@ -76,7 +76,10 @@ function UploadPage() {
   return (
     <Page>
       {newVideoID ? (
-        <p>New video is available at <LinkInternal href={`/videos/${newVideoID}`} /></p>
+        <p>
+          New video is available at{" "}
+          <LinkInternal href={`/videos/${newVideoID}`} />
+        </p>
       ) : (
         <FormClient id="file-upload" onSubmit={handleFileUpload}>
           <Text id="file-upload-title" name={FIELD_NAMES.TITLE}>

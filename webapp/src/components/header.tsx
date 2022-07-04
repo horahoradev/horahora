@@ -244,8 +244,13 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
           Profile page
         </Link>
       </Menu.Item>
-
       <Menu.Divider />
+
+      <Menu.Item key="upload"  className="flex flex-row gap-2" icon={<Icon icon={faUpload} />}>
+        <LinkInternal href="/account/upload">Upload</LinkInternal>
+      </Menu.Item>
+      <Menu.Divider />
+
       <Menu.Item
         key="archive-requests"
         icon={
