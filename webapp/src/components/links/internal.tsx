@@ -11,7 +11,11 @@ export function LinkInternal({
   ...blockProps
 }: ILinkInternalProps) {
   return (
-    <Link href={href} {...blockProps}>
+    <Link
+      className="flex items-center flex-row gap-2 text-black dark:text-white dark:hover:text-black"
+      href={href}
+      {...blockProps}
+    >
       {children ? children : href}
     </Link>
   );

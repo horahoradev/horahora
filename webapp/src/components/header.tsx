@@ -9,15 +9,17 @@ import {
   faKey,
   faSignOutAlt,
   faUser,
-  faSun,
+  faUpload,
 } from "@fortawesome/free-solid-svg-icons";
 import { Switch, Button, Dropdown, Input, Menu } from "antd";
 
 import { ThemeSwitcher } from "./theme-switcher";
+import { LinkInternal } from "./links/internal";
 
 import { UserRank } from "#api/types";
 import { onParentBlur } from "#lib/dom";
-
+import { IS_DEVELOPMENT } from "#environment/derived";
+import { Icon } from "#components/icons";
 
 interface IHeaderProps extends Record<string, unknown> {}
 export function Header({ userData, dataless }: IHeaderProps) {
@@ -162,15 +164,10 @@ function LoggedInUserNav(props: ILoggedInUserNav) {
 
   let menu = (
     <Menu className="bg-white dark:bg-black">
-      <Menu.Item
-        key="profile"
-        icon={
-          <FontAwesomeIcon
-            className="max-h-4 text-black dark:text-white"
-            icon={faUser}
-          />
-        }
-      >
+      <Menu.Item key="upload" icon={<Icon icon={faUpload} />}>
+        <LinkInternal href="/account/upload">Upload</LinkInternal>
+      </Menu.Item>
+      <Menu.Item key="profile" icon={<Icon icon={faUser} />}>
         <Link
           className="text-black dark:text-white dark:hover:text-black"
           // @ts-expect-error figure `userData` shape
@@ -345,6 +342,11 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
 function LoggedOutUserNav() {
   return (
     <>
+      {IS_DEVELOPMENT && (
+        <LinkInternal href="/account/upload">
+          <Icon icon={faUpload} /> Upload
+        </LinkInternal>
+      )}
       <Link href="/login">
         <Button>Login</Button>
       </Link>
