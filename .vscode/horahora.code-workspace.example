@@ -59,6 +59,9 @@
 			"video_service": true,
 			"webapp": true,
 			"schema": true
-		}
+		},
+		"files.trimTrailingWhitespace": true,
+  	"files.insertFinalNewline": true,
+  	"files.trimFinalNewlines": true
 	}
 }
