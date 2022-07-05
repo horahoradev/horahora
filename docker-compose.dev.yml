@@ -10,29 +10,29 @@ services:
     ports:
       - "3000:3000"
   frontapi:
-    $FRONT_API_BUILD_DIRECTIVE
+    build: front_api
     restart: always
+    env_file:
+      - ./.env.dev
     environment:
-      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
-      - UserServiceGRPCAddress=userservice:7777
-      - VideoServiceGRPCAddress=videoservice:7777
-      - SchedulerServiceGRPCAddress=scheduler:7777
+      - UserServiceGRPCAddress=userservice:${GRPCPort}
+      - VideoServiceGRPCAddress=videoservice:${GRPCPort}
+      - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
       - JaegerAddress=
   scheduler:
-    $SCHEDULER_BUILD_DIRECTIVE
+    build: scheduler
     restart: always
+    env_file:
+      - ./.env.dev
     environment:
-      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - pgs_host=postgres
       - pgs_port=5432
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=scheduler
-      # TODO(ivan): probably should add this to config
-      - GRPCPort=7777
-      - VideoServiceGRPCAddress=videoservice:7777
+      - VideoServiceGRPCAddress=videoservice:${GRPCPort}
       - NumberOfRetries=1
-      - SocksConn=$SOCKS_ADDR
+      - SocksConn=${SOCKS_ADDR}
       - SyncPollDelay=1m
       - MaxDLFileSize=300
       - AcceptLanguage=ja
@@ -41,44 +41,42 @@ services:
       - rabbit_user=guest
       - rabbit_pass=guest
   videoservice:
-    $VIDEOSERVICE_BUILD_DIRECTIVE
+    build: video_service
     restart: always
+    env_file:
+      - ./.env.dev
     environment:
-      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - pgs_host=postgres
       - pgs_port=5432
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=videoservice
-      - GRPCPort=7777
-      - UserServiceGRPCAddress=userservice:7777
-      - BucketName=$BUCKET_NAME
+      - UserServiceGRPCAddress=userservice:${GRPCPort}
+      - BucketName=${BUCKET_NAME}
       - Local=false
-      - OriginFQDN=$ORIGIN_FQDN
+      - OriginFQDN=${ORIGIN_FQDN}
       - AWS_DEFAULT_REGION=
       - JaegerAddress=
-      - StorageBackend=$STORAGE_BACKEND
-      - StorageAPIID=$STORAGE_API_ID
-      - StorageAPIKey=$STORAGE_API_KEY
-      - StorageEndpoint=$STORAGE_ENDPOINT
+      - StorageBackend=${STORAGE_BACKEND}
+      - StorageAPIID=${STORAGE_API_ID}
+      - StorageAPIKey=${STORAGE_API_KEY}
+      - StorageEndpoint=${STORAGE_ENDPOINT}
       - ApprovalThreshold=1
       - MaxDLFileSize=300
     volumes:
     - $HOME/.aws/:/root/.aws/:ro
   userservice:
-    $USERSERVICE_BUILD_DIRECTIVE
+    build: user_service
     restart: always
+    env_file:
+      - ./.env.dev
     environment:
-      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
       - pgs_host=postgres
       - pgs_port=5432
       - pgs_user=admin
       - pgs_pass=password
       - pgs_db=userservice
-      - |
-        RSA_KEYPAIR=
-$JWT_KEYPAIR
-      - GRPCPort=7777
+      - RSA_KEYPAIR=${JWT_KEYPAIR}
   postgres:
     build:
       context: .
@@ -88,12 +86,13 @@ $JWT_KEYPAIR
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
     volumes:
-      - postgresdata:/var/lib/postgresql/data
+      - postgresdata_dev:/var/lib/postgresql/data
   minio:
     build: minio
     restart: always
+    env_file:
+      - ./.env.dev
     environment:
-      BUCKET_NAME: otomads
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
@@ -102,12 +101,13 @@ $JWT_KEYPAIR
     image: qmcgaw/gluetun
     cap_add:
       - NET_ADMIN
+    env_file:
+      - ./.env.dev
     environment:
-      - VPN_SERVICE_PROVIDER=$VPN_PROVIDER
+      - VPN_SERVICE_PROVIDER=${VPN_PROVIDER}
       - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=$WIREGUARD_PRIVATE_KEY
-      - WIREGUARD_ADDRESSES=$VPN_IP
-      - SERVER_CITIES=$VPN_CITIES
+      - WIREGUARD_ADDRESSES=${VPN_IP}
+      - SERVER_CITIES=${VPN_CITIES}
       - HTTPPROXY=on
       - HTTPPROXY_LOG=on
   nginx:
@@ -135,5 +135,4 @@ $JWT_KEYPAIR
     build: stomp_proxy
     restart: always
 volumes:
-  postgresdata:
-
+  postgresdata_dev:

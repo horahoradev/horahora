@@ -10,3 +10,4 @@ sql/backup*
 
 # env file is used for the docker compose
 /.env
+/.env*
