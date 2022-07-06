@@ -32,7 +32,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="apple-touch-icon" href="/logo192.png" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <div className="bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
+      <div className="text-base bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
         <Component {...pageProps} />
       </div>
 
