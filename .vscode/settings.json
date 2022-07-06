@@ -13,5 +13,8 @@
       "fileMatch": ["schema/**/*schema.json"],
       "url": "./schema/meta.schema.json"
     }
-  ]
+  ],
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true
 }

@@ -22,14 +22,53 @@ Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 ## Local Use Instructions (START HERE)
 
 1. Install docker and docker-compose
-2. Run: sudo ./up.sh
-3. Wait a minute, then visit localhost:80
-4. Login as admin/admin
+2. Generate private key:
+   ```sh
+   openssl genrsa 2048 | sed -e 's/^/        /'
+   ```
+3. Create env vars file:
+   ```sh
+   cp configs/.env.example .env
+   ```
+4. Save the private key into `JWT_KEYPAIR` value:
+   ```sh
+   JWT_KEYPAIR="-----BEGIN RSA PRIVATE KEY-----
+   ...
+   -----END RSA PRIVATE KEY-----"
+   ```
+   The value should be double-quoted.
+5. Start up the stack:
+    ```sh
+    sudo ./up.sh
+    ```
+6. Wait a minute, then visit localhost:80
+7. Login as admin/admin
     - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
     - it's recommended to visit /password-reset immediately to change the admin user's default password if using in an untrusted environment
-5. navigate to the archival requests page from the hamburger menu, add a link, and wait a few minutes
-  
+8. navigate to the archival requests page from the hamburger menu, add a link, and wait a few minutes
+
 That's it for basic usage, and should work. If that doesn't work, bug me on Discord.
+
+## Develop
+**DO NOT RUN THIS SETUP IN ANY PUBLIC CONTEXT.**
+
+1. Copy example env file:
+   ```sh
+   cp ./configs/.env.dev.example .env.dev
+   ```
+
+2. Build the local images:
+   ```sh
+   docker-compose --env-file .env.dev build
+   ```
+3. Start the dev stack:
+   ```sh
+   docker-compose --env-file .env.dev up
+   ```
+4. Tear down the dev stack:
+   ```sh
+   docker-compose --env-file .env.dev down
+   ```
 
 ## Contributing
 Contributions are always welcome. Please see [CONTRIBUTING.md](https://github.com/horahoradev/horahora/blob/master/CONTRIBUTING.md) for details, including an architectural rundown.
