@@ -4,7 +4,6 @@ import {
   type HTMLAttributeAnchorTarget,
   type ReactNode,
 } from "react";
-import clsx from "clsx";
 
 import styles from "./internal.module.scss";
 import { AnchourHTML } from "./html";
@@ -30,12 +29,10 @@ export function Component({
   children,
   ...blockProps
 }: ILinkInternalProps) {
-  const linkClass = clsx(styles.internal, className);
-
   return (
     <Link {...blockProps} passHref>
       <AnchourHTML
-        className={linkClass}
+        className={className}
         target={target}
         iconID={iconID}
         onClick={onClick}
