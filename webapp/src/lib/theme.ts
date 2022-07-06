@@ -1,6 +1,11 @@
 import { getCookie, setCookie } from "../store/cookie";
 
-type ITheme = "dark" | "light";
+export const THEME = {
+  DARK: "dark",
+  LIGHT: "light",
+} as const;
+
+type ITheme = typeof THEME[keyof typeof THEME];
 
 export const DEFAULT_THEME = "dark";
 
