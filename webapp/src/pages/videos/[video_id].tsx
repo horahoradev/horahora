@@ -26,6 +26,8 @@ import {
 import { UserRank } from "#api/types";
 import { VideoList } from "#components/video-list";
 import { Header } from "#components/header";
+import { LinkExternal, LinkInternal } from "#components/links";
+import { Icon } from "#components/icons";
 
 const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
@@ -145,13 +147,13 @@ function VideoPlayer(props: IVideoPlayerProps) {
         <p className="vjs-no-js">
           To view this video please enable JavaScript, and consider upgrading to
           a web browser that
-          <a
+          <LinkExternal
             href="https://videojs.com/html5-video-support/"
             target="_blank"
             rel="noreferrer"
           >
             supports HTML5 video
-          </a>
+          </LinkExternal>
         </p>
       </video>
     </>
@@ -337,19 +339,19 @@ function VideoView(props: IVideoViewProps) {
         <div className="my-4">
           <div>
             <span className="h-20 w-20 inline-block">
-              <Link href={`/users/${data.AuthorID}`}>
+              <LinkInternal href={`/users/${data.AuthorID}`}>
                 <Avatar
                   size={80}
-                  icon={<FontAwesomeIcon icon={faUserCircle} />}
+                  icon={<Icon icon={faUserCircle} />}
                 />
-              </Link>
+              </LinkInternal>
             </span>
             <span className="ml-2 pl-1 mt-2 inline-block align-top">
-              <Link href={`/users/${data.AuthorID}`}>
+              <LinkInternal href={`/users/${data.AuthorID}`}>
                 <b className="font-black text-blue-500 text-xl">
                   {data.Username}
                 </b>
-              </Link>
+              </LinkInternal>
               <h1 className="text-black dark:text-white">0 subscribers</h1>
             </span>
           </div>
@@ -383,7 +385,7 @@ function VideoView(props: IVideoViewProps) {
                 <span key={1} className="text-black dark:text-white text-bold">
                   {item.upvote_count}
                 </span>,
-                <FontAwesomeIcon
+                <Icon
                   key={2}
                   onClick={() => upvoteComment(item.id, item.user_has_upvoted)}
                   className={
@@ -422,7 +424,10 @@ function VideoView(props: IVideoViewProps) {
             size="large"
             placeholder="<your comment here>"
             prefix={
-              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
+              <FontAwesomeIcon
+                className="max-h-4 mr-1 text-gray-400"
+                icon={faUser}
+              />
             }
           />
         </Input.Group>
