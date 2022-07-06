@@ -1,0 +1,58 @@
+:root[data-theme="dark"] {
+  // base colours
+  --colour0-primary: hsl(0, 0%, 95%);
+  --colour0-primary-transparent: hsla(0, 0%, 95%, 50%);
+  --colour0-secondary: hsl(0, 0%, 90%);
+  --colour0-secondary-transparent: hsla(0, 0%, 90%, 50%);
+  --colour0-tertiary: hsla(0, 0%, 80%);
+  --colour0-tertiary-transparent: hsla(0, 0%, 80%, 50%);
+  --colour1-primary: hsl(0, 0%, 10%);
+  --colour1-primary-transparent: hsl(0, 0%, 10%, 80%);
+  --colour1-secondary: hsl(0, 0%, 20%);
+  --colour1-secondary-transparent: hsla(0, 0%, 20%, 80%);
+  --colour1-tertiary: hsla(0, 0%, 30%);
+  --colour1-tertiary-transparent: hsla(0, 0%, 30%, 80%);
+
+  /* Buttons */
+  --submit-colour1-primary: hsl(240, 100%, 70%);
+  --submit-colour1-secondary: hsl(240, 100%, 70%);
+  --submit-colour2-primary: hsl(240, 100%, 50%);
+  --submit-colour2-secondary: hsl(240, 100%, 50%);
+
+  --positive-colour1-primary: hsl(120, 100%, 70%);
+  --positive-colour1-secondary: hsl(120, 100%, 75%);
+  --positive-colour2-primary: hsl(120, 100%, 45%);
+  --positive-colour2-secondary: hsl(120, 100%, 30%);
+
+  --negative-colour1-primary: hsl(0, 100%, 70%);
+  --negative-colour1-secondary: hsl(0, 100%, 70%);
+  --negative-colour2-primary: hsl(0, 100%, 60%);
+  --negative-colour2-secondary: hsl(0, 100%, 45%);
+
+  --favourite-colour1-primary: hsl(60, 100%, 30%);
+  --favourite-colour2-primary: hsl(51, 100%, 50%);
+  /* END Buttons */
+
+  /* Links */
+  // external
+  --anchour-colour1-primary: hsl(200, 100%, 80%);
+  --anchour-colour1-secondary: hsla(210, 70%, 70%);
+  --anchour-colour2-primary: hsl(240, 100%, 40%);
+  --anchour-colour2-secondary: hsla(230, 70%, 40%);
+  // internal
+  --anchour-internal-colour1-primary: hsl(20, 100%, 80%);
+  --anchour-internal-colour1-secondary: hsla(20, 70%, 70%);
+  --anchour-internal-colour2-primary: hsl(30, 100%, 20%);
+  --anchour-internal-colour2-secondary: hsla(30, 80%, 20%);
+  // local
+  --anchour-local-colour1-primary: hsl(260, 100%, 80%);
+  --anchour-local-colour1-secondary: hsla(260, 70%, 70%);
+  --anchour-local-colour2-primary: hsl(280, 100%, 30%);
+  --anchour-local-colour2-secondary: hsla(280, 70%, 30%);
+  // email
+  // --anchour-email-colour1-primary: hsl(260, 100%, 80%);
+  // --anchour-email-colour1-secondary: hsla(260, 70%, 70%);
+  // --anchour-email-colour2-primary: hsl(280, 100%, 30%);
+  // --anchour-email-colour2-secondary: hsla(280, 70%, 30%);
+  /* END Links */
+}
