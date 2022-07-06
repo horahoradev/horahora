@@ -5,9 +5,9 @@ export const THEME = {
   LIGHT: "light",
 } as const;
 
-type ITheme = typeof THEME[keyof typeof THEME];
+export type ITheme = typeof THEME[keyof typeof THEME];
 
-export const DEFAULT_THEME = "dark";
+export const DEFAULT_THEME = THEME.DARK;
 
 export function getTheme(): ITheme {
   let currentTheme: string | undefined = undefined;
