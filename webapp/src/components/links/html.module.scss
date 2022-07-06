@@ -4,6 +4,9 @@
   --local-colour2-primary: var(--anchour-colour2-primary);
   --local-colour2-secondary: var(--anchour-colour2-secondary);
 
+  display: inline-flex;
+  align-items: center;
+  gap: $size-small;
   outline: none;
   text-decoration: none;
   border-bottom: $size-nano solid transparent;

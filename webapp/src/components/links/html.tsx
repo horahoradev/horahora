@@ -1,16 +1,15 @@
 import { forwardRef, type LegacyRef } from "react";
-import { type IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 import styles from "./html.module.scss";
 
 import { blockComponent, IBlockProps } from "#components/meta";
-import { Icon } from "#components/icons";
+import { Icon, type IIconID } from "#components/icons";
 
 export interface IAnchourHTMLProps extends Omit<IBlockProps<"a">, "href"> {
   /**
    * Icon id to use in a link.
    */
-  iconID?: IconDefinition;
+  iconID?: IIconID;
   href?: string | URL;
 }
 
