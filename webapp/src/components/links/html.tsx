@@ -5,6 +5,7 @@ import styles from "./html.module.scss";
 
 import { blockComponent, IBlockProps } from "#components/meta";
 import { Icon } from "#components/icons";
+
 export interface IAnchourHTMLProps extends Omit<IBlockProps<"a">, "href"> {
   /**
    * Icon id to use in a link.
@@ -25,19 +26,22 @@ function Component(
   { href, iconID, children, ...blockProps }: IAnchourHTMLProps,
   ref?: LegacyRef<HTMLAnchorElement>
 ) {
+  /**
+   * Normalized `href` prop.
+   */
+  const finalHref = href && (typeof href === "string" ? href : href.toString());
+  // show the href values
+  const content = children ? children : finalHref;
+
   return (
-    <a
-      href={href && (typeof href === "string" ? href : href.toString())}
-      {...blockProps}
-      ref={ref}
-    >
+    <a href={finalHref} {...blockProps} ref={ref}>
       {iconID ? (
         <>
           <Icon icon={iconID} />
-          <span>{children}</span>
+          <span>{content}</span>
         </>
       ) : (
-        children
+        content
       )}
     </a>
   );
