@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { Rate } from "antd";
+
+import { LinkInternal } from "#components/links";
 
 const VIDEO_ELEMENT_WIDTH = "w-44";
 
@@ -50,15 +51,15 @@ export function VideoList(props: IVideoListProps) {
 }
 
 interface IVideoProps extends Record<string, unknown> {
-  video: IVideo
+  video: IVideo;
 }
 
 interface IVideo {
-  VideoID: unknown
-  Title: string
-  ThumbnailLoc: string
-  Rating: number
-  Views: unknown
+  VideoID: unknown;
+  Title: string;
+  ThumbnailLoc: string;
+  Rating: number;
+  Views: unknown;
 }
 
 function Video(props: IVideoProps) {
@@ -70,7 +71,8 @@ function Video(props: IVideoProps) {
         inline ? "h-24 w-80 relative inline-block m-1" : "px-2 h-44 w-44 m-1"
       }
     >
-      <Link href={`/videos/${video.VideoID}`}>
+      {/* @TODO: not make an entire component a link */}
+      <LinkInternal href={`/videos/${video.VideoID}`}>
         <>
           <div className="rounded relative inline-block w-44">
             <img
@@ -79,7 +81,9 @@ function Video(props: IVideoProps) {
               src={`${video.ThumbnailLoc}`}
               onError={(e) => {
                 (e.target as HTMLImageElement).onerror = null;
-                (e.target as HTMLImageElement).src = `${video.ThumbnailLoc.slice(0, -6)}.jpg`;
+                (
+                  e.target as HTMLImageElement
+                ).src = `${video.ThumbnailLoc.slice(0, -6)}.jpg`;
               }}
             />
             {!inline && (
@@ -114,7 +118,7 @@ function Video(props: IVideoProps) {
             )}
           </div>
         </>
-      </Link>
+      </LinkInternal>
     </div>
   );
 }
