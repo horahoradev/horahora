@@ -19,6 +19,11 @@ fi
 if [ ! -f .env ]
 then
   cp configs/.env.example .env
+  # oh no no no no no
+  sed -i '$d' .env
+  echo -n 'JWT_KEYPAIR="' >> .env
+  openssl genrsa 2048 >> .env
+  echo '"' >> .env
 fi
 
 # docker compose by default reads `.env` file

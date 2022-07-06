@@ -24,7 +24,7 @@ Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 1. Install docker and docker-compose
 2. Generate private key:
    ```sh
-   openssl genrsa 2048 | sed -e 's/^/        /'
+   openssl genrsa 2048
    ```
 3. Create env vars file:
    ```sh
