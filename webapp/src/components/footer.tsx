@@ -1,12 +1,14 @@
+import styles from "./footer.module.scss";
+
 import { LinkInternal } from "#components/links";
 
 interface IFooterProps extends Record<string, unknown> {}
 
 export function Footer({ userData, dataless }: IFooterProps) {
   return (
-    <nav className="flex justify-around h-8 w-full bg-white dark:bg-gray-900 shadow">
-      <LinkInternal href="/privacy-policy">Privacy Policy</LinkInternal>
-      <LinkInternal href="/terms-of-service">Terms of Service</LinkInternal>
-    </nav>
+    <footer className={styles.block}>
+      <LinkInternal className={styles.link} href="/privacy-policy">Privacy Policy</LinkInternal>
+      <LinkInternal className={styles.link} href="/terms-of-service">Terms of Service</LinkInternal>
+    </footer>
   );
 }

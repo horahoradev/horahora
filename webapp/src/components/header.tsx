@@ -14,19 +14,19 @@ import { Button, Dropdown, Input, Menu } from "antd";
 
 import { ThemeSwitcher } from "./theme-switcher";
 import { LinkInternal } from "./links/internal";
+import styles from "./header.module.scss"
 
 import { UserRank } from "#api/types";
 import { onParentBlur } from "#lib/dom";
-import { Icon } from "#components/icons";
 
 interface IHeaderProps extends Record<string, unknown> {}
 export function Header({ userData, dataless }: IHeaderProps) {
   return (
-    <nav className="h-16 bg-white dark:bg-gray-800 shadow flex justify-center">
-      <div className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
+    <header className={styles.block}>
+      <nav className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
         <div className="flex justify-start flex-grow-0">
           {/* @TODO: site logo component */}
-          <LinkInternal className="text-2xl font-black text-blue-500" href="/">
+          <LinkInternal className={styles.logo} href="/">
             Horahora
           </LinkInternal>
         </div>
@@ -36,8 +36,8 @@ export function Header({ userData, dataless }: IHeaderProps) {
             <UserNav userData={userData} />
           </div>
         )}
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }
 
