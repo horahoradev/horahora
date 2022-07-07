@@ -8,3 +8,5 @@ export { File } from "./file";
 export type { IFileProps } from "./file";
 export { Tags } from "./tags";
 export type { ITagsProps } from "./tags";
+export { Search } from "./search";
+export type { ISearchProps } from "./search";

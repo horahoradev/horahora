@@ -8,28 +8,32 @@ type IStrategy =
   typeof NORMALIZATION_STRATEGY[keyof typeof NORMALIZATION_STRATEGY];
 
 interface INormalizeQueryKeyOptions {
-  defaultValue?: string;
-  strategy?: IStrategy;
-  separator?: string;
+  defaultValue: string;
+  strategy: IStrategy;
+  separator: string;
 }
 
 const defaultNormalizeQueryKeyOptions: INormalizeQueryKeyOptions = {
-  defaultValue: undefined,
+  defaultValue: "",
   strategy: NORMALIZATION_STRATEGY.FIRST,
   separator: ",",
 } as const;
 
 export function normalizeQueryKey(
   query: string | string[] | undefined,
-  options?: INormalizeQueryKeyOptions
-) {
+  options?: Partial<INormalizeQueryKeyOptions>
+): string {
   const finalOptions = options
     ? { ...defaultNormalizeQueryKeyOptions, ...options }
     : defaultNormalizeQueryKeyOptions;
   const { defaultValue, strategy, separator } = finalOptions;
-  let finalValue: typeof defaultValue;
+
+  if (!query) {
+    return defaultValue;
+  }
 
   if (Array.isArray(query)) {
+    let finalValue;
     switch (strategy) {
       case NORMALIZATION_STRATEGY.FIRST: {
         finalValue = query[0];
@@ -50,13 +54,9 @@ export function normalizeQueryKey(
         throw new Error(`Unknown query normalization strategy "${strategy}"`);
       }
     }
-  } else {
-    finalValue = query;
+
+    return finalValue;
   }
 
-  if (!finalValue) {
-    finalValue = defaultValue;
-  }
-
-  return finalValue;
+  return query;
 }
