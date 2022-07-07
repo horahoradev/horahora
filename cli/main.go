@@ -1,7 +1,7 @@
 package main
 
-import "horahora/cli/cmd"
+import "horahora/cli/src/commands"
 
 func main() {
-	cmd.Execute()
+	commands.Execute()
 }

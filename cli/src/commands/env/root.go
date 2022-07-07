@@ -1,18 +1,18 @@
-package cmd
+package env
 
 import (
 	"github.com/spf13/cobra"
 )
 
-// envCmd represents the `env` command
-var envCmd = &cobra.Command{
+// ENVCommand represents the `env` command
+var ENVCommand = &cobra.Command{
 	Use:   "env",
 	Short: "Manage environment variables",
 	Long:  `Environment variables manager for Horahora.`,
 }
 
 func init() {
-	envCmd.AddCommand(envInitCMD)
+	ENVCommand.AddCommand(ENVValidate)
 
 	// Here you will define your flags and configuration settings.
 
