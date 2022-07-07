@@ -9,6 +9,6 @@ export interface IInputProps extends IChildlessBlockProps<"input"> {
 
 export const Input = blockComponent(styles.block, Component);
 
-export function Component({ ...blockProps }: IInputProps) {
+function Component({ ...blockProps }: IInputProps) {
   return <input {...blockProps} />;
 }

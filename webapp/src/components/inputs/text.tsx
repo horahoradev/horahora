@@ -12,7 +12,7 @@ export interface ITextProps extends IFormSectionProps {
 
 export const Text = blockComponent(undefined, Component);
 
-export function Component({
+function Component({
   id,
   name,
   maxLength,

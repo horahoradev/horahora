@@ -8,8 +8,17 @@ type IStrategy =
   typeof NORMALIZATION_STRATEGY[keyof typeof NORMALIZATION_STRATEGY];
 
 interface INormalizeQueryKeyOptions {
+  /**
+   * @default ""
+   */
   defaultValue: string;
+  /**
+   * @default "first"
+   */
   strategy: IStrategy;
+  /**
+   * @default ","
+   */
   separator: string;
 }
 

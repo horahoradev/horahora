@@ -10,7 +10,7 @@ export interface IFileProps extends IFormSectionProps {
 
 export const File = blockComponent(undefined, Component);
 
-export function Component({ id, name, children, ...blockProps }: IFileProps) {
+function Component({ id, name, children, ...blockProps }: IFileProps) {
   return (
     <FormSection {...blockProps}>
       <Label htmlFor={id}>{children}</Label>

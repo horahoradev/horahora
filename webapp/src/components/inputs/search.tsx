@@ -1,4 +1,3 @@
-import styles from "./search.module.scss";
 import { Input } from "./input";
 
 import { type IFormSectionProps, FormSection, Label } from "#components/forms";
@@ -9,7 +8,7 @@ export interface ISearchProps extends IFormSectionProps {
   name: string;
 }
 
-export const Search = blockComponent(styles.block, Component);
+export const Search = blockComponent(undefined, Component);
 
 function Component({ id, name, children, ...blockProps }: ISearchProps) {
   return (
