@@ -1,20 +1,21 @@
+import styles from "./search.module.scss";
 import { Input } from "./input";
 
 import { type IFormSectionProps, FormSection, Label } from "#components/forms";
 import { blockComponent } from "#components/meta";
 
-export interface IFileProps extends IFormSectionProps {
+export interface ISearchProps extends IFormSectionProps {
   id: string;
   name: string;
 }
 
-export const File = blockComponent(undefined, Component);
+export const Search = blockComponent(styles.block, Component);
 
-export function Component({ id, name, children, ...blockProps }: IFileProps) {
+function Component({ id, name, children, ...blockProps }: ISearchProps) {
   return (
     <FormSection {...blockProps}>
       <Label htmlFor={id}>{children}</Label>
-      <Input id={id} type="file" name={name} />
+      <Input id={id} name={name} type="search" />
     </FormSection>
   );
 }

@@ -1,0 +1,13 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.5rem;
+  max-width: $width-phone;
+  color: var(--colour0-primary);
+  background-color: var(--colour1-tertiary);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin: 0 auto;
+}

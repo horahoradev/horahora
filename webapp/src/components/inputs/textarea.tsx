@@ -1,10 +1,14 @@
-import { IBlockProps } from "#components/meta";
+import styles from "./textarea.module.scss";
 
-export interface ITextAreaProps extends IBlockProps<"textarea"> {}
-export function TextArea({ children, ...blockProps }: ITextAreaProps) {
-  return (
-    <textarea className="w-full bg-white dark:bg-black p-2 rounded-md" {...blockProps}>
-      {children}
-    </textarea>
-  );
+import { blockComponent, type IBlockProps } from "#components/meta";
+
+export interface ITextAreaProps extends IBlockProps<"textarea"> {
+  id: string;
+  name: string;
+}
+
+export const TextArea = blockComponent(styles.block, Component);
+
+export function Component({ children, ...blockProps }: ITextAreaProps) {
+  return <textarea {...blockProps}>{children}</textarea>;
 }

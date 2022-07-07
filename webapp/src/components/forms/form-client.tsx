@@ -1,7 +1,7 @@
 import { Form, type IFormProps } from "./form";
 import { type ISubmitEvent } from "./types";
 
-import { ClientComponent } from "#components/meta";
+import { blockComponent, ClientComponent } from "#components/meta";
 
 export interface IFormClientProps extends IFormProps {
   onSubmit: (event: ISubmitEvent) => Promise<void>;
@@ -12,7 +12,9 @@ export interface IFormClientProps extends IFormProps {
  *
  * Submit is default prevented and `onSubmit()` is always async and is required.
  */
-export function FormClient({
+export const FormClient = blockComponent(undefined, Component);
+
+export function Component({
   onSubmit,
   children,
   ...blockProps
