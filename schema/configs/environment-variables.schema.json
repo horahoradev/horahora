@@ -1,0 +1,249 @@
+{
+  "$id": "https://horahora-schemas.org/configs/environment-variables.schema.json",
+  "title": "EnvironmentVariables",
+  "description": "The environment variables used by Horahora project.",
+  "required": [],
+  "properties": {
+    "BUCKET_NAME": {
+      "type": "string",
+      "default": "otomads",
+      "description": "The storage bucket name for b2 or s3.\nIf you want to use S3, you need to include your aws credentials and config in $HOME/.aws. The config and credentials will be mounted into the relevant services at runtime.\nSee https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html for more information."
+    },
+    "ORIGIN_FQDN": {
+      "type": "string",
+      "description": "For non-local applications, should be the public address of the server (if minio) or storage origin.\nThis will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads for backblaze, or https://horahora-dev-otomads.s3-us-west-1.amazonaws.com for s3.",
+      "default": "http://localhost:9000/$BUCKET_NAME"
+    },
+    "STORAGE_BACKEND": {
+      "type": "string",
+      "enum": ["b2", "s3"],
+      "default": "s3"
+    },
+    "STORAGE_API_ID": {
+      "type": "string",
+      "default": "minioadmin",
+      "description": "The API ID for your Backblaze account if using backblaze, otherwise blank"
+    },
+    "STORAGE_API_KEY": {
+      "type": "string",
+      "default": "minioadmin",
+      "description": "The API key for your Backblaze account, otherwise blank"
+    },
+    "STORAGE_ENDPOINT": {
+      "type": "string",
+      "default": "http://minio:9000"
+    },
+    "BUILD_LOCAL_IMAGES": {
+      "type": "boolean",
+      "default": false
+    },
+    "USE_CUSTOM_KEYPAIR": {
+      "type": "boolean",
+      "default": true
+    },
+    "USE_VPN_CONFIG": {
+      "type": "boolean",
+      "default": false
+    },
+    "VPN_PROVIDER": {
+      "type": "string",
+      "default": "mullvad"
+    },
+    "VPN_IP": {
+      "type": "string",
+      "default": "10.64.168.1/32"
+    },
+    "WIREGUARD_PRIVATE_KEY": {
+      "type": "string"
+    },
+    "VPN_CITIES": {
+      "type": "string",
+      "default": "Tokyo"
+    },
+    "FRONTEND_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: frontend"
+    },
+    "VIDEOSERVICE_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: video_service"
+    },
+    "USERSERVICE_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: user_service"
+    },
+    "SCHEDULER_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: scheduler"
+    },
+    "FRONT_API_BUILD_DIRECTIVE": {
+      "type": "string",
+      "default": "build: front_api"
+    },
+    "SOCKS_ADDR": {
+      "type": "string",
+      "default": "http://gluetun:8888"
+    },
+    "JWT_KEYPAIR": {
+      "type": "string"
+    },
+    "GOLANG_PROTOBUF_REGISTRATION_CONFLICT": {
+      "type": "string",
+      "default": "warn"
+    },
+    "UserServiceGRPCAddress": {
+      "type": "string",
+      "default": "userservice:7777"
+    },
+    "VideoServiceGRPCAddress": {
+      "type": "string",
+      "default": "videoservice:7777"
+    },
+    "SchedulerServiceGRPCAddress": {
+      "type": "string",
+      "default": "scheduler:7777"
+    },
+    "JaegerAddress": {
+      "type": "string"
+    },
+    "pgs_host": {
+      "type": "string",
+      "default": "postgres"
+    },
+    "pgs_port": {
+      "type": "string",
+      "default": "5432"
+    },
+    "pgs_user": {
+      "type": "string",
+      "default": "admin"
+    },
+    "pgs_pass": {
+      "type": "string",
+      "default": "password"
+    },
+    "pgs_db": {
+      "type": "string",
+      "enum": ["scheduler", "videoservice", "userservice"]
+    },
+    "GRPCPort": {
+      "type": "string",
+      "default": "7777"
+    },
+    "NumberOfRetries": {
+      "type": "integer",
+      "default": 1
+    },
+    "SocksConn": {
+      "type": "string",
+      "default": "$SOCKS_ADDR"
+    },
+    "SyncPollDelay": {
+      "type": "string",
+      "default": "1m"
+    },
+    "MaxDLFileSize": {
+      "type": "integer",
+      "default": 300
+    },
+    "AcceptLanguage": {
+      "type": "string",
+      "default": "ja"
+    },
+    "rabbit_host": {
+      "type": "string",
+      "default": "rabbitmq"
+    },
+    "rabbit_port": {
+      "type": "string",
+      "default": "61613"
+    },
+    "rabbit_user": {
+      "type": "string",
+      "default": "guest"
+    },
+    "rabbit_pass": {
+      "type": "string",
+      "default": "guest"
+    },
+    "BucketName": {
+      "type": "string",
+      "default": "$BUCKET_NAME"
+    },
+    "Local": {
+      "type": "boolean",
+      "default": false
+    },
+    "OriginFQDN": {
+      "type": "string",
+      "default": "$ORIGIN_FQDN"
+    },
+    "AWS_DEFAULT_REGION": {
+      "type": "string"
+    },
+    "StorageBackend": {
+      "type": "string",
+      "default": "$STORAGE_BACKEND"
+    },
+    "StorageAPIID": {
+      "type": "string",
+      "default": "$STORAGE_API_ID"
+    },
+    "StorageAPIKey": {
+      "type": "string",
+      "default": "$STORAGE_API_KEY"
+    },
+    "StorageEndpoint": {
+      "type": "string",
+      "default": "$STORAGE_ENDPOINT"
+    },
+    "ApprovalThreshold": {
+      "type": "integer",
+      "default": 1
+    },
+    "RSA_KEYPAIR": {
+      "type": "string",
+      "default": "$JWT_KEYPAIR"
+    },
+    "POSTGRES_USER": {
+      "type": "string",
+      "default": "admin"
+    },
+    "POSTGRES_PASSWORD": {
+      "type": "string",
+      "default": "password"
+    },
+    "MINIO_ROOT_USER": {
+      "type": "string",
+      "default": "minioadmin"
+    },
+    "MINIO_ROOT_PASSWORD": {
+      "type": "string",
+      "default": "minioadmin"
+    },
+    "VPN_SERVICE_PROVIDER": {
+      "type": "string",
+      "default": "$VPN_PROVIDER"
+    },
+    "VPN_TYPE": {
+      "type": "string",
+      "default": "wireguard"
+    },
+    "WIREGUARD_ADDRESSES": {
+      "type": "string",
+      "default": "$VPN_IP"
+    },
+    "SERVER_CITIES": {
+      "type": "string",
+      "default": "$VPN_CITIES"
+    },
+    "HTTPPROXY": {
+      "type": "string",
+      "default": "on"
+    },
+    "HTTPPROXY_LOG": {
+      "type": "string",
+      "default": "on"
+    }
+  }
+}

@@ -65,11 +65,11 @@ authloop:
 		//	continue
 		//}
 
-		err = pageHasVideos(client, "風野灯織", 1) // nico channel
-		if err != nil {
-			log.Println(err)
-			continue
-		}
+// 		err = pageHasVideos(client, "風野灯織", 1) // nico channel
+// 		if err != nil {
+// 			log.Println(err)
+// 			continue
+// 		}
 
 		err = pageHasVideos(client, "中の", 1) // there's some bizarre nico bug here where the tags keep switching on the video. very strange
 		if err != nil {

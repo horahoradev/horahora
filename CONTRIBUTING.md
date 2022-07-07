@@ -5,10 +5,10 @@ Thank you for your interest in contributing to Horahora! Think you can do better
 ![](https://raw.githubusercontent.com/horahoradev/horahora/master/Architectural_Drawing.png)
 
 Horahora's architecture is microservice-based. The main microservices are:
-- front_api: which is the RESTful API to the rest of the services
-- userservice: which does all authentication and handles user storage/permissions
-- videoservice: which does all video storage, uploads to the origin (e.g. s3/backblaze), queries, transcoding, etc
-- scheduler: which handles content archival requests and downloads
+- `front_api`: which is the RESTful API to the rest of the services
+- `userservice`: which does all authentication and handles user storage/permissions
+- `videoservice`: which does all video storage, uploads to the origin (e.g. s3/backblaze), queries, transcoding, etc
+- `scheduler`: which handles content archival requests and downloads
 Communication between userservice, videosercvice, and scheduler is GRPC-based. For more details on individual microservice architecture, see the README for whichever microservice.
 
 Postgresql is used as the database for each service, but Redis is also used for very specific purposes (e.g. distributed locking). Schema migrations can be found within the "migrations" directory within each service. As an example, [here's the migrations directory for Videoservice](https://github.com/horahoradev/horahora/tree/master/video_service/migrations). Migrations are applied using Flyway as a means of providing schema versioning.
