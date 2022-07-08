@@ -1,6 +1,7 @@
 package fs
 
 import (
+	errorsLib "errors"
 	"horahora/cli/src/lib/errors"
 	"io/fs"
 	"os"
@@ -28,4 +29,32 @@ func WriteFile(filePath string, content string) {
 	fileContent := []byte(content)
 	err := os.WriteFile(filePath, fileContent, 0644)
 	errors.CheckError(err)
+}
+
+// Overwrite the file at destination path
+// with the content of the file at sourcePath.
+func OverwriteFile(sourcePath, destinationPath string) {
+	content := ReadFile(sourcePath)
+	WriteFile(destinationPath, content)
+}
+
+// Check for existence of the file/folder at path.
+func IsExist(filePath string) bool {
+	_, err := os.Stat(filePath)
+
+	return errorsLib.Is(err, fs.ErrExist)
+}
+
+// Copies the file from source to destination.
+func CopyFile(sourcePath, destinationPath string) {
+	if !IsExist(sourcePath) {
+		panic("Input file doesn't exist.")
+	}
+
+	if IsExist(destinationPath) {
+		panic("Output path already exists.")
+	}
+
+	content := ReadFile(sourcePath)
+	WriteFile(destinationPath, content)
 }

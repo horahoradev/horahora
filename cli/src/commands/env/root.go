@@ -4,7 +4,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ENVCommand represents the `env` command
+const (
+	envFileName        string = ".env"
+	configsFolder      string = "configs"
+	envExampleFilename string = ".env.example"
+	schemaFolder       string = "schema"
+)
+
+// `env`
 var ENVCommand = &cobra.Command{
 	Use:   "env",
 	Short: "Manage environment variables",
@@ -12,7 +19,8 @@ var ENVCommand = &cobra.Command{
 }
 
 func init() {
-	ENVCommand.AddCommand(ENVValidate)
+	ENVCommand.AddCommand(envInit)
+	ENVCommand.AddCommand(envValidate)
 
 	// Here you will define your flags and configuration settings.
 

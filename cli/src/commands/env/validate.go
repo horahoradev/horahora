@@ -12,16 +12,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const envFileName string = ".env"
-const configsFolder string = "configs"
-const envExampleFilename string = ".env.example"
-const schemaFolder string = "schema"
+
 
 // `env validate`
-var ENVValidate = &cobra.Command{
+var envValidate = &cobra.Command{
 	Use:   "validate",
 	Short: "Validate environment variables",
-	Long:  `Environment variables validator for Horahora.`,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Starting environment variables validation...")
 	},
@@ -54,6 +50,8 @@ func validateEnvVars(cmd *cobra.Command, args []string) {
 
 // Compares the present env map to the example one
 // and returns the list of missing keys in the former.
+//
+// @TODO: compare against schema instead
 func compareEnvMaps(envMap, exampleENVMap map[string]string) []string {
 	var missingKeys []string
 
