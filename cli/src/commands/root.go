@@ -15,7 +15,7 @@ var (
 	userLicense string
 	// rootCmd represents the base command when called without any subcommands
 	rootCmd = &cobra.Command{
-		Use:   "cli",
+		Use:   "horahora",
 		Short: "A CLI tool to manage horahora.",
 		Long:  `Horahora management CLI tool.`,
 	}
