@@ -2,6 +2,7 @@ package fs
 
 import (
 	errorsLib "errors"
+	"fmt"
 	"horahora/cli/src/lib/errors"
 	"io/fs"
 	"os"
@@ -42,17 +43,19 @@ func OverwriteFile(sourcePath, destinationPath string) {
 func IsExist(filePath string) bool {
 	_, err := os.Stat(filePath)
 
-	return errorsLib.Is(err, fs.ErrExist)
+	return !errorsLib.Is(err, fs.ErrExist)
 }
 
 // Copies the file from source to destination.
 func CopyFile(sourcePath, destinationPath string) {
 	if !IsExist(sourcePath) {
-		panic("Input file doesn't exist.")
+		message := fmt.Sprintf("Source path \"%v\" doesn't exist.", sourcePath)
+		panic(message)
 	}
 
 	if IsExist(destinationPath) {
-		panic("Output path already exists.")
+		message := fmt.Sprintf("Destination path \"%v\"already exists.", destinationPath)
+		panic(message)
 	}
 
 	content := ReadFile(sourcePath)

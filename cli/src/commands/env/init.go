@@ -30,14 +30,14 @@ func initEnvVars(cmd *cobra.Command, args []string) {
 	workingFolder, pathErr := os.Getwd()
 	errors.CheckError(pathErr)
 
-	envFilePath := filepath.Join(workingFolder, "..", envFileName)
+	envFilePath := filepath.Join(workingFolder, envFileName)
 
 	if fs.IsExist(envFilePath) {
 		fmt.Println("\".env\" file already exists, skipping initialization.")
 		return
 	}
 
-	exampleENVFilepath := filepath.Join(workingFolder, "..", configsFolder, envExampleFilename)
+	exampleENVFilepath := filepath.Join(workingFolder, configsFolder, envExampleFilename)
 
 	fs.CopyFile(exampleENVFilepath, envFilePath)
 }

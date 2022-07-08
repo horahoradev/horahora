@@ -12,8 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
-
 // `env validate`
 var envValidate = &cobra.Command{
 	Use:   "validate",
@@ -32,11 +30,11 @@ func validateEnvVars(cmd *cobra.Command, args []string) {
 	workingFolder, pathErr := os.Getwd()
 	errors.CheckError(pathErr)
 
-	envFilePath := filepath.Join(workingFolder, "..", envFileName)
+	envFilePath := filepath.Join(workingFolder, envFileName)
 	envMap, fileErr := godotenv.Read(envFilePath)
 	errors.CheckError(fileErr)
 
-	exampleENVFilepath := filepath.Join(workingFolder, "..", configsFolder, envExampleFilename)
+	exampleENVFilepath := filepath.Join(workingFolder, configsFolder, envExampleFilename)
 	exampleENVMap, fileErr := godotenv.Read(exampleENVFilepath)
 	errors.CheckError(fileErr)
 
