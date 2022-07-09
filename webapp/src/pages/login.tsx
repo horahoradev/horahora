@@ -3,12 +3,12 @@ import { Button, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import type { InputRef } from "antd";
 
 import { Header } from "#components/header";
 import { postLogin } from "#api/index";
+import { LinkInternal } from "#components/links";
 
 function LoginPage() {
   return (
@@ -49,12 +49,12 @@ function LoginForm() {
       <h2 className="text-xl text-black dark:text-white mb-4 inline-block">
         Welcome back!
       </h2>{" "}
-      <Link
+      <LinkInternal
         className="float-right -top-5 text-black dark:text-white"
         href="/register"
       >
         register
-      </Link>
+      </LinkInternal>
       <form onSubmit={formik.handleSubmit}>
         <Input.Group>
           <Input

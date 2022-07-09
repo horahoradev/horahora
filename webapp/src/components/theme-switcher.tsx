@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
 import { Switch, Menu } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun } from "@fortawesome/free-solid-svg-icons";
 
-import { DEFAULT_THEME, getTheme, setTheme } from "#lib/theme";
+import {
+  DEFAULT_THEME,
+  getTheme,
+  setTheme,
+  THEME,
+  type ITheme,
+} from "#lib/theme";
+import { Icon } from "#components/icons";
 
 /**
  * @TODO more standalone markup.
  */
 export function ThemeSwitcher() {
-  const [currentTheme, switchTheme] = useState(DEFAULT_THEME);
+  const [currentTheme, switchTheme] = useState<ITheme>(DEFAULT_THEME);
 
   // initialize component on client
   useEffect(() => {
@@ -20,17 +26,13 @@ export function ThemeSwitcher() {
     <Menu.Item
       key="darkmode"
       className="bg-white dark:bg-black"
-      icon={
-        <FontAwesomeIcon
-          className="max-h-4 text-black dark:text-white"
-          icon={faSun}
-        />
-      }
+      icon={<Icon icon={faSun} />}
     >
       <Switch
         className="text-black dark:text-white"
         onChange={() => {
-          const nextTheme = currentTheme === "dark" ? "light" : "dark";
+          const nextTheme =
+            currentTheme === THEME.DARK ? THEME.LIGHT : THEME.DARK;
           switchTheme(setTheme(nextTheme));
         }}
       ></Switch>

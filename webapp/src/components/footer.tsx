@@ -1,17 +1,14 @@
-import { PrivacyPolicy } from "./privacy-policy";
-import { TermsOfService } from "./terms-of-service";
+import styles from "./footer.module.scss";
+
+import { LinkInternal } from "#components/links";
 
 interface IFooterProps extends Record<string, unknown> {}
 
-export function Footer(props: IFooterProps) {
-  const { userData, dataless } = props;
-
+export function Footer({ userData, dataless }: IFooterProps) {
   return (
-    <nav className="h-8 w-full bg-white dark:bg-gray-900 shadow">
-      <div className="flex justify-around p-auto">
-        <PrivacyPolicy />
-        <TermsOfService />
-      </div>
-    </nav>
+    <footer className={styles.block}>
+      <LinkInternal className={styles.link} href="/privacy-policy">Privacy Policy</LinkInternal>
+      <LinkInternal className={styles.link} href="/terms-of-service">Terms of Service</LinkInternal>
+    </footer>
   );
 }

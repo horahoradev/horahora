@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useCallback, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,20 +14,21 @@ import { Button, Dropdown, Input, Menu } from "antd";
 
 import { ThemeSwitcher } from "./theme-switcher";
 import { LinkInternal } from "./links/internal";
+import styles from "./header.module.scss"
 
 import { UserRank } from "#api/types";
 import { onParentBlur } from "#lib/dom";
-import { Icon } from "#components/icons";
 
 interface IHeaderProps extends Record<string, unknown> {}
 export function Header({ userData, dataless }: IHeaderProps) {
   return (
-    <nav className="h-16 bg-white dark:bg-gray-800 shadow flex justify-center">
-      <div className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
+    <header className={styles.block}>
+      <nav className="max-w-screen-lg w-screen flex justify-start items-center gap-x-4 mx-4">
         <div className="flex justify-start flex-grow-0">
-          <Link className="text-2xl font-black text-blue-500" href="/">
+          {/* @TODO: site logo component */}
+          <LinkInternal className={styles.logo} href="/">
             Horahora
-          </Link>
+          </LinkInternal>
         </div>
         <Search />
         {!dataless && (
@@ -36,8 +36,8 @@ export function Header({ userData, dataless }: IHeaderProps) {
             <UserNav userData={userData} />
           </div>
         )}
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }
 
@@ -163,46 +163,32 @@ function LoggedInUserNav(props: ILoggedInUserNav) {
 
   let menu = (
     <Menu className="bg-white dark:bg-black">
-      <Menu.Item key="upload" icon={<Icon icon={faUpload} />}>
-        <LinkInternal href="/account/upload">Upload</LinkInternal>
+      <Menu.Item key="upload">
+        <LinkInternal iconID={faUpload} href="/account/upload">
+          Upload
+        </LinkInternal>
       </Menu.Item>
-      <Menu.Item key="profile" icon={<Icon icon={faUser} />}>
-        <Link
-          className="text-black dark:text-white dark:hover:text-black"
+      <Menu.Item key="profile">
+        <LinkInternal
+          iconID={faUser}
           // @ts-expect-error figure `userData` shape
           href={`/users/${userData.userID}`}
         >
           Profile page
-        </Link>
+        </LinkInternal>
       </Menu.Item>
       <Menu.Divider />
 
       <Menu.Item
         key="password-reset"
-        icon={
-          <FontAwesomeIcon
-            className="max-h-4 text-black dark:text-white"
-            icon={faKey}
-          />
-        }
       >
-        <Link className="text-black dark:text-white" href="/password-reset">
-          Reset Password
-        </Link>
+        <LinkInternal iconID={faKey} href="/password-reset">Reset Password</LinkInternal>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
         key="logout"
-        icon={
-          <FontAwesomeIcon
-            className="max-h-4 text-red-600"
-            icon={faSignOutAlt}
-          />
-        }
       >
-        <Link className="text-black dark:text-white" href="/logout">
-          Logout
-        </Link>
+        <LinkInternal iconID={faSignOutAlt} href="/logout">Logout</LinkInternal>
       </Menu.Item>
     </Menu>
   );
@@ -229,43 +215,29 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
     <Menu className="bg-white dark:bg-black">
       <Menu.Item
         key="profile"
-        icon={
-          <FontAwesomeIcon
-            className="max-h-4 text-black dark:text-white"
-            icon={faUser}
-          />
-        }
       >
-        <Link
-          className="text-black dark:text-white dark:hover:text-black"
+        <LinkInternal
+          iconID={faUser}
           // @ts-expect-error figure `userData` shape
           href={`/users/${userData.userID}`}
         >
           Profile page
-        </Link>
+        </LinkInternal>
       </Menu.Item>
       <Menu.Divider />
 
-      <Menu.Item key="upload"  className="flex flex-row gap-2" icon={<Icon icon={faUpload} />}>
-        <LinkInternal href="/account/upload">Upload</LinkInternal>
+      <Menu.Item
+        key="upload"
+        className="flex flex-row gap-2"
+      >
+        <LinkInternal iconID={faUpload} href="/account/upload">Upload</LinkInternal>
       </Menu.Item>
       <Menu.Divider />
 
       <Menu.Item
         key="archive-requests"
-        icon={
-          <FontAwesomeIcon
-            className="max-h-4 text-black dark:text-white"
-            icon={faArchive}
-          />
-        }
       >
-        <Link
-          className="text-black dark:text-white dark:hover:text-black"
-          href="/archive-requests"
-        >
-          Archive Requests
-        </Link>
+        <LinkInternal iconID={faArchive} href="/archive-requests">Archive Requests</LinkInternal>
       </Menu.Item>
       <Menu.Divider />
 
@@ -275,54 +247,21 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
 
       <Menu.Item
         key="password-reset"
-        icon={
-          <FontAwesomeIcon
-            className="max-h-4 text-black dark:text-white"
-            icon={faKey}
-          />
-        }
       >
-        <Link
-          className="text-black dark:text-white dark:hover:text-black"
-          href="/password-reset"
-        >
-          Password Reset
-        </Link>
+        <LinkInternal iconID={faKey} href="/password-reset">Password Reset</LinkInternal>
       </Menu.Item>
 
       <Menu.Divider />
       <Menu.Item
         key="audits"
-        icon={
-          <FontAwesomeIcon
-            className="max-h-4 text-black dark:text-white"
-            icon={faArchive}
-          />
-        }
       >
-        <Link
-          className="text-black dark:text-white dark:hover:text-black"
-          href="/audits"
-        >
-          Audit Logs
-        </Link>
+        <LinkInternal iconID={faArchive} href="/audits">Audit Logs</LinkInternal>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
         key="logout"
-        icon={
-          <FontAwesomeIcon
-            className="max-h-4 text-red-600"
-            icon={faSignOutAlt}
-          />
-        }
       >
-        <Link
-          className="text-black dark:text-white dark:hover:text-black"
-          href="/logout"
-        >
-          Logout
-        </Link>
+        <LinkInternal iconID={faSignOutAlt} href="/logout">Logout</LinkInternal>
       </Menu.Item>
     </Menu>
   );
@@ -346,12 +285,8 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
 function LoggedOutUserNav() {
   return (
     <>
-      <Link href="/login">
-        <Button>Login</Button>
-      </Link>
-      <Link className="ml-2" href="/register">
-        <Button type="primary">Register</Button>
-      </Link>
+      <LinkInternal href="/login">Login</LinkInternal>
+      <LinkInternal href="/register">Register</LinkInternal>
     </>
   );
 }
