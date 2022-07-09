@@ -1,5 +1,5 @@
 import "antd/dist/antd.css";
-import "#styles/index.css";
+import "#styles/index.scss";
 
 import Head from "next/head";
 import type { AppProps } from 'next/app'
