@@ -29,6 +29,7 @@ export function Component({
   children,
   ...blockProps
 }: ILinkInternalProps) {
+
   return (
     <Link {...blockProps} passHref>
       <AnchourHTML
