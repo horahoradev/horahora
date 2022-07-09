@@ -1,22 +1,47 @@
 import Link, { type LinkProps } from "next/link";
-import { type ReactNode } from "react";
+import {
+  type MouseEventHandler,
+  type HTMLAttributeAnchorTarget,
+  type ReactNode,
+} from "react";
+import clsx from "clsx";
 
-export interface ILinkInternalProps extends LinkProps {
+import styles from "./internal.module.scss";
+import { AnchourHTML } from "./html";
+
+import { blockComponent } from "#components/meta";
+import { IIconID } from "#components/icons";
+
+export interface ILinkInternalProps extends Omit<LinkProps, "passHref"> {
+  target?: HTMLAttributeAnchorTarget;
+  iconID?: IIconID;
+  className?: string;
   children?: ReactNode;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
 }
 
-export function LinkInternal({
-  href,
+export const LinkInternal = blockComponent(styles.block, Component);
+
+export function Component({
+  iconID,
+  target = "_self",
+  className,
+  onClick,
   children,
   ...blockProps
 }: ILinkInternalProps) {
+  const linkClass = clsx(styles.internal, className);
+
   return (
-    <Link
-      className="flex items-center flex-row gap-2 text-base text-black dark:text-white dark:hover:text-black"
-      href={href}
-      {...blockProps}
-    >
-      {children ? children : href}
+    <Link {...blockProps} passHref>
+      <AnchourHTML
+        className={linkClass}
+        target={target}
+        iconID={iconID}
+        onClick={onClick}
+      >
+        {children}
+      </AnchourHTML>
     </Link>
   );
 }
