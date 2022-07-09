@@ -5,6 +5,7 @@ import {
   type ReactNode,
 } from "react";
 
+
 import styles from "./internal.module.scss";
 import { AnchourHTML } from "./html";
 
@@ -29,6 +30,8 @@ export function Component({
   children,
   ...blockProps
 }: ILinkInternalProps) {
+  const linkClass = clsx(styles.internal, className);
+
   return (
     <Link {...blockProps} passHref>
       <AnchourHTML
