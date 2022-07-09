@@ -1,4 +1,5 @@
-{
+package meta
+const MetaJSONSchema string = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://horahora-schemas.org/meta.schema.json",
   "title": "Core schema meta-schema",
@@ -164,3 +165,4 @@
   },
   "default": true
 }
+`
