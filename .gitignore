@@ -1,3 +1,9 @@
+# CLI build output
+/horahora
+# CLI windows build output
+/horahora.exe
+
+
 # vscode files
 *.code-workspace
 
