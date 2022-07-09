@@ -30,7 +30,6 @@ export function Component({
   children,
   ...blockProps
 }: ILinkInternalProps) {
-  const linkClass = clsx(styles.internal, className);
 
   return (
     <Link {...blockProps} passHref>
