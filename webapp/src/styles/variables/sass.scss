@@ -25,5 +25,6 @@ $radius-normal: 10px;
 $radius-big: 15px;
 $radius-round: 50%;
 
-$min-button-width: 44px;
-$min-button-height: 44px;
+$button-size: 44px;
+$min-button-width: $button-size;
+$min-button-height: $button-size;

@@ -1,4 +1,5 @@
 import { Input } from "./input";
+import styles from "./radio.module.scss";
 
 import { FormSection, Label, type IFormSectionProps } from "#components/forms";
 import { blockComponent } from "#components/meta";
@@ -10,7 +11,7 @@ export interface IRadioProps extends IFormSectionProps {
   checked?: boolean;
 }
 
-export const Radio = blockComponent(undefined, Component);
+export const Radio = blockComponent(styles.block, Component);
 
 function Component({
   id,
@@ -24,12 +25,15 @@ function Component({
     <FormSection {...blockProps}>
       <Input
         id={id}
+        className={styles.input}
         name={name}
         type="radio"
         value={value}
         defaultChecked={checked}
       />
-      <Label htmlFor={id}>{children}</Label>
+      <Label className={styles.label} htmlFor={id}>
+        {children}
+      </Label>
     </FormSection>
   );
 }

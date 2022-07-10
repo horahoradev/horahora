@@ -1,0 +1,29 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: $size-normal;
+}
+
+.input {
+  flex: 0 0 $button-size;
+  min-height: $button-size;
+  cursor: pointer;
+
+  &:checked + .label {
+    color: var(--colour0-primary);
+    opacity: 1;
+  }
+}
+
+.label {
+  flex: 1 1 auto;
+  color: var(--colour0-secondary);
+  opacity: 0.8;
+
+  transition-property: color, opacity;
+  transition-duration: var(--duration-global);
+}
