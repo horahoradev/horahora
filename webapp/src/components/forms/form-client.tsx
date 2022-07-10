@@ -3,7 +3,7 @@ import { type ISubmitEvent } from "./types";
 
 import { blockComponent, ClientComponent } from "#components/meta";
 
-export interface IFormClientProps extends IFormProps {
+export interface IFormClientProps extends Omit<IFormProps, "method"> {
   onSubmit: (event: ISubmitEvent) => Promise<void>;
 }
 
