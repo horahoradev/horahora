@@ -1,15 +1,13 @@
 import { useFormik } from "formik";
-import { Button, Input } from "antd";
+import { Button, Input, type InputRef } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import type { InputRef } from "antd";
 
-import { PrivacyPolicy } from "#components/privacy-policy";
-import { TermsOfService } from "#components/terms-of-service";
 import { Header } from "#components/header";
 import { postRegister } from "#api/index";
+import { LinkInternal } from "#components/links";
 
 function RegisterPage() {
   return (
@@ -101,8 +99,9 @@ function RegistrationForm() {
           />
         </Input.Group>
         <div className="text-black dark:text-white">
-          By submitting, you agree to the <PrivacyPolicy /> and{" "}
-          <TermsOfService />
+          By submitting, you agree to the{" "}
+          <LinkInternal href="/privacy-policy">Privacy Policy</LinkInternal> and{" "}
+          <LinkInternal href="/terms-of-service">TermsOfService</LinkInternal>.
         </div>
         <Input.Group>
           <Button block type="primary" htmlType="submit" size="large">

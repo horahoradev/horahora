@@ -1,8 +1,13 @@
 import { getCookie, setCookie } from "../store/cookie";
 
-type ITheme = "dark" | "light";
+export const THEME = {
+  DARK: "dark",
+  LIGHT: "light",
+} as const;
 
-export const DEFAULT_THEME = "dark";
+export type ITheme = typeof THEME[keyof typeof THEME];
+
+export const DEFAULT_THEME = THEME.DARK;
 
 export function getTheme(): ITheme {
   let currentTheme: string | undefined = undefined;

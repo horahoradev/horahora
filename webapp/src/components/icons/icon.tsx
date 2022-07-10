@@ -1,7 +1,10 @@
+import { type IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
   FontAwesomeIcon,
   type FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
+
+export interface IIconID extends IconDefinition {}
 
 export interface IIconProps extends FontAwesomeIconProps {}
 
