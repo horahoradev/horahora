@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 
 import { Radio } from "./radio";
+import styles from "./radio-group.module.scss";
 
 import { Fieldset, Legend, type IFieldsetProps } from "#components/forms";
 import { blockComponent } from "#components/meta";
@@ -16,7 +17,7 @@ export interface IRadioOption {
   value: string;
 }
 
-export const RadioGroup = blockComponent(undefined, Component);
+export const RadioGroup = blockComponent(styles.block, Component);
 
 function Component({
   name,
@@ -28,7 +29,7 @@ function Component({
     <Fieldset {...blockProps}>
       <Legend>{children}</Legend>
       {options.map(({ id, title, value }) => (
-        <Radio key={id} id={id} name={name} value={value}>
+        <Radio key={id} id={id} name={name} className={styles.radio} value={value}>
           {title}
         </Radio>
       ))}

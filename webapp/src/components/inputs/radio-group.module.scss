@@ -1,0 +1,13 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: $size-small;
+}
+
+.radio {
+  width: 100%;
+}

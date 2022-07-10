@@ -7,7 +7,7 @@ import { Header } from "#components/header";
 import { VideoList } from "#components/video-list";
 import Paginatione from "#components/pagination";
 import { FormClient } from "#components/forms";
-import { RadioGroup, Search, Select } from "#components/inputs";
+import { Email, RadioGroup, Search, Select } from "#components/inputs";
 
 interface IPageData {
   PaginationData: Record<string, unknown>;
@@ -72,36 +72,44 @@ export function HomePage() {
       <Header userData={userData} />
       <div className="flex justify-center mx-4 min-h-screen py-4">
         <div className="max-w-screen-lg w-screen">
-        <FormClient id="test-form" onSubmit={async () => {}}>
-          <Search id="test-form-search" name="search">
-            Search
-          </Search>
-          <Select
-            id="test-form-select"
-            name="select"
-            options={[
-              {
-                title: "Option 1",
-                value: 1,
-              },
-              {
-                title: "Option 2",
-                value: 2
-              }
-            ]}
-          >
-            Select
-          </Select>
-          <RadioGroup
-            name="radio"
-            options={[
-              { id: "test-form-radio-1", title: "Option 1", value: "1" },
-              { id: "test-form-radio-2", title: "Option 2", value: "2" },
-            ]}
-          >
-            Radio
-          </RadioGroup>
-        </FormClient>
+          <FormClient id="test-form" onSubmit={async () => {}}>
+            <Email id="test-form.email" name="email">
+              Email
+            </Email>
+            <Search id="test-form-search" name="search">
+              Search
+            </Search>
+            <Select
+              id="test-form-select"
+              name="select"
+              options={[
+                {
+                  title: "Option 1",
+                  value: 1,
+                },
+                {
+                  title: "Option 2",
+                  value: 2,
+                },
+                {
+                  title: "Option 3",
+                  value: 3,
+                },
+              ]}
+            >
+              Select
+            </Select>
+            <RadioGroup
+              name="radio"
+              options={[
+                { id: "test-form-radio-1", title: "Option 1", value: "1" },
+                { id: "test-form-radio-2", title: "Option 2", value: "2" },
+                { id: "test-form-radio-3", title: "Option 3", value: "3" },
+              ]}
+            >
+              Radio
+            </RadioGroup>
+          </FormClient>
           <h1 className="bold text-2xl text-black dark:text-white">
             Number of videos:{" "}
             {pageData ? pageData.PaginationData.NumberOfItems : 0}

@@ -98,6 +98,7 @@ function RegistrationForm() {
             }
           />
         </Input.Group>
+        {/* These should be checkboxes. */}
         <div className="text-black dark:text-white">
           By submitting, you agree to the{" "}
           <LinkInternal href="/privacy-policy">Privacy Policy</LinkInternal> and{" "}
