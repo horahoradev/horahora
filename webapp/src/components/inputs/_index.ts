@@ -18,3 +18,5 @@ export { RadioGroup } from "./radio-group";
 export type { IRadioGroupProps, IRadioOption } from "./radio-group";
 export { Email } from "./email";
 export type { IEmailProps } from "./email";
+export { Password } from "./password";
+export type { IPasswordProps } from "./password";

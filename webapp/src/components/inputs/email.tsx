@@ -14,7 +14,7 @@ function Component({ id, name, children, ...blockProps }: IEmailProps) {
   return (
     <FormSection {...blockProps}>
       <Label htmlFor={id}>{children}</Label>
-      <Input id={id} name={name} />
+      <Input id={id} name={name} type="email" />
     </FormSection>
   );
 }
