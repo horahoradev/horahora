@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	codegenCommand "horahora/cli/src/commands/codegen"
 	envCommand "horahora/cli/src/commands/env"
 	"os"
 
@@ -29,4 +30,5 @@ func Execute() {
 
 func init() {
 	rootCmd.AddCommand(envCommand.ENVCommand)
+	rootCmd.AddCommand(codegenCommand.CodegenCommand)
 }
