@@ -1,6 +1,6 @@
 {
   "recommendations": [
+    // https://go.dev/doc/editors#options
     "golang.go",
-    "zxh404.vscode-proto3"
   ]
 }
