@@ -46,6 +46,8 @@ services:
     depends_on:
       - postgres
     restart: always
+    volumes:
+      -./scheduler:/horahora/scheduler
     env_file:
       - ./.env.dev
     environment:
@@ -156,8 +158,17 @@ services:
     build: activemq
     restart: always
   stomp_proxy:
-    build: stomp_proxy
+    build:
+      context: stomp_proxy
+      dockerfile: Dockerfile.dev
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+        GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
+    depends_on:
+      - postgres
     restart: always
+    volumes:
+      -./stomp_proxy:/horahora/stomp_proxy
 
 volumes:
   postgresdata_dev:

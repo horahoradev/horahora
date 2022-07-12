@@ -1,17 +1,23 @@
-# syntax=docker/dockerfile:1.2
+# syntax=docker/dockerfile:1
 
-# NOTE: because migrations come from outside the `front_api` directory,
-#       we build this image from project root, symlinking this file to
-#       Dockerfile.front_api
+# https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG GOLANG_IMAGE
+ARG GOLANG_AIR_VERSION
 
-FROM golang:1.18.1-alpine as builder
+FROM ${GOLANG_IMAGE}
+
+# live-reloading package
+RUN go install github.com/cosmtrek/air@${GOLANG_AIR_VERSION}
 
 WORKDIR /horahora/stomp_proxy
 
-# build binary
+# copy dependency info
+COPY ["go.mod", "go.sum", "./"]
+
+# install dependencies
+RUN go mod download
+
+# copy source files
 COPY . /horahora/stomp_proxy
 
-RUN go mod vendor && \
- go build -mod=vendor -o /stomp_proxy.bin
-
-ENTRYPOINT ["/stomp_proxy.bin"]
+CMD [ "air" ]
