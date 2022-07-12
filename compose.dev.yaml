@@ -92,8 +92,17 @@ services:
     volumes:
     - $HOME/.aws/:/root/.aws/:ro
   userservice:
-    build: user_service
+    build:
+      context: user_service
+      dockerfile: Dockerfile.dev
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+        GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
+      labels:
+        org.opencontainers.image.source: https://github.com/horahoradev/horahora
     restart: always
+    volumes:
+      -./user_service:/horahora/userservice
     env_file:
       - ./.env.dev
     environment:
