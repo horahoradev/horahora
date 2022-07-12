@@ -67,8 +67,20 @@ services:
       - rabbit_user=guest
       - rabbit_pass=guest
   videoservice:
-    build: video_service
+    build:
+      context: video_service
+      dockerfile: Dockerfile.dev
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+        GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
+      labels:
+        org.opencontainers.image.source: https://github.com/horahoradev/horahora
+    depends_on:
+      - postgres
     restart: always
+    volumes:
+      -./video_service:/horahora/videoservice
+      - $HOME/.aws/:/root/.aws/:ro
     env_file:
       - ./.env.dev
     environment:
@@ -89,8 +101,6 @@ services:
       - StorageEndpoint=${STORAGE_ENDPOINT}
       - ApprovalThreshold=1
       - MaxDLFileSize=300
-    volumes:
-    - $HOME/.aws/:/root/.aws/:ro
   userservice:
     build:
       context: user_service
