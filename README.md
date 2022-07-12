@@ -69,7 +69,7 @@ Golang - 1.18+
 
 3. Start the dev stack:
    ```sh
-   docker-compose --env-file .env.dev up
+   docker-compose --env-file .env.dev up --build
    ```
 
 4. Tear down the dev stack:

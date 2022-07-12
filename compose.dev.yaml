@@ -1,4 +1,7 @@
-version: "3"
+# https://docs.docker.com/compose/compose-file/#version-top-level-element
+
+# top level name is governed by `COMPOSE_PROJECT_NAME` env var instead
+# https://docs.docker.com/compose/compose-file/#name-top-level-element
 
 services:
   react_app:
@@ -11,8 +14,16 @@ services:
     ports:
       - "3000:3000"
   frontapi:
-    build: front_api
+    build:
+      context: front_api
+      dockerfile: Dockerfile.dev
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+    depends_on:
+      - postgres
     restart: always
+    volumes:
+      -./front_api:/horahora/front_api
     env_file:
       - ./.env.dev
     environment:
@@ -135,5 +146,6 @@ services:
   stomp_proxy:
     build: stomp_proxy
     restart: always
+
 volumes:
   postgresdata_dev:

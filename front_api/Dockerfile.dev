@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1
+
+# https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG GOLANG_IMAGE
+
+FROM ${GOLANG_IMAGE}
+
+# live-reloading package
+RUN go install github.com/cosmtrek/air@latest
+
+WORKDIR /horahora/front_api
+
+# copy dependency info
+COPY ["go.mod", "go.sum", "./"]
+
+# install dependencies
+RUN go mod download
+
+# copy source files
+COPY . /horahora/front_api
+
+CMD [ "air" ]
