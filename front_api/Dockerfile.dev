@@ -2,11 +2,12 @@
 
 # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG GOLANG_IMAGE
+ARG GOLANG_AIR_VERSION
 
 FROM ${GOLANG_IMAGE}
 
 # live-reloading package
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/cosmtrek/air@${GOLANG_AIR_VERSION}
 
 WORKDIR /horahora/front_api
 

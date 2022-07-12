@@ -1,3 +1,4 @@
+# top level version is optional
 # https://docs.docker.com/compose/compose-file/#version-top-level-element
 
 # top level name is governed by `COMPOSE_PROJECT_NAME` env var instead
@@ -19,6 +20,7 @@ services:
       dockerfile: Dockerfile.dev
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
+        GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
     depends_on:
       - postgres
     restart: always
@@ -32,7 +34,17 @@ services:
       - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
       - JaegerAddress=
   scheduler:
-    build: scheduler
+    build:
+      context: scheduler
+      dockerfile: Dockerfile.dev
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+        GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
+        PYTHON_IMAGE: ${PYTHON_IMAGE}
+      labels:
+        org.opencontainers.image.source: https://github.com/horahoradev/horahora
+    depends_on:
+      - postgres
     restart: always
     env_file:
       - ./.env.dev
