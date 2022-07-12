@@ -7,7 +7,7 @@
 services:
   react_app:
     build: webapp
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./webapp/src:/webapp/src
       - ./webapp/public:/webapp/public
@@ -23,7 +23,7 @@ services:
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
     depends_on:
       - postgres
-    restart: always
+    restart: unless-stopped
     volumes:
       -./front_api:/horahora/front_api
     env_file:
@@ -45,7 +45,7 @@ services:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
     depends_on:
       - postgres
-    restart: always
+    restart: unless-stopped
     volumes:
       -./scheduler:/horahora/scheduler
     env_file:
@@ -77,7 +77,7 @@ services:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
     depends_on:
       - postgres
-    restart: always
+    restart: unless-stopped
     volumes:
       -./video_service:/horahora/videoservice
       - $HOME/.aws/:/root/.aws/:ro
@@ -110,7 +110,7 @@ services:
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
-    restart: always
+    restart: unless-stopped
     volumes:
       -./user_service:/horahora/userservice
     env_file:
@@ -126,7 +126,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.postgres
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -134,7 +134,7 @@ services:
       - postgresdata_dev:/var/lib/postgresql/data
   minio:
     build: minio
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./.env.dev
     environment:
@@ -157,7 +157,7 @@ services:
       - HTTPPROXY_LOG=on
   nginx:
     image: nginx
-    restart: always
+    restart: unless-stopped
     ports:
       - "80:80"
       - "9000:80" # backwards compatibility issue
@@ -175,7 +175,7 @@ services:
       - ./videos/otomads:/etc/nginx/html/otomads
   rabbitmq:
     build: activemq
-    restart: always
+    restart: unless-stopped
   stomp_proxy:
     build:
       context: stomp_proxy
@@ -185,7 +185,7 @@ services:
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
     depends_on:
       - postgres
-    restart: always
+    restart: unless-stopped
     volumes:
       -./stomp_proxy:/horahora/stomp_proxy
 
