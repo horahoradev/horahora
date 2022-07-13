@@ -177,7 +177,11 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./videos/otomads:/etc/nginx/html/otomads
   rabbitmq:
-    build: activemq
+    build:
+      context: activemq
+      dockerfile: Dockerfile.dev
+      args:
+        ACTIVEMQ_IMAGE: ${ACTIVEMQ_IMAGE}
     restart: unless-stopped
   stomp_proxy:
     build:
