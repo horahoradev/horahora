@@ -2,9 +2,11 @@
 #       we build this image from project root, symlinking this file to
 #       Dockerfile.postgres
 ARG POSTGRES_IMAGE
-ARG FLYWAY_VERSION
+
 
 FROM ${POSTGRES_IMAGE}
+
+ARG FLYWAY_VERSION
 
 RUN apt --assume-yes update && \
   apt --assume-yes install wget && \

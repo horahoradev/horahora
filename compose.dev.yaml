@@ -37,14 +37,14 @@ services:
       - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
       - JaegerAddress=
     volumes:
-      -./front_api:/horahora/front_api
+      - ./front_api:/horahora/front_api
 
   scheduler:
     build:
       context: scheduler
       dockerfile: Dockerfile.dev
       args:
-        GOLANG_IMAGE: ${GOLANG_IMAGE}
+        GOLANG_VERSION: ${GOLANG_VERSION}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
         PYTHON_IMAGE: ${PYTHON_IMAGE}
       labels:
@@ -71,7 +71,7 @@ services:
       - rabbit_user=guest
       - rabbit_pass=guest
     volumes:
-      -./scheduler:/horahora/scheduler
+      - ./scheduler:/horahora/scheduler
 
   videoservice:
     build:
@@ -106,7 +106,7 @@ services:
       - ApprovalThreshold=1
       - MaxDLFileSize=300
     volumes:
-      -./video_service:/horahora/videoservice
+      - ./video_service:/horahora/videoservice
       - $HOME/.aws/:/root/.aws/:ro
 
   userservice:
@@ -129,7 +129,7 @@ services:
       - pgs_db=userservice
       - RSA_KEYPAIR=${JWT_KEYPAIR}
     volumes:
-      -./user_service:/horahora/userservice
+      - ./user_service:/horahora/userservice
 
   postgres:
     build:
@@ -210,7 +210,7 @@ services:
       - postgres
     restart: unless-stopped
     volumes:
-      -./stomp_proxy:/horahora/stomp_proxy
+      - ./stomp_proxy:/horahora/stomp_proxy
 
 volumes:
   postgresdata_dev:

@@ -2,10 +2,11 @@
 
 # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG GOLANG_IMAGE
-ARG GOLANG_AIR_VERSION
 ARG PYTHON_IMAGE
 
 FROM ${GOLANG_IMAGE}
+
+ARG GOLANG_AIR_VERSION
 
 # @TODO: python version
 RUN apk add --update --no-cache \
