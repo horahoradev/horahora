@@ -125,7 +125,10 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: Dockerfile.postgres
+      dockerfile: Dockerfile.postgres.dev
+      args:
+        POSTGRES_IMAGE: ${POSTGRES_IMAGE}
+        FLYWAY_VERSION: ${FLYWAY_VERSION}
     restart: unless-stopped
     environment:
       POSTGRES_USER: admin
