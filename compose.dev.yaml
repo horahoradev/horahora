@@ -45,6 +45,7 @@ services:
       dockerfile: Dockerfile.dev
       args:
         GOLANG_VERSION: ${GOLANG_VERSION}
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
         PYTHON_IMAGE: ${PYTHON_IMAGE}
       labels:
@@ -149,6 +150,8 @@ services:
     build:
       context: minio
       dockerfile: Dockerfile.dev
+      args:
+        UBUNTU_IMAGE: ${UBUNTU_IMAGE}
     restart: unless-stopped
     env_file:
       - ./.env.dev
@@ -206,6 +209,7 @@ services:
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
+        PYTHON_IMAGE: ${PYTHON_IMAGE}
     depends_on:
       - postgres
     restart: unless-stopped
