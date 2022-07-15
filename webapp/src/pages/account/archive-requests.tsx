@@ -14,6 +14,8 @@ import {
   getArchivalSubscriptions,
 } from "#api/index";
 import { Header } from "#components/header";
+import { FormClient, IFormElements, ISubmitEvent } from "#components/forms";
+import { Text } from "#components/inputs";
 
 let id = Math.floor(Math.random() * 1000);
 
@@ -244,8 +246,7 @@ function ArchivalPage() {
     return () => clearInterval(interval);
   }, []);
 
-  function createNewArchival() {
-    const url = (document.getElementById("url") as HTMLInputElement).value;
+  async function createNewArchival(url: string) {
     postArchival(url);
     let subs = archivalSubscriptions ? archivalSubscriptions : [];
     let newList = [
@@ -444,21 +445,7 @@ function ArchivalPage() {
           <div>
             <div>
               <div className="inline-block bg-white dark:bg-black mr-5 w-2/5 align-bottom">
-                <div className="border-gray-50 border-b-4">
-                  <Input
-                    type="text"
-                    className="w-4/5 font-black text-base text-black"
-                    placeholder="Paste URL to archive here"
-                    id="url"
-                  ></Input>
-                  <Button
-                    className="w-1/5 text-base text-black dark:text-white"
-                    type="primary"
-                    onClick={createNewArchival}
-                  >
-                    Submit
-                  </Button>
-                </div>
+                <NewVideoForm onNewURL={createNewArchival} />
                 <Table
                   // @ts-expect-error types
                   dataSource={archivalSubscriptions}
@@ -500,6 +487,33 @@ function ArchivalPage() {
         </div>
       </div>
     </>
+  );
+}
+
+const FIELD_NAMES = {
+  NEW_URL: "url",
+} as const;
+type IFieldName = typeof FIELD_NAMES[keyof typeof FIELD_NAMES];
+
+interface INewVideoFormProps {
+  onNewURL: (url: string) => Promise<void>;
+}
+
+function NewVideoForm({ onNewURL }: INewVideoFormProps) {
+  async function handleSubmit(event: ISubmitEvent) {
+    const fields = event.currentTarget.elements as IFormElements<IFieldName>;
+
+    const urlInput = fields[FIELD_NAMES.NEW_URL];
+
+    await onNewURL(urlInput.value);
+  }
+
+  return (
+    <FormClient id="new-video" onSubmit={handleSubmit}>
+      <Text id="new-video-url" name="url">
+        New video URL
+      </Text>
+    </FormClient>
   );
 }
 
