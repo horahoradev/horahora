@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-import { postRegister } from "#api/authentication";
+import { registerAccount } from "#api/authentication";
 import { LinkInternal } from "#components/links";
 import { Page } from "#components/page";
 import {
@@ -43,7 +43,7 @@ function RegisterPage() {
       },
       new FormData()
     );
-    await postRegister(formData);
+    await registerAccount(formData);
     router.push("/");
   }
 

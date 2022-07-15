@@ -53,24 +53,6 @@ export async function deleteVideo(videoId: number) {
   return res.data;
 }
 
-interface ILoginData {
-  username: string;
-  password: string;
-}
-
-export async function postLogin(data: ILoginData) {
-  let form = new FormData();
-  form.append("username", data.username);
-  form.append("password", data.password);
-
-  const res = await axios.post(e("login"), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
-  return res.data;
-}
-
 export async function postRating(videoID: number, rating: number) {
   if (videoID == 0) {
     return;

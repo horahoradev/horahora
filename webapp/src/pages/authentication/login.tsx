@@ -1,103 +1,70 @@
-import { useFormik } from "formik";
-import { Button, Input } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import type { InputRef } from "antd";
 
-import { Header } from "#components/header";
-import { postLogin } from "#api/index";
+import { loginAccount } from "#api/authentication";
 import { LinkInternal } from "#components/links";
+import {
+  FormClient,
+  type IFormElements,
+  type ISubmitEvent,
+} from "#components/forms";
+import { Page } from "#components/page";
+import { Password, Text } from "#components/inputs";
+
+const FIELD_NAMES = {
+  NAME: "username",
+  PASSWORD: "password",
+} as const;
+type IFieldName = typeof FIELD_NAMES[keyof typeof FIELD_NAMES];
 
 function LoginPage() {
-  return (
-    <>
-      <Header dataless />
-      <div className="flex justify-center mx-4">
-        <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
-          <LoginForm />
-        </div>
-      </div>
-    </>
-  );
-}
-
-function LoginForm() {
   const router = useRouter();
-  // TODO(ivan): validation, form errors
-  // TODO(ivan): submitting state
-  let formik = useFormik({
-    initialValues: {
-      username: "",
-      password: "",
-    },
-    onSubmit: async (values) => {
-      await postLogin(values);
-      router.push("/");
-    },
-  });
 
-  // automatically focus input on first input on render
-  let usernameInputRef = useRef<InputRef>(null);
-  useEffect(() => {
-    usernameInputRef.current && usernameInputRef.current.focus();
-  }, [usernameInputRef]);
+  async function handleSubmit(event: ISubmitEvent) {
+    const fields = event.currentTarget.elements as IFormElements<IFieldName>;
+    const formData = Object.values(FIELD_NAMES).reduce(
+      (formData, fieldName) => {
+        switch (fieldName) {
+          case FIELD_NAMES.NAME:
+          case FIELD_NAMES.PASSWORD: {
+            const fieldElement = fields[fieldName];
+            formData.set(fieldName, fieldElement.value);
+            break;
+          }
+
+          default:
+            throw new Error(
+              `The field "${fieldName}" is missing from the form.`
+            );
+        }
+
+        return formData;
+      },
+      new FormData()
+    );
+    await loginAccount(formData);
+    router.push("/");
+  }
 
   return (
-    <div className="max-w-xs w-full border rounded shadow bg-white dark:bg-gray-800 p-4">
-      <h2 className="text-xl text-black dark:text-white mb-4 inline-block">
-        Welcome back!
-      </h2>{" "}
-      <LinkInternal
-        className="float-right -top-5 text-black dark:text-white"
-        href="/register"
-      >
-        register
-      </LinkInternal>
-      <form onSubmit={formik.handleSubmit}>
-        <Input.Group>
-          <Input
-            name="username"
-            // @ts-expect-error types
-            values={formik.values.username}
-            onChange={formik.handleChange}
-            size="large"
-            placeholder="Username"
-            ref={usernameInputRef}
-            prefix={
-              <FontAwesomeIcon
-                className="max-h-4 mr-1 text-gray-400"
-                icon={faUser}
-              />
-            }
-          />
-        </Input.Group>
-        <br />
-        <Input.Group>
-          <Input.Password
-            name="password"
-            // @ts-expect-error types
-            values={formik.values.username}
-            onChange={formik.handleChange}
-            size="large"
-            placeholder="Password"
-            prefix={
-              <FontAwesomeIcon
-                className="max-h-4 mr-1 text-gray-400"
-                icon={faKey}
-              />
-            }
-          />
-        </Input.Group>
-        <br />
-        <Input.Group>
-          <Button block type="primary" htmlType="submit" size="large">
-            Submit
-          </Button>
-        </Input.Group>
-      </form>
-    </div>
+    <Page>
+      <FormClient id="auth-login" onSubmit={handleSubmit}>
+        <p>
+          Welcome back!{" "}
+          <LinkInternal
+            className="float-right -top-5 text-black dark:text-white"
+            href="/register"
+          >
+            register
+          </LinkInternal>
+        </p>
+        <Text id="auth-login-name" name={FIELD_NAMES.NAME}>
+          Name
+        </Text>
+        <Password id="auth-login-password" name={FIELD_NAMES.PASSWORD}>
+          Password
+        </Password>
+      </FormClient>
+    </Page>
   );
 }
 
