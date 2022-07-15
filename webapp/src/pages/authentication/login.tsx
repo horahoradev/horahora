@@ -60,7 +60,11 @@ function LoginPage() {
         <Text id="auth-login-name" name={FIELD_NAMES.NAME}>
           Name
         </Text>
-        <Password id="auth-login-password" name={FIELD_NAMES.PASSWORD}>
+        <Password
+          id="auth-login-password"
+          name={FIELD_NAMES.PASSWORD}
+          autoComplete="current-password"
+        >
           Password
         </Password>
       </FormClient>

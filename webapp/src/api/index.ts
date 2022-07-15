@@ -69,26 +69,6 @@ export async function postRating(videoID: number, rating: number) {
   return res.data;
 }
 
-
-
-interface IPasswordResetData {
-  old_password: string;
-  new_password: string;
-}
-
-export async function postPasswordReset(data: IPasswordResetData) {
-  let form = new FormData();
-  form.append("old_password", data.old_password);
-  form.append("new_password", data.new_password);
-
-  const res = await axios.post(e("password-reset"), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
-  return res.data;
-}
-
 export async function getVideo(videoId: number) {
   const res = await axios.get(e(`videos/${videoId}`));
   return res.data;

@@ -56,3 +56,22 @@ export async function logoutAccount() {
 
   return result;
 }
+
+export async function resetAccountPassword(formData: FormData) {
+  const url = new PublicAPIURL("/password-reset");
+  const headers = new Headers([["content-type", "multipart/form-data"]]);
+  const response = await fetch(url, {
+    method: "POST",
+    headers,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = new FetchError("Failed to reset password", response);
+    throw error;
+  }
+
+  const result: null = await response.json();
+
+  return result;
+}

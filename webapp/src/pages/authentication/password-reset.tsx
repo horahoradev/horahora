@@ -1,91 +1,71 @@
-import { useFormik } from "formik";
-import { Button, Input } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faMailBulk, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import type { InputRef } from "antd";
 
-import { Header } from "#components/header";
-import { postPasswordReset } from "#api/index";
+import { resetAccountPassword } from "#api/authentication";
+import { Page } from "#components/page";
+import {
+  FormClient,
+  type IFormElements,
+  type ISubmitEvent,
+} from "#components/forms";
+import { Password } from "#components/inputs";
+
+const FIELD_NAMES = {
+  OLD: "old_password",
+  NEW: "new_password",
+} as const;
+type IFieldName = typeof FIELD_NAMES[keyof typeof FIELD_NAMES];
 
 function PasswordResetPage() {
-  return (
-    <>
-      <Header dataless />
-      <div className="flex justify-center mx-4">
-        <div className="max-w-screen-lg w-screen my-6 flex justify-center items-center pt-32">
-          <PasswordResetForm />
-        </div>
-      </div>
-    </>
-  );
-}
-
-function PasswordResetForm() {
   const router = useRouter();
-  // TODO(ivan): validation, form errors
-  // TODO(ivan): submitting state
-  let formik = useFormik({
-    initialValues: {
-      old_password: "",
-      new_password: "",
-    },
-    onSubmit: async (values) => {
-      await postPasswordReset(values);
-      router.push("/");
-    },
-  });
 
-  // automatically focus input on first input on render
-  let usernameInputRef = useRef<InputRef>(null);
+  async function handleSubmit(event: ISubmitEvent) {
+    const fields = event.currentTarget.elements as IFormElements<IFieldName>;
 
-  useEffect(() => {
-    usernameInputRef.current && usernameInputRef.current.focus();
-  }, [usernameInputRef]);
+    const formData = Object.values(FIELD_NAMES).reduce(
+      (formData, fieldName) => {
+        switch (fieldName) {
+          case FIELD_NAMES.OLD:
+          case FIELD_NAMES.NEW: {
+            const fieldElement = fields[fieldName];
+            formData.set(fieldName, fieldElement.value);
+            break;
+          }
+
+          default:
+            throw new Error(
+              `The field "${fieldName}" is missing from the form.`
+            );
+        }
+
+        return formData;
+      },
+      new FormData()
+    );
+
+    await resetAccountPassword(formData);
+    router.push("/");
+  }
 
   return (
-    <div className="max-w-xs w-full border rounded shadow bg-white dark:bg-black p-4">
-      <h2 className="text-xl text-black dark:text-white mb-4">
-        Reset Password
-      </h2>
-      <form onSubmit={formik.handleSubmit}>
-        <Input.Group>
-          <Input
-            name="old_password"
-            // @ts-expect-error form types
-            values={formik.values.old_password}
-            onChange={formik.handleChange}
-            size="large"
-            placeholder="current password"
-            ref={usernameInputRef}
-            prefix={
-              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
-            }
-          />
-        </Input.Group>
-        <Input.Group>
-          <Input
-            name="new_password"
-            // @ts-expect-error form types
-            values={formik.values.new_password}
-            onChange={formik.handleChange}
-            size="large"
-            placeholder="new password"
-            ref={usernameInputRef}
-            prefix={
-              <FontAwesomeIcon className="max-h-4 mr-1 text-gray-400" icon={faUser} />
-            }
-          />
-        </Input.Group>
-        <br />
-        <Input.Group>
-          <Button block type="primary" htmlType="submit" size="large">
-            Submit
-          </Button>
-        </Input.Group>
-      </form>
-    </div>
+    <Page>
+      <FormClient id="auth-reset" onSubmit={handleSubmit}>
+        <p>Reset Password</p>
+        <Password
+          id="auth-reset-old"
+          name={FIELD_NAMES.OLD}
+          autoComplete="current-password"
+        >
+          Current Password
+        </Password>
+        <Password
+          id="auth-reset-new"
+          name={FIELD_NAMES.NEW}
+          autoComplete="new-password"
+        >
+          New Password
+        </Password>
+      </FormClient>
+    </Page>
   );
 }
 
