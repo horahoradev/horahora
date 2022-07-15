@@ -3,9 +3,11 @@
 # CLI windows build output
 /horahora.exe
 
-
 # vscode files
 *.code-workspace
+
+# temporary folders created by golang watcher
+**/tmp/*
 
 youtube-dl*
 packer/vpn_conf*

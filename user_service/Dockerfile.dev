@@ -2,14 +2,19 @@
 
 # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG GOLANG_IMAGE
-ARG GOLANG_AIR_VERSION
 
 FROM ${GOLANG_IMAGE}
 
-# live-reloading package
-RUN go install github.com/cosmtrek/air@${GOLANG_AIR_VERSION}
+ARG GOLANG_AIR_VERSION
 
-WORKDIR /horahora/stomp_proxy
+RUN apk add --update --no-cache \
+  git \
+  gcc \
+  musl-dev \
+  # live-reloading package
+  && go install github.com/cosmtrek/air@${GOLANG_AIR_VERSION}
+
+WORKDIR /horahora/userservice
 
 # copy dependency info
 COPY ["go.mod", "go.sum", "./"]
@@ -18,6 +23,6 @@ COPY ["go.mod", "go.sum", "./"]
 RUN go mod download
 
 # copy source files
-COPY . /horahora/stomp_proxy
+COPY . /horahora/userservice
 
 CMD [ "air" ]
