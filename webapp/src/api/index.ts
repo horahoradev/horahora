@@ -109,26 +109,6 @@ export async function getDownloadsInProgress() {
   return res.data;
 }
 
-interface IPostCommentData {
-  video_id: number;
-  content: string;
-  parent: string;
-}
-
-export async function postComment(data: IPostCommentData) {
-  let form = new FormData();
-  form.append("video_id", data.video_id);
-  form.append("content", data.content);
-  form.append("parent", data.parent);
-
-  const res = await axios.post(e("comments/"), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
-  return res.data;
-}
-
 export async function deleteArchivalRequest(download_id: number) {
   let form = new FormData();
   form.append("download_id", download_id);

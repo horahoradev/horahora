@@ -28,6 +28,12 @@ import { VideoList } from "#components/video-list";
 import { Header } from "#components/header";
 import { LinkExternal, LinkInternal } from "#components/links";
 import { Icon } from "#components/icons";
+import {
+  FormClient,
+  type IFormElements,
+  type ISubmitEvent,
+} from "#components/forms";
+import { Hidden, Text } from "#components/inputs";
 
 const VIDEO_WIDTH = 44;
 const VIDEO_HEIGHT = (9 / 16) * VIDEO_WIDTH;
@@ -340,10 +346,7 @@ function VideoView(props: IVideoViewProps) {
           <div>
             <span className="h-20 w-20 inline-block">
               <LinkInternal href={`/users/${data.AuthorID}`}>
-                <Avatar
-                  size={80}
-                  icon={<Icon icon={faUserCircle} />}
-                />
+                <Avatar size={80} icon={<Icon icon={faUserCircle} />} />
               </LinkInternal>
             </span>
             <span className="ml-2 pl-1 mt-2 inline-block align-top">
@@ -414,6 +417,7 @@ function VideoView(props: IVideoViewProps) {
         )}
       />
       ,
+      <NewCommentForm videoID={id} />
       <form onSubmit={formik.handleSubmit}>
         <Input.Group>
           <Input
@@ -438,6 +442,76 @@ function VideoView(props: IVideoViewProps) {
         </Input.Group>
       </form>
     </div>
+  );
+}
+
+export interface ICommentInit {
+  video_id: string;
+  content: string;
+  parent: string;
+}
+
+const FIELD_NAMES = {
+  MESSAGE: "content",
+  VIDEO_ID: "video_id",
+  PARENT: "parent",
+} as const;
+type IFieldName = typeof FIELD_NAMES[keyof typeof FIELD_NAMES];
+
+interface INewCommentFormProps {
+  videoID: number;
+  parentID?: string;
+
+  onNewComment: (commentInit: ICommentInit) => Promise<void>;
+}
+
+function NewCommentForm({
+  videoID,
+  parentID,
+  onNewComment,
+}: INewCommentFormProps) {
+  async function handleSubmit(event: ISubmitEvent) {
+    const fields = event.currentTarget.elements as IFormElements<IFieldName>;
+    const commentInit = Object.values(FIELD_NAMES).reduce(
+      (commentInit, fieldName) => {
+        switch (fieldName) {
+          case FIELD_NAMES.MESSAGE:
+          case FIELD_NAMES.PARENT:
+          case FIELD_NAMES.VIDEO_ID: {
+            const fieldElement = fields[fieldName];
+            commentInit[fieldName] = fieldElement.value
+            break;
+          }
+
+          default:
+            throw new Error(
+              `The field "${fieldName}" is missing from the form.`
+            );
+        }
+        return commentInit;
+      },
+      {} as ICommentInit
+    );
+
+    await onNewComment(commentInit);
+  }
+
+  return (
+    <FormClient onSubmit={handleSubmit} id="new-comment">
+      <Hidden
+        id="new-comment-parent-id"
+        name={FIELD_NAMES.PARENT}
+        defaultValue={parentID}
+      />
+      <Hidden
+        id="new-comment-video-id"
+        name={FIELD_NAMES.VIDEO_ID}
+        defaultValue={videoID}
+      />
+      <Text id="new-comment-content" name={FIELD_NAMES.MESSAGE}>
+        New comment
+      </Text>
+    </FormClient>
   );
 }
 
