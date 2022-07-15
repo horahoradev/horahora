@@ -1,14 +1,12 @@
-import type { IBlockProps } from "#components/meta";
+import { blockComponent, IBlockProps } from "#components/meta";
 
 export interface IFormSectionProps extends IBlockProps<"div"> {}
 
 /**
  * Generic separator between form inputs.
  */
-export function FormSection({ children, ...blockProps }: IFormSectionProps) {
-  return (
-    <div {...blockProps}>
-      {children}
-    </div>
-  );
+export const FormSection = blockComponent(undefined, Component);
+
+export function Component({ children, ...blockProps }: IFormSectionProps) {
+  return <div {...blockProps}>{children}</div>;
 }

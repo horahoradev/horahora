@@ -5,7 +5,6 @@ import {
   type ReactNode,
 } from "react";
 
-
 import styles from "./internal.module.scss";
 import { AnchourHTML } from "./html";
 

@@ -2,15 +2,18 @@ import { useState } from "react";
 
 import { FormSection } from "./section";
 import { type ISubmitEvent } from "./types";
+import styles from "./form.module.scss";
 
-import { type IBlockProps } from "#components/meta";
+import { blockComponent, type IBlockProps } from "#components/meta";
 import { ButtonSubmit } from "#components/buttons";
 
 export interface IFormProps extends IBlockProps<"form"> {
   onSubmit?: (event: ISubmitEvent) => Promise<void> | void;
 }
 
-export function Form({ onSubmit, children, ...blockProps }: IFormProps) {
+export const Form = blockComponent(styles.block, Component);
+
+export function Component({ onSubmit, children, ...blockProps }: IFormProps) {
   const [isSubmitting, switchSubmit] = useState(false);
   const [errors, changeErrors] = useState<string[]>([]);
 
@@ -27,7 +30,7 @@ export function Form({ onSubmit, children, ...blockProps }: IFormProps) {
       if (onSubmit) {
         await onSubmit(event);
       }
-      
+
       changeErrors([]);
     } catch (error) {
       event.preventDefault();
@@ -39,11 +42,7 @@ export function Form({ onSubmit, children, ...blockProps }: IFormProps) {
   }
 
   return (
-    <form
-      className="flex flex-col gap-2 max-w-md text-black dark:text-white bg-slate-50 dark:bg-stone-800 rounded-lg px-4 py-2 mx-auto"
-      onSubmit={handleSubmit}
-      {...blockProps}
-    >
+    <form onSubmit={handleSubmit} {...blockProps}>
       {children}
       <FormSection>
         <ul>

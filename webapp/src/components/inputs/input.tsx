@@ -1,7 +1,14 @@
-import { IChildlessBlockProps } from "#components/meta";
+import styles from "./input.module.scss";
 
-export interface IInputProps extends IChildlessBlockProps<"input"> {}
+import { blockComponent, type IChildlessBlockProps } from "#components/meta";
 
-export function Input({ ...blockProps }: IInputProps) {
-  return <input className="w-full bg-white dark:bg-black p-2 rounded-md" {...blockProps} />;
+export interface IInputProps extends IChildlessBlockProps<"input"> {
+  id: string,
+  name: string
+}
+
+export const Input = blockComponent(styles.block, Component);
+
+function Component({ ...blockProps }: IInputProps) {
+  return <input {...blockProps} />;
 }

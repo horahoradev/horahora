@@ -6,4 +6,6 @@ export { FormSection } from "./section";
 export type { IFormSectionProps } from "./section";
 export { Label } from "./label";
 export type { ILabelProps } from "./label";
+export { Fieldset, Legend } from "./fieldset";
+export type { IFieldsetProps, ILegendProps } from "./fieldset";
 export type { IFormElements, ISubmitEvent } from "./types";

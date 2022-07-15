@@ -1,14 +1,12 @@
-import { IBlockProps } from "#components/meta";
+import styles from "./label.module.scss";
 
-export interface ILabelProps extends IBlockProps<"label"> {}
+import { blockComponent, type IBlockProps } from "#components/meta";
+export interface ILabelProps extends IBlockProps<"label"> {
+  htmlFor: string;
+}
 
-export function Label({ children, ...blockProps }: ILabelProps) {
-  return (
-    <label
-      className="inline-block text-black dark:text-white py-1 cursor-pointer"
-      {...blockProps}
-    >
-      {children}
-    </label>
-  );
+export const Label = blockComponent(styles.block, Component);
+
+export function Component({ children, ...blockProps }: ILabelProps) {
+  return <label {...blockProps}>{children}</label>;
 }

@@ -68,7 +68,6 @@ export function HomePage() {
   return (
     <>
       <Header userData={userData} />
-
       <div className="flex justify-center mx-4 min-h-screen py-4">
         <div className="max-w-screen-lg w-screen">
           <h1 className="bold text-2xl text-black dark:text-white">
