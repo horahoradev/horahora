@@ -69,10 +69,7 @@ export async function postRating(videoID: number, rating: number) {
   return res.data;
 }
 
-export async function postLogout() {
-  const res = await axios.post(e("logout"));
-  return res.data;
-}
+
 
 interface IPasswordResetData {
   old_password: string;

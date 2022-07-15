@@ -1,4 +1,4 @@
-import { PublicAPIURL } from "./types";
+import { FetchError, PublicAPIURL } from "./types";
 
 /**
  * @TODO proper arg typing
@@ -13,15 +13,12 @@ export async function registerAccount(formData: FormData) {
   });
 
   if (!response.ok) {
-    const message = [
-      "Failed to register an account. Details:",
-      `Status: ${response.status}`,
-      `Message: ${response.statusText}`,
-    ].join("\n");
-    throw new Error(message);
+    const error = new FetchError("Failed to register an account", response);
+    throw error;
   }
 
   const result: null = await response.json();
+
   return result;
 }
 
@@ -35,14 +32,27 @@ export async function loginAccount(formData: FormData) {
   });
 
   if (!response.ok) {
-    const message = [
-      "Failed to login an account. Details:",
-      `Status: ${response.status}`,
-      `Message: ${response.statusText}`,
-    ].join("\n");
-    throw new Error(message);
+    const error = new FetchError("Failed to login an account", response);
+    throw error;
   }
 
   const result = await response.json();
+
+  return result;
+}
+
+export async function logoutAccount() {
+  const url = new PublicAPIURL("/logout");
+  const response = await fetch(url, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    const error = new FetchError("Failed to log out an account", response);
+    throw error;
+  }
+
+  const result: null = await response.json();
+
   return result;
 }

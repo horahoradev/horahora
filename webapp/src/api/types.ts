@@ -29,3 +29,14 @@ export class PublicAPIURL extends URL {
     }
   }
 }
+
+export class FetchError extends Error {
+  constructor(baseMessage: string, response: Response) {
+    const message = [
+      `${baseMessage}. Details:`,
+      `Status: ${response.status}`,
+      `Message: ${response.statusText}`,
+    ].join("\n");
+    super(message)
+  }
+}
