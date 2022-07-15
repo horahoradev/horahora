@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Tag, Avatar, Button } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+import { Avatar, Button } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 
@@ -13,18 +11,25 @@ import {
   setUserAdmin,
 } from "#api/index";
 import { Header } from "#components/header";
-import { UserRank } from "#api/types";
+import { type IUserRank, UserRank } from "#api/types";
 import { VideoList } from "#components/video-list";
 import Paginatione from "#components/pagination";
 
 // {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":11,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 
 interface IPageUserData extends Record<string, unknown> {
-  L: Record<string, unknown>;
+  Username: string;
+  banned: boolean;
+  L: Record<string, unknown> & {
+    rank: IUserRank;
+  };
   Videos: Record<string, unknown>[];
   UserID: number;
 }
 
+/**
+ * @TODO split into several pages
+ */
 function UsersPage() {
   const router = useRouter();
   const { query, isReady } = router;
