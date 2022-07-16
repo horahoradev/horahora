@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Input, Tag, Table, Timeline, Progress, Button, Space } from "antd";
+import { useEffect, useRef, useState } from "react";
+import { Tag, Table, Timeline, Progress, Button, Space } from "antd";
 import { CheckOutlined, SyncOutlined } from "@ant-design/icons";
-import { Client as StompClient, StompSubscription } from "@stomp/stompjs";
+import {
+  Client as StompClient,
+  StompSubscription,
+  type IMessage,
+} from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
-import type { IMessage } from "@stomp/stompjs";
 
 import {
   getDownloadsInProgress,
@@ -14,8 +17,7 @@ import {
   getArchivalSubscriptions,
 } from "#api/index";
 import { Header } from "#components/header";
-import { FormClient, IFormElements, ISubmitEvent } from "#components/forms";
-import { Text } from "#components/inputs";
+import { NewVideoForm } from "#components/posts";
 
 let id = Math.floor(Math.random() * 1000);
 
@@ -487,33 +489,6 @@ function ArchivalPage() {
         </div>
       </div>
     </>
-  );
-}
-
-const FIELD_NAMES = {
-  NEW_URL: "url",
-} as const;
-type IFieldName = typeof FIELD_NAMES[keyof typeof FIELD_NAMES];
-
-interface INewVideoFormProps {
-  onNewURL: (url: string) => Promise<void>;
-}
-
-function NewVideoForm({ onNewURL }: INewVideoFormProps) {
-  async function handleSubmit(event: ISubmitEvent) {
-    const fields = event.currentTarget.elements as IFormElements<IFieldName>;
-
-    const urlInput = fields[FIELD_NAMES.NEW_URL];
-
-    await onNewURL(urlInput.value);
-  }
-
-  return (
-    <FormClient id="new-video" onSubmit={handleSubmit}>
-      <Text id="new-video-url" name="url">
-        New video URL
-      </Text>
-    </FormClient>
   );
 }
 
