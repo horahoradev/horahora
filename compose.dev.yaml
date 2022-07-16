@@ -209,7 +209,6 @@ services:
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
-        PYTHON_IMAGE: ${PYTHON_IMAGE}
     depends_on:
       - postgres
     restart: unless-stopped
