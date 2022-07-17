@@ -15,6 +15,7 @@ export interface IVideoAdminControls {
 export function VideoAdminControls(props: IVideoAdminControls) {
   const router = useRouter();
   let { data } = props;
+  // @TODO approval status check
   let [approvedVideo, setApprovedVideo] = useState(false);
   let approvingVideo = useRef(false);
   let deletingVideo = useRef(false);
