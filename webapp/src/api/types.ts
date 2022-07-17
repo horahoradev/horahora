@@ -8,7 +8,7 @@ export const UserRank = {
 
 export type IUserRank = typeof UserRank[keyof typeof UserRank];
 
-export const multipartFormHeader = ["content-type", "multipart/form-data"];
+export const formHeader = ["content-type", "application/x-www-form-urlencoded"];
 
 /**
  * URL constructor for public API endpoints.

@@ -1,11 +1,11 @@
-import { FetchError, multipartFormHeader, PublicAPIURL } from "./types";
+import { FetchError, formHeader, PublicAPIURL } from "./types";
 
 /**
  * @TODO proper arg typing
  */
 export async function registerAccount(formData: FormData) {
   const url = new PublicAPIURL("/register");
-  const headers = new Headers([multipartFormHeader]);
+  const headers = new Headers([formHeader]);
   const response = await fetch(url, {
     method: "POST",
     headers,
@@ -22,13 +22,13 @@ export async function registerAccount(formData: FormData) {
   return result;
 }
 
-export async function loginAccount(formData: FormData) {
+export async function loginAccount(formParams: URLSearchParams) {
   const url = new PublicAPIURL("/login");
-  const headers = new Headers([multipartFormHeader]);
+  const headers = new Headers([formHeader]);
   const response = await fetch(url, {
     method: "POST",
     headers,
-    body: formData,
+    body: formParams,
   });
 
   if (!response.ok) {
@@ -59,7 +59,7 @@ export async function logoutAccount() {
 
 export async function resetAccountPassword(formData: FormData) {
   const url = new PublicAPIURL("/password-reset");
-  const headers = new Headers([multipartFormHeader]);
+  const headers = new Headers([formHeader]);
   const response = await fetch(url, {
     method: "POST",
     headers,
