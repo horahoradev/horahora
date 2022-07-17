@@ -1,10 +1,21 @@
+# CLI build output
+/horahora
+# CLI windows build output
+/horahora.exe
+
 # vscode files
 *.code-workspace
+
+# temporary folders created by golang watcher
+**/tmp/*
 
 youtube-dl*
 packer/vpn_conf*
 data*
 secrets.env
-docker-compose.yml
 sql/backup*
 /videos
+
+# env file is used for the docker compose
+/.env
+/.env*

@@ -37,6 +37,10 @@
 			"path": "webapp"
 		},
 		{
+      "name": "cli",
+      "path": "cli"
+    },
+		{
 			"name": "schema",
 			"path": "schema"
 		}
@@ -58,7 +62,34 @@
 			"user_service": true,
 			"video_service": true,
 			"webapp": true,
-			"schema": true
-		}
+			"schema": true,
+			"cli": true
+		},
+		"files.associations": {
+			// syntax highlight for example env files
+			"**/.env*": "dotenv",
+			// syntax highlight for example workspace files
+			"**/*.code-workspace*": "jsonc"
+		},
+		// remove text 3 options if you've set them up in global editor settings
+		"files.trimTrailingWhitespace": true,
+  	"files.insertFinalNewline": true,
+  	"files.trimFinalNewlines": true
+	},
+	"extensions": {
+		"recommendations": [
+			// `.env` syntax highlight
+			"mikestead.dotenv",
+			// docker-related features plus highlight in dockerfiles and compose configs
+			"ms-azuretools.vscode-docker",
+			// lots of QoL git features
+			"eamodio.gitlens",
+			// nginx config highlight
+			"ahmadalli.vscode-nginx-conf",
+			// `.sql` formatter
+			"bradymholt.pgformatter",
+			// `.proto3` syntax highlight
+			"zxh404.vscode-proto3"
+		]
 	}
 }

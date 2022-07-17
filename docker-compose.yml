@@ -1,0 +1,149 @@
+version: "3"
+
+services:
+  react_app:
+    build: webapp
+    restart: always
+    env_file:
+      - ./.env
+    volumes:
+      - ./webapp/src:/webapp/src
+      - ./webapp/public:/webapp/public
+    ports:
+      - "3000:3000"
+  frontapi:
+    image: ghcr.io/horahoradev/horahora:dev_front_api
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - UserServiceGRPCAddress=userservice:${GRPCPort}
+      - VideoServiceGRPCAddress=videoservice:${GRPCPort}
+      - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
+      - JaegerAddress=
+  scheduler:
+    image: ghcr.io/horahoradev/horahora:master_scheduler
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - pgs_host=postgres
+      - pgs_port=5432
+      - pgs_user=admin
+      - pgs_pass=password
+      - pgs_db=scheduler
+      - VideoServiceGRPCAddress=videoservice:${GRPCPort}
+      - NumberOfRetries=1
+      - SocksConn=${SOCKS_ADDR}
+      - SyncPollDelay=1m
+      - MaxDLFileSize=300
+      - AcceptLanguage=ja
+      - rabbit_host=rabbitmq
+      - rabbit_port=61613
+      - rabbit_user=guest
+      - rabbit_pass=guest
+      - redis_host=redis
+      - redis_port=6379
+      - redis_pass=
+  videoservice:
+    image: ghcr.io/horahoradev/horahora:master_videoservice
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - pgs_host=postgres
+      - pgs_port=5432
+      - pgs_user=admin
+      - pgs_pass=password
+      - pgs_db=videoservice
+      - UserServiceGRPCAddress=userservice:${GRPCPort}
+      - BucketName=${BUCKET_NAME}
+      - Local=false
+      - OriginFQDN=${ORIGIN_FQDN}
+      - AWS_DEFAULT_REGION=
+      - JaegerAddress=
+      - StorageBackend=${STORAGE_BACKEND}
+      - StorageAPIID=${STORAGE_API_ID}
+      - StorageAPIKey=${STORAGE_API_KEY}
+      - StorageEndpoint=${STORAGE_ENDPOINT}
+      - ApprovalThreshold=1
+      - MaxDLFileSize=300
+      - redis_host=redis
+      - redis_port=6379
+      - redis_pass=
+    volumes:
+      - $HOME/.aws/:/root/.aws/:ro
+  userservice:
+    image: ghcr.io/horahoradev/horahora:master_userservice
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - pgs_host=postgres
+      - pgs_port=5432
+      - pgs_user=admin
+      - pgs_pass=password
+      - pgs_db=userservice
+      - RSA_KEYPAIR=${JWT_KEYPAIR}
+  redis:
+    image: "redis:alpine"
+    restart: always
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+  minio:
+    build: minio
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./videos:/data
+  gluetun:
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    env_file:
+      - ./.env
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_PROVIDER}
+      - VPN_TYPE=wireguard
+      - WIREGUARD_ADDRESSES=${VPN_IP}
+      - SERVER_CITIES=$VPN_CITIES
+      - HTTPPROXY=on
+      - HTTPPROXY_LOG=on
+  nginx:
+    image: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "9000:80" # backwards compatibility issue
+      - "443:443"
+    depends_on:
+      - frontapi
+      - userservice
+      - scheduler
+      - videoservice
+      - stomp_proxy
+      - minio
+    volumes:
+      - ./static:/etc/nginx/html/static/images
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./videos/otomads:/etc/nginx/html/otomads
+  rabbitmq:
+    build: activemq
+    restart: always
+  stomp_proxy:
+    build: stomp_proxy
+    restart: always
+volumes:
+  postgresdata:

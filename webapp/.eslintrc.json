@@ -1,0 +1,13 @@
+{
+  "extends": ["next/core-web-vitals", "prettier"],
+  "rules": {
+    "import/order": [
+      "warn",
+      {
+        "newlines-between": "always"
+      }
+    ],
+    // not using its component as of now
+    "@next/next/no-img-element": "off"
+  }
+}

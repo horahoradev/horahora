@@ -1,0 +1,1 @@
+// This file is for custom global type declarations

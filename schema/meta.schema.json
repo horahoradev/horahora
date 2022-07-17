@@ -1,63 +1,166 @@
 {
-  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://horahora-schemas.org/meta.schema.json",
-  "$vocabulary": {
-    "https://json-schema.org/draft/2019-09/vocab/core": true,
-    "https://json-schema.org/draft/2019-09/vocab/applicator": true,
-    "https://json-schema.org/draft/2019-09/vocab/validation": true,
-    "https://json-schema.org/draft/2019-09/vocab/meta-data": true,
-    "https://json-schema.org/draft/2019-09/vocab/format": false,
-    "https://json-schema.org/draft/2019-09/vocab/content": true
-  },
-  "$recursiveAnchor": true,
-  "title": "MetaSchema",
-  "description": "Core and Validation specifications meta-schema.",
-  "allOf": [
-    {
-      "$ref": "meta/core"
+  "title": "Core schema meta-schema",
+  "definitions": {
+    "schemaArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#" }
     },
-    {
-      "$ref": "meta/applicator"
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0
     },
-    {
-      "$ref": "meta/validation"
+    "nonNegativeIntegerDefault0": {
+      "allOf": [
+        { "$ref": "#/definitions/nonNegativeInteger" },
+        { "default": 0 }
+      ]
     },
-    {
-      "$ref": "meta/meta-data"
+    "simpleTypes": {
+      "enum": [
+        "array",
+        "boolean",
+        "integer",
+        "null",
+        "number",
+        "object",
+        "string"
+      ]
     },
-    {
-      "$ref": "meta/format"
-    },
-    {
-      "$ref": "meta/content"
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "default": []
     }
-  ],
-  "type": [
-    "object",
-    "boolean"
-  ],
+  },
+  "type": ["object", "boolean"],
   "properties": {
+    "$id": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "$ref": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "$comment": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "default": true,
+    "readOnly": {
+      "type": "boolean",
+      "default": false
+    },
+    "writeOnly": {
+      "type": "boolean",
+      "default": false
+    },
+    "examples": {
+      "type": "array",
+      "items": true
+    },
+    "multipleOf": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "maximum": {
+      "type": "number"
+    },
+    "exclusiveMaximum": {
+      "type": "number"
+    },
+    "minimum": {
+      "type": "number"
+    },
+    "exclusiveMinimum": {
+      "type": "number"
+    },
+    "maxLength": { "$ref": "#/definitions/nonNegativeInteger" },
+    "minLength": { "$ref": "#/definitions/nonNegativeIntegerDefault0" },
+    "pattern": {
+      "type": "string",
+      "format": "regex"
+    },
+    "additionalItems": { "$ref": "#" },
+    "items": {
+      "anyOf": [{ "$ref": "#" }, { "$ref": "#/definitions/schemaArray" }],
+      "default": true
+    },
+    "maxItems": { "$ref": "#/definitions/nonNegativeInteger" },
+    "minItems": { "$ref": "#/definitions/nonNegativeIntegerDefault0" },
+    "uniqueItems": {
+      "type": "boolean",
+      "default": false
+    },
+    "contains": { "$ref": "#" },
+    "maxProperties": { "$ref": "#/definitions/nonNegativeInteger" },
+    "minProperties": { "$ref": "#/definitions/nonNegativeIntegerDefault0" },
+    "required": { "$ref": "#/definitions/stringArray" },
+    "additionalProperties": { "$ref": "#" },
     "definitions": {
-      "$comment": "While no longer an official keyword as it is replaced by $defs, this keyword is retained in the meta-schema to prevent incompatible extensions as it remains in common use.",
       "type": "object",
-      "additionalProperties": {
-        "$recursiveRef": "#"
-      },
+      "additionalProperties": { "$ref": "#" },
+      "default": {}
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#" },
+      "default": {}
+    },
+    "patternProperties": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#" },
+      "propertyNames": { "format": "regex" },
       "default": {}
     },
     "dependencies": {
-      "$comment": "\"dependencies\" is no longer a keyword, but schema authors should avoid redefining it to facilitate a smooth transition to \"dependentSchemas\" and \"dependentRequired\"",
       "type": "object",
       "additionalProperties": {
-        "anyOf": [
-          {
-            "$recursiveRef": "#"
-          },
-          {
-            "$ref": "meta/validation#/$defs/stringArray"
-          }
-        ]
+        "anyOf": [{ "$ref": "#" }, { "$ref": "#/definitions/stringArray" }]
       }
-    }
-  }
+    },
+    "propertyNames": { "$ref": "#" },
+    "const": true,
+    "enum": {
+      "type": "array",
+      "items": true,
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "type": {
+      "anyOf": [
+        { "$ref": "#/definitions/simpleTypes" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/definitions/simpleTypes" },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      ]
+    },
+    "format": { "type": "string" },
+    "contentMediaType": { "type": "string" },
+    "contentEncoding": { "type": "string" },
+    "if": { "$ref": "#" },
+    "then": { "$ref": "#" },
+    "else": { "$ref": "#" },
+    "allOf": { "$ref": "#/definitions/schemaArray" },
+    "anyOf": { "$ref": "#/definitions/schemaArray" },
+    "oneOf": { "$ref": "#/definitions/schemaArray" },
+    "not": { "$ref": "#" }
+  },
+  "default": true
 }
