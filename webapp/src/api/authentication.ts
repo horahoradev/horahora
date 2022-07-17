@@ -48,7 +48,7 @@ export async function logoutAccount() {
   });
 
   if (!response.ok) {
-    const error = new FetchError("Failed to log out an account", response);
+    const error = new FetchError("Failed to log out", response);
     throw error;
   }
 

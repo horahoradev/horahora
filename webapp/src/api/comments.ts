@@ -1,12 +1,12 @@
-import { FetchError, PublicAPIURL } from "./types";
+import { FetchError, formHeader, PublicAPIURL } from "./types";
 
-export async function addComment(formData: FormData) {
+export async function addComment(formParams: URLSearchParams) {
   const url = new PublicAPIURL("/comments");
-  const headers = new Headers([["content-type", "multipart/form-data"]]);
+  const headers = new Headers([formHeader]);
   const response = await fetch(url, {
     method: "POST",
     headers,
-    body: formData,
+    body: formParams,
   });
 
   if (!response.ok) {

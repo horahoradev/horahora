@@ -22,7 +22,7 @@ export interface INewCommentFormProps {
   videoID: number;
   parentID?: string;
 
-  onNewComment: (commentInit: FormData) => Promise<void>;
+  onNewComment: (commentInit: URLSearchParams) => Promise<void>;
 }
 
 export function NewCommentForm({
@@ -33,13 +33,13 @@ export function NewCommentForm({
   async function handleSubmit(event: ISubmitEvent) {
     const fields = event.currentTarget.elements as IFormElements<IFieldName>;
     const commentInit = Object.values(FIELD_NAMES).reduce(
-      (formData, fieldName) => {
+      (formParams, fieldName) => {
         switch (fieldName) {
           case FIELD_NAMES.MESSAGE:
           case FIELD_NAMES.PARENT:
           case FIELD_NAMES.VIDEO_ID: {
             const fieldElement = fields[fieldName];
-            formData.set(fieldName, fieldElement.value);
+            formParams.set(fieldName, fieldElement.value);
             break;
           }
 
@@ -48,9 +48,9 @@ export function NewCommentForm({
               `The field "${fieldName}" is missing from the form.`
             );
         }
-        return formData;
+        return formParams;
       },
-      new FormData()
+      new URLSearchParams()
     );
 
     await onNewComment(commentInit);
