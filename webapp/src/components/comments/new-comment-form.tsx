@@ -4,6 +4,7 @@ import {
   type ISubmitEvent,
 } from "#components/forms";
 import { Hidden, Text } from "#components/inputs";
+import { addComment } from "#api/comments";
 
 export interface ICommentInit {
   video_id: string;
@@ -52,9 +53,10 @@ export function NewCommentForm({
       },
       new URLSearchParams()
     );
-
+    await addComment(commentInit);
     await onNewComment(commentInit);
-    event.currentTarget.reset();
+    // is null for some reason
+    // event.currentTarget.reset();
   }
 
   return (

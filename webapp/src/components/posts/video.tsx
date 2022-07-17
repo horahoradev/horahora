@@ -5,7 +5,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { UserOutlined } from "@ant-design/icons";
 
-import { addComment } from "#api/comments";
+
 import { UserRank } from "#api/types";
 import { Icon } from "#components/icons";
 import { upvoteComment as apiUpvoteComment, postRating } from "#api/index";
@@ -169,7 +169,6 @@ export function VideoView(props: IVideoViewProps) {
       <NewCommentForm
         videoID={id}
         onNewComment={async (commentInit) => {
-          await addComment(commentInit);
           await refreshComments();
         }}
       />

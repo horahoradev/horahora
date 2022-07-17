@@ -22,7 +22,7 @@ import { NewVideoForm } from "#components/posts";
 let id = Math.floor(Math.random() * 1000);
 
 function ArchivalPage() {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState();
   const [archivalSubscriptions, setArchivalSubscriptions] = useState<
     {
       Url: string;

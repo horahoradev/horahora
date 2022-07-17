@@ -14,14 +14,14 @@ import { Button, Dropdown, Input, Menu } from "antd";
 
 import { ThemeSwitcher } from "./theme-switcher";
 import { LinkInternal } from "./links/internal";
-import styles from "./header.module.scss"
+import styles from "./header.module.scss";
 
 import { UserRank } from "#api/types";
 import { onParentBlur } from "#lib/dom";
 
 interface IHeaderProps {
-  userData?: Record<string, unknown>
-  dataless: boolean
+  userData?: Record<string, unknown>;
+  dataless?: boolean;
 }
 
 export function Header({ userData, dataless }: IHeaderProps) {
@@ -144,15 +144,16 @@ function Search() {
   );
 }
 
-interface IUserNav extends Record<string, unknown> {}
+interface IUserNav {
+  userData?: Record<string, unknown>;
+}
 
-function UserNav(props: IUserNav) {
-  const { userData } = props;
+function UserNav({ userData }: IUserNav) {
+  const isRegistered = Boolean(userData && userData.username);
+  const isAdmin = userData?.rank === UserRank.ADMIN;
 
-  // @ts-expect-error figure `userData` shape
-  if (userData && userData.username && userData.rank === UserRank.ADMIN) {
+  if (isRegistered && isAdmin) {
     return <LoggedInAdminNav userData={userData} />;
-    // @ts-expect-error figure `userData` shape
   } else if (userData && userData.username) {
     return <LoggedInUserNav userData={userData} />;
   } else {
@@ -183,16 +184,16 @@ function LoggedInUserNav(props: ILoggedInUserNav) {
       </Menu.Item>
       <Menu.Divider />
 
-      <Menu.Item
-        key="password-reset"
-      >
-        <LinkInternal iconID={faKey} href="/authentication/password-reset">Reset Password</LinkInternal>
+      <Menu.Item key="password-reset">
+        <LinkInternal iconID={faKey} href="/authentication/password-reset">
+          Reset Password
+        </LinkInternal>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item
-        key="logout"
-      >
-        <LinkInternal iconID={faSignOutAlt} href="/authentication/logout">Logout</LinkInternal>
+      <Menu.Item key="logout">
+        <LinkInternal iconID={faSignOutAlt} href="/authentication/logout">
+          Logout
+        </LinkInternal>
       </Menu.Item>
     </Menu>
   );
@@ -217,9 +218,7 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
 
   let menu = (
     <Menu className="bg-white dark:bg-black">
-      <Menu.Item
-        key="profile"
-      >
+      <Menu.Item key="profile">
         <LinkInternal
           iconID={faUser}
           // @ts-expect-error figure `userData` shape
@@ -230,18 +229,17 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
       </Menu.Item>
       <Menu.Divider />
 
-      <Menu.Item
-        key="upload"
-        className="flex flex-row gap-2"
-      >
-        <LinkInternal iconID={faUpload} href="/account/upload">Upload</LinkInternal>
+      <Menu.Item key="upload" className="flex flex-row gap-2">
+        <LinkInternal iconID={faUpload} href="/account/upload">
+          Upload
+        </LinkInternal>
       </Menu.Item>
       <Menu.Divider />
 
-      <Menu.Item
-        key="archive-requests"
-      >
-        <LinkInternal iconID={faArchive} href="/archive-requests">Archive Requests</LinkInternal>
+      <Menu.Item key="archive-requests">
+        <LinkInternal iconID={faArchive} href="/account/archive-requests">
+          Archive Requests
+        </LinkInternal>
       </Menu.Item>
       <Menu.Divider />
 
@@ -249,23 +247,23 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
 
       <Menu.Divider />
 
-      <Menu.Item
-        key="password-reset"
-      >
-        <LinkInternal iconID={faKey} href="/authentication/password-reset">Password Reset</LinkInternal>
+      <Menu.Item key="password-reset">
+        <LinkInternal iconID={faKey} href="/authentication/password-reset">
+          Password Reset
+        </LinkInternal>
       </Menu.Item>
 
       <Menu.Divider />
-      <Menu.Item
-        key="audits"
-      >
-        <LinkInternal iconID={faArchive} href="/audits">Audit Logs</LinkInternal>
+      <Menu.Item key="audits">
+        <LinkInternal iconID={faArchive} href="/account/administrator/audits">
+          Audit Logs
+        </LinkInternal>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item
-        key="logout"
-      >
-        <LinkInternal iconID={faSignOutAlt} href="/authentication/logout">Logout</LinkInternal>
+      <Menu.Item key="logout">
+        <LinkInternal iconID={faSignOutAlt} href="/authentication/logout">
+          Logout
+        </LinkInternal>
       </Menu.Item>
     </Menu>
   );
