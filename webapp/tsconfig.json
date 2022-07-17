@@ -8,7 +8,8 @@
       "#components/*": ["./src/components/*/_index.ts", "./src/components/*"],
       "#pages/*": ["./src/pages/*"],
       "#store/*": ["./src/store/*"],
-      "#styles/*": ["./src/styles/*"]
+      "#styles/*": ["./src/styles/*"],
+      "#types/*": ["./src/types/*/_index.ts", "./src/types/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

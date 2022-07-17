@@ -1,6 +1,7 @@
 import { Rate } from "antd";
 
 import { LinkInternal } from "#components/links";
+import { type IVideo } from "#types/entities";
 
 const VIDEO_ELEMENT_WIDTH = "w-44";
 
@@ -52,14 +53,6 @@ export function VideoList(props: IVideoListProps) {
 
 interface IVideoProps extends Record<string, unknown> {
   video: IVideo;
-}
-
-interface IVideo {
-  VideoID: unknown;
-  Title: string;
-  ThumbnailLoc: string;
-  Rating: number;
-  Views: unknown;
 }
 
 function Video(props: IVideoProps) {

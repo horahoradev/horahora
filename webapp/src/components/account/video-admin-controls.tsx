@@ -6,11 +6,10 @@ import {
   deleteVideo as apiDeleteVideo,
   approveVideo as apiApproveVideo,
 } from "#api/index";
+import { type IVideoDetailed } from "#types/entities";
 
-export interface IVideoAdminControls extends Record<string, unknown> {
-  data: {
-    VideoID: number;
-  };
+export interface IVideoAdminControls {
+  data: IVideoDetailed;
 }
 
 export function VideoAdminControls(props: IVideoAdminControls) {

@@ -5,9 +5,10 @@ import { getComments, getVideo, getUserdata } from "#api/index";
 import { VideoList } from "#components/video-list";
 import { Header } from "#components/header";
 import { VideoView } from "#components/posts";
+import { type IVideoDetailed, type IVideo } from "#types/entities";
 
-interface IPageData extends Record<string, unknown> {
-  RecommendedVideos: Record<string, unknown>[];
+interface IPageData extends IVideoDetailed {
+  RecommendedVideos: IVideo[];
 }
 
 function VideosPage() {
@@ -63,7 +64,6 @@ function VideosPage() {
       <div className="flex justify-center mx-4">
         <div className="w-screen my-6 z-0 min-w-400">
           <VideoView
-            // @ts-expect-error typing
             data={pageData}
             videoComments={comments}
             id={video_id}
@@ -75,7 +75,6 @@ function VideosPage() {
         </div>
         <div className="ml-4 mt-2 w-100 align-top float-right">
           <VideoList
-            // @ts-expect-error types
             videos={pageData.RecommendedVideos}
             title="Recommendations"
             inline={true}

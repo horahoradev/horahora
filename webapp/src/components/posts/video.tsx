@@ -13,30 +13,12 @@ import { VideoPlayer } from "#components/video";
 import { LinkInternal } from "#components/links";
 import { VideoAdminControls } from "#components/account";
 import { NewCommentForm } from "#components/comments";
+import { type IComment, type IVideoDetailed } from "#types/entities";
 
-export interface IVideoViewProps extends Record<string, unknown> {
+export interface IVideoViewProps {
   id: number;
-  data: {
-    MPDLoc: string;
-    Title: string;
-    Views: string;
-    UploadDate: string;
-    Tags: string[];
-    AuthorID: number;
-    Username: string;
-    VideoDescription: string;
-    L: {
-      rank: number;
-    };
-  };
-  videoComments: {
-    upvote_count: number;
-    id: number;
-    user_has_upvoted: boolean;
-    content: string;
-    created: string;
-    fullname: string;
-  }[];
+  data: IVideoDetailed
+  videoComments: IComment[];
 
   rating: number;
   refreshComments: () => Promise<unknown>;
@@ -98,7 +80,6 @@ export function VideoView(props: IVideoViewProps) {
             {!data.Tags
               ? "None"
               : data.Tags.map((tag, idx) => {
-                  // TODO(ivan): add links to tags
                   return (
                     <div key={idx} className="my-1 inline-block">
                       <LinkInternal href={`/?search=${tag}`}>
@@ -134,7 +115,6 @@ export function VideoView(props: IVideoViewProps) {
         </div>
       </div>
       {data.L && data.L.rank === UserRank.ADMIN && (
-        // @ts-expect-error types
         <VideoAdminControls data={data} />
       )}
       <hr></hr>
