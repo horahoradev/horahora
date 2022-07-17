@@ -21,13 +21,13 @@ function PasswordResetPage() {
   async function handleSubmit(event: ISubmitEvent) {
     const fields = event.currentTarget.elements as IFormElements<IFieldName>;
 
-    const formData = Object.values(FIELD_NAMES).reduce(
-      (formData, fieldName) => {
+    const formParams = Object.values(FIELD_NAMES).reduce(
+      (formParams, fieldName) => {
         switch (fieldName) {
           case FIELD_NAMES.OLD:
           case FIELD_NAMES.NEW: {
             const fieldElement = fields[fieldName];
-            formData.set(fieldName, fieldElement.value);
+            formParams.set(fieldName, fieldElement.value);
             break;
           }
 
@@ -37,12 +37,12 @@ function PasswordResetPage() {
             );
         }
 
-        return formData;
+        return formParams;
       },
-      new FormData()
+      new URLSearchParams()
     );
 
-    await resetAccountPassword(formData);
+    await resetAccountPassword(formParams);
     router.push("/");
   }
 

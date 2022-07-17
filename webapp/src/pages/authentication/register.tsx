@@ -22,14 +22,14 @@ function RegisterPage() {
 
   async function handleSubmit(event: ISubmitEvent) {
     const fields = event.currentTarget.elements as IFormElements<IFieldName>;
-    const formData = Object.values(FIELD_NAMES).reduce(
-      (formData, fieldName) => {
+    const formParams = Object.values(FIELD_NAMES).reduce(
+      (formParams, fieldName) => {
         switch (fieldName) {
           case FIELD_NAMES.NAME:
           case FIELD_NAMES.EMAIL:
           case FIELD_NAMES.PASSWORD: {
             const fieldElement = fields[fieldName];
-            formData.set(fieldName, fieldElement.value);
+            formParams.set(fieldName, fieldElement.value);
             break;
           }
 
@@ -39,11 +39,11 @@ function RegisterPage() {
             );
         }
 
-        return formData;
+        return formParams;
       },
-      new FormData()
+      new URLSearchParams()
     );
-    await registerAccount(formData);
+    await registerAccount(formParams);
     router.push("/");
   }
 

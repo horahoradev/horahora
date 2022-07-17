@@ -3,13 +3,13 @@ import { FetchError, formHeader, PublicAPIURL } from "./types";
 /**
  * @TODO proper arg typing
  */
-export async function registerAccount(formData: FormData) {
+export async function registerAccount(formParams: URLSearchParams) {
   const url = new PublicAPIURL("/register");
   const headers = new Headers([formHeader]);
   const response = await fetch(url, {
     method: "POST",
     headers,
-    body: formData,
+    body: formParams,
   });
 
   if (!response.ok) {
@@ -32,7 +32,7 @@ export async function loginAccount(formParams: URLSearchParams) {
   });
 
   if (!response.ok) {
-    const error = new FetchError("Failed to login an account", response);
+    const error = new FetchError("Failed to log in", response);
     throw error;
   }
 
@@ -57,13 +57,13 @@ export async function logoutAccount() {
   return result;
 }
 
-export async function resetAccountPassword(formData: FormData) {
+export async function resetAccountPassword(formParams: URLSearchParams) {
   const url = new PublicAPIURL("/password-reset");
   const headers = new Headers([formHeader]);
   const response = await fetch(url, {
     method: "POST",
     headers,
-    body: formData,
+    body: formParams,
   });
 
   if (!response.ok) {
