@@ -27,7 +27,7 @@ function LoginPage() {
           case FIELD_NAMES.NAME:
           case FIELD_NAMES.PASSWORD: {
             const fieldElement = fields[fieldName];
-            formData.set(fieldName, fieldElement.value);
+            formData.append(fieldName, fieldElement.value);
             break;
           }
 
@@ -49,12 +49,11 @@ function LoginPage() {
     <Page>
       <FormClient id="auth-login" onSubmit={handleSubmit}>
         <p>
-          Welcome back!{" "}
+          Not registered?{" "}
           <LinkInternal
-            className="float-right -top-5 text-black dark:text-white"
-            href="/register"
+            href="/authentication/register"
           >
-            register
+            Register
           </LinkInternal>
         </p>
         <Text id="auth-login-name" name={FIELD_NAMES.NAME}>

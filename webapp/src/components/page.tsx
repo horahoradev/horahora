@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import type { ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
+import { useRouter } from "next/router";
 
 import { Header } from "#components/header";
 import { getUserdata } from "#api/index";
@@ -9,10 +9,17 @@ interface IPageProps {
 }
 
 export function Page({ children }: IPageProps) {
-  const [userData, setUserData] = useState(null);
+  const router = useRouter();
+  const [userData, setUserData] = useState<Record<string, unknown>>();
 
   useEffect(() => {
     let ignore = false;
+
+    if (router.pathname.startsWith("/authentication")) {
+      return () => {
+        ignore = true;
+      };
+    }
 
     (async () => {
       let userData = await getUserdata();
@@ -26,7 +33,7 @@ export function Page({ children }: IPageProps) {
 
   return (
     <>
-      <Header userData={userData} />
+      <Header userData={userData} dataless={!userData} />
       {children}
     </>
   );

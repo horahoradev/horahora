@@ -19,7 +19,11 @@ import styles from "./header.module.scss"
 import { UserRank } from "#api/types";
 import { onParentBlur } from "#lib/dom";
 
-interface IHeaderProps extends Record<string, unknown> {}
+interface IHeaderProps {
+  userData?: Record<string, unknown>
+  dataless: boolean
+}
+
 export function Header({ userData, dataless }: IHeaderProps) {
   return (
     <header className={styles.block}>
@@ -182,13 +186,13 @@ function LoggedInUserNav(props: ILoggedInUserNav) {
       <Menu.Item
         key="password-reset"
       >
-        <LinkInternal iconID={faKey} href="/password-reset">Reset Password</LinkInternal>
+        <LinkInternal iconID={faKey} href="/authentication/password-reset">Reset Password</LinkInternal>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item
         key="logout"
       >
-        <LinkInternal iconID={faSignOutAlt} href="/logout">Logout</LinkInternal>
+        <LinkInternal iconID={faSignOutAlt} href="/authentication/logout">Logout</LinkInternal>
       </Menu.Item>
     </Menu>
   );
@@ -248,7 +252,7 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
       <Menu.Item
         key="password-reset"
       >
-        <LinkInternal iconID={faKey} href="/password-reset">Password Reset</LinkInternal>
+        <LinkInternal iconID={faKey} href="/authentication/password-reset">Password Reset</LinkInternal>
       </Menu.Item>
 
       <Menu.Divider />
@@ -261,7 +265,7 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
       <Menu.Item
         key="logout"
       >
-        <LinkInternal iconID={faSignOutAlt} href="/logout">Logout</LinkInternal>
+        <LinkInternal iconID={faSignOutAlt} href="/authentication/logout">Logout</LinkInternal>
       </Menu.Item>
     </Menu>
   );
@@ -285,8 +289,8 @@ function LoggedInAdminNav(props: ILoggedInAdminNav) {
 function LoggedOutUserNav() {
   return (
     <>
-      <LinkInternal href="/login">Login</LinkInternal>
-      <LinkInternal href="/register">Register</LinkInternal>
+      <LinkInternal href="/authentication/login">Login</LinkInternal>
+      <LinkInternal href="/authentication/register">Register</LinkInternal>
     </>
   );
 }
