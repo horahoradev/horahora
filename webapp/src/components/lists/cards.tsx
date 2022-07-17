@@ -1,5 +1,7 @@
-import { IHeadingLevel } from "#components/headings";
-import { blockComponent, IBlockProps } from "#components/meta";
+import styles from "./cards.module.scss";
+
+import { type IHeadingLevel } from "#components/headings";
+import { blockComponent, type IBlockProps } from "#components/meta";
 
 export interface ICardListProps extends IBlockProps<"div"> {}
 export interface ICardProps extends IBlockProps<"article"> {
@@ -13,15 +15,15 @@ export interface ICardHeaderProps extends IBlockProps<"header"> {}
 export interface ICardBodyProps extends IBlockProps<"section"> {}
 export interface ICardFooterProps extends IBlockProps<"footer"> {}
 
-export const CardList = blockComponent(undefined, CardListComponent);
+export const CardList = blockComponent(styles.block, CardListComponent);
 /**
  * Skeleton component, do not use it directly but instead
  * create a card component which extends its props.
  */
-export const Card = blockComponent(undefined, CardComponent);
-export const CardHeader = blockComponent(undefined, CardHeaderComponent);
-export const CardBody = blockComponent(undefined, CardBodyComponent);
-export const CardFooter = blockComponent(undefined, CardFooterComponent);
+export const Card = blockComponent(styles.card, CardComponent);
+export const CardHeader = blockComponent(styles.header, CardHeaderComponent);
+export const CardBody = blockComponent(styles.body, CardBodyComponent);
+export const CardFooter = blockComponent(styles.footer, CardFooterComponent);
 
 function CardListComponent({ children, ...blockProps }: ICardListProps) {
   return <div {...blockProps}>{children}</div>;
