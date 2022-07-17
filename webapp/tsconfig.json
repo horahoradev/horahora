@@ -7,6 +7,7 @@
       "#lib/*": ["./src/lib/*/_index.ts", "./src/lib/*"],
       "#components/*": ["./src/components/*/_index.ts", "./src/components/*"],
       "#pages/*": ["./src/pages/*"],
+      "#server/*": ["./src/server/*/_index.ts"],
       "#store/*": ["./src/store/*"],
       "#styles/*": ["./src/styles/*"]
     },
