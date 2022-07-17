@@ -1,7 +1,5 @@
+import { IHeadingLevel } from "#components/headings";
 import { blockComponent, IBlockProps } from "#components/meta";
-
-const headingLevels = [1, 2, 3, 4, 5, 6] as const;
-type IHeadingLevel = typeof headingLevels[number];
 
 export interface ICardListProps extends IBlockProps<"div"> {}
 export interface ICardProps extends IBlockProps<"article"> {
