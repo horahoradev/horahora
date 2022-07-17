@@ -1,6 +1,7 @@
+import styles from "./article.module.scss";
+
 import { blockComponent, type IBlockProps } from "#components/meta";
 import { type IHeadingLevel } from "#components/headings";
-
 export interface IArticleProps extends IBlockProps<"article"> {
   /**
    * Is not used by the card itself,
@@ -18,7 +19,7 @@ export interface IArticleFooterProps extends IBlockProps<"footer"> {}
  * The main difference between this and card is card is a part of a list.
  * But article is one of a kind per page.
  */
-export const Article = blockComponent(undefined, ArticleComponent);
+export const Article = blockComponent(styles.block, ArticleComponent);
 export const ArticleHeader = blockComponent(undefined, ArticleHeaderComponent);
 export const ArticleBody = blockComponent(undefined, ArticleBodyComponent);
 export const ArticleFooter = blockComponent(undefined, ArticleFooterComponent);

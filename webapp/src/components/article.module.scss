@@ -1,0 +1,13 @@
+@use "../styles/variables/sass.scss" as *;
+
+.block {
+  max-width: $width-tablet;
+  background-color: var(--colour1-primary);
+  border-radius: $radius-normal;
+  padding: $size-normal;
+  margin: 0 auto;
+
+  @media (min-width: $width-tablet) {
+    padding: $size-big;
+  }
+}
