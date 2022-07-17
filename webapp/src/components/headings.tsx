@@ -1,5 +1,4 @@
-import { blockComponent } from "#components/meta/block-component";
-import { type IBlockProps } from "#components/meta/types";
+import { blockComponent, type IBlockProps } from "#components/meta";
 
 const headingLevels = [1, 2, 3, 4, 5, 6] as const;
 export type IHeadingLevel = typeof headingLevels[number];
