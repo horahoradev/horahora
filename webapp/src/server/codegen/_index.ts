@@ -7,6 +7,8 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { cwd } from "node:process";
 
+import prettier from "prettier";
+
 import { reduceFolder } from "#server/lib";
 import { multilineString } from "#lib/strings";
 
@@ -48,7 +50,9 @@ export async function runCodegen() {
         resultString,
         "\n"
       );
-      await fs.writeFile(resultPath, finalResult);
+      const formattedResult = prettier.format(finalResult);
+
+      await fs.writeFile(resultPath, formattedResult);
 
       codegenDirs.push(path.relative(codegenPath, entryPath.dir));
 
