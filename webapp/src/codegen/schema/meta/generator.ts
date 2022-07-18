@@ -5,7 +5,7 @@ import { cwd } from "node:process";
 import { compile } from "json-schema-to-typescript";
 import { type JSONSchema7 } from "json-schema";
 
-import { isError } from "#lib/errors";
+import { handleError, isError } from "#lib/errors";
 import { multilineString } from "#lib/strings";
 
 interface IMetaSchema extends JSONSchema7 {
@@ -32,20 +32,13 @@ async function generateMetaSchema() {
         additionalProperties: false,
         bannerComment: "",
         format: false,
+        declareExternallyReferenced: false,
       }
     );
 
     return metaSchemaInterface;
   } catch (error) {
-    if (!isError(error)) {
-      throw error;
-    }
-
-    const message = multilineString(
-      "Failed to generate meta schema interface",
-      `Reason: ${error.message}`
-    );
-    throw new Error(message, { cause: error });
+    handleError(error, "Failed to generate meta schema interface");
   }
 }
 

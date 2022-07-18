@@ -1,3 +1,3 @@
-export function multilineString(...lines: string[]) {
-  return lines.join("\n")
+export function multilineString(...lines: Array<string | undefined>) {
+  return lines.filter((line) => line).join("\n")
 }

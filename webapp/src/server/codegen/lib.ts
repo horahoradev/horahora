@@ -33,11 +33,12 @@ export async function runCodegen() {
         const modulePath = path.format(entryPath);
         const { default: codegenFunction, ...libExports }: ICodegenModule =
           await import(modulePath);
-        const imports = multilineString(
+        const importKeys = Object.keys(libExports)
+        const imports = importKeys.length ? multilineString(
           "import {",
           Object.keys(libExports).join(", "),
           `} from "./${generatorFilename}"`
-        );
+        ) : undefined;
         const resultString = await codegenFunction();
         const resultPath = path.join(entryPath.dir, resultFilename);
         const finalResult = multilineString(
@@ -48,9 +49,16 @@ export async function runCodegen() {
           resultString,
           "\n"
         );
-        const formattedResult = prettier.format(finalResult);
+        let formattedResult;
 
-        await fs.writeFile(resultPath, formattedResult);
+        try {
+          formattedResult = prettier.format(finalResult);
+        } catch (error) {
+          console.warn(`Failed to format the result at "${resultPath}"`, "Continue unformatted");
+        }
+
+
+        await fs.writeFile(resultPath, finalResult);
 
         codegenDirs.push(path.relative(codegenPath, entryPath.dir));
 
