@@ -8,6 +8,7 @@ import fs from "node:fs/promises";
 import { cwd } from "node:process";
 
 import { reduceFolder } from "#server/lib";
+import { multilineString } from "#lib/strings";
 
 export interface ICodegenModule extends Record<string, unknown> {
   default: () => Promise<string>;
@@ -32,21 +33,21 @@ export async function runCodegen() {
       const modulePath = path.format(entryPath);
       const { default: codegenFunction, ...libExports }: ICodegenModule =
         await import(modulePath);
-      const imports = [
+      const imports = multilineString(
         "import {",
         Object.keys(libExports).join(", "),
-        `} from "./${generatorFilename}"`,
-      ].join("\n");
+        `} from "./${generatorFilename}"`
+      );
       const resultString = await codegenFunction();
       const resultPath = path.join(entryPath.dir, resultFilename);
-      const finalResult = [
+      const finalResult = multilineString(
         "/*",
-        "  This module was created by a codegen, do not edit it manually.",
+        "  This module was created by the codegen, do not edit it manually.",
         "*/",
         imports,
         resultString,
-        "\n",
-      ].join("\n");
+        "\n"
+      );
       await fs.writeFile(resultPath, finalResult);
 
       codegenDirs.push(path.relative(codegenPath, entryPath.dir));
