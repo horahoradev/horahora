@@ -2,6 +2,8 @@ import { readdir } from "node:fs/promises";
 import { type Dirent } from "node:fs";
 import path, { type ParsedPath } from "node:path";
 
+import { multilineString } from "#lib/strings";
+
 export type IWalkFunc<InitType> = (
   accumulator: InitType,
   parsedPath: ParsedPath,
@@ -47,6 +49,10 @@ export async function reduceFolder<InitType = unknown>(
       throw error;
     }
 
-    throw new Error(`Failed to walk folder ${rootFolder}`, { cause: error });
+    const message = multilineString(
+      `Failed to walk folder ${rootFolder}`,
+      `Reason: ${error.message}`
+    );
+    throw new Error(message, { cause: error });
   }
 }

@@ -27,6 +27,13 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
+  "ts-node": {
+    // don't need typecheck here
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
   "include": ["next-env.d.ts", "additional.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", ".next", "build"]
 }
