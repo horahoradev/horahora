@@ -3,6 +3,11 @@
 ## Table of contents
 - [Introduction](#introduction)
 - [The rules of codegen](#the-rules-of-codegen)
+- [Basic structure](#basic-structure)
+    - [General](#general)
+    - [Language-specific](#language-specific)
+- [Codegen sections](#codegen-sections)
+    - [JSON Schema](#json-schema)
 
 ## Introduction
 
@@ -29,8 +34,83 @@ Because almost all these points deal with security one way or another, it might 
 
 ## Basic structure
 
-The codegen consist 3 parts:
+### General
+The codegen consist of 2 parts:
 
-- input files
-- generator modules
+- codegen folder
 - codegen lib
+
+#### Codegen Folder
+
+This is the folder where all generated code resides. This folder is further separated into codegen modules of this structure:
+
+- generator file
+
+    A file which exports a generator function with no arguments which returns a string of the code generated.
+
+- result file
+
+    A file into which generated string is written into
+
+- index file
+
+    If the language supports re-exports, the generated symbols are re-exported there.
+
+For the folder to count as a codegen module, the generator file must be present. Codegen modules cannot have nested codegen modules within them.
+
+#### Codegen Lib
+
+This library is responsible for analyzing, formatting and writing the generated code. Its module can export whatever number of symbols to help wtih code generation, but has to export a function with this signature:
+```typescript
+async function runCodegen(): string[]
+```
+
+This function walks the `codegen folder` and performs these operations in a `codegen module`:
+1. Runs the generator.
+2. The resulting string then formatted and written to the `result file`.
+3. `index file` is created and populated.
+4. The folder path is added to the list of paths.
+
+### Language-specific
+
+#### Javascript
+- folder: `/webapp/src/codegen`
+- module:
+    - index file: `_index.ts`
+    - generator: `generator.ts`
+    - result file: `result.ts`
+- command: `npm run codegen`
+
+#### Golang
+- folder: `/cli/src/codegen`
+
+    For now it lives within the `cli` until the structure for shared packages is figured out.
+
+- module
+    - generator: `generator.go`
+    - result file: `exports.go`
+
+    Golang doesn't seem to support re-exports so the result file is also an index file.
+
+- command: `./horahora codegen`
+
+## Codegen sections
+
+These are sections all target language codegens have to implement.
+
+### JSON Schema
+
+- Schema folder - `/schema`
+- Schema file ending - `.schema.json`
+
+JSON schema codegen has to travel in the `schema folder` and for each `schema file` export these things:
+- an interface of the target JSON
+- an immutable variable storing the parsed version of schema
+- a function to validate the target JSON
+
+As an example Typescript generated exports would look like this:
+```typescript
+export interface IMeta {...};
+export const metaSchema = {...} as const;
+export function validateMeta(inputJSON: unknown): inputJSON is IMeta;
+```
