@@ -18,6 +18,9 @@ const resultModule = `${resultFilename}.ts`;
 const indexFilename = "_index";
 const indexModule = `${indexFilename}.ts`;
 
+/**
+ * @TODO `prettier` to pick up on its config
+ */
 export async function runCodegen() {
   const codegenPath = path.join(cwd(), ...codegenFolder);
 
