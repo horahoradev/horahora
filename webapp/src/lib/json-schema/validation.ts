@@ -31,9 +31,16 @@ export class ValidationError extends Error {
   }
 }
 
-const ajv = createAJV();
+export function createAJV(schemaMap: ISchemaMap) {
+  return new Ajv({
+    schemas: Object.values(schemaMap),
+  });
+}
 
-export function createValidator<SchemaInterface>(schema: IJSONSchema) {
+export function createValidator<SchemaInterface>(
+  schema: IJSONSchema,
+  ajv: ReturnType<typeof createAJV>
+) {
   const validate: ValidateFunction<SchemaInterface> | undefined =
     ajv.getSchema<SchemaInterface>(schema.$id);
 
@@ -52,10 +59,4 @@ export function createValidator<SchemaInterface>(schema: IJSONSchema) {
 
     return true;
   };
-}
-
-function createAJV() {
-  return new Ajv({
-    schemas: [],
-  });
 }

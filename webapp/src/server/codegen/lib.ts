@@ -20,6 +20,7 @@ const indexModule = `${indexFilename}.ts`;
 
 /**
  * @TODO `prettier` to pick up on its config
+ * @TODO automatic type imports from generator exports
  */
 export async function runCodegen() {
   const codegenPath = path.join(cwd(), ...codegenFolder);
