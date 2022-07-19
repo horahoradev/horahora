@@ -1,2 +1,2 @@
 export { createValidator } from "./validation";
-export type { IJSONSchema } from "./validation";
+export type { IJSONSchema, ISchemaMap } from "./validation";

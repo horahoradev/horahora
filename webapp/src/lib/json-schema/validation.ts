@@ -4,8 +4,12 @@ import { type JSONSchema7 } from "json-schema";
 import { multilineString } from "#lib/strings";
 
 export interface IJSONSchema extends JSONSchema7 {
-  async: false;
+  $id: string;
+  title: string;
 }
+
+export interface ISchemaMap
+  extends Record<Required<IJSONSchema>["$id"], IJSONSchema> {}
 
 export class ValidationError extends Error {
   errors: DefinedError[];
@@ -29,21 +33,21 @@ export class ValidationError extends Error {
 
 const ajv = createAJV();
 
-export function createValidator<SchemaInterface>(schemaID: string) {
+export function createValidator<SchemaInterface>(schema: IJSONSchema) {
   const validate: ValidateFunction<SchemaInterface> | undefined =
-    ajv.getSchema<SchemaInterface>(schemaID);
+    ajv.getSchema<SchemaInterface>(schema.$id);
 
   if (!validate) {
-    throw new Error(`JSON Schema with "$id" "${schemaID}" doesn't exist.`);
+    throw new Error(`JSON Schema with "$id" "${schema.$id}" doesn't exist.`);
   }
 
   return (inputJSON: unknown): inputJSON is SchemaInterface => {
     const result = validate(inputJSON);
 
     if (!result) {
-      // errors key is always an array when validation is failed
+      // `errors` key is always an array when validation is failed
       const errors = [...(validate.errors! as DefinedError[])];
-      throw new ValidationError(errors, schemaID);
+      throw new ValidationError(errors, schema.$id);
     }
 
     return true;
