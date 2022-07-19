@@ -1,6 +1,11 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import {
+  compile as compileSchemaInterface,
+  type Options as JS2TSOptions,
+} from "json-schema-to-typescript";
+
 import { type IJSONSchema } from "#lib/json-schema";
 import { reduceFolder } from "#server/lib";
 import { fromJSON } from "#lib/json";
@@ -8,7 +13,8 @@ import { fromJSON } from "#lib/json";
 export interface IJSONSchemaCollection extends Record<string, IJSONSchema> {}
 
 const schemaFileEnd = ".schema.json";
-let collection: IJSONSchemaCollection | undefined = undefined;
+const metaSchemaFileName = `meta${schemaFileEnd}`;
+let collection: IJSONSchemaCollection;
 
 export async function collectJSONSchemas(schemaFolder: string) {
   if (collection) {
@@ -19,7 +25,11 @@ export async function collectJSONSchemas(schemaFolder: string) {
     schemaFolder,
     {},
     async (schemaCollection, filePath, entry) => {
-      const isSchema = entry.isFile() && entry.name.endsWith(schemaFileEnd);
+      // for now exclude meta schema
+      const isSchema =
+        entry.isFile() &&
+        entry.name !== metaSchemaFileName &&
+        entry.name.endsWith(schemaFileEnd);
 
       if (!isSchema) {
         return schemaCollection;
@@ -42,4 +52,47 @@ export async function collectJSONSchemas(schemaFolder: string) {
   );
 
   return collection;
+}
+
+interface ISchemaInterface {
+  inputSchema: IJSONSchema;
+  code: string;
+}
+
+const parserOptions: JS2TSOptions["$refOptions"] = {
+  resolve: {
+    http: {
+      async read(file) {
+        const schemaCopy = transformSchema(collection[file.url]);
+        return schemaCopy;
+      },
+    },
+  },
+};
+
+export async function createInterfaceFromSchema(
+  inputSchema: IJSONSchema,
+  options?: Partial<Omit<JS2TSOptions, "$refOptions" | "bannerComment">>
+): Promise<ISchemaInterface> {
+  const schemaCopy = transformSchema(inputSchema);
+  const interfaceCode = await compileSchemaInterface(
+    // @ts-expect-error draft-04 type
+    schemaCopy,
+    schemaCopy.$id,
+    { ...options, bannerComment: "", $refOptions: parserOptions }
+  );
+
+  const schemaInterface: ISchemaInterface = {
+    inputSchema: schemaCopy,
+    code: interfaceCode,
+  };
+
+  return schemaInterface;
+}
+
+function transformSchema(inputSchema: IJSONSchema): IJSONSchema {
+  const modifedSchema = Object.assign({}, inputSchema);
+  modifedSchema.title = `I${modifedSchema.title}`;
+
+  return modifedSchema;
 }
