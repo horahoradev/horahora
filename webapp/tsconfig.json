@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "paths": {
       "#environment/*": ["./environment/*"],
+      "#codegen/*": ["./src/codegen/*/_index.ts"],
       "#api/*": ["./src/api/*"],
       "#lib/*": ["./src/lib/*/_index.ts", "./src/lib/*"],
       "#components/*": ["./src/components/*/_index.ts", "./src/components/*"],
