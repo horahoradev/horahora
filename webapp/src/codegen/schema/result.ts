@@ -433,7 +433,6 @@ export interface IFileUpload {
    * Thumbnail file.
    */
   "file[1]": string;
-  [k: string]: unknown;
 }
 
 export const fileUploadSchema = {
@@ -441,6 +440,7 @@ export const fileUploadSchema = {
   title: "FileUpload",
   description: "Schema for the upload form",
   required: ["file[0]", "file[1]"],
+  additionalProperties: false,
   properties: {
     title: {
       type: "string",
