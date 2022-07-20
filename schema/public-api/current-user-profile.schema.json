@@ -1,0 +1,24 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/current-user-profile.schema.json",
+  "title": "LoggedInUserData",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "userID": {
+      "type": "integer"
+    },
+    "username": {
+      "type": "string"
+    },
+    "profile_picture_url": {
+      "type": "string"
+    },
+    "rank": {
+      "type": "integer"
+    },
+    "banned": {
+      "type": "boolean"
+    }
+  }
+}
