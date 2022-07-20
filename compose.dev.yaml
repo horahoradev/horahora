@@ -11,6 +11,8 @@ services:
       dockerfile: Dockerfile.dev
       args:
         NODEJS_IMAGE: ${NODEJS_IMAGE}
+    depends_on:
+      - frontapi
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -119,6 +121,8 @@ services:
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
+    depends_on:
+      - postgres
     restart: unless-stopped
     env_file:
       - ./.env.dev
@@ -209,7 +213,6 @@ services:
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
-        PYTHON_IMAGE: ${PYTHON_IMAGE}
     depends_on:
       - postgres
     restart: unless-stopped

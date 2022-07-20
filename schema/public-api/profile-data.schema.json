@@ -1,0 +1,33 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/profile-data.schema.json",
+  "title": "ProfileData",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "PaginationData": {
+      "$ref": "https://horahora-schemas.org/public-api/pagination-data.schema.json"
+    },
+    "UserID": {
+      "type": "integer"
+    },
+    "Username": {
+      "type": "string"
+    },
+    "ProfilePictureURL": {
+      "type": "string"
+    },
+    "Videos": {
+      "type": "array",
+      "items": {
+        "$ref": "https://horahora-schemas.org/public-api/video.schema.json"
+      }
+    },
+    "Banned": {
+      "type": "boolean"
+    },
+    "L": {
+      "$ref": "https://horahora-schemas.org/public-api/current-user-profile.schema.json"
+    }
+  }
+}

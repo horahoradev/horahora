@@ -1,0 +1,45 @@
+{
+  "folders": [
+    {
+      "name": "webapp",
+      "path": "."
+    },
+    {
+      "name": "front_api",
+      "path": "../front_api"
+    },
+    {
+      "name": "schema",
+      "path": "../schema"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/node_modules": true,
+      "**/.yarn": true,
+      "**/.next": true,
+      "**/build": true
+    },
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    // not enabled by default because they can feel spammy
+    // "javascript.referencesCodeLens.enabled": true,
+    // "typescript.referencesCodeLens.enabled": true,
+    "typescript.preferences.jsxAttributeCompletionStyle": "braces",
+    // sort imports on save basically
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    // remove this if you have it enabled globally
+    "gopls": {
+      "ui.semanticTokens": true
+    }
+  }
+}

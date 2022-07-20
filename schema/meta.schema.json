@@ -1,7 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://horahora-schemas.org/meta.schema.json",
-  "title": "Core schema meta-schema",
+  "title": "MetaSchema",
+  "description": "A local copy of `draft-07` meta schema.",
   "definitions": {
     "schemaArray": {
       "type": "array",

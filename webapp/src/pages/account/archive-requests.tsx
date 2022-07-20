@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Input, Tag, Table, Timeline, Progress, Button, Space } from "antd";
+import { useEffect, useRef, useState } from "react";
+import { Tag, Table, Timeline, Progress, Button, Space } from "antd";
 import { CheckOutlined, SyncOutlined } from "@ant-design/icons";
-import { Client as StompClient, StompSubscription } from "@stomp/stompjs";
+import {
+  Client as StompClient,
+  StompSubscription,
+  type IMessage,
+} from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
-import type { IMessage } from "@stomp/stompjs";
 
 import {
   getDownloadsInProgress,
@@ -14,11 +17,12 @@ import {
   getArchivalSubscriptions,
 } from "#api/index";
 import { Header } from "#components/header";
+import { NewVideoForm } from "#components/posts";
 
 let id = Math.floor(Math.random() * 1000);
 
 function ArchivalPage() {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState();
   const [archivalSubscriptions, setArchivalSubscriptions] = useState<
     {
       Url: string;
@@ -244,8 +248,7 @@ function ArchivalPage() {
     return () => clearInterval(interval);
   }, []);
 
-  function createNewArchival() {
-    const url = (document.getElementById("url") as HTMLInputElement).value;
+  async function createNewArchival(url: string) {
     postArchival(url);
     let subs = archivalSubscriptions ? archivalSubscriptions : [];
     let newList = [
@@ -444,21 +447,7 @@ function ArchivalPage() {
           <div>
             <div>
               <div className="inline-block bg-white dark:bg-black mr-5 w-2/5 align-bottom">
-                <div className="border-gray-50 border-b-4">
-                  <Input
-                    type="text"
-                    className="w-4/5 font-black text-base text-black"
-                    placeholder="Paste URL to archive here"
-                    id="url"
-                  ></Input>
-                  <Button
-                    className="w-1/5 text-base text-black dark:text-white"
-                    type="primary"
-                    onClick={createNewArchival}
-                  >
-                    Submit
-                  </Button>
-                </div>
+                <NewVideoForm onNewURL={createNewArchival} />
                 <Table
                   // @ts-expect-error types
                   dataSource={archivalSubscriptions}

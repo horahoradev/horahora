@@ -8,6 +8,7 @@ import { blockComponent, type IBlockProps } from "#components/meta";
 import { ButtonSubmit } from "#components/buttons";
 
 export interface IFormProps extends IBlockProps<"form"> {
+  id: string
   onSubmit?: (event: ISubmitEvent) => Promise<void> | void;
 }
 

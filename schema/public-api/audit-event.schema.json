@@ -1,0 +1,21 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/audit-event.schema.json",
+  "title": "AuditEvent",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "ID": {
+      "type": "integer"
+    },
+    "UserID": {
+      "type": "integer"
+    },
+    "Message": {
+      "type": "string"
+    },
+    "Timestamp": {
+      "type": "string"
+    }
+  }
+}

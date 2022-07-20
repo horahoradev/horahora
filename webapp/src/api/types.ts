@@ -8,6 +8,8 @@ export const UserRank = {
 
 export type IUserRank = typeof UserRank[keyof typeof UserRank];
 
+export const formHeader = ["content-type", "application/x-www-form-urlencoded"];
+
 /**
  * URL constructor for public API endpoints.
  */
@@ -27,5 +29,16 @@ export class PublicAPIURL extends URL {
     if (searchParams) {
       this.search = searchParams.toString();
     }
+  }
+}
+
+export class FetchError extends Error {
+  constructor(baseMessage: string, response: Response) {
+    const message = [
+      `${baseMessage}. Details:`,
+      `Status: ${response.status}`,
+      `Message: ${response.statusText}`,
+    ].join("\n");
+    super(message)
   }
 }

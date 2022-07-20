@@ -3,6 +3,7 @@
   "title": "FileUpload",
   "description": "Schema for the upload form",
   "required": ["file[0]", "file[1]"],
+  "additionalProperties": false,
   "properties": {
     "title": { "type": "string" },
     "description": { "type": "string" },
