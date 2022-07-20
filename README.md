@@ -79,7 +79,7 @@ Golang - 1.18+
 
 ### CLI (experimental)
 
-1. Build CLI tool:
+1. Build CLI tool in the project root:
    ```sh
    cd cli && go build -o ../horahora . && cd ..
    ```

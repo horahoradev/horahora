@@ -8,6 +8,9 @@ import (
 	"os"
 )
 
+// Saved as a string so no need for `os.Getwd()` routine
+var Cwd string
+
 // Reads the folder at provided location.
 func ReadFolder(dirPath string) []fs.DirEntry {
 	folderContent, err := os.ReadDir(dirPath)
@@ -60,4 +63,11 @@ func CopyFile(sourcePath, destinationPath string) {
 
 	content := ReadFile(sourcePath)
 	WriteFile(destinationPath, content)
+}
+
+func init() {
+	cwd, err := os.Getwd()
+	errors.CheckError(err)
+
+	Cwd = cwd
 }

@@ -2,29 +2,61 @@ package codegen
 
 import (
 	"fmt"
-	"horahora/cli/src/lib/errors"
 	fslib "horahora/cli/src/lib/fs"
 	json "horahora/cli/src/lib/json"
+	stringslib "horahora/cli/src/lib/strings"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"strings"
 )
 
-// Key is the schema ID while the value is the schema literal
-type ISchemaCollection = map[string][]byte
-
 const (
 	schemaFolder      string = "schema"
 	schemaFilenameEnd string = ".schema.json"
+	resultFilename    string = "export.go"
 )
 
 var (
-	schemaCollection   ISchemaCollection
+	// The root folder of generated code.
+	CodegenFolderPath  string
+	schemaCollection   = ISchemaCollection{}
 	metaSchemaFilename = fmt.Sprintf("meta%v", schemaFilenameEnd)
 	schemaFolderPath   string
+	codegenNotice      string = CommentMultiline("This file was created by the codegen, do not edit it manualy.")
 )
 
+func CreateCodegenModule(generatorFunc IGeneratorFunc) ICodegenFunc {
+	return func() {
+		codeContent, genPath := generatorFunc()
+		finalContent := stringslib.MultilineString(
+			codegenNotice,
+			codeContent,
+		)
+		resultFilePath := filepath.Join(genPath, resultFilename)
+
+		fslib.WriteFile(resultFilePath, []byte(finalContent))
+	}
+}
+
+// Creates a multiline comment string out of provided string arguments
+func CommentMultiline(lines ...string) string {
+	var outputSlice []string
+	var commentString string
+
+	for _, line := range lines {
+		outputSlice = append(outputSlice, fmt.Sprintf(" * %v", line))
+	}
+
+	commentString = stringslib.MultilineString(outputSlice...)
+
+	return stringslib.MultilineString(
+		"/*",
+		commentString,
+		" */",
+	)
+}
+
+// Collect all json schema files into a map.
 func CollectJSONSchemas() *ISchemaCollection {
 	if len(schemaCollection) != 0 {
 		return &schemaCollection
@@ -48,12 +80,11 @@ func CollectJSONSchemas() *ISchemaCollection {
 }
 
 func isSchemaFile(entry fs.DirEntry) bool {
-	// exclusing metaschema from the collection for now
+	// excluding metaschema from the collection for now
 	return entry.Type().IsRegular() && entry.Name() != metaSchemaFilename && strings.HasSuffix(entry.Name(), schemaFilenameEnd)
 }
 
 func init() {
-	cwd, err := os.Getwd()
-	errors.CheckError(err)
-	schemaFolderPath = filepath.Join(cwd, schemaFolder)
+	schemaFolderPath = filepath.Join(fslib.Cwd, schemaFolder)
+	CodegenFolderPath = filepath.Join(fslib.Cwd, "cli", "src", "codegen")
 }

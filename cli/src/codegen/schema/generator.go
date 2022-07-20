@@ -5,5 +5,5 @@ import (
 )
 
 func GenerateSchemas() {
-	schemamap.GenerateSchemaMap()
+	schemamap.CodeGenerator()
 }
