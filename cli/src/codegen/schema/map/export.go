@@ -2,235 +2,7 @@
  * This file was created by the codegen, do not edit it manualy.
  */
 package schemamap
-
-var AuditData []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/audit-data.schema.json",
-  "title": "AuditData",
-  "type": "object",
-  "required": [],
-  "additionalProperties": false,
-  "properties": {
-    "Length": {
-      "type": "integer"
-    },
-    "Events": {
-      "type": "array",
-      "items": {
-        "$ref": "https://horahora-schemas.org/public-api/audit-event.schema.json"
-      }
-    }
-  }
-}
-`)
-var LoggedInUserData []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/current-user-profile.schema.json",
-  "title": "LoggedInUserData",
-  "type": "object",
-  "required": [],
-  "additionalProperties": false,
-  "properties": {
-    "userID": {
-      "type": "integer"
-    },
-    "username": {
-      "type": "string"
-    },
-    "profile_picture_url": {
-      "type": "string"
-    },
-    "rank": {
-      "type": "integer"
-    },
-    "banned": {
-      "type": "boolean"
-    }
-  }
-}
-`)
-var ArchivalEvent []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/archival-event.schema.json",
-  "title": "ArchivalEvent",
-  "type": "object",
-  "required": [],
-  "additionalProperties": false,
-  "properties": {
-    "video_url": {
-      "type": "string"
-    },
-	  "parent_url": {
-      "type": "string"
-    },
-	  "message": {
-      "type": "string"
-    },
-	  "timestamp": {
-      "type": "string"
-    }
-  }
-}
-`)
-var ArchivalRequest []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/archival-request.schema.json",
-  "title": "ArchivalRequest",
-  "type": "object",
-  "required": [],
-  "additionalProperties": false,
-  "properties": {
-    "UserID": {
-      "type": "integer"
-    },
-    "Url": {
-      "type": "string"
-    },
-    "ArchivedVideos": {
-      "type": "integer"
-    },
-    "CurrentTotalVideos": {
-      "type": "integer"
-    },
-    "LastSynced": {
-      "type": "string"
-    },
-    "BackoffFactor": {
-      "type": "integer"
-    },
-    "DownloadID": {
-      "type": "integer"
-    },
-    "UndownloadableVideos": {
-      "type": "integer"
-    }
-  }
-}
-`)
-var AuditEvent []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/audit-event.schema.json",
-  "title": "AuditEvent",
-  "type": "object",
-  "required": [],
-  "additionalProperties": false,
-  "properties": {
-    "ID": {
-      "type": "integer"
-    },
-    "UserID": {
-      "type": "integer"
-    },
-    "Message": {
-      "type": "string"
-    },
-    "Timestamp": {
-      "type": "string"
-    }
-  }
-}
-`)
-var CommentData []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/comment-data.schema.json",
-  "title": "CommentData",
-  "type": "object",
-  "required": [
-    "id",
-    "created",
-    "content",
-    "fullname",
-    "profile_picture_url",
-    "upvote_count",
-    "user_has_upvoted"
-  ],
-  "additionalProperties": false,
-  "properties": {
-    "id": {
-      "type": "integer"
-    },
-    "created": {
-      "type": "string"
-    },
-    "content": {
-      "type": "string"
-    },
-    "fullname": {
-      "type": "string"
-    },
-    "profile_picture_url": {
-      "type": "string"
-    },
-    "upvote_count": {
-      "type": "integer"
-    },
-    "user_has_upvoted": {
-      "type": "boolean"
-    },
-    "parent": {
-      "type": "integer"
-    }
-  }
-}
-`)
-var VideoInProgress []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/video-in-progress.schema.json",
-  "title": "VideoInProgress",
-  "type": "object",
-  "required": [],
-  "additionalProperties": false,
-  "properties": {
-    "Website": {
-      "type": "string"
-    },
-    "VideoID": {
-      "type": "string"
-    },
-    "DlStatus": {
-      "type": "string"
-    }
-  }
-}
-`)
-var VideoMetadata []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/video-metadata.schema.json",
-  "title": "VideoMetadata",
-  "type": "object",
-  "required": [],
-  "additionalProperties": false,
-  "properties": {
-    "videoLoc": {
-      "type": "string",
-      "description": "The location of the DASH manifest"
-    },
-    "videoTitle": {
-      "type": "string"
-    },
-    "rating": {
-      "type": "number"
-    },
-    "authorName": {
-      "type": "string",
-      "description": "Do I need this? probably not"
-    },
-    "views": {
-      "type": "integer"
-    },
-    "videoID": {
-      "type": "integer"
-    },
-    "uploadDate": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "authorID": {
-      "type": "integer"
-    },
-    "tags": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    }
-  }
-}
-`)
+import ( "horahora/cli/src/lib/codegen" )
 var EnvironmentVariables []byte = []byte(`{
   "$id": "https://horahora-schemas.org/configs/environment-variables.schema.json",
   "title": "EnvironmentVariables",
@@ -321,6 +93,198 @@ var EnvironmentVariables []byte = []byte(`{
   }
 }
 `)
+var AuditEvent []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/audit-event.schema.json",
+  "title": "AuditEvent",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "ID": {
+      "type": "integer"
+    },
+    "UserID": {
+      "type": "integer"
+    },
+    "Message": {
+      "type": "string"
+    },
+    "Timestamp": {
+      "type": "string"
+    }
+  }
+}
+`)
+var CommentData []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/comment-data.schema.json",
+  "title": "CommentData",
+  "type": "object",
+  "required": [
+    "id",
+    "created",
+    "content",
+    "fullname",
+    "profile_picture_url",
+    "upvote_count",
+    "user_has_upvoted"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "created": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "fullname": {
+      "type": "string"
+    },
+    "profile_picture_url": {
+      "type": "string"
+    },
+    "upvote_count": {
+      "type": "integer"
+    },
+    "user_has_upvoted": {
+      "type": "boolean"
+    },
+    "parent": {
+      "type": "integer"
+    }
+  }
+}
+`)
+var LoggedInUserData []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/current-user-profile.schema.json",
+  "title": "LoggedInUserData",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "userID": {
+      "type": "integer"
+    },
+    "username": {
+      "type": "string"
+    },
+    "profile_picture_url": {
+      "type": "string"
+    },
+    "rank": {
+      "type": "integer"
+    },
+    "banned": {
+      "type": "boolean"
+    }
+  }
+}
+`)
+var VideoInProgress []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/video-in-progress.schema.json",
+  "title": "VideoInProgress",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "Website": {
+      "type": "string"
+    },
+    "VideoID": {
+      "type": "string"
+    },
+    "DlStatus": {
+      "type": "string"
+    }
+  }
+}
+`)
+var ArchivalEvent []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/archival-event.schema.json",
+  "title": "ArchivalEvent",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "video_url": {
+      "type": "string"
+    },
+	  "parent_url": {
+      "type": "string"
+    },
+	  "message": {
+      "type": "string"
+    },
+	  "timestamp": {
+      "type": "string"
+    }
+  }
+}
+`)
+var FileUpload []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/upload.schema.json",
+  "title": "FileUpload",
+  "description": "Schema for the upload form",
+  "required": ["file[0]", "file[1]"],
+  "additionalProperties": false,
+  "properties": {
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "file[0]": { "type": "string", "description": "Video file." },
+    "file[1]": { "type": "string", "description": "Thumbnail file." }
+  }
+}
+`)
+var Video []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/video.schema.json",
+  "title": "Video",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "Title": {
+      "type": "string"
+    },
+    "VideoID": {
+      "type": "integer"
+    },
+    "Views": {
+      "type": "integer"
+    },
+    "AuthorID": {
+      "type": "integer"
+    },
+    "AuthorName": {
+      "type": "string"
+    },
+    "ThumbnailLoc": {
+      "type": "string"
+    },
+    "Rating": {
+      "type": "number"
+    }
+  }
+}
+`)
+var PaginationData []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/pagination-data.schema.json",
+  "title": "PaginationData",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "NumberOfItems": {
+      "type": "integer"
+    },
+    "CurrentPage": {
+      "type": "integer"
+    }
+  }
+}
+`)
 var ProfileData []byte = []byte(`{
   "$id": "https://horahora-schemas.org/public-api/profile-data.schema.json",
   "title": "ProfileData",
@@ -352,21 +316,6 @@ var ProfileData []byte = []byte(`{
     "L": {
       "$ref": "https://horahora-schemas.org/public-api/current-user-profile.schema.json"
     }
-  }
-}
-`)
-var FileUpload []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/upload.schema.json",
-  "title": "FileUpload",
-  "description": "Schema for the upload form",
-  "required": ["file[0]", "file[1]"],
-  "additionalProperties": false,
-  "properties": {
-    "title": { "type": "string" },
-    "description": { "type": "string" },
-    "tags": { "type": "array", "items": { "type": "string" } },
-    "file[0]": { "type": "string", "description": "Video file." },
-    "file[1]": { "type": "string", "description": "Thumbnail file." }
   }
 }
 `)
@@ -432,50 +381,117 @@ var VideoDetail []byte = []byte(`{
   }
 }
 `)
-var PaginationData []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/pagination-data.schema.json",
-  "title": "PaginationData",
+var VideoMetadata []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/video-metadata.schema.json",
+  "title": "VideoMetadata",
   "type": "object",
   "required": [],
   "additionalProperties": false,
   "properties": {
-    "NumberOfItems": {
-      "type": "integer"
+    "videoLoc": {
+      "type": "string",
+      "description": "The location of the DASH manifest"
     },
-    "CurrentPage": {
-      "type": "integer"
-    }
-  }
-}
-`)
-var Video []byte = []byte(`{
-  "$id": "https://horahora-schemas.org/public-api/video.schema.json",
-  "title": "Video",
-  "type": "object",
-  "required": [],
-  "additionalProperties": false,
-  "properties": {
-    "Title": {
+    "videoTitle": {
       "type": "string"
     },
-    "VideoID": {
-      "type": "integer"
-    },
-    "Views": {
-      "type": "integer"
-    },
-    "AuthorID": {
-      "type": "integer"
-    },
-    "AuthorName": {
-      "type": "string"
-    },
-    "ThumbnailLoc": {
-      "type": "string"
-    },
-    "Rating": {
+    "rating": {
       "type": "number"
+    },
+    "authorName": {
+      "type": "string",
+      "description": "Do I need this? probably not"
+    },
+    "views": {
+      "type": "integer"
+    },
+    "videoID": {
+      "type": "integer"
+    },
+    "uploadDate": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "authorID": {
+      "type": "integer"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   }
 }
 `)
+var ArchivalRequest []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/archival-request.schema.json",
+  "title": "ArchivalRequest",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "UserID": {
+      "type": "integer"
+    },
+    "Url": {
+      "type": "string"
+    },
+    "ArchivedVideos": {
+      "type": "integer"
+    },
+    "CurrentTotalVideos": {
+      "type": "integer"
+    },
+    "LastSynced": {
+      "type": "string"
+    },
+    "BackoffFactor": {
+      "type": "integer"
+    },
+    "DownloadID": {
+      "type": "integer"
+    },
+    "UndownloadableVideos": {
+      "type": "integer"
+    }
+  }
+}
+`)
+var AuditData []byte = []byte(`{
+  "$id": "https://horahora-schemas.org/public-api/audit-data.schema.json",
+  "title": "AuditData",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "Length": {
+      "type": "integer"
+    },
+    "Events": {
+      "type": "array",
+      "items": {
+        "$ref": "https://horahora-schemas.org/public-api/audit-event.schema.json"
+      }
+    }
+  }
+}
+`)
+var JSONChemaMap = codegen.ISchemaCollection{
+"https://horahora-schemas.org/configs/environment-variables.schema.json" : EnvironmentVariables,
+"https://horahora-schemas.org/public-api/video-in-progress.schema.json" : VideoInProgress,
+"https://horahora-schemas.org/public-api/video-detail.schema.json" : VideoDetail,
+"https://horahora-schemas.org/public-api/archival-event.schema.json" : ArchivalEvent,
+"https://horahora-schemas.org/public-api/video.schema.json" : Video,
+"https://horahora-schemas.org/public-api/video-metadata.schema.json" : VideoMetadata,
+"https://horahora-schemas.org/public-api/comment-data.schema.json" : CommentData,
+"https://horahora-schemas.org/public-api/profile-data.schema.json" : ProfileData,
+"https://horahora-schemas.org/public-api/archival-request.schema.json" : ArchivalRequest,
+"https://horahora-schemas.org/public-api/audit-event.schema.json" : AuditEvent,
+"https://horahora-schemas.org/public-api/current-user-profile.schema.json" : LoggedInUserData,
+"https://horahora-schemas.org/public-api/upload.schema.json" : FileUpload,
+"https://horahora-schemas.org/public-api/pagination-data.schema.json" : PaginationData,
+"https://horahora-schemas.org/public-api/audit-data.schema.json" : AuditData,
+}
