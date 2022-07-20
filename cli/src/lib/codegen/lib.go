@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"horahora/cli/src/lib/errors"
 	fslib "horahora/cli/src/lib/fs"
+	json "horahora/cli/src/lib/json"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -34,7 +35,11 @@ func CollectJSONSchemas() *ISchemaCollection {
 			return nil
 		}
 
-		fslib.ReadFile(path)
+		content := fslib.ReadFile(path)
+		schema := json.FromJSON[map[string]any](content)
+		schemaID := schema["$id"].(string)
+
+		schemaCollection[schemaID] = content
 
 		return nil
 	})
