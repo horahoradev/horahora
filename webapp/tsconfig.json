@@ -3,10 +3,12 @@
     "baseUrl": ".",
     "paths": {
       "#environment/*": ["./environment/*"],
+      "#codegen/*": ["./src/codegen/*/_index.ts"],
       "#api/*": ["./src/api/*"],
       "#lib/*": ["./src/lib/*/_index.ts", "./src/lib/*"],
       "#components/*": ["./src/components/*/_index.ts", "./src/components/*"],
       "#pages/*": ["./src/pages/*"],
+      "#server/*": ["./src/server/*/_index.ts"],
       "#store/*": ["./src/store/*"],
       "#styles/*": ["./src/styles/*"]
     },
@@ -25,6 +27,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve"
+  },
+  "ts-node": {
+    // don't need typecheck here
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   },
   "include": ["next-env.d.ts", "additional.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", ".next", "build"]
