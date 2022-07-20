@@ -2,18 +2,30 @@ package codegen
 
 import (
 	"fmt"
-	"strings"
+	"horahora/cli/src/lib/errors"
+	"io/fs"
+	"os"
+	"path/filepath"
 )
 
-// Creates a multiline comment string out of provided string arguments
-func CommentMultiline(lines ...string) string {
-	outputSlice := []string{"/*"}
+const (
+	schemaFolder      string = "schema"
+	schemaFilenameEnd string = ".schema.json"
+)
 
-	for _, line := range lines {
-		outputSlice = append(outputSlice, fmt.Sprintf(" * %v", line))
-	}
+var (
+	metaSchemaFilename = fmt.Sprintf("meta%v", schemaFilenameEnd)
+	schemaFolderPath   string
+)
 
-	outputSlice = append(outputSlice, " */")
+func CollectJSONSchemas() {
+	filepath.WalkDir(schemaFolderPath, func(path string, enry fs.DirEntry, err error) error {
+		return nil
+	})
+}
 
-	return strings.Join(outputSlice, "\n")
+func init() {
+	cwd, err := os.Getwd()
+	errors.CheckError(err)
+	schemaFolderPath = filepath.Join(cwd, schemaFolder)
 }
