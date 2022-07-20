@@ -48,46 +48,8 @@ export async function postArchival(url: string) {
   return res.data;
 }
 
-interface IRegisterData {
-  username: string;
-  password: string;
-  email: string;
-}
-
-export async function postRegister(data: IRegisterData) {
-  let form = new FormData();
-  form.append("username", data.username);
-  form.append("password", data.password);
-  form.append("email", data.email);
-
-  const res = await axios.post(e("register"), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
-  return res.data;
-}
-
 export async function deleteVideo(videoId: number) {
   const res = await axios.post(e(`delete/${videoId}`));
-  return res.data;
-}
-
-interface ILoginData {
-  username: string;
-  password: string;
-}
-
-export async function postLogin(data: ILoginData) {
-  let form = new FormData();
-  form.append("username", data.username);
-  form.append("password", data.password);
-
-  const res = await axios.post(e("login"), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
   return res.data;
 }
 
@@ -100,29 +62,6 @@ export async function postRating(videoID: number, rating: number) {
   form.append("rating", rating);
 
   const res = await axios.post(e(`rate/${videoID}`), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
-  return res.data;
-}
-
-export async function postLogout() {
-  const res = await axios.post(e("logout"));
-  return res.data;
-}
-
-interface IPasswordResetData {
-  old_password: string;
-  new_password: string;
-}
-
-export async function postPasswordReset(data: IPasswordResetData) {
-  let form = new FormData();
-  form.append("old_password", data.old_password);
-  form.append("new_password", data.new_password);
-
-  const res = await axios.post(e("password-reset"), form, {
     headers: {
       "content-type": "multipart/form-data",
     },
@@ -167,26 +106,6 @@ export async function getAudits(userID: number, page: number) {
 
 export async function getDownloadsInProgress() {
   const res = await axios.get(e(`downloadsinprogress`));
-  return res.data;
-}
-
-interface IPostCommentData {
-  video_id: number;
-  content: string;
-  parent: string;
-}
-
-export async function postComment(data: IPostCommentData) {
-  let form = new FormData();
-  form.append("video_id", data.video_id);
-  form.append("content", data.content);
-  form.append("parent", data.parent);
-
-  const res = await axios.post(e("comments/"), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
   return res.data;
 }
 

@@ -41,7 +41,7 @@ export function HomePage() {
       } catch (error) {
         // Bad redirect if not authenticated
         if (axios.isAxiosError(error) && error.response!.status === 403) {
-          router.push("/login");
+          router.push("/authentication/login");
         }
       }
     };
