@@ -10,7 +10,8 @@
       "#pages/*": ["./src/pages/*"],
       "#server/*": ["./src/server/*/_index.ts"],
       "#store/*": ["./src/store/*"],
-      "#styles/*": ["./src/styles/*"]
+      "#styles/*": ["./src/styles/*"],
+      "#types/*": ["./src/types/*/_index.ts", "./src/types/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
