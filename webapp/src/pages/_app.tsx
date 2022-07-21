@@ -5,7 +5,7 @@ import Head from "next/head";
 import type { AppProps } from "next/app";
 
 import { Footer } from "#components/footer";
-import { AccountContext } from "#hooks";
+import { AccountProvider } from "#hooks";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -33,9 +33,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <div className="text-base bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
-        <AccountContext.Provider value={undefined}>
+        <AccountProvider>
           <Component {...pageProps} />
-        </AccountContext.Provider>
+        </AccountProvider>
       </div>
 
       <Footer />

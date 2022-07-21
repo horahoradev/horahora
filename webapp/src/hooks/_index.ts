@@ -1,1 +1,1 @@
-export { useAccount, AccountContext } from "./account";
+export { useAccount, AccountProvider } from "./account";
