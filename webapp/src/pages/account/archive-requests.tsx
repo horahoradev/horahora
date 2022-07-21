@@ -18,6 +18,7 @@ import {
 } from "#api/index";
 import { Header } from "#components/header";
 import { NewVideoForm } from "#components/posts";
+import { WSClient, WSConfig } from "#lib/fetch";
 
 let id = Math.floor(Math.random() * 1000);
 
@@ -45,41 +46,7 @@ function ArchivalPage() {
 
   // TODO: currently connects every time the videos in progress changes
   useEffect(() => {
-    var client = new StompClient({
-      // brokerURL: "ws://localhost:61614/ws",
-      webSocketFactory: function () {
-        return new WebSocket("ws://localhost/ws");
-      },
-      connectHeaders: {
-        login: "guest", // TODO
-        passcode: "guest",
-      },
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-      connectionTimeout: 5000,
-    });
-
-    client.onConnect = function (frame) {
-      setConn(client);
-    };
-
-    client.onDisconnect = function (frame) {
-      setConn(null);
-    };
-
-    client.onWebSocketError = async (error) => {
-      console.log(`onWebSocketError ${JSON.stringify(error)}`, "WS");
-    };
-
-    client.onStompError = function (frame) {
-      // Will be invoked in case of error encountered at Broker
-      // Bad login/passcode typically will cause an error
-      // Complaint brokers will set `message` header with a brief message. Body may contain details.
-      // Compliant brokers will terminate the connection after any error
-      console.log("Broker reported error: " + frame.headers["message"]);
-      console.log("Additional details: " + frame.body);
-    };
+    var client = new WSClient(new WSConfig(), setConn)
     client.activate();
 
     return () => {
