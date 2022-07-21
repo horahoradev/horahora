@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Table, Button, Space } from "antd";
 
-import styles from "./new-request.module.scss";
+import styles from "./requests.module.scss";
 
 import { Page } from "#components/page";
 import { NewVideoForm } from "#components/posts";

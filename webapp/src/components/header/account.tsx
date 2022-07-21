@@ -98,8 +98,8 @@ function LoggedInAdminNav({ userData }: ILoggedInAdminNav) {
       <Menu.Divider />
 
       <Menu.Item key="archive-requests">
-        <LinkInternal iconID={faArchive} href="/account/archive-requests">
-          Archive Requests
+        <LinkInternal iconID={faArchive} href="/account/archives">
+          Archives
         </LinkInternal>
       </Menu.Item>
       <Menu.Divider />
