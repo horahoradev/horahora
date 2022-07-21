@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Tag, Table, Timeline, Progress, Button, Space } from "antd";
-import { CheckOutlined, SyncOutlined } from "@ant-design/icons";
 import {
   Client as StompClient,
   StompSubscription,
@@ -10,17 +9,11 @@ import { useMutex } from "react-context-mutex";
 
 import {
   getDownloadsInProgress,
-  deleteArchivalRequest as apiDeleteArchivalRequest,
-  retryArchivalRequest as apiRetryArchivalRequest,
-  postArchival,
   getUserdata,
   getArchivalSubscriptions,
 } from "#api/index";
-import { Header } from "#components/header";
-import { NewVideoForm } from "#components/posts";
 import { WSClient, WSConfig } from "#lib/fetch";
-
-let id = Math.floor(Math.random() * 1000);
+import { Page } from "#components/page";
 
 function ArchivalPage() {
   const [userData, setUserData] = useState();
@@ -39,20 +32,17 @@ function ArchivalPage() {
     { VideoID: number; progress: number }[] | null
   >([]);
   const [conn, setConn] = useState<StompClient | null>(null);
-  const latest = useRef(videoInProgressDataset);
 
   const MutexRunner = useMutex();
   const mutex = new MutexRunner("messageHandler");
 
   // TODO: currently connects every time the videos in progress changes
   useEffect(() => {
-    var client = new WSClient(new WSConfig(), setConn)
+    var client = new WSClient(new WSConfig(), setConn);
     client.activate();
 
     return () => {
-      (async () => {
-        client.deactivate();
-      })();
+      client.deactivate();
     };
   }, []);
 
@@ -197,16 +187,6 @@ function ArchivalPage() {
     setTimerVal((timerVal) => timerVal + 1);
   }
 
-  async function deleteArchivalRequest(download_id: number) {
-    await apiDeleteArchivalRequest(download_id);
-    reloadPage();
-  }
-
-  async function retryArchivalRequest(download_id: number) {
-    await apiRetryArchivalRequest(download_id);
-    reloadPage();
-  }
-
   useEffect(() => {
     const interval = setInterval(() => {
       reloadPage();
@@ -214,46 +194,6 @@ function ArchivalPage() {
 
     return () => clearInterval(interval);
   }, []);
-
-  async function createNewArchival(url: string) {
-    postArchival(url);
-    let subs = archivalSubscriptions ? archivalSubscriptions : [];
-    let newList = [
-      { Url: url, ArchivedVideos: 0, CurrentTotalVideos: 0, BackoffFactor: 1 },
-      ...subs,
-    ];
-    setArchivalSubscriptions(newList);
-  }
-
-  function Status(record: {
-    ArchivedVideos: number;
-    CurrentTotalVideos: number;
-    LastSynced: null;
-  }) {
-    if (
-      record.ArchivedVideos == record.CurrentTotalVideos &&
-      record.CurrentTotalVideos != 0
-    ) {
-      return (
-        <Tag color="green" className="p-1 text-base" icon={<CheckOutlined />}>
-          Complete
-        </Tag>
-      );
-    } else if (record.CurrentTotalVideos == 0 || record.LastSynced == null) {
-      return (
-        <Tag color="blue" className="text-base" icon={<SyncOutlined spin />}>
-          Fetching...
-        </Tag>
-      );
-    } else {
-      return (
-        <Tag color="blue" className="text-base" icon={<SyncOutlined spin />}>
-          {" "}
-          Archiving...
-        </Tag>
-      );
-    }
-  }
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
@@ -294,80 +234,6 @@ function ArchivalPage() {
     ];
   }
 
-  const columns = [
-    {
-      title: "Status",
-      key: "Status",
-      render: (
-        text: string,
-        record: {
-          ArchivedVideos: number;
-          CurrentTotalVideos: number;
-          LastSynced: null;
-        }
-      ) => <span>{Status(record)}</span>,
-    },
-    {
-      title: "URL",
-      dataIndex: "Url",
-    },
-    {
-      title: "Last synced",
-      dataIndex: "LastSynced",
-    },
-    // {
-    //     title: 'Days until next sync',
-    //     'dataIndex': 'BackoffFactor',
-    //     key: 'BackoffFactor',
-    // },
-    {
-      title: "Downloaded",
-      key: "Downloaded",
-      render: (
-        text: string,
-        record: {
-          ArchivedVideos: number;
-          CurrentTotalVideos: number;
-          LastSynced: null;
-          UndownloadableVideos: number;
-        }
-      ) => (
-        <span>
-          <b>{record.ArchivedVideos + "/" + record.CurrentTotalVideos}</b>{" "}
-          videos ({record.UndownloadableVideos} undownloadable)
-        </span>
-      ),
-    },
-    {
-      title: "Actions",
-      key: "Actions",
-      render: (
-        text: string,
-        record: {
-          ArchivedVideos: number;
-          CurrentTotalVideos: number;
-          LastSynced: null;
-          DownloadID: number;
-        }
-      ) => (
-        <Space size="middle">
-          <Button
-            className="background-blue"
-            onClick={() => retryArchivalRequest(record.DownloadID)}
-          >
-            Retry {record.DownloadID}
-          </Button>
-          <Button
-            className="background-blue"
-            onClick={() => deleteArchivalRequest(record.DownloadID)}
-          >
-            Delete {record.DownloadID}
-          </Button>
-        </Space>
-      ),
-    },
-  ];
-
   const timelinTableCols = [
     {
       title: "Timestamp",
@@ -402,60 +268,35 @@ function ArchivalPage() {
   ];
 
   return (
-    <>
-      <Header userData={userData} />
-      <br></br>
-      <div className=" mx-10 h-full">
-        <div className="inline-block mr-5">
-          <b className="text-black dark:text-white text-4xl m-0">Archives</b>
-          <h2 className="text-black dark:text-white text-xl mb-5">
-            View and manage your archives
-          </h2>
-          <div>
-            <div>
-              <div className="inline-block bg-white dark:bg-black mr-5 w-2/5 align-bottom">
-                <NewVideoForm onNewURL={createNewArchival} />
-                <Table
-                  // @ts-expect-error types
-                  dataSource={archivalSubscriptions}
-                  scroll={{ y: 700 }}
-                  className="align-bottom w-full "
-                  ellipsis={true}
-                  // @ts-expect-error types
-                  columns={columns}
-                />
-              </div>
-              <div className="h-full inline-block w-2/5">
-                <h2 className="text-xl text-black dark:text-white">
-                  Archival Events
-                </h2>
-                <Table
-                  dataSource={timelineEvents}
-                  className="align-bottom w-full"
-                  scroll={{ y: 700 }}
-                  // @ts-expect-error types
-                  ellipsis={true}
-                  columns={timelinTableCols}
-                />
-              </div>
-              <div className="h-full inline-block w-4/5">
-                <h2 className="text-xl text-black dark:text-white">
-                  Videos Currently Being Downloaded
-                </h2>
-                <Table
-                  // @ts-expect-error types
-                  dataSource={videoInProgressDataset}
-                  className="align-bottom w-full"
-                  scroll={{ y: 700 }}
-                  ellipsis={true}
-                  columns={videoDLsCols}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+    <Page>
+
+      <div className="h-full inline-block w-2/5">
+        <h2 className="text-xl text-black dark:text-white">
+          Archival Events
+        </h2>
+        <Table
+          dataSource={timelineEvents}
+          className="align-bottom w-full"
+          scroll={{ y: 700 }}
+          // @ts-expect-error types
+          ellipsis={true}
+          columns={timelinTableCols}
+        />
       </div>
-    </>
+      <div className="h-full inline-block w-4/5">
+        <h2 className="text-xl text-black dark:text-white">
+          Videos Currently Being Downloaded
+        </h2>
+        <Table
+          // @ts-expect-error types
+          dataSource={videoInProgressDataset}
+          className="align-bottom w-full"
+          scroll={{ y: 700 }}
+          ellipsis={true}
+          columns={videoDLsCols}
+        />
+      </div>
+    </Page>
   );
 }
 
