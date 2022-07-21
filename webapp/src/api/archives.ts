@@ -1,5 +1,10 @@
 import { FetchError, formHeader, PublicAPIURL } from "./types";
 
+import {
+  IArchivalRequest,
+  type IArchivalEvent,
+} from "#codegen/schema/001_interfaces";
+
 export async function createNewArchivalRequest(formParams: URLSearchParams) {
   const url = new PublicAPIURL("/archiverequests");
   const headers = new Headers([formHeader]);
@@ -10,11 +15,35 @@ export async function createNewArchivalRequest(formParams: URLSearchParams) {
   });
 
   if (!response.ok) {
-    const error = new FetchError("Failed to create a new archival request", response);
+    const error = new FetchError(
+      "Failed to create a new archival request",
+      response
+    );
     throw error;
   }
 
   const result: null = await response.json();
+
+  return result;
+}
+
+interface IRequestInfo {
+  ArchivalEvents: IArchivalEvent[];
+  ArchivalRequests: IArchivalRequest[];
+}
+
+export async function getArchivalRequests() {
+  const url = new PublicAPIURL("/archiverequests");
+  const response = await fetch(url, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    const error = new FetchError("Failed to fetch archival requests", response);
+    throw error;
+  }
+
+  const result: IRequestInfo = await response.json();
 
   return result;
 }
@@ -29,7 +58,10 @@ export async function deleteArchivalRequest(formParams: URLSearchParams) {
   });
 
   if (!response.ok) {
-    const error = new FetchError("Failed to delete an archival request", response);
+    const error = new FetchError(
+      "Failed to delete an archival request",
+      response
+    );
     throw error;
   }
 
@@ -48,7 +80,10 @@ export async function retryArchivalRequest(formParams: URLSearchParams) {
   });
 
   if (!response.ok) {
-    const error = new FetchError("Failed to retry an archival request", response);
+    const error = new FetchError(
+      "Failed to retry an archival request",
+      response
+    );
     throw error;
   }
 

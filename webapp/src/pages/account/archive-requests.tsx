@@ -1,37 +1,17 @@
 import { useEffect, useState } from "react";
-import { Tag, Table, Timeline, Progress, Button, Space } from "antd";
-import {
-  Client as StompClient,
-  StompSubscription,
-  type IMessage,
-} from "@stomp/stompjs";
+import { Table, Progress } from "antd";
+import { StompSubscription, type IMessage } from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
 
-import {
-  getDownloadsInProgress,
-  getUserdata,
-  getArchivalSubscriptions,
-} from "#api/index";
+import { getDownloadsInProgress } from "#api/index";
 import { WSClient, WSConfig } from "#lib/fetch";
 import { Page } from "#components/page";
 
 function ArchivalPage() {
-  const [userData, setUserData] = useState();
-  const [archivalSubscriptions, setArchivalSubscriptions] = useState<
-    {
-      Url: string;
-      ArchivedVideos: number;
-      CurrentTotalVideos: number;
-      BackoffFactor: number;
-    }[]
-  >([]);
-  const [timelineEvents, setTimelineEvents] = useState<
-    { message: string; timestamp: string }[]
-  >([]);
   const [videoInProgressDataset, setVideoInProgressDataset] = useState<
     { VideoID: number; progress: number }[] | null
   >([]);
-  const [conn, setConn] = useState<StompClient | null>(null);
+  const [conn, setConn] = useState<WSClient | null>(null);
 
   const MutexRunner = useMutex();
   const mutex = new MutexRunner("messageHandler");
@@ -195,56 +175,6 @@ function ArchivalPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
-  useEffect(() => {
-    let ignore = false;
-
-    let fetchData = async () => {
-      let userData = await getUserdata();
-      if (!ignore) setUserData(userData);
-
-      let subscriptionData = await getArchivalSubscriptions();
-
-      // videos.map((video, idx) => video.progress = videoInProgressDataset && videoInProgressDataset[idx] ? videoInProgressDataset[idx].progress : 0);
-
-      // TODO: diff downloads in progress vs old downloads state, and unsubscribe!
-      if (!ignore) {
-        setArchivalSubscriptions(subscriptionData.ArchivalRequests);
-        setTimelineEvents(subscriptionData.ArchivalEvents);
-      }
-    };
-
-    fetchData();
-    return () => {
-      ignore = true;
-    };
-  }, [timerVal]);
-
-  let timelineElements = [];
-
-  if (timelineEvents) {
-    timelineElements = [
-      timelineEvents.map((event, idx) => (
-        <Timeline.Item key={idx}>
-          {event.message}
-          <br></br>
-          {event.timestamp}
-        </Timeline.Item>
-      )),
-    ];
-  }
-
-  const timelinTableCols = [
-    {
-      title: "Timestamp",
-      dataIndex: "timestamp",
-    },
-    {
-      title: "Event Message",
-      dataIndex: "message",
-    },
-  ];
-
   const videoDLsCols = [
     {
       title: "Video ID",
@@ -269,20 +199,6 @@ function ArchivalPage() {
 
   return (
     <Page>
-
-      <div className="h-full inline-block w-2/5">
-        <h2 className="text-xl text-black dark:text-white">
-          Archival Events
-        </h2>
-        <Table
-          dataSource={timelineEvents}
-          className="align-bottom w-full"
-          scroll={{ y: 700 }}
-          // @ts-expect-error types
-          ellipsis={true}
-          columns={timelinTableCols}
-        />
-      </div>
       <div className="h-full inline-block w-4/5">
         <h2 className="text-xl text-black dark:text-white">
           Videos Currently Being Downloaded

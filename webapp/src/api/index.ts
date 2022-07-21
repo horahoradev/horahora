@@ -30,11 +30,6 @@ export async function getUserdata() {
   return res.data;
 }
 
-export async function getArchivalSubscriptions() {
-  const res = await axios.get(e("archiverequests"));
-  return res.data;
-}
-
 export async function deleteVideo(videoId: number) {
   const res = await axios.post(e(`delete/${videoId}`));
   return res.data;
