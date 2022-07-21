@@ -1,20 +1,43 @@
-import { useEffect, useState } from "react";
 import { Table, Progress } from "antd";
+import { useEffect, useState } from "react";
 import { StompSubscription, type IMessage } from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
 
-import { getDownloadsInProgress } from "#api/index";
 import { WSClient, WSConfig } from "#lib/fetch";
 import { Page } from "#components/page";
+import { fetchDownloadsInProgress } from "#api/archives";
 
-function ArchivalPage() {
+function ArchivalDownloadsPage() {
+  const MutexRunner = useMutex();
+  const mutex = new MutexRunner("messageHandler");
+  const [conn, setConn] = useState<WSClient | null>(null);
   const [videoInProgressDataset, setVideoInProgressDataset] = useState<
     { VideoID: number; progress: number }[] | null
   >([]);
-  const [conn, setConn] = useState<WSClient | null>(null);
+  // I think this is a hack? looks okay to me though!
+  const [timerVal, setTimerVal] = useState(0);
 
-  const MutexRunner = useMutex();
-  const mutex = new MutexRunner("messageHandler");
+  const videoDLsCols = [
+    {
+      title: "Video ID",
+      dataIndex: "VideoID",
+    },
+    {
+      title: "Website",
+      dataIndex: "Website",
+    },
+    {
+      title: "Download Status",
+      dataIndex: "DlStatus",
+    },
+    {
+      title: "Progress",
+      key: "Progress",
+      render: (text: string, record: { progress: number }) => (
+        <Progress percent={Math.floor(record.progress)} size="small" />
+      ),
+    },
+  ];
 
   // TODO: currently connects every time the videos in progress changes
   useEffect(() => {
@@ -26,40 +49,11 @@ function ArchivalPage() {
     };
   }, []);
 
-  function processMessage(message: IMessage) {
-    mutex.lock();
-    setVideoInProgressDataset(
-      (videosInProg: { VideoID: number; progress: number }[] | null) => {
-        if (videosInProg == null) {
-          return videosInProg;
-        }
-        let dataset: { VideoID: number; progress: number }[] = JSON.parse(
-          JSON.stringify(videosInProg)
-        );
-        let body = JSON.parse(message.body);
-        let total_bytes = body.total_bytes || body.total_bytes_estimate;
-        let progress =
-          (100 * parseFloat(body.downloaded_bytes || total_bytes)) /
-          total_bytes;
-        let idx = dataset.findIndex(
-          (video) => video.VideoID == body.info_dict.id
-        );
-        if (idx == -1) {
-          return dataset;
-        }
-        dataset[idx].progress = progress;
-        return dataset;
-      }
-    );
-    message.ack();
-    mutex.unlock();
-  }
-
   // Get initial downloads in progress
   useEffect(() => {
     let unsub: StompSubscription[] = [];
     (async () => {
-      let videos = await getDownloadsInProgress();
+      let videos = await fetchDownloadsInProgress();
       for (var i = 0; i < (videos != null ? videos.length : 0); i++) {
         videos[i].progress = 0;
       }
@@ -160,13 +154,6 @@ function ArchivalPage() {
     );
   }, [conn]);
 
-  // I think this is a hack? looks okay to me though!
-  const [timerVal, setTimerVal] = useState(0);
-
-  function reloadPage() {
-    setTimerVal((timerVal) => timerVal + 1);
-  }
-
   useEffect(() => {
     const interval = setInterval(() => {
       reloadPage();
@@ -175,45 +162,52 @@ function ArchivalPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const videoDLsCols = [
-    {
-      title: "Video ID",
-      dataIndex: "VideoID",
-    },
-    {
-      title: "Website",
-      dataIndex: "Website",
-    },
-    {
-      title: "Download Status",
-      dataIndex: "DlStatus",
-    },
-    {
-      title: "Progress",
-      key: "Progress",
-      render: (text: string, record: { progress: number }) => (
-        <Progress percent={Math.floor(record.progress)} size="small" />
-      ),
-    },
-  ];
+  function reloadPage() {
+    setTimerVal((timerVal) => timerVal + 1);
+  }
+
+  function processMessage(message: IMessage) {
+    mutex.lock();
+    setVideoInProgressDataset(
+      (videosInProg: { VideoID: number; progress: number }[] | null) => {
+        if (videosInProg == null) {
+          return videosInProg;
+        }
+        let dataset: { VideoID: number; progress: number }[] = JSON.parse(
+          JSON.stringify(videosInProg)
+        );
+        let body = JSON.parse(message.body);
+        let total_bytes = body.total_bytes || body.total_bytes_estimate;
+        let progress =
+          (100 * parseFloat(body.downloaded_bytes || total_bytes)) /
+          total_bytes;
+        let idx = dataset.findIndex(
+          (video) => video.VideoID == body.info_dict.id
+        );
+        if (idx == -1) {
+          return dataset;
+        }
+        dataset[idx].progress = progress;
+        return dataset;
+      }
+    );
+    message.ack();
+    mutex.unlock();
+  }
 
   return (
     <Page>
-      <div className="h-full inline-block w-4/5">
-        <h2 className="text-xl text-black dark:text-white">
-          Videos Currently Being Downloaded
-        </h2>
-        <Table
-          // @ts-expect-error types
-          dataSource={videoInProgressDataset}
-          className="align-bottom w-full"
-          scroll={{ y: 700 }}
-          ellipsis={true}
-          columns={videoDLsCols}
-        />
-      </div>
+      <h1>Videos Currently Being Downloaded</h1>
+      <Table
+        // @ts-expect-error types
+        dataSource={videoInProgressDataset}
+        className="align-bottom w-full"
+        scroll={{ y: 700 }}
+        ellipsis={true}
+        columns={videoDLsCols}
+      />
     </Page>
   );
 }
 
-export default ArchivalPage;
+export default ArchivalDownloadsPage;

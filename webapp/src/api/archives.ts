@@ -91,3 +91,22 @@ export async function retryArchivalRequest(formParams: URLSearchParams) {
 
   return result;
 }
+
+export async function fetchDownloadsInProgress() {
+  const url = new PublicAPIURL("/downloadsinprogress");
+  const response = await fetch(url, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    const error = new FetchError(
+      "Failed to fetch downloads in progress",
+      response
+    );
+    throw error;
+  }
+
+  const result = await response.json();
+
+  return result;
+}

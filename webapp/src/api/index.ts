@@ -86,11 +86,6 @@ export async function getAudits(userID: number, page: number) {
   return res.data;
 }
 
-export async function getDownloadsInProgress() {
-  const res = await axios.get(e(`downloadsinprogress`));
-  return res.data;
-}
-
 export async function upvoteComment(
   commentID: number,
   upvoted_already: boolean
