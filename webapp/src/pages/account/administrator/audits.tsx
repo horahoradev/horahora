@@ -20,7 +20,7 @@ function AuditsPage() {
     Events: Record<string, unknown>[];
     Length: number;
   } | null>(null);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState();
   const [userID, setUserID] = useState(-1);
   const [currPage, setPage] = useState(1);
 
