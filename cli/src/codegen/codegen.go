@@ -1,9 +1,9 @@
 package codegen
 
 import (
-	"horahora/cli/src/codegen/schema/meta"
+	"horahora/cli/src/codegen/schema"
 )
 
 func RunCodegen() {
-	meta.GenerateMetaSchema()
+	schema.GenerateSchemas()
 }
