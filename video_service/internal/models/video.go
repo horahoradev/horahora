@@ -59,11 +59,11 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 		return 0, err
 	}
 
-	if foreignAuthorID == "" || foreignAuthorUsername == "" {
+	if domesticAuthorID == 0 && (foreignAuthorID == "" || foreignAuthorUsername == "") {
 		return 0, serror.New("foreign author info cannot be blank")
 	}
 
-	if originalVideoLink == "" || originalVideoID == "" {
+	if domesticAuthorID == 0 && (originalVideoLink == "" || originalVideoID == "") {
 		return 0, serror.New("original video info cannot be blank")
 	}
 
