@@ -19,6 +19,7 @@ import {
   accountSchema,
   accountInitSchema,
   accountClientSchema,
+  accountLoginSchema,
   createAJV,
   createValidator,
 } from "./generator";
@@ -29,6 +30,7 @@ import type {
   IAccountClient,
   IAccount,
   IAccountInit,
+  IAccountLogin,
   IArchivalEvent,
   IArchivalRequest,
   IAuditData,
@@ -58,6 +60,10 @@ export const validateAccount = createValidator<IAccount>(
 );
 export const validateAccountInit = createValidator<IAccountInit>(
   accountInitSchema as unknown as IJSONSchema,
+  ajv
+);
+export const validateAccountLogin = createValidator<IAccountLogin>(
+  accountLoginSchema as unknown as IJSONSchema,
   ajv
 );
 export const validateArchivalEvent = createValidator<IArchivalEvent>(

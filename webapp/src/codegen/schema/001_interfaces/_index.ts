@@ -4,6 +4,7 @@ export type {
   IAccountClient,
   IAccount,
   IAccountInit,
+  IAccountLogin,
   IArchivalEvent,
   IArchivalRequest,
   IAuditData,

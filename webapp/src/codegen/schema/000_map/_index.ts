@@ -4,6 +4,7 @@ export {
   accountClientSchema,
   accountSchema,
   accountInitSchema,
+  accountLoginSchema,
   archivalEventSchema,
   archivalRequestSchema,
   auditDataSchema,

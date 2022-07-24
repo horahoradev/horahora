@@ -1,9 +1,9 @@
 {
   "$id": "https://horahora-schemas.org/entities/account/client.schema.json",
   "title": "AccountClient",
-  "description": "A hohora account as shown on client.",
+  "description": "A horahora account as shown on client. For now is the same shape as the entity.",
   "type": "object",
-  "required": ["userID", "username"],
+  "required": ["userID"],
   "additionalProperties": false,
   "properties": {
     "userID": {

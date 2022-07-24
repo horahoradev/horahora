@@ -99,9 +99,10 @@ export const environmentVariablesSchema = {
 export const accountClientSchema = {
   $id: "https://horahora-schemas.org/entities/account/client.schema.json",
   title: "AccountClient",
-  description: "A hohora account as shown on client.",
+  description:
+    "A horahora account as shown on client. For now is the same shape as the entity.",
   type: "object",
-  required: ["userID", "username"],
+  required: ["userID"],
   additionalProperties: false,
   properties: {
     userID: {
@@ -124,7 +125,7 @@ export const accountClientSchema = {
 export const accountSchema = {
   $id: "https://horahora-schemas.org/entities/account/entity.schema.json",
   title: "Account",
-  description: "An account on hohora.",
+  description: "An account on horahora.",
   type: "object",
   required: ["userID"],
   additionalProperties: false,
@@ -149,12 +150,34 @@ export const accountSchema = {
 export const accountInitSchema = {
   $id: "https://horahora-schemas.org/entities/account/init.schema.json",
   title: "AccountInit",
-  description: "Initializer for horahora account,",
+  description: "Initializer for horahora account.",
   type: "object",
-  required: ["username"],
+  required: ["username", "email", "password"],
   additionalProperties: false,
   properties: {
     username: {
+      type: "string",
+    },
+    email: {
+      type: "string",
+    },
+    password: {
+      type: "string",
+    },
+  },
+} as const;
+export const accountLoginSchema = {
+  $id: "https://horahora-schemas.org/entities/account/login.schema.json",
+  title: "AccountLogin",
+  description: "Account information needed to log in an account.",
+  type: "object",
+  required: ["username", "password"],
+  additionalProperties: false,
+  properties: {
+    username: {
+      type: "string",
+    },
+    password: {
       type: "string",
     },
   },
@@ -528,6 +551,7 @@ export const schemaMap = {
   [accountClientSchema.$id]: accountClientSchema,
   [accountSchema.$id]: accountSchema,
   [accountInitSchema.$id]: accountInitSchema,
+  [accountLoginSchema.$id]: accountLoginSchema,
   [archivalEventSchema.$id]: archivalEventSchema,
   [archivalRequestSchema.$id]: archivalRequestSchema,
   [auditDataSchema.$id]: auditDataSchema,

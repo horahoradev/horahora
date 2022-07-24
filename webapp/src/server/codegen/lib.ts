@@ -57,26 +57,32 @@ export async function runCodegen() {
         );
         const indexPath = path.join(entryPath.dir, indexModule);
         const indexContent = createIndex(exports);
-        let formattedResult;
-        let formattedIndex;
 
-        try {
-          formattedResult = prettier.format(finalResult);
-          formattedIndex = prettier.format(indexContent);
-        } catch (error) {
-          console.warn(
-            `Failed to format the result at "${resultPath}"`,
-            "Continue unformatted"
-          );
-        }
+        const resultInfo = {
+          module: finalResult,
+          index: indexContent
+        };
+
+        Object.entries(resultInfo).forEach(([key, code]) => {
+          try {
+            const formattedCode = prettier.format(code);
+            // @ts-expect-error dict mutation
+            resultInfo[key] = formattedCode
+          } catch (error) {
+            console.warn(
+              `Failed to format the ${key} at "${resultPath}"`,
+              "Continue unformatted"
+            );
+          }
+        })
 
         await fs.writeFile(
           resultPath,
-          formattedResult ? formattedResult : finalResult
+          resultInfo.module
         );
         await fs.writeFile(
           indexPath,
-          formattedIndex ? formattedIndex : indexContent
+          resultInfo.index
         );
 
         codegenDirs.push(path.relative(codegenPath, entryPath.dir));

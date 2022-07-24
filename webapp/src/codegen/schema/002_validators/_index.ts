@@ -3,6 +3,7 @@ export {
   validateAccountClient,
   validateAccount,
   validateAccountInit,
+  validateAccountLogin,
   validateArchivalEvent,
   validateArchivalRequest,
   validateAuditData,

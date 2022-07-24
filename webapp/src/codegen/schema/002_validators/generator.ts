@@ -26,6 +26,7 @@ export {
   accountSchema,
   accountInitSchema,
   accountClientSchema,
+  accountLoginSchema,
 } from "../000_map/_index";
 export type {
   IArchivalEvent,
@@ -44,6 +45,7 @@ export type {
   IAccount,
   IAccountClient,
   IAccountInit,
+  IAccountLogin,
 } from "../001_interfaces/_index";
 export { createAJV, createValidator } from "#lib/json-schema";
 export type { ISchemaMap, IJSONSchema } from "#lib/json-schema";

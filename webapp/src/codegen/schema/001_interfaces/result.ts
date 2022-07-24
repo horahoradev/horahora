@@ -54,18 +54,18 @@ export interface IEnvironmentVariables {
 }
 
 /**
- * A hohora account as shown on client.
+ * A horahora account as shown on client. For now is the same shape as the entity.
  */
 export interface IAccountClient {
   userID: number;
-  username: string;
+  username?: string;
   profile_picture_url?: string;
   rank?: number;
   banned?: boolean;
 }
 
 /**
- * An account on hohora.
+ * An account on horahora.
  */
 export interface IAccount {
   userID: number;
@@ -76,10 +76,20 @@ export interface IAccount {
 }
 
 /**
- * Initializer for horahora account,
+ * Initializer for horahora account.
  */
 export interface IAccountInit {
   username: string;
+  email: string;
+  password: string;
+}
+
+/**
+ * Account information needed to log in an account.
+ */
+export interface IAccountLogin {
+  username: string;
+  password: string;
 }
 
 export interface IArchivalEvent {
