@@ -9,9 +9,9 @@ import {
 import { useState, useEffect } from "react";
 
 import styles from "./account-nav.module.scss";
+import { ThemeSwitcher } from "./theme-switcher";
 
 import { getUserdata } from "#api/index";
-import { ThemeSwitcher } from "#components/theme-switcher";
 import { LinkInternal } from "#components/links";
 import { UserRank } from "#api/types";
 import { ListItem, ListUnordered } from "#components/lists";
