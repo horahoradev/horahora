@@ -1,4 +1,3 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArchive,
   faBars,
@@ -7,7 +6,6 @@ import {
   faUser,
   faUpload,
 } from "@fortawesome/free-solid-svg-icons";
-import { Dropdown, Menu } from "antd";
 import { useState, useEffect } from "react";
 
 import styles from "./account-nav.module.scss";
@@ -41,9 +39,7 @@ export function AccountNavigation() {
   return (
     <ListUnordered className={styles.block}>
       <ListItem>
-        <b className="text-blue-500">{userData?.username}</b>
-        <FontAwesomeIcon className="max-h-4 text-xs ml-2" icon={faBars} />
-        <Button>Account</Button>
+        <Button iconID={faBars}>Account</Button>
         <ListUnordered>
           {!isRegistered ? (
             <>
@@ -72,6 +68,19 @@ export function AccountNavigation() {
                   Profile page
                 </LinkInternal>
               </ListItem>
+              {isAdmin && (
+                <ListItem>
+                  <LinkInternal
+                    iconID={faArchive}
+                    href="/account/archive-requests"
+                  >
+                    Archive Requests
+                  </LinkInternal>
+                </ListItem>
+              )}
+              <ListItem>
+                <ThemeSwitcher />
+              </ListItem>
               <ListItem>
                 <LinkInternal
                   iconID={faKey}
@@ -80,6 +89,16 @@ export function AccountNavigation() {
                   Reset Password
                 </LinkInternal>
               </ListItem>
+              {isAdmin && (
+                <ListItem>
+                  <LinkInternal
+                    iconID={faArchive}
+                    href="/account/administrator/audits"
+                  >
+                    Audit Logs
+                  </LinkInternal>
+                </ListItem>
+              )}
               <ListItem>
                 <LinkInternal
                   iconID={faSignOutAlt}
@@ -93,78 +112,5 @@ export function AccountNavigation() {
         </ListUnordered>
       </ListItem>
     </ListUnordered>
-  );
-}
-
-interface ILoggedInAdminNav extends Record<string, unknown> {}
-
-function LoggedInAdminNav(props: ILoggedInAdminNav) {
-  const { userData } = props;
-
-  let menu = (
-    <Menu className="bg-white dark:bg-black">
-      <Menu.Item key="profile">
-        <LinkInternal
-          iconID={faUser}
-          // @ts-expect-error figure `userData` shape
-          href={`/users/${userData.userID}`}
-        >
-          Profile page
-        </LinkInternal>
-      </Menu.Item>
-      <Menu.Divider />
-
-      <Menu.Item key="upload" className="flex flex-row gap-2">
-        <LinkInternal iconID={faUpload} href="/account/upload">
-          Upload
-        </LinkInternal>
-      </Menu.Item>
-      <Menu.Divider />
-
-      <Menu.Item key="archive-requests">
-        <LinkInternal iconID={faArchive} href="/account/archive-requests">
-          Archive Requests
-        </LinkInternal>
-      </Menu.Item>
-      <Menu.Divider />
-
-      <ThemeSwitcher />
-
-      <Menu.Divider />
-
-      <Menu.Item key="password-reset">
-        <LinkInternal iconID={faKey} href="/authentication/password-reset">
-          Password Reset
-        </LinkInternal>
-      </Menu.Item>
-
-      <Menu.Divider />
-      <Menu.Item key="audits">
-        <LinkInternal iconID={faArchive} href="/account/administrator/audits">
-          Audit Logs
-        </LinkInternal>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="logout">
-        <LinkInternal iconID={faSignOutAlt} href="/authentication/logout">
-          Logout
-        </LinkInternal>
-      </Menu.Item>
-    </Menu>
-  );
-
-  return (
-    <>
-      <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
-        <Button className="flex flex-row flex-nowrap items-center">
-          {/* @ts-expect-error figure `userData` shape */}
-          <b className="text-blue-500">{userData.username}</b>
-          <FontAwesomeIcon
-            className="text-xs max-h-4 ml-2 text-black dark:text-white dark:hover:text-black"
-            icon={faBars}
-          />
-        </Button>
-      </Dropdown>
-    </>
   );
 }
