@@ -1,25 +1,44 @@
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArchive,
   faBars,
-  faSearch,
   faKey,
   faSignOutAlt,
   faUser,
   faUpload,
 } from "@fortawesome/free-solid-svg-icons";
-import { Button, Dropdown, Input, Menu } from "antd";
+import { Button, Dropdown, Menu } from "antd";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
+import { getUserdata } from "#api/index";
 import { ThemeSwitcher } from "#components/theme-switcher";
 import { LinkInternal } from "#components/links";
 import { UserRank } from "#api/types";
 
-interface IUserNav {
-  userData?: Record<string, unknown>;
-}
+export function AccountNavigation() {
+  const router = useRouter();
+  const [userData, setUserData] = useState<Record<string, unknown>>();
 
-export function AccountNavigation({ userData }: IUserNav) {
+  useEffect(() => {
+    let ignore = false;
+
+    if (router.pathname.startsWith("/authentication")) {
+      return () => {
+        ignore = true;
+      };
+    }
+
+    (async () => {
+      let userData = await getUserdata();
+      if (!ignore) setUserData(userData);
+    })();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   const isRegistered = Boolean(userData && userData.username);
   const isAdmin = userData?.rank === UserRank.ADMIN;
 

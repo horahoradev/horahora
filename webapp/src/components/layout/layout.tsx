@@ -9,11 +9,9 @@ import { ListItem, ListUnordered } from "#components/lists";
 
 export interface ILayoutProps {
   children: ReactNode;
-  userData?: Record<string, unknown>;
-  dataless?: boolean;
 }
 
-export function Layout({ userData, dataless, children }: ILayoutProps) {
+export function Layout({ children }: ILayoutProps) {
   return (
     <>
       <header className={styles.header}>
@@ -26,11 +24,9 @@ export function Layout({ userData, dataless, children }: ILayoutProps) {
             <ListItem className={styles.search}>
               <GlobalSearch />
             </ListItem>
-            {!dataless && (
-              <ListItem className={styles.account}>
-                <AccountNavigation userData={userData} />
-              </ListItem>
-            )}
+            <ListItem className={styles.account}>
+              <AccountNavigation />
+            </ListItem>
           </ListUnordered>
         </nav>
       </header>

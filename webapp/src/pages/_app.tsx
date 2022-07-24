@@ -2,8 +2,9 @@ import "antd/dist/antd.css";
 import "#styles/index.scss";
 
 import Head from "next/head";
-import type { AppProps } from 'next/app'
+import type { AppProps } from "next/app";
 
+import { Layout } from "#components/layout";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -30,9 +31,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="apple-touch-icon" href="/logo192.png" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <div className="text-base bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
+      <Layout>
         <Component {...pageProps} />
-      </div>
+      </Layout>
     </>
   );
 }

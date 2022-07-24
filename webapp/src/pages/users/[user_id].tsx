@@ -5,15 +5,14 @@ import { useRouter } from "next/router";
 
 import {
   getUser,
-  getUserdata,
   banUser,
   setUserMod,
   setUserAdmin,
 } from "#api/index";
-import { Header } from "#components/header";
 import { type IUserRank, UserRank } from "#api/types";
 import { VideoList } from "#components/video-list";
 import Paginatione from "#components/pagination";
+import { Page } from "#components/page";
 
 // {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":11,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 
@@ -34,8 +33,6 @@ function UsersPage() {
   const router = useRouter();
   const { query, isReady } = router;
   const { user_id } = query;
-
-  const [userData, setUserData] = useState(null);
   // @ts-expect-error typing
   const [pageUserData, setPageUserData] = useState<IPageUserData>({});
   const [currPage, setPage] = useState(1);
@@ -52,9 +49,6 @@ function UsersPage() {
       // @ts-expect-error some types
       let pageUserData = await getUser(user_id, currPage);
       if (!ignore) setPageUserData(pageUserData);
-
-      let userData = await getUserdata();
-      if (!ignore) setUserData(userData);
     };
 
     fetchData();
@@ -64,8 +58,7 @@ function UsersPage() {
   }, [user_id, currPage, isReady]);
 
   return (
-    <>
-      <Header userData={userData} />
+    <Page>
       <div className="pt-10">
         {/*lol oh no*/}
         {/* TODO: add user profile image*/}
@@ -118,7 +111,7 @@ function UsersPage() {
           </div>
         </div>
       </div>
-    </>
+    </Page>
   );
 }
 

@@ -13,16 +13,14 @@ import {
   deleteArchivalRequest as apiDeleteArchivalRequest,
   retryArchivalRequest as apiRetryArchivalRequest,
   postArchival,
-  getUserdata,
   getArchivalSubscriptions,
 } from "#api/index";
-import { Header } from "#components/header";
 import { NewVideoForm } from "#components/posts";
+import { Page } from "#components/page";
 
 let id = Math.floor(Math.random() * 1000);
 
 function ArchivalPage() {
-  const [userData, setUserData] = useState();
   const [archivalSubscriptions, setArchivalSubscriptions] = useState<
     {
       Url: string;
@@ -293,9 +291,6 @@ function ArchivalPage() {
     let ignore = false;
 
     let fetchData = async () => {
-      let userData = await getUserdata();
-      if (!ignore) setUserData(userData);
-
       let subscriptionData = await getArchivalSubscriptions();
 
       // videos.map((video, idx) => video.progress = videoInProgressDataset && videoInProgressDataset[idx] ? videoInProgressDataset[idx].progress : 0);
@@ -435,9 +430,7 @@ function ArchivalPage() {
   ];
 
   return (
-    <>
-      <Header userData={userData} />
-      <br></br>
+    <Page>
       <div className=" mx-10 h-full">
         <div className="inline-block mr-5">
           <b className="text-black dark:text-white text-4xl m-0">Archives</b>
@@ -488,7 +481,7 @@ function ArchivalPage() {
           </div>
         </div>
       </div>
-    </>
+    </Page>
   );
 }
 
