@@ -1,4 +1,5 @@
 export type {
+  IAccount,
   IAccountClient,
   IAccountInit,
   IAccountLogin,

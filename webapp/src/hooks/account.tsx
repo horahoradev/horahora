@@ -4,65 +4,94 @@ import {
   useContext,
   useEffect,
   useState,
+  useCallback,
 } from "react";
 
-import { type ILoggedInUserData } from "#codegen/schema/001_interfaces";
-import { getLocalStoreItem } from "#store/local";
+import {
+  getAccount,
+  isRegistered,
+  loginAccount,
+  logoutAccount,
+  registerAccount,
+  type IAccount,
+} from "#lib/account";
 import { fetchAccountInfo } from "#api/account";
 
-export interface IAccountInfo extends ILoggedInUserData {
-  isLoggedIn: boolean;
+interface IAccountContext {
+  account?: IAccount;
+  register: (...args: Parameters<typeof registerAccount>) => void;
+  login: (...args: Parameters<typeof loginAccount>) => void;
+  logout: (...args: Parameters<typeof logoutAccount>) => void;
 }
 
-const AccountContext = createContext<IAccountInfo | undefined>(undefined);
+const defaultContext: IAccountContext = {
+  register: () => {},
+  login: () => {},
+  logout: () => {},
+};
 
-interface IAccountProviderProps {
-  children: ReactNode;
-}
+const AccountContext = createContext<IAccountContext>(defaultContext);
 
-export function AccountProvider({ children }: IAccountProviderProps) {
-  const [accountInfo, changeAccountInfo] = useState<
-    ILoggedInUserData | undefined
-  >(undefined);
+export function AccountProvider({ children }: { children: ReactNode }) {
+  const [account, changeAccount] = useState<IAccount | undefined>(undefined);
 
+  // dunno if `useCallback()` is needed
+  // but react can struggle with referential equality of functions
+  // created outside of the rendering tree.
+  const register = useCallback(
+    async (...args: Parameters<IAccountContext["register"]>): Promise<void> => {
+      const newAccount = await registerAccount(...args);
+      changeAccount(newAccount);
+    },
+    []
+  );
+
+  const login = useCallback(
+    async (...args: Parameters<IAccountContext["login"]>): Promise<void> => {
+      const account = await loginAccount(...args);
+      changeAccount(account);
+    },
+    []
+  );
+
+  const logout = useCallback(async (): Promise<void> => {
+    await logoutAccount();
+    changeAccount(undefined);
+  }, []);
+
+  // initialize the context
   useEffect(() => {
     (async () => {
-      const isRegistered = getLocalStoreItem<boolean>("is_registered", false);
-      if (!isRegistered) {
+      if (isRegistered()) {
         return;
       }
 
-      const accountData = getLocalStoreItem<ILoggedInUserData>("account");
+      const accountData = getAccount();
 
       if (accountData) {
-        changeAccountInfo(accountData);
+        changeAccount(accountData);
         return;
       }
 
-      let remoteAccountData = undefined;
-
       try {
-        remoteAccountData = await fetchAccountInfo();
+        const remoteAccountData = await fetchAccountInfo();
+        changeAccount(remoteAccountData);
       } catch (error) {
         console.log(error);
         return;
       }
-
-      changeAccountInfo(remoteAccountData);
     })();
   }, []);
 
   return (
-    <AccountContext.Provider
-      value={{ ...accountInfo, isLoggedIn: Boolean(accountInfo) }}
-    >
+    <AccountContext.Provider value={{ account, register, login, logout }}>
       {{ children }}
     </AccountContext.Provider>
   );
 }
 
+// Using a hook so every component wouldn't need to import the context and `useContext()`
+// to get access to it.
 export function useAccount() {
-  const accountInfo = useContext(AccountContext);
-
-  return accountInfo;
+  return useContext(AccountContext);
 }
