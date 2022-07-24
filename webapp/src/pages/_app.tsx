@@ -4,8 +4,6 @@ import "#styles/index.scss";
 import Head from "next/head";
 import type { AppProps } from 'next/app'
 
-import { Footer } from "#components/footer";
-
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -35,8 +33,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       <div className="text-base bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
         <Component {...pageProps} />
       </div>
-
-      <Footer />
     </>
   );
 }
