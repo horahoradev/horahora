@@ -1,10 +1,10 @@
-import { type IBaseButtonProps, BaseButton } from "./base";
+import { type IButtonHTMLProps, ButtonHTML } from "./html";
 
-export interface IButtonProps extends Omit<IBaseButtonProps, "type"> {}
+export interface IButtonProps extends Omit<IButtonHTMLProps, "type"> {}
 export function Button({ children, ...blockProps }: IButtonProps) {
   return (
-    <BaseButton {...blockProps} type="button">
+    <ButtonHTML {...blockProps} type="button">
       {children}
-    </BaseButton>
+    </ButtonHTML>
   );
 }

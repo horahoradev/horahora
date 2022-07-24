@@ -2,7 +2,7 @@ import { forwardRef, type LegacyRef } from "react";
 
 import styles from "./html.module.scss";
 
-import { blockComponent, IBlockProps } from "#components/meta";
+import { blockComponent, type IBlockProps } from "#components/meta";
 import { Icon, type IIconID } from "#components/icons";
 
 export interface IAnchourHTMLProps extends Omit<IBlockProps<"a">, "href"> {
