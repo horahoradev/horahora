@@ -1,8 +1,61 @@
-import { IAccountClient, IAccountInit } from "#codegen/schema/001_interfaces";
+import {
+  type IAccountClient,
+  type IAccountInit,
+  type IAccountLogin,
+} from "./types";
 
-export async function registerAccount(accInit: IAccountInit): Promise<IAccountClient> {
+import {
+  registerAccount as fetchRegisterAccount,
+  loginAccount as fetchLoginAccount,
+  logoutAccount as fetchLogoutAccount,
+} from "#api/authentication";
+import { fetchAccountInfo } from "#api/account";
+import {
+  setLocalStoreItem,
+  LOCAL_STORAGE,
+  deleteLocaleStoreItem,
+} from "#store/local";
 
+export async function registerAccount(
+  accInit: IAccountInit
+): Promise<IAccountClient> {
+  const formParams = new URLSearchParams();
+
+  formParams.set("username", accInit.username);
+  formParams.set("password", accInit.password);
+  formParams.set("email", accInit.email);
+
+  await fetchRegisterAccount(formParams);
+
+  setLocalStoreItem<boolean>(LOCAL_STORAGE.IS_REGISTERED, true);
+
+  const newAccount = await fetchAccountInfo();
+
+  setLocalStoreItem<IAccountClient>(LOCAL_STORAGE.ACCOUNT, newAccount);
+
+  return newAccount;
 }
-export async function loginAccount(loginInfo: IAccLogin): Promise<IAccountClient> {}
 
-export async function logoutAccount(): Promise<void> {}
+export async function loginAccount(
+  loginInfo: IAccountLogin
+): Promise<IAccountClient> {
+  const formParams = new URLSearchParams();
+
+  formParams.set("username", loginInfo.username);
+  formParams.set("password", loginInfo.password);
+
+  await fetchLoginAccount(formParams);
+
+  const account = await fetchAccountInfo();
+
+  setLocalStoreItem<IAccountClient>(LOCAL_STORAGE.ACCOUNT, account);
+
+  return account;
+}
+
+export async function logoutAccount(): Promise<void> {
+  await fetchLogoutAccount();
+
+  deleteLocaleStoreItem(LOCAL_STORAGE.IS_REGISTERED);
+  deleteLocaleStoreItem(LOCAL_STORAGE.ACCOUNT);
+}

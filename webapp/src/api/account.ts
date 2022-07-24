@@ -1,6 +1,6 @@
 import { FetchError, PublicAPIURL } from "./types";
 
-import { type ILoggedInUserData } from "#codegen/schema/001_interfaces";
+import { type IAccountClient } from "#codegen/schema/001_interfaces";
 
 export async function fetchAccountInfo() {
   const url = new PublicAPIURL("/currentuserprofile");
@@ -13,7 +13,7 @@ export async function fetchAccountInfo() {
     throw error;
   }
 
-  const result: ILoggedInUserData = await response.json();
+  const result: IAccountClient = await response.json();
 
   return result;
 }

@@ -1,6 +1,9 @@
 import { isError } from "#lib/errors";
 import { toJSON, fromJSON } from "#lib/json";
 
+/**
+ * All local store values are JSON-encoded strings.
+ */
 export const LOCAL_STORAGE = {
   TEST: "__storage_test__",
   IS_REGISTERED: "is_registered",
@@ -52,4 +55,8 @@ export function setLocalStoreItem<Type = unknown>(
       cause: error,
     });
   }
+}
+
+export function deleteLocaleStoreItem(storeName: ILocalStoreKey) {
+  localStorage.removeItem(storeName);
 }
