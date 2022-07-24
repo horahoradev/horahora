@@ -2,9 +2,9 @@ import { type ReactNode } from "react";
 
 import styles from "./layout.module.scss";
 import { AccountNavigation } from "./account-nav";
+import { GlobalSearch } from "./search";
 
 import { LinkInternal } from "#components/links";
-import { Search } from "#components/inputs";
 import { ListItem, ListUnordered } from "#components/lists";
 
 export interface ILayoutProps {
@@ -18,23 +18,20 @@ export function Layout({ userData, dataless, children }: ILayoutProps) {
     <>
       <header className={styles.header}>
         <nav className={styles.nav}>
-          <ListUnordered >
-            <ListItem>
+          <ListUnordered className={styles.list}>
+            <ListItem className={styles.logo}>
               {/* @TODO: site logo component */}
-              <LinkInternal className={styles.logo} href="/">
-              Horahora
-            </LinkInternal></ListItem>
+              <LinkInternal href="/">Horahora</LinkInternal>
+            </ListItem>
+            <ListItem className={styles.search}>
+              <GlobalSearch />
+            </ListItem>
+            {!dataless && (
+              <ListItem className={styles.account}>
+                <AccountNavigation userData={userData} />
+              </ListItem>
+            )}
           </ListUnordered>
-          <div className="flex justify-start flex-grow-0">
-
-
-          </div>
-          <Search />
-          {!dataless && (
-            <div className="flex-grow-0 ml-auto">
-              <AccountNavigation userData={userData} />
-            </div>
-          )}
         </nav>
       </header>
 

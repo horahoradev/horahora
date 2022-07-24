@@ -29,6 +29,17 @@
   font-weight: bold;
 }
 
+.search {
+  display: flex;
+  justify-content: flex-start;
+  flex-grow: 0;
+}
+
+.account {
+  flex-grow: 0;
+  margin-left: auto
+}
+
 .main {
 }
 
