@@ -53,6 +53,35 @@ export interface IEnvironmentVariables {
   [k: string]: unknown;
 }
 
+/**
+ * A hohora account as shown on client.
+ */
+export interface IAccountClient {
+  userID: number;
+  username: string;
+  profile_picture_url?: string;
+  rank?: number;
+  banned?: boolean;
+}
+
+/**
+ * An account on hohora.
+ */
+export interface IAccount {
+  userID: number;
+  username?: string;
+  profile_picture_url?: string;
+  rank?: number;
+  banned?: boolean;
+}
+
+/**
+ * Initializer for horahora account,
+ */
+export interface IAccountInit {
+  username: string;
+}
+
 export interface IArchivalEvent {
   video_url?: string;
   parent_url?: string;
@@ -94,14 +123,6 @@ export interface ICommentData {
   parent?: number;
 }
 
-export interface ILoggedInUserData {
-  userID?: number;
-  username?: string;
-  profile_picture_url?: string;
-  rank?: number;
-  banned?: boolean;
-}
-
 export interface IPaginationData {
   NumberOfItems?: number;
   CurrentPage?: number;
@@ -114,7 +135,7 @@ export interface IProfileData {
   ProfilePictureURL?: string;
   Videos?: IVideo[];
   Banned?: boolean;
-  L?: ILoggedInUserData;
+  L?: IAccount;
 }
 
 /**
@@ -152,7 +173,7 @@ export interface IVideoDetail {
   UploadDate?: string;
   Tags?: string[];
   RecommendedVideos?: IVideo[];
-  L?: ILoggedInUserData;
+  L?: IAccount;
 }
 
 export interface IVideoInProgress {

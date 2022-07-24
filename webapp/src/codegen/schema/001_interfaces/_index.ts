@@ -1,12 +1,14 @@
 export {} from "./result";
 export type {
   IEnvironmentVariables,
+  IAccountClient,
+  IAccount,
+  IAccountInit,
   IArchivalEvent,
   IArchivalRequest,
   IAuditData,
   IAuditEvent,
   ICommentData,
-  ILoggedInUserData,
   IPaginationData,
   IProfileData,
   IFileUpload,

@@ -9,7 +9,6 @@ import {
   commentDataSchema,
   environmentVariablesSchema,
   fileUploadSchema,
-  loggedInUserDataSchema,
   paginationDataSchema,
   profileDataSchema,
   videoDetailSchema,
@@ -17,6 +16,9 @@ import {
   videoInProgressSchema,
   videoMetadataSchema,
   videoSchema,
+  accountSchema,
+  accountInitSchema,
+  accountClientSchema,
   createAJV,
   createValidator,
 } from "./generator";
@@ -24,12 +26,14 @@ import type {
   ISchemaMap,
   IJSONSchema,
   IEnvironmentVariables,
+  IAccountClient,
+  IAccount,
+  IAccountInit,
   IArchivalEvent,
   IArchivalRequest,
   IAuditData,
   IAuditEvent,
   ICommentData,
-  ILoggedInUserData,
   IPaginationData,
   IProfileData,
   IFileUpload,
@@ -44,6 +48,18 @@ export const validateEnvironmentVariables =
     environmentVariablesSchema as unknown as IJSONSchema,
     ajv
   );
+export const validateAccountClient = createValidator<IAccountClient>(
+  accountClientSchema as unknown as IJSONSchema,
+  ajv
+);
+export const validateAccount = createValidator<IAccount>(
+  accountSchema as unknown as IJSONSchema,
+  ajv
+);
+export const validateAccountInit = createValidator<IAccountInit>(
+  accountInitSchema as unknown as IJSONSchema,
+  ajv
+);
 export const validateArchivalEvent = createValidator<IArchivalEvent>(
   archivalEventSchema as unknown as IJSONSchema,
   ajv
@@ -62,10 +78,6 @@ export const validateAuditEvent = createValidator<IAuditEvent>(
 );
 export const validateCommentData = createValidator<ICommentData>(
   commentDataSchema as unknown as IJSONSchema,
-  ajv
-);
-export const validateLoggedInUserData = createValidator<ILoggedInUserData>(
-  loggedInUserDataSchema as unknown as IJSONSchema,
   ajv
 );
 export const validatePaginationData = createValidator<IPaginationData>(

@@ -55,7 +55,7 @@
       }
     },
     "L": {
-      "$ref": "https://horahora-schemas.org/public-api/current-user-profile.schema.json"
+      "$ref": "https://horahora-schemas.org/entities/account/entity.schema.json"
     }
   }
 }

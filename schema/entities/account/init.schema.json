@@ -1,0 +1,13 @@
+{
+  "$id": "https://horahora-schemas.org/entities/account/init.schema.json",
+  "title": "AccountInit",
+  "description": "Initializer for horahora account,",
+  "type": "object",
+  "required": ["username"],
+  "additionalProperties": false,
+  "properties": {
+    "username": {
+      "type": "string"
+    }
+  }
+}

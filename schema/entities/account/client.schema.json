@@ -1,8 +1,9 @@
 {
-  "$id": "https://horahora-schemas.org/public-api/current-user-profile.schema.json",
-  "title": "LoggedInUserData",
+  "$id": "https://horahora-schemas.org/entities/account/client.schema.json",
+  "title": "AccountClient",
+  "description": "A hohora account as shown on client.",
   "type": "object",
-  "required": [],
+  "required": ["userID", "username"],
   "additionalProperties": false,
   "properties": {
     "userID": {
