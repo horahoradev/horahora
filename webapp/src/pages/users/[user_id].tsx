@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
-import { Avatar, Button } from "antd";
+import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 
-import {
-  getUser,
-  banUser,
-  setUserMod,
-  setUserAdmin,
-} from "#api/index";
+import { getUser, banUser, setUserMod, setUserAdmin } from "#api/index";
 import { type IUserRank, UserRank } from "#api/types";
 import { VideoList } from "#components/video-list";
 import Paginatione from "#components/pagination";
 import { Page } from "#components/page";
+import { Button } from "#components/buttons";
 
 // {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":11,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 
@@ -71,27 +67,19 @@ function UsersPage() {
         </h1>
         {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
           <h1 className={"flex justify-center"}>
-            <Button type="primary" onClick={() => banUser(pageUserData.UserID)}>
-              Ban
-            </Button>
+            <Button onClick={() => banUser(pageUserData.UserID)}>Ban</Button>
           </h1>
         )}
         {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
           <h1 className={"flex justify-center"}>
-            <Button
-              type="primary"
-              onClick={() => setUserMod(pageUserData.UserID)}
-            >
+            <Button onClick={() => setUserMod(pageUserData.UserID)}>
               Promote to mod
             </Button>
           </h1>
         )}
         {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
           <h1 className={"flex justify-center"}>
-            <Button
-              type="primary"
-              onClick={() => setUserAdmin(pageUserData.UserID)}
-            >
+            <Button onClick={() => setUserAdmin(pageUserData.UserID)}>
               Promote to admin
             </Button>
           </h1>
