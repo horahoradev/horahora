@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Switch, Menu } from "antd";
 import { faSun } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -9,7 +8,7 @@ import {
   THEME,
   type ITheme,
 } from "#lib/theme";
-import { Icon } from "#components/icons";
+import { Button } from "#components/buttons";
 
 /**
  * @TODO more standalone markup.
@@ -23,19 +22,13 @@ export function ThemeSwitcher() {
   }, []);
 
   return (
-    <Menu.Item
-      key="darkmode"
-      className="bg-white dark:bg-black"
-      icon={<Icon icon={faSun} />}
-    >
-      <Switch
-        className="text-black dark:text-white"
-        onChange={() => {
-          const nextTheme =
-            currentTheme === THEME.DARK ? THEME.LIGHT : THEME.DARK;
-          switchTheme(setTheme(nextTheme));
-        }}
-      ></Switch>
-    </Menu.Item>
+    <Button
+      iconID={faSun}
+      onClick={() => {
+        const nextTheme =
+          currentTheme === THEME.DARK ? THEME.LIGHT : THEME.DARK;
+        switchTheme(setTheme(nextTheme));
+      }}
+    ></Button>
   );
 }
