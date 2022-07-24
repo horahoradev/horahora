@@ -24,6 +24,9 @@ interface IAccountContext {
   logout: (...args: Parameters<typeof logoutAccount>) => void;
 }
 
+// this is a typescript ritual because default value
+// has to have the same type as the context
+// but these functions can't operate outside of the context component.
 const defaultContext: IAccountContext = {
   register: () => {},
   login: () => {},
@@ -90,8 +93,8 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Using a hook so every component wouldn't need to import the context and `useContext()`
-// to get access to it.
+// Using a hook so every component wouldn't need to import the context object and `useContext()`
+// to get access to it
 export function useAccount() {
   return useContext(AccountContext);
 }
