@@ -16,7 +16,7 @@ export function HomePage() {
   const router = useRouter();
   const { query, isReady } = router;
   const [pageData, setPageData] = useState<IPageData | null>(null);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState();
   const [currPage, setPage] = useState(1);
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states

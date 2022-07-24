@@ -35,7 +35,7 @@ function UsersPage() {
   const { query, isReady } = router;
   const { user_id } = query;
 
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState();
   // @ts-expect-error typing
   const [pageUserData, setPageUserData] = useState<IPageUserData>({});
   const [currPage, setPage] = useState(1);

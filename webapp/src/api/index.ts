@@ -30,24 +30,6 @@ export async function getUserdata() {
   return res.data;
 }
 
-export async function getArchivalSubscriptions() {
-  const res = await axios.get(e("archiverequests"));
-  return res.data;
-}
-
-export async function postArchival(url: string) {
-  let form = new FormData();
-  form.append("url", url);
-
-  const res = await axios.post(e("archiverequests"), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
-
-  return res.data;
-}
-
 export async function deleteVideo(videoId: number) {
   const res = await axios.post(e(`delete/${videoId}`));
   return res.data;
@@ -101,35 +83,6 @@ export async function getComments(videoID: number) {
 
 export async function getAudits(userID: number, page: number) {
   const res = await axios.get(e(`auditevents/${userID}?page=${page}`));
-  return res.data;
-}
-
-export async function getDownloadsInProgress() {
-  const res = await axios.get(e(`downloadsinprogress`));
-  return res.data;
-}
-
-export async function deleteArchivalRequest(download_id: number) {
-  let form = new FormData();
-  form.append("download_id", download_id);
-
-  const res = await axios.post(e("delete-archiverequest"), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
-  return res.data;
-}
-
-export async function retryArchivalRequest(download_id: number) {
-  let form = new FormData();
-  form.append("download_id", download_id);
-
-  const res = await axios.post(e("retry-archiverequest"), form, {
-    headers: {
-      "content-type": "multipart/form-data",
-    },
-  });
   return res.data;
 }
 

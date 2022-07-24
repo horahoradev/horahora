@@ -19,7 +19,7 @@ function VideosPage() {
   const [pageData, setPageData] = useState<IPageData | null>(null);
   const [rating, setRating] = useState(0.0);
   const [comments, setComments] = useState([]);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState();
 
   function navigate_to_next_video() {
     if (!pageData || !pageData.RecommendedVideos) return;
