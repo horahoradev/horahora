@@ -4,6 +4,7 @@ import {
   type ISubmitEvent,
 } from "#components/forms";
 import { Text } from "#components/inputs";
+import { createNewArchivalRequest } from "#api/archives";
 
 const FIELD_NAMES = {
   NEW_URL: "url",
@@ -17,10 +18,12 @@ export interface INewVideoFormProps {
 export function NewVideoForm({ onNewURL }: INewVideoFormProps) {
   async function handleSubmit(event: ISubmitEvent) {
     const fields = event.currentTarget.elements as IFormElements<IFieldName>;
-
     const urlInput = fields[FIELD_NAMES.NEW_URL];
+    const newURL = urlInput.value;
+    const formParams = new URLSearchParams([["url", newURL]]);
 
-    await onNewURL(urlInput.value);
+    await createNewArchivalRequest(formParams);
+    await onNewURL(newURL);
   }
 
   return (
