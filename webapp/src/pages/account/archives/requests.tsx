@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Table, Button, Space } from "antd";
 
-import styles from "./requests.module.scss";
-
 import { Page } from "#components/page";
 import { NewVideoForm } from "#components/posts";
 import { IArchivalRequest } from "#codegen/schema/001_interfaces";
@@ -157,9 +155,8 @@ function NewArchivePage() {
   }
 
   return (
-    <Page>
-      <h1 className={styles.heading}>View and manage your archives</h1>
-      <div className={styles.table}>
+    <Page title="View and manage your archives">
+      <div>
         <NewVideoForm onNewURL={createNewArchival} />
         <Table
           // @ts-expect-error types

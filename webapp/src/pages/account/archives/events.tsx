@@ -1,8 +1,6 @@
 import { Table, Timeline } from "antd";
 import { useEffect, useState } from "react";
 
-import styles from "./events.module.scss";
-
 import { Page } from "#components/page";
 import { getArchivalRequests } from "#api/archives";
 import { type IArchivalEvent } from "#codegen/schema/001_interfaces";
@@ -69,8 +67,7 @@ function ArchivalEventsPage() {
   }, []);
 
   return (
-    <Page>
-      <h1 className={styles.heading} >Archival Events</h1>
+    <Page title="Archival Events">
       <Table
         dataSource={timelineEvents}
         className="align-bottom w-full"

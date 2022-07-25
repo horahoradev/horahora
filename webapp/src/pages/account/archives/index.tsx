@@ -1,27 +1,25 @@
-import styles from "./index.module.scss";
-
 import { Page } from "#components/page";
 import { LinkInternal } from "#components/links";
+import { ListItem, ListUnordered } from "#components/lists";
 
 function ArchivesPage() {
   return (
-    <Page>
-      <h1 className={styles.heading}>Archives</h1>
-      <ul>
-        <li>
+    <Page title="Archives">
+      <ListUnordered>
+        <ListItem>
           <LinkInternal href="/account/archives/requests">
             Requests
           </LinkInternal>
-        </li>
-        <li>
+        </ListItem>
+        <ListItem>
           <LinkInternal href="/account/archives/events">Events</LinkInternal>
-        </li>
-        <li>
+        </ListItem>
+        <ListItem>
           <LinkInternal href="/account/archives/downloads">
             Download Progress
           </LinkInternal>
-        </li>
-      </ul>
+        </ListItem>
+      </ListUnordered>
     </Page>
   );
 }

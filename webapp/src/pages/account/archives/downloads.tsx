@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { StompSubscription, type IMessage } from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
 
-import styles from "./downloads.module.scss";
-
 import { WSClient, WSConfig } from "#lib/fetch";
 import { Page } from "#components/page";
 import { fetchDownloadsInProgress } from "#api/archives";
@@ -198,8 +196,7 @@ function ArchivalDownloadsPage() {
   }
 
   return (
-    <Page>
-      <h1 className={styles.heading} >Videos Currently Being Downloaded</h1>
+    <Page title="Downloads in progress">
       <Table
         // @ts-expect-error types
         dataSource={videoInProgressDataset}
