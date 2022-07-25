@@ -21,6 +21,10 @@ html {
 body {
   width: 100%;
   height: 100%;
+  // setting this value because of shit antd stylesheet
+  // hardcoding it on the `<body>`
+  // @TODO remove it once antd is gone
+  font-size: 100%;
   padding: 0;
   margin: 0;
 }

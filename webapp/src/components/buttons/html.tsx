@@ -1,4 +1,4 @@
-import styles from "./base.module.scss";
+import styles from "./html.module.scss";
 
 import { blockComponent, type IBlockProps } from "#components/meta";
 import { Icon, type IIconID } from "#components/icons";
