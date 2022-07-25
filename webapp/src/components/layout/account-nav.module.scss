@@ -1,3 +1,49 @@
-.block {
+@use "../../styles/variables/sass.scss" as *;
 
+.block {
+  position: relative;
+  flex-basis: 8em;
+
+  &:focus-within,
+  &_open {
+    & > .switch {
+      background-color: var(--colour1-primary);
+    }
+
+    & > .list {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  &_loading {
+    pointer-events: none;
+    cursor: progress;
+  }
+}
+
+.switch {
+  width: 100%;
+  justify-content: center;
+}
+
+.list {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: $size-normal;
+  width: 100%;
+  background-color: var(--colour1-primary);
+  border-radius: $radius-small;
+  padding: $size-normal;
+
+  visibility: hidden;
+  opacity: 0;
+
+  transition-duration: var(--duration-global);
+  transition-property: visibility, opacity;
+}
+
+.item {
 }
