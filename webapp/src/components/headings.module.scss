@@ -1,8 +1,9 @@
 .block {
   // font-weight: normal;
+  color: var(--colour0-primary);
+
   transition-duration: var(--duration-global);
   transition-property: color, background-color;
-  margin: 0;
 }
 
 .level1 {

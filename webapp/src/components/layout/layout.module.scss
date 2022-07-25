@@ -28,6 +28,10 @@
   flex-basis: $width-laptop;
 }
 
+.logo {
+  display: flex;
+}
+
 .list {
   display: flex;
   justify-content: space-between;

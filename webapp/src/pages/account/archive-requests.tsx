@@ -430,7 +430,7 @@ function ArchivalPage() {
   ];
 
   return (
-    <Page>
+    <Page title="Archive requests">
       <div className=" mx-10 h-full">
         <div className="inline-block mr-5">
           <b className="text-black dark:text-white text-4xl m-0">Archives</b>

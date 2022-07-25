@@ -5,6 +5,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import type { ChangeEvent } from "react";
 
 import { getAudits } from "#api/index";
+import { Page } from "#components/page";
 
 function AuditsPage() {
   const [pageData, setPageData] = useState<{
@@ -59,7 +60,7 @@ function AuditsPage() {
   if (pageData == null) return null;
 
   return (
-    <>
+    <Page title="Audit logs">
       <Input
         name="search"
         size="large"
@@ -86,7 +87,7 @@ function AuditsPage() {
           total: pageData.Length,
         }}
       />
-    </>
+    </Page>
   );
 }
 

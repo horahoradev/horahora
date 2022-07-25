@@ -47,7 +47,7 @@ function LoginPage() {
   }
 
   return (
-    <Page>
+    <Page title="Log in">
       <FormClient id="auth-login" onSubmit={handleSubmit}>
         <p>
           Not registered?{" "}

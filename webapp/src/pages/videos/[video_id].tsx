@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { getComments, getVideo } from "#api/index";
-import { VideoList } from "#components/video-list";
 import { VideoView } from "#components/posts";
 import { type IVideoDetailed, type IVideo } from "#types/entities";
 import { Page } from "#components/page";
+import { VideoList } from "#components/video-list";
 
 interface IPageData extends IVideoDetailed {
   RecommendedVideos: IVideo[];
@@ -55,25 +55,23 @@ function VideosPage() {
   if (pageData == null) return null;
 
   return (
-    <Page>
-      <div className="w-screen my-6 z-0 min-w-400">
-        <VideoView
-          data={pageData}
-          videoComments={comments}
-          id={video_id}
-          refreshComments={refreshComments}
-          setRating={setRating}
-          rating={rating}
-          next_video={navigate_to_next_video}
-        />
-      </div>
-      <div className="ml-4 mt-2 w-100 align-top float-right">
+    <Page title="Video">
+      <VideoView
+        data={pageData}
+        videoComments={comments}
+        id={video_id}
+        refreshComments={refreshComments}
+        setRating={setRating}
+        rating={rating}
+        next_video={navigate_to_next_video}
+      />
+      {/* <div className="ml-4 mt-2 w-100 align-top float-right">
         <VideoList
           videos={pageData.RecommendedVideos}
           title="Recommendations"
           inline={true}
         />
-      </div>
+      </div> */}
     </Page>
   );
 }

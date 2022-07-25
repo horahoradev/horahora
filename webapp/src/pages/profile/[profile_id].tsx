@@ -54,49 +54,47 @@ function UsersPage() {
   }, [user_id, currPage, isReady]);
 
   return (
-    <Page>
-      <div className="pt-10">
-        {/*lol oh no*/}
-        {/* TODO: add user profile image*/}
-        <div className={"flex justify-center mx-4"}>
-          <Avatar shape="square" size={96} icon={<UserOutlined />} />
-        </div>
+    <Page title="Profile information">
+      {/*lol oh no*/}
+      {/* TODO: add user profile image*/}
+      <div className={"flex justify-center mx-4"}>
+        <Avatar shape="square" size={96} icon={<UserOutlined />} />
+      </div>
 
-        <h1 className={"flex justify-center text-black dark:text-white"}>
-          {pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
-        </h1>
-        {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
-          <h1 className={"flex justify-center"}>
-            <Button onClick={() => banUser(pageUserData.UserID)}>Ban</Button>
-          </h1>
-        )}
-        {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
-          <h1 className={"flex justify-center"}>
-            <Button onClick={() => setUserMod(pageUserData.UserID)}>
-              Promote to mod
-            </Button>
-          </h1>
-        )}
-        {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
-          <h1 className={"flex justify-center"}>
-            <Button onClick={() => setUserAdmin(pageUserData.UserID)}>
-              Promote to admin
-            </Button>
-          </h1>
-        )}
+      <p className={"flex justify-center text-black dark:text-white"}>
+        {pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
+      </p>
+      {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
+        <p className={"flex justify-center"}>
+          <Button onClick={() => banUser(pageUserData.UserID)}>Ban</Button>
+        </p>
+      )}
+      {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
+        <p className={"flex justify-center"}>
+          <Button onClick={() => setUserMod(pageUserData.UserID)}>
+            Promote to mod
+          </Button>
+        </p>
+      )}
+      {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
+        <p className={"flex justify-center"}>
+          <Button onClick={() => setUserAdmin(pageUserData.UserID)}>
+            Promote to admin
+          </Button>
+        </p>
+      )}
 
-        {/* TODO: no more copy pasta! */}
-        <div className="flex justify-center mx-4 min-h-screen">
-          <div className="max-w-screen-lg w-screen my-6">
-            <VideoList
-              // @ts-expect-error some type
-              videos={pageUserData.Videos}
-            />
-            <Paginatione
-              paginationData={pageUserData.PaginationData}
-              onPageChange={setPage}
-            />
-          </div>
+      {/* TODO: no more copy pasta! */}
+      <div className="flex justify-center mx-4 min-h-screen">
+        <div className="max-w-screen-lg w-screen my-6">
+          <VideoList
+            // @ts-expect-error some type
+            videos={pageUserData.Videos}
+          />
+          <Paginatione
+            paginationData={pageUserData.PaginationData}
+            onPageChange={setPage}
+          />
         </div>
       </div>
     </Page>

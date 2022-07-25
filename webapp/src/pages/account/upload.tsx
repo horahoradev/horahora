@@ -74,7 +74,7 @@ function UploadPage() {
   }
 
   return (
-    <Page>
+    <Page title="Upload new post" >
       {newVideoID ? (
         <p>
           New video is available at{" "}

@@ -48,9 +48,8 @@ function RegisterPage() {
   }
 
   return (
-    <Page>
+    <Page title="Register">
       <FormClient id="auth-register" onSubmit={handleSubmit}>
-        <p>Register a new account.</p>
         <Text id="auth-register-username" name={FIELD_NAMES.NAME}>
           Name
         </Text>

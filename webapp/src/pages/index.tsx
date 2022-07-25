@@ -52,21 +52,18 @@ export function HomePage() {
   }, [currPage, isReady]);
 
   return (
-    <Page>
-      <div className="max-w-screen-lg w-screen">
-        <h1 className="bold text-2xl text-black dark:text-white">
-          Number of videos:{" "}
-          {pageData ? pageData.PaginationData.NumberOfItems : 0}
-        </h1>
-        <VideoList
-          // @ts-expect-error types
-          videos={pageData ? pageData.Videos : []}
-        />
-        <Paginatione
-          paginationData={pageData ? pageData.PaginationData : []}
-          onPageChange={setPage}
-        />
-      </div>
+    <Page title="Videos">
+      <p>
+        Number of videos: {pageData ? pageData.PaginationData.NumberOfItems : 0}
+      </p>
+      <VideoList
+        // @ts-expect-error types
+        videos={pageData ? pageData.Videos : []}
+      />
+      <Paginatione
+        paginationData={pageData ? pageData.PaginationData : []}
+        onPageChange={setPage}
+      />
     </Page>
   );
 }

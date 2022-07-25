@@ -16,6 +16,8 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_ORIGIN=${PUBLIC_ORIGIN}
     volumes:
       - ./webapp/src:/webapp/src
       - ./webapp/public:/webapp/public
