@@ -28,7 +28,7 @@ interface IPageUserData extends Record<string, unknown> {
 function UsersPage() {
   const router = useRouter();
   const { query, isReady } = router;
-  const { user_id } = query;
+  const { profile_id } = query;
   // @ts-expect-error typing
   const [pageUserData, setPageUserData] = useState<IPageUserData>({});
   const [currPage, setPage] = useState(1);
@@ -43,7 +43,7 @@ function UsersPage() {
 
     let fetchData = async () => {
       // @ts-expect-error some types
-      let pageUserData = await getUser(user_id, currPage);
+      let pageUserData = await getUser(profile_id, currPage);
       if (!ignore) setPageUserData(pageUserData);
     };
 
@@ -51,7 +51,7 @@ function UsersPage() {
     return () => {
       ignore = true;
     };
-  }, [user_id, currPage, isReady]);
+  }, [profile_id, currPage, isReady]);
 
   return (
     <Page title="Profile information">

@@ -19,6 +19,7 @@ import { ListItem, ListUnordered } from "#components/lists";
 import { Button } from "#components/buttons";
 import { type ILoggedInUserData } from "#codegen/schema/001_interfaces";
 import { onParentBlur } from "#lib/dom";
+import { ProfileURL } from "#lib/urls";
 
 // eslint-disable-next-line
 import styles from "./account-nav.module.scss";
@@ -66,39 +67,52 @@ export function AccountNavigation() {
       <ListUnordered className={styles.list}>
         {!isRegistered ? (
           <>
-            <ListItem>
+            <ListItem className={styles.item}>
               <LinkInternal
+                className={styles.link}
                 href="/authentication/login"
                 iconID={faArrowRightToBracket}
               >
                 Login
               </LinkInternal>
             </ListItem>
-            <ListItem>
-              <LinkInternal href="/authentication/register" iconID={faUserPlus}>
+
+            <ListItem className={styles.item}>
+              <LinkInternal
+                className={styles.link}
+                href="/authentication/register"
+                iconID={faUserPlus}
+              >
                 Register
               </LinkInternal>
             </ListItem>
           </>
         ) : (
           <>
-            <ListItem>
-              <LinkInternal iconID={faUpload} href="/account/upload">
-                Upload
-              </LinkInternal>
-            </ListItem>
-            <ListItem>
+            <ListItem className={styles.item}>
               <LinkInternal
+                className={styles.link}
                 iconID={faUser}
                 // @ts-expect-error figure `userData` shape
-                href={`/users/${userData.userID}`}
+                href={new ProfileURL(userData.userID)}
               >
                 Profile page
               </LinkInternal>
             </ListItem>
+
+            <ListItem className={styles.item}>
+              <LinkInternal
+                className={styles.link}
+                iconID={faUpload}
+                href="/account/upload"
+              >
+                Upload
+              </LinkInternal>
+            </ListItem>
             {isAdmin && (
-              <ListItem>
+              <ListItem className={styles.item}>
                 <LinkInternal
+                  className={styles.link}
                   iconID={faArchive}
                   href="/account/archive-requests"
                 >
@@ -106,20 +120,24 @@ export function AccountNavigation() {
                 </LinkInternal>
               </ListItem>
             )}
-            <ListItem>
+            <ListItem className={styles.item}>
               <ThemeSwitcher />
             </ListItem>
-            <ListItem>
+
+            <ListItem className={styles.item}>
               <LinkInternal
+                className={styles.link}
                 iconID={faKey}
                 href="/authentication/password-reset"
               >
                 Reset Password
               </LinkInternal>
             </ListItem>
+
             {isAdmin && (
-              <ListItem>
+              <ListItem className={styles.item}>
                 <LinkInternal
+                  className={styles.link}
                   iconID={faArchive}
                   href="/account/administrator/audits"
                 >
@@ -127,8 +145,13 @@ export function AccountNavigation() {
                 </LinkInternal>
               </ListItem>
             )}
-            <ListItem>
-              <LinkInternal iconID={faSignOutAlt} href="/authentication/logout">
+
+            <ListItem className={styles.item}>
+              <LinkInternal
+                className={styles.link}
+                iconID={faSignOutAlt}
+                href="/authentication/logout"
+              >
                 Logout
               </LinkInternal>
             </ListItem>

@@ -29,11 +29,12 @@
 
 .list {
   position: absolute;
+  right: 0;
   z-index: 1;
   display: flex;
   flex-flow: column nowrap;
   gap: $size-normal;
-  width: 100%;
+  width: 150%;
   background-color: var(--colour1-primary);
   border-radius: $radius-small;
   padding: $size-normal;
@@ -46,4 +47,10 @@
 }
 
 .item {
+  display: flex;
+  justify-content: stretch;
+}
+
+.link {
+  width: 100%;
 }
