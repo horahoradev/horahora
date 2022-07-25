@@ -56,7 +56,7 @@
   grid-template-columns: 100%;
   align-content: baseline;
   gap: $size-normal;
-  background-color: var(--colour1-tertiary);
+  background-color: var(--colour1-tertiary-transparent);
   padding-bottom: $size-normal;
 
   & > * {
