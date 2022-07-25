@@ -1,0 +1,37 @@
+html {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  font-size: 100%;
+  font-family: Helvetica, sans-serif;
+  padding: 0;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+*[id="__next"] {
+  position: relative;
+  display: grid;
+  grid-template:
+    "header" auto
+    "main" 1fr
+    "footer" auto
+    / 100%;
+  justify-items: stretch;
+  min-height: 100%;
+  width: 100%;
+}

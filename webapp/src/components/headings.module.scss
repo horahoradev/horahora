@@ -1,0 +1,33 @@
+.block {
+  // font-weight: normal;
+  transition-duration: var(--duration-global);
+  transition-property: color, background-color;
+  margin: 0;
+}
+
+.level1 {
+  text-transform: capitalize;
+  text-align: center;
+  font-size: 1.7rem;
+  background-color: var(--colour1-primary);
+}
+
+.level2 {
+  font-size: 1.6rem;
+}
+
+.level3 {
+  font-size: 1.5rem;
+}
+
+.level4 {
+  font-size: 1.4rem;
+}
+
+.level5 {
+  font-size: 1.3rem;
+}
+
+.level6 {
+  font-size: 1.2rem;
+}

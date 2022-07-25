@@ -1,10 +1,27 @@
 @use "../../styles/variables/sass.scss" as *;
 
+.header,
+.main,
+.footer {
+  color: var(--colour0-primary);
+
+  transition-duration: var(--duration-global);
+  transition-property: color, background-color;
+}
+
 .header {
+  grid-area: header;
   display: flex;
-  justify-content: center;
-  height: 4rem;
-  background-color: var(--colour1-secondary);
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: $size-normal;
+  background-color: var(--colour1-secondary-transparent);
+  padding: $size-small $size-normal;
+
+  @media (min-width: $width-tablet) {
+    padding: $size-small $size-big;
+  }
 }
 
 .nav {
@@ -37,18 +54,44 @@
 
 .account {
   flex-grow: 0;
-  margin-left: auto
+  margin-left: auto;
 }
 
 .main {
+  grid-area: main;
+  display: grid;
+  grid-template-columns: 100%;
+  align-content: baseline;
+  gap: $size-normal;
+  background-color: var(--colour1-tertiary);
+  padding-bottom: $size-normal;
+
+  & > * {
+    padding: 0 $size-small;
+
+    @media (min-width: $width-phone) {
+      padding: 0 $size-normal;
+    }
+
+    @media (min-width: $width-tablet) {
+      padding: 0 $size-big;
+    }
+  }
 }
 
 .footer {
+  grid-area: footer;
   display: flex;
-  justify-content: space-around;
-  width: 100%;
-  height: 2rem;
-  background-color: var(--colour1-secondary);
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $size-normal;
+  background-color: var(--colour1-secondary-transparent);
+  padding: $size-small $size-normal;
+
+  @media (min-width: $width-tablet) {
+    padding: $size-small $size-big;
+  }
 }
 
 .link {
