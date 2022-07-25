@@ -13,7 +13,7 @@
   grid-area: header;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: $size-normal;
   background-color: var(--colour1-secondary-transparent);
@@ -25,19 +25,13 @@
 }
 
 .nav {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 1rem;
-  max-width: 1024px;
-  width: 100vw;
-  margin: 0 1rem;
+  flex-basis: $width-laptop;
 }
 
 .list {
   display: flex;
-  justify-content: flex-start;
-  flex-grow: 0;
+  justify-content: space-between;
+  gap: $size-normal;
 }
 
 .logo {
@@ -50,11 +44,6 @@
   display: flex;
   justify-content: flex-start;
   flex-grow: 0;
-}
-
-.account {
-  flex-grow: 0;
-  margin-left: auto;
 }
 
 .main {

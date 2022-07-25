@@ -24,93 +24,82 @@ export function AccountNavigation() {
   const isAdmin = userData?.rank === UserRank.ADMIN;
 
   useEffect(() => {
-    let ignore = false;
-
     (async () => {
       let userData = await getUserdata();
-      if (!ignore) setUserData(userData);
+      setUserData(userData);
     })();
-
-    return () => {
-      ignore = true;
-    };
   }, []);
 
   return (
-    <ListUnordered className={styles.block}>
-      <ListItem>
-        <Button iconID={faBars}>Account</Button>
-        <ListUnordered>
-          {!isRegistered ? (
-            <>
-              <ListItem>
-                <LinkInternal href="/authentication/login">Login</LinkInternal>
-              </ListItem>
-              <ListItem>
-                <LinkInternal href="/authentication/register">
-                  Register
-                </LinkInternal>
-              </ListItem>
-            </>
-          ) : (
-            <>
-              <ListItem>
-                <LinkInternal iconID={faUpload} href="/account/upload">
-                  Upload
-                </LinkInternal>
-              </ListItem>
-              <ListItem>
-                <LinkInternal
-                  iconID={faUser}
-                  // @ts-expect-error figure `userData` shape
-                  href={`/users/${userData.userID}`}
-                >
-                  Profile page
-                </LinkInternal>
-              </ListItem>
-              {isAdmin && (
-                <ListItem>
-                  <LinkInternal
-                    iconID={faArchive}
-                    href="/account/archive-requests"
-                  >
-                    Archive Requests
-                  </LinkInternal>
-                </ListItem>
-              )}
-              <ListItem>
-                <ThemeSwitcher />
-              </ListItem>
+    <ListItem className={styles.block}>
+      <Button iconID={faBars}>Account</Button>
+      <ListUnordered>
+        {!isRegistered ? (
+          <>
+            <ListItem>
+              <LinkInternal href="/authentication/login">Login</LinkInternal>
+            </ListItem>
+            <ListItem>
+              <LinkInternal href="/authentication/register">
+                Register
+              </LinkInternal>
+            </ListItem>
+          </>
+        ) : (
+          <>
+            <ListItem>
+              <LinkInternal iconID={faUpload} href="/account/upload">
+                Upload
+              </LinkInternal>
+            </ListItem>
+            <ListItem>
+              <LinkInternal
+                iconID={faUser}
+                // @ts-expect-error figure `userData` shape
+                href={`/users/${userData.userID}`}
+              >
+                Profile page
+              </LinkInternal>
+            </ListItem>
+            {isAdmin && (
               <ListItem>
                 <LinkInternal
-                  iconID={faKey}
-                  href="/authentication/password-reset"
+                  iconID={faArchive}
+                  href="/account/archive-requests"
                 >
-                  Reset Password
+                  Archive Requests
                 </LinkInternal>
               </ListItem>
-              {isAdmin && (
-                <ListItem>
-                  <LinkInternal
-                    iconID={faArchive}
-                    href="/account/administrator/audits"
-                  >
-                    Audit Logs
-                  </LinkInternal>
-                </ListItem>
-              )}
+            )}
+            <ListItem>
+              <ThemeSwitcher />
+            </ListItem>
+            <ListItem>
+              <LinkInternal
+                iconID={faKey}
+                href="/authentication/password-reset"
+              >
+                Reset Password
+              </LinkInternal>
+            </ListItem>
+            {isAdmin && (
               <ListItem>
                 <LinkInternal
-                  iconID={faSignOutAlt}
-                  href="/authentication/logout"
+                  iconID={faArchive}
+                  href="/account/administrator/audits"
                 >
-                  Logout
+                  Audit Logs
                 </LinkInternal>
               </ListItem>
-            </>
-          )}
-        </ListUnordered>
-      </ListItem>
-    </ListUnordered>
+            )}
+            <ListItem>
+              <LinkInternal iconID={faSignOutAlt} href="/authentication/logout">
+                Logout
+              </LinkInternal>
+            </ListItem>
+          </>
+        )}
+      </ListUnordered>
+    </ListItem>
   );
 }

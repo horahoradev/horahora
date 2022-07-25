@@ -12,12 +12,16 @@ interface IPageProps {
  * to construct and style the page markup.
  */
 export function Page({ title, children }: IPageProps) {
-  return !title ? (
-    children
-  ) : (
+  return (
     <>
-      <Heading level={1}>{title}</Heading>
-      <section>{children}</section>
+      {!title ? (
+        children
+      ) : (
+        <>
+          <Heading level={1}>{title}</Heading>
+          <section>{children}</section>
+        </>
+      )}
     </>
   );
 }

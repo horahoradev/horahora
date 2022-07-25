@@ -24,16 +24,14 @@ export function Layout({ children }: ILayoutProps) {
             <ListItem className={styles.search}>
               <GlobalSearch />
             </ListItem>
-            <ListItem className={styles.account}>
-              <AccountNavigation />
-            </ListItem>
+            <AccountNavigation />
           </ListUnordered>
         </nav>
       </header>
 
       <main className={styles.main}>{children}</main>
 
-      <footer className={styles.block}>
+      <footer className={styles.footer}>
         <LinkInternal className={styles.link} href="/privacy-policy">
           Privacy Policy
         </LinkInternal>
