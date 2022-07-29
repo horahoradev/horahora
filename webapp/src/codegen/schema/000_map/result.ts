@@ -96,6 +96,92 @@ export const environmentVariablesSchema = {
     },
   },
 } as const;
+export const accountClientSchema = {
+  $id: "https://horahora-schemas.org/entities/account/client.schema.json",
+  title: "AccountClient",
+  description:
+    "A horahora account as shown on client. For now is the same shape as the entity.",
+  type: "object",
+  required: ["userID"],
+  additionalProperties: false,
+  properties: {
+    userID: {
+      type: "integer",
+    },
+    username: {
+      type: "string",
+    },
+    profile_picture_url: {
+      type: "string",
+    },
+    rank: {
+      type: "integer",
+    },
+    banned: {
+      type: "boolean",
+    },
+  },
+} as const;
+export const accountSchema = {
+  $id: "https://horahora-schemas.org/entities/account/entity.schema.json",
+  title: "Account",
+  description: "An account on horahora.",
+  type: "object",
+  required: ["userID"],
+  additionalProperties: false,
+  properties: {
+    userID: {
+      type: "integer",
+    },
+    username: {
+      type: "string",
+    },
+    profile_picture_url: {
+      type: "string",
+    },
+    rank: {
+      type: "integer",
+    },
+    banned: {
+      type: "boolean",
+    },
+  },
+} as const;
+export const accountInitSchema = {
+  $id: "https://horahora-schemas.org/entities/account/init.schema.json",
+  title: "AccountInit",
+  description: "Initializer for horahora account.",
+  type: "object",
+  required: ["username", "email", "password"],
+  additionalProperties: false,
+  properties: {
+    username: {
+      type: "string",
+    },
+    email: {
+      type: "string",
+    },
+    password: {
+      type: "string",
+    },
+  },
+} as const;
+export const accountLoginSchema = {
+  $id: "https://horahora-schemas.org/entities/account/login.schema.json",
+  title: "AccountLogin",
+  description: "Account information needed to log in an account.",
+  type: "object",
+  required: ["username", "password"],
+  additionalProperties: false,
+  properties: {
+    username: {
+      type: "string",
+    },
+    password: {
+      type: "string",
+    },
+  },
+} as const;
 export const archivalEventSchema = {
   $id: "https://horahora-schemas.org/public-api/archival-event.schema.json",
   title: "ArchivalEvent",
@@ -230,30 +316,6 @@ export const commentDataSchema = {
     },
   },
 } as const;
-export const loggedInUserDataSchema = {
-  $id: "https://horahora-schemas.org/public-api/current-user-profile.schema.json",
-  title: "LoggedInUserData",
-  type: "object",
-  required: [],
-  additionalProperties: false,
-  properties: {
-    userID: {
-      type: "integer",
-    },
-    username: {
-      type: "string",
-    },
-    profile_picture_url: {
-      type: "string",
-    },
-    rank: {
-      type: "integer",
-    },
-    banned: {
-      type: "boolean",
-    },
-  },
-} as const;
 export const paginationDataSchema = {
   $id: "https://horahora-schemas.org/public-api/pagination-data.schema.json",
   title: "PaginationData",
@@ -298,7 +360,7 @@ export const profileDataSchema = {
       type: "boolean",
     },
     L: {
-      $ref: "https://horahora-schemas.org/public-api/current-user-profile.schema.json",
+      $ref: "https://horahora-schemas.org/entities/account/entity.schema.json",
     },
   },
 } as const;
@@ -388,7 +450,7 @@ export const videoDetailSchema = {
       },
     },
     L: {
-      $ref: "https://horahora-schemas.org/public-api/current-user-profile.schema.json",
+      $ref: "https://horahora-schemas.org/entities/account/entity.schema.json",
     },
   },
 } as const;
@@ -486,12 +548,15 @@ export const videoSchema = {
 } as const;
 export const schemaMap = {
   [environmentVariablesSchema.$id]: environmentVariablesSchema,
+  [accountClientSchema.$id]: accountClientSchema,
+  [accountSchema.$id]: accountSchema,
+  [accountInitSchema.$id]: accountInitSchema,
+  [accountLoginSchema.$id]: accountLoginSchema,
   [archivalEventSchema.$id]: archivalEventSchema,
   [archivalRequestSchema.$id]: archivalRequestSchema,
   [auditDataSchema.$id]: auditDataSchema,
   [auditEventSchema.$id]: auditEventSchema,
   [commentDataSchema.$id]: commentDataSchema,
-  [loggedInUserDataSchema.$id]: loggedInUserDataSchema,
   [paginationDataSchema.$id]: paginationDataSchema,
   [profileDataSchema.$id]: profileDataSchema,
   [fileUploadSchema.$id]: fileUploadSchema,

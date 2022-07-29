@@ -16,7 +16,6 @@ export {
   commentDataSchema,
   environmentVariablesSchema,
   fileUploadSchema,
-  loggedInUserDataSchema,
   paginationDataSchema,
   profileDataSchema,
   videoDetailSchema,
@@ -24,6 +23,10 @@ export {
   videoInProgressSchema,
   videoMetadataSchema,
   videoSchema,
+  accountSchema,
+  accountInitSchema,
+  accountClientSchema,
+  accountLoginSchema,
 } from "../000_map/_index";
 export type {
   IArchivalEvent,
@@ -33,13 +36,16 @@ export type {
   ICommentData,
   IEnvironmentVariables,
   IFileUpload,
-  ILoggedInUserData,
   IPaginationData,
   IProfileData,
   IVideo,
   IVideoDetail,
   IVideoInProgress,
   IVideoMetadata,
+  IAccount,
+  IAccountClient,
+  IAccountInit,
+  IAccountLogin,
 } from "../001_interfaces/_index";
 export { createAJV, createValidator } from "#lib/json-schema";
 export type { ISchemaMap, IJSONSchema } from "#lib/json-schema";

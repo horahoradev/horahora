@@ -5,6 +5,7 @@ import Head from "next/head";
 import type { AppProps } from "next/app";
 
 import { Layout } from "#components/layout";
+import { AccountProvider } from "#hooks";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -31,9 +32,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="apple-touch-icon" href="/logo192.png" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <AccountProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </AccountProvider>
     </>
   );
 }
