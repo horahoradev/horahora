@@ -16,12 +16,18 @@ import {
   type IAccount,
 } from "#lib/account";
 import { fetchAccountInfo } from "#api/account";
+import { UserRank } from "#api/types";
 
 interface IAccountContext {
   account?: IAccount;
   register: (...args: Parameters<typeof registerAccount>) => Promise<void>;
   login: (...args: Parameters<typeof loginAccount>) => Promise<void>;
   logout: (...args: Parameters<typeof logoutAccount>) => Promise<void>;
+}
+
+interface IUseAccount extends IAccountContext {
+  isRegistered: boolean;
+  isAdmin: boolean;
 }
 
 // this is a typescript ritual because default value
@@ -95,6 +101,10 @@ export function AccountProvider({ children }: { children: ReactNode }) {
 
 // Using a hook so every component wouldn't need to import the context object and `useContext()`
 // to get access to it
-export function useAccount() {
-  return useContext(AccountContext);
+export function useAccount(): IUseAccount {
+  const { account, ...accContext } = useContext(AccountContext);
+  const isRegistered = Boolean(account);
+  const isAdmin = account?.rank === UserRank.ADMIN;
+
+  return { account, ...accContext, isRegistered, isAdmin };
 }
