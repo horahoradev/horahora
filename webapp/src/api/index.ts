@@ -2,7 +2,6 @@ import axios from "axios";
 import FormData from "form-data";
 
 import { API_ENDPOINT } from "#environment/vars";
-import { type ILoggedInUserData } from "#codegen/schema/001_interfaces";
 
 function e(name: string) {
   return `${API_ENDPOINT}${name}`;
@@ -23,11 +22,6 @@ export async function getHome(
 export async function getUser(id: number, page: number) {
   const path = "users/" + id + "?page=" + page;
   const res = await axios.get(e(path));
-  return res.data;
-}
-
-export async function getUserdata(): Promise<ILoggedInUserData> {
-  const res = await axios.get(e("currentuserprofile/"));
   return res.data;
 }
 
