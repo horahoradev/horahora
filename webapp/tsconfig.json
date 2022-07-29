@@ -6,6 +6,7 @@
       "#codegen/*": ["./src/codegen/*/_index.ts"],
       "#api/*": ["./src/api/*"],
       "#lib/*": ["./src/lib/*/_index.ts", "./src/lib/*"],
+      "#hooks": ["./src/hooks/_index.ts"],
       "#components/*": ["./src/components/*/_index.ts", "./src/components/*"],
       "#pages/*": ["./src/pages/*"],
       "#server/*": ["./src/server/*/_index.ts"],

@@ -2,10 +2,10 @@ import "antd/dist/antd.css";
 import "#styles/index.scss";
 
 import Head from "next/head";
-import type { AppProps } from 'next/app'
+import type { AppProps } from "next/app";
 
 import { Footer } from "#components/footer";
-
+import { AccountProvider } from "#hooks";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -33,7 +33,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <div className="text-base bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
-        <Component {...pageProps} />
+        <AccountProvider>
+          <Component {...pageProps} />
+        </AccountProvider>
       </div>
 
       <Footer />

@@ -1,0 +1,16 @@
+{
+  "$id": "https://horahora-schemas.org/entities/account/login.schema.json",
+  "title": "AccountLogin",
+  "description": "Account information needed to log in an account.",
+  "type": "object",
+  "required": ["username", "password"],
+  "additionalProperties": false,
+  "properties": {
+    "username": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    }
+  }
+}
