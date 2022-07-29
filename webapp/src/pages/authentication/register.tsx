@@ -24,7 +24,7 @@ function RegisterPage() {
 
   async function handleSubmit(event: ISubmitEvent) {
     const fields = event.currentTarget.elements as IFormElements<IFieldName>;
-    const accInit = Object.values(FIELD_NAMES).reduce<IAccountInit>(
+    const accInit = Object.values(FIELD_NAMES).reduce(
       (accInit, fieldName) => {
         switch (fieldName) {
           case FIELD_NAMES.NAME:
