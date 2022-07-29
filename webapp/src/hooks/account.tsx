@@ -19,18 +19,18 @@ import { fetchAccountInfo } from "#api/account";
 
 interface IAccountContext {
   account?: IAccount;
-  register: (...args: Parameters<typeof registerAccount>) => void;
-  login: (...args: Parameters<typeof loginAccount>) => void;
-  logout: (...args: Parameters<typeof logoutAccount>) => void;
+  register: (...args: Parameters<typeof registerAccount>) => Promise<void>;
+  login: (...args: Parameters<typeof loginAccount>) => Promise<void>;
+  logout: (...args: Parameters<typeof logoutAccount>) => Promise<void>;
 }
 
 // this is a typescript ritual because default value
 // has to have the same type as the context
 // but these functions can't operate outside of the context component.
 const defaultContext: IAccountContext = {
-  register: () => {},
-  login: () => {},
-  logout: () => {},
+  register: async () => {},
+  login: async () => {},
+  logout: async () => {},
 };
 
 const AccountContext = createContext<IAccountContext>(defaultContext);

@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 
-import { registerAccount } from "#api/authentication";
 import { LinkInternal } from "#components/links";
 import { Page } from "#components/page";
 import {
@@ -9,6 +8,8 @@ import {
   type ISubmitEvent,
 } from "#components/forms";
 import { Text, Password, Email } from "#components/inputs";
+import { useAccount } from "#hooks";
+import { type IAccountInit } from "#lib/account";
 
 const FIELD_NAMES = {
   NAME: "username",
@@ -19,17 +20,18 @@ type IFieldName = typeof FIELD_NAMES[keyof typeof FIELD_NAMES];
 
 function RegisterPage() {
   const router = useRouter();
+  const { register } = useAccount();
 
   async function handleSubmit(event: ISubmitEvent) {
     const fields = event.currentTarget.elements as IFormElements<IFieldName>;
-    const formParams = Object.values(FIELD_NAMES).reduce(
-      (formParams, fieldName) => {
+    const accInit = Object.values(FIELD_NAMES).reduce<IAccountInit>(
+      (accInit, fieldName) => {
         switch (fieldName) {
           case FIELD_NAMES.NAME:
           case FIELD_NAMES.EMAIL:
           case FIELD_NAMES.PASSWORD: {
             const fieldElement = fields[fieldName];
-            formParams.set(fieldName, fieldElement.value);
+            accInit[fieldName] = fieldElement.value;
             break;
           }
 
@@ -39,11 +41,11 @@ function RegisterPage() {
             );
         }
 
-        return formParams;
+        return accInit;
       },
-      new URLSearchParams()
+      {} as IAccountInit
     );
-    await registerAccount(formParams);
+    await register(accInit);
     router.push("/");
   }
 
