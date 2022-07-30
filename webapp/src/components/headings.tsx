@@ -11,7 +11,7 @@ export type IHeadingLevel = typeof headingLevels[number];
  * Not creating separate interfaces per header because they all share the same interface.
  */
 export interface IHeadingProps extends IBlockProps<"h1"> {
-  level: IHeadingLevel;
+  level?: IHeadingLevel;
 }
 
 export const Heading = blockComponent(styles.block, Component);

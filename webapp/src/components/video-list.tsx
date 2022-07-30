@@ -1,5 +1,5 @@
-import { type IVideo } from "#types/entities";
-import { VideoPost } from "#components/entities/video-post";
+import { PostCard } from "#components/entities/post";
+import { type IVideo } from "#codegen/schema/001_interfaces";
 
 const VIDEO_ELEMENT_WIDTH = "w-44";
 
@@ -15,9 +15,7 @@ export function VideoList({ videos, title, inline }: IVideoListProps) {
   if (videos) {
     elements = [
       // @ts-expect-error add spread
-      videos.map((video, idx) => (
-        <VideoPost inline={inline} key={idx} video={video} />
-      )),
+      videos.map((video, idx) => <PostCard key={video.VideoID} post={video} />),
     ];
   }
 

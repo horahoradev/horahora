@@ -1,11 +1,3 @@
-export interface IVideo {
-  VideoID: number;
-  Title: string;
-  ThumbnailLoc: string;
-  Rating: number;
-  Views: unknown;
-}
-
 export interface IVideoDetailed {
   VideoID: number;
   MPDLoc: string;
