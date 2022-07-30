@@ -1,26 +1,17 @@
 import { useEffect, useState } from "react";
-import { Table, Timeline, Button, Space, Input } from "antd";
+import { Table, Input } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArchive,
-  faBars,
-  faSearch,
-  faSignOutAlt,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import type { ChangeEvent } from "react";
 
-import { getAudits, getUserdata } from "#api/index";
-import { Header } from "#components/header";
-import { VideoList } from "#components/video-list";
-import Paginatione from "#components/pagination";
+import { getAudits } from "#api/index";
+import { Page } from "#components/page";
 
 function AuditsPage() {
   const [pageData, setPageData] = useState<{
     Events: Record<string, unknown>[];
     Length: number;
   } | null>(null);
-  const [userData, setUserData] = useState();
   const [userID, setUserID] = useState(-1);
   const [currPage, setPage] = useState(1);
 
@@ -58,9 +49,6 @@ function AuditsPage() {
     let fetchData = async () => {
       let data = await getAudits(userID, currPage);
       if (!ignore) setPageData(data);
-
-      let userData = await getUserdata();
-      if (!ignore) setUserData(userData);
     };
 
     fetchData();
@@ -72,9 +60,7 @@ function AuditsPage() {
   if (pageData == null) return null;
 
   return (
-    <>
-      <Header userData={userData} />
-
+    <Page title="Audit logs">
       <Input
         name="search"
         size="large"
@@ -101,7 +87,7 @@ function AuditsPage() {
           total: pageData.Length,
         }}
       />
-    </>
+    </Page>
   );
 }
 

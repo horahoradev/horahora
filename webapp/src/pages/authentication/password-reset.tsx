@@ -47,9 +47,8 @@ function PasswordResetPage() {
   }
 
   return (
-    <Page>
+    <Page title="Reset Password">
       <FormClient id="auth-reset" onSubmit={handleSubmit}>
-        <p>Reset Password</p>
         <Password
           id="auth-reset-old"
           name={FIELD_NAMES.OLD}

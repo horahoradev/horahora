@@ -5,13 +5,17 @@ import {
   type ReactNode,
 } from "react";
 
-import styles from "./internal.module.scss";
 import { AnchourHTML } from "./html";
 
+import { HorahoraURL } from "#lib/urls";
 import { blockComponent } from "#components/meta";
 import { IIconID } from "#components/icons";
 
+// eslint-disable-next-line
+import styles from "./internal.module.scss";
+
 export interface ILinkInternalProps extends Omit<LinkProps, "passHref"> {
+  href: string | HorahoraURL;
   target?: HTMLAttributeAnchorTarget;
   iconID?: IIconID;
   className?: string;
@@ -22,6 +26,7 @@ export interface ILinkInternalProps extends Omit<LinkProps, "passHref"> {
 export const LinkInternal = blockComponent(styles.block, Component);
 
 export function Component({
+  href,
   iconID,
   target = "_self",
   className,
@@ -29,9 +34,12 @@ export function Component({
   children,
   ...blockProps
 }: ILinkInternalProps) {
-
   return (
-    <Link {...blockProps} passHref>
+    <Link
+      href={href instanceof HorahoraURL ? href.toString() : href}
+      {...blockProps}
+      passHref
+    >
       <AnchourHTML
         className={className}
         target={target}

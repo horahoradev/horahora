@@ -25,11 +25,6 @@ export async function getUser(id: number, page: number) {
   return res.data;
 }
 
-export async function getUserdata() {
-  const res = await axios.get(e("currentuserprofile/"));
-  return res.data;
-}
-
 export async function deleteVideo(videoId: number) {
   const res = await axios.post(e(`delete/${videoId}`));
   return res.data;

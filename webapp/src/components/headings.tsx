@@ -1,3 +1,7 @@
+import clsx from "clsx";
+
+import styles from "./headings.module.scss";
+
 import { blockComponent, type IBlockProps } from "#components/meta";
 
 const headingLevels = [1, 2, 3, 4, 5, 6] as const;
@@ -10,27 +14,63 @@ export interface IHeadingProps extends IBlockProps<"h1"> {
   level: IHeadingLevel;
 }
 
-export const Heading = blockComponent(undefined, Component);
+export const Heading = blockComponent(styles.block, Component);
 
-function Component({ level, children, ...blockProps }: IHeadingProps) {
+function Component({
+  level,
+  className,
+  children,
+  ...blockProps
+}: IHeadingProps) {
+  const finalClassName = clsx(styles[`level${level}`], className);
+
   switch (level) {
     case 1: {
-      return <h1 {...blockProps}>{children}</h1>;
+      return (
+        <h1 className={finalClassName} {...blockProps}>
+          {children}
+        </h1>
+      );
     }
+
     case 2: {
-      return <h2 {...blockProps}>{children}</h2>;
+      return (
+        <h2 className={finalClassName} {...blockProps}>
+          {children}
+        </h2>
+      );
     }
+
     case 3: {
-      return <h3 {...blockProps}>{children}</h3>;
+      return (
+        <h3 className={finalClassName} {...blockProps}>
+          {children}
+        </h3>
+      );
     }
+
     case 4: {
-      return <h4 {...blockProps}>{children}</h4>;
+      return (
+        <h4 className={finalClassName} {...blockProps}>
+          {children}
+        </h4>
+      );
     }
+
     case 5: {
-      return <h5 {...blockProps}>{children}</h5>;
+      return (
+        <h5 className={finalClassName} {...blockProps}>
+          {children}
+        </h5>
+      );
     }
+
     case 6: {
-      return <h6 {...blockProps}>{children}</h6>;
+      return (
+        <h6 className={finalClassName} {...blockProps}>
+          {children}
+        </h6>
+      );
     }
 
     default: {

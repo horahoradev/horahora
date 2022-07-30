@@ -4,7 +4,7 @@ import "#styles/index.scss";
 import Head from "next/head";
 import type { AppProps } from "next/app";
 
-import { Footer } from "#components/footer";
+import { Layout } from "#components/layout";
 import { AccountProvider } from "#hooks";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -32,13 +32,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="apple-touch-icon" href="/logo192.png" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <div className="text-base bg-yellow-50 dark:bg-gray-900 min-h-screen font-sans-serif">
-        <AccountProvider>
+      <AccountProvider>
+        <Layout>
           <Component {...pageProps} />
-        </AccountProvider>
-      </div>
-
-      <Footer />
+        </Layout>
+      </AccountProvider>
     </>
   );
 }

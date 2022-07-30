@@ -44,7 +44,7 @@ export async function loginAccount(formParams: URLSearchParams) {
 export async function logoutAccount() {
   const url = new PublicAPIURL("/logout");
   const response = await fetch(url, {
-    method: "GET",
+    method: "POST",
   });
 
   if (!response.ok) {

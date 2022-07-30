@@ -1,40 +1,27 @@
-import { useState, useEffect, type ReactNode } from "react";
-import { useRouter } from "next/router";
+import { type ReactNode } from "react";
 
-import { Header } from "#components/header";
-import { getUserdata } from "#api/index";
+import { Heading } from "#components/headings";
 
 interface IPageProps {
+  title?: ReactNode;
   children: ReactNode;
 }
 
-export function Page({ children }: IPageProps) {
-  const router = useRouter();
-  const [userData, setUserData] = useState<Record<string, unknown>>();
-
-  useEffect(() => {
-    let ignore = false;
-
-    if (router.pathname.startsWith("/authentication")) {
-      return () => {
-        ignore = true;
-      };
-    }
-
-    (async () => {
-      let userData = await getUserdata();
-      if (!ignore) setUserData(userData);
-    })();
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
+/**
+ * If no `title` prop is passed, then it's up to the page
+ * to construct and style the page markup.
+ */
+export function Page({ title, children }: IPageProps) {
   return (
     <>
-      <Header userData={userData} dataless={!userData} />
-      {children}
+      {!title ? (
+        children
+      ) : (
+        <>
+          <Heading level={1}>{title}</Heading>
+          <section>{children}</section>
+        </>
+      )}
     </>
   );
 }

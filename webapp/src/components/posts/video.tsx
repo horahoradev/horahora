@@ -1,10 +1,6 @@
 import { Tag, Avatar, Rate, Comment, List } from "antd";
-import {
-  faThumbsUp,
-  faUserCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { UserOutlined } from "@ant-design/icons";
-
 
 import { UserRank } from "#api/types";
 import { Icon } from "#components/icons";
@@ -15,9 +11,12 @@ import { VideoAdminControls } from "#components/account";
 import { NewCommentForm } from "#components/comments";
 import { type IComment, type IVideoDetailed } from "#types/entities";
 
+// eslint-disable-next-line
+import styles from "./video.module.scss";
+import { ProfileURL } from "#lib/urls";
 export interface IVideoViewProps {
   id: number;
-  data: IVideoDetailed
+  data: IVideoDetailed;
   videoComments: IComment[];
 
   rating: number;
@@ -53,9 +52,13 @@ export function VideoView(props: IVideoViewProps) {
 
   // FIXME: new API endpoint
   return (
-    <div className="bg-white dark:bg-black border">
-      <VideoPlayer url={data.MPDLoc} next_video={next_video} />
-      <div className="px-4 pt-4">
+    <div className={styles.block}>
+      <VideoPlayer
+        className={styles.player}
+        url={data.MPDLoc}
+        next_video={next_video}
+      />
+      <div>
         <div>
           <span className="text-lg font-bold text-black dark:text-white">
             {data.Title}
@@ -95,12 +98,12 @@ export function VideoView(props: IVideoViewProps) {
         <div className="my-4">
           <div>
             <span className="h-20 w-20 inline-block">
-              <LinkInternal href={`/users/${data.AuthorID}`}>
+              <LinkInternal href={new ProfileURL(data.AuthorID)}>
                 <Avatar size={80} icon={<Icon icon={faUserCircle} />} />
               </LinkInternal>
             </span>
             <span className="ml-2 pl-1 mt-2 inline-block align-top">
-              <LinkInternal href={`/users/${data.AuthorID}`}>
+              <LinkInternal href={new ProfileURL(data.AuthorID)}>
                 <b className="font-black text-blue-500 text-xl">
                   {data.Username}
                 </b>
@@ -165,7 +168,6 @@ export function VideoView(props: IVideoViewProps) {
           </li>
         )}
       />
-      ,
       <NewCommentForm
         videoID={id}
         onNewComment={async (commentInit) => {

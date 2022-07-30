@@ -4,6 +4,9 @@ import {
   type FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
 
+/**
+ * An ID of the icon to be used by other components.
+ */
 export interface IIconID extends IconDefinition {}
 
 export interface IIconProps extends FontAwesomeIconProps {}

@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { Button } from "antd";
 
+import { Button } from "#components/buttons";
 import {
   deleteVideo as apiDeleteVideo,
   approveVideo as apiApproveVideo,
@@ -56,17 +56,10 @@ export function VideoAdminControls(props: IVideoAdminControls) {
         <b className="text-2xl text-black dark:text-white ml-4">
           Admin controls:
         </b>
-        <Button
-          type="primary"
-          className="mx-4"
-          disabled={approvedVideo}
-          onClick={approveVideo}
-        >
+        <Button disabled={approvedVideo} onClick={approveVideo}>
           {approvedVideo ? "Approved" : "Approve"}
         </Button>
-        <Button type="primary" className="mx-4" onClick={deleteVideo}>
-          Delete video
-        </Button>
+        <Button onClick={deleteVideo}>Delete video</Button>
       </div>
     </>
   );

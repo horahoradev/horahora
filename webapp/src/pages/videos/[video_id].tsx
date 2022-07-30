@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { getComments, getVideo, getUserdata } from "#api/index";
-import { VideoList } from "#components/video-list";
-import { Header } from "#components/header";
+import { getComments, getVideo } from "#api/index";
 import { VideoView } from "#components/posts";
 import { type IVideoDetailed, type IVideo } from "#types/entities";
+import { Page } from "#components/page";
+import { VideoList } from "#components/video-list";
 
 interface IPageData extends IVideoDetailed {
   RecommendedVideos: IVideo[];
@@ -19,7 +19,6 @@ function VideosPage() {
   const [pageData, setPageData] = useState<IPageData | null>(null);
   const [rating, setRating] = useState(0.0);
   const [comments, setComments] = useState([]);
-  const [userData, setUserData] = useState();
 
   function navigate_to_next_video() {
     if (!pageData || !pageData.RecommendedVideos) return;
@@ -43,9 +42,6 @@ function VideosPage() {
       if (data) setRating(data.Rating);
       if (!ignore) setPageData(data);
 
-      let userData = await getUserdata();
-      if (!ignore) setUserData(userData);
-
       await refreshComments();
     };
 
@@ -59,29 +55,24 @@ function VideosPage() {
   if (pageData == null) return null;
 
   return (
-    <>
-      <Header userData={userData} />
-      <div className="flex justify-center mx-4">
-        <div className="w-screen my-6 z-0 min-w-400">
-          <VideoView
-            data={pageData}
-            videoComments={comments}
-            id={video_id}
-            refreshComments={refreshComments}
-            setRating={setRating}
-            rating={rating}
-            next_video={navigate_to_next_video}
-          />
-        </div>
-        <div className="ml-4 mt-2 w-100 align-top float-right">
-          <VideoList
-            videos={pageData.RecommendedVideos}
-            title="Recommendations"
-            inline={true}
-          />
-        </div>
-      </div>
-    </>
+    <Page title="Video">
+      <VideoView
+        data={pageData}
+        videoComments={comments}
+        id={video_id}
+        refreshComments={refreshComments}
+        setRating={setRating}
+        rating={rating}
+        next_video={navigate_to_next_video}
+      />
+      {/* <div className="ml-4 mt-2 w-100 align-top float-right">
+        <VideoList
+          videos={pageData.RecommendedVideos}
+          title="Recommendations"
+          inline={true}
+        />
+      </div> */}
+    </Page>
   );
 }
 

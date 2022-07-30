@@ -1,11 +1,14 @@
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 import { Button, Input } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { onParentBlur } from "#lib/dom";
-export function Search() {
+
+export function GlobalSearch() {
   const router = useRouter();
   const [redirectVal, setRedirectVal] = useState<string | null>(null);
   const [isFocused, switchFocus] = useState(false);
