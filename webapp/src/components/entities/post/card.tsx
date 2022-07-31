@@ -1,5 +1,6 @@
 import { type IVideo } from "#codegen/schema/001_interfaces";
 import { Heading } from "#components/headings";
+import { ImageLink } from "#components/images";
 import { LinkInternal } from "#components/links";
 import {
   Card,
@@ -9,6 +10,9 @@ import {
   type ICardProps,
 } from "#components/lists";
 import { blockComponent } from "#components/meta";
+
+// eslint-disable-next-line
+import styles from "./card.module.scss";
 
 export interface IPostVideoCardProps extends ICardProps {
   post: IVideo;
@@ -22,11 +26,7 @@ export interface IPostVideoCardProps extends ICardProps {
  */
 export const PostCard = blockComponent(undefined, Component);
 
-function Component({
-  post,
-  headingLevel,
-  ...blockProps
-}: IPostVideoCardProps) {
+function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
   const { Title, VideoID, ThumbnailLoc } = post;
 
   return (
@@ -35,9 +35,12 @@ function Component({
         <Heading level={headingLevel}>{Title}</Heading>
       </CardHeader>
       <CardBody>
-        <img
+        <ImageLink
+          className={styles.preview}
+          // @ts-expect-error schema type
+          src={ThumbnailLoc}
+          href={`/videos/${VideoID}`}
           alt={Title}
-          src={`${ThumbnailLoc}`}
           onError={(e) => {
             const img = e.target as HTMLImageElement;
             img.onerror = null;
@@ -47,7 +50,9 @@ function Component({
         />
       </CardBody>
       <CardFooter>
-        <LinkInternal href={`/videos/${VideoID}`}>Details</LinkInternal>
+        <LinkInternal className={styles.link} href={`/videos/${VideoID}`}>
+          Details
+        </LinkInternal>
       </CardFooter>
     </Card>
   );

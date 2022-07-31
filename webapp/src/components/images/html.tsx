@@ -11,11 +11,12 @@ export interface IImageHTMLProps
 
 export const ImageHTML = blockComponent(styles.block, Component);
 
-function Component({ src, alt = "", ...blockProps }: IImageHTMLProps) {
+function Component({ src, alt = "", onError, ...blockProps }: IImageHTMLProps) {
   return (
     <img
       src={typeof src == "string" ? src : src.toString()}
       alt={alt}
+      onError={onError ?? onError}
       {...blockProps}
     />
   );

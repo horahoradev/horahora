@@ -7,6 +7,9 @@ import styles from "./link.module.scss";
 
 export interface IImageLinkProps extends ILinkExternalProps {
   src: IImageHTMLProps["src"];
+  alt: IImageHTMLProps["alt"];
+
+  onImageError: IImageHTMLProps["onError"];
 }
 
 /**
@@ -14,10 +17,16 @@ export interface IImageLinkProps extends ILinkExternalProps {
  */
 export const ImageLink = blockComponent(styles.block, Component);
 
-function Component({ src, href, ...blockProps }: IImageLinkProps) {
+function Component({
+  src,
+  alt,
+  href,
+  onImageError,
+  ...blockProps
+}: IImageLinkProps) {
   return (
     <LinkExternal href={href ?? src} {...blockProps}>
-      <ImageHTML src={src} />
+      <ImageHTML src={src} alt={alt} onError={onImageError ?? onImageError} />
     </LinkExternal>
   );
 }
