@@ -3,7 +3,13 @@ import styles from "./cards.module.scss";
 import { type IHeadingLevel } from "#components/headings";
 import { blockComponent, type IBlockProps } from "#components/meta";
 
-export interface ICardListProps extends IBlockProps<"div"> {}
+export interface ICardListProps extends IBlockProps<"div"> {
+  /**
+   * Is not used by the list itself,
+   * but the components extending it have to incorporate it.
+   */
+  headingLevel?: IHeadingLevel;
+}
 export interface ICardProps extends IBlockProps<"article"> {
   /**
    * Is not used by the card itself,

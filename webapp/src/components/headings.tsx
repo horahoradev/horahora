@@ -17,7 +17,7 @@ export interface IHeadingProps extends IBlockProps<"h1"> {
 export const Heading = blockComponent(styles.block, Component);
 
 function Component({
-  level,
+  level = 2,
   className,
   children,
   ...blockProps

@@ -3,13 +3,14 @@ import { useRouter } from "next/router";
 import axios from "axios";
 
 import { getHome } from "#api/index";
-import { VideoList } from "#components/video-list";
 import Paginatione from "#components/pagination";
 import { Page } from "#components/page";
+import { PostList } from "#components/entities/post";
+import { type IVideo } from "#codegen/schema/001_interfaces";
 
 interface IPageData {
   PaginationData: Record<string, unknown>;
-  Videos: Record<string, unknown>;
+  Videos: IVideo[];
 }
 
 export function HomePage() {
@@ -30,7 +31,7 @@ export function HomePage() {
       const { order, category, search } = query;
 
       try {
-        let data = await getHome(
+        let data: IPageData = await getHome(
           currPage,
           search as string,
           order as string,
@@ -56,12 +57,9 @@ export function HomePage() {
       <p>
         Number of videos: {pageData ? pageData.PaginationData.NumberOfItems : 0}
       </p>
-      <VideoList
-        // @ts-expect-error types
-        videos={pageData ? pageData.Videos : []}
-      />
+      <PostList posts={pageData ? pageData.Videos : []} />
       <Paginatione
-        paginationData={pageData ? pageData.PaginationData : []}
+        paginationData={pageData ? pageData.PaginationData : {}}
         onPageChange={setPage}
       />
     </Page>
