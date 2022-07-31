@@ -15,7 +15,9 @@ export function VideoList({ videos, title, inline }: IVideoListProps) {
   if (videos) {
     elements = [
       // @ts-expect-error add spread
-      videos.map((video, idx) => <PostCard key={video.VideoID} post={video} />),
+      videos.map((video, idx) => (
+        <PostCard key={video.VideoID} headingLevel={2} post={video} />
+      )),
     ];
   }
 

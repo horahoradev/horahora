@@ -24,7 +24,7 @@ export const PostCard = blockComponent(undefined, Component);
 
 function Component({
   post,
-  headingLevel,
+  headingLevel = 2,
   ...blockProps
 }: IPostVideoCardProps) {
   const { Title, VideoID, ThumbnailLoc } = post;
