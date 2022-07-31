@@ -13,7 +13,7 @@ export interface IImageLinkProps extends ILinkExternalProps {
 }
 
 /**
- * Image but also a clickable link
+ * Image but also a clickable link. By default is not focusable.
  */
 export const ImageLink = blockComponent(styles.block, Component);
 
@@ -21,12 +21,18 @@ function Component({
   src,
   alt,
   href,
+  tabIndex = -1,
   onImageError,
   ...blockProps
 }: IImageLinkProps) {
   return (
-    <LinkExternal href={href ?? src} {...blockProps}>
-      <ImageHTML src={src} alt={alt} onError={onImageError ?? onImageError} />
+    <LinkExternal href={href ?? src} tabIndex={tabIndex} {...blockProps}>
+      <ImageHTML
+        className={styles.image}
+        src={src}
+        alt={alt}
+        onError={onImageError ?? onImageError}
+      />
     </LinkExternal>
   );
 }

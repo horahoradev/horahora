@@ -1,8 +1,7 @@
-import styles from "./html.module.scss";
-
 import { blockComponent, type IChildlessBlockProps } from "#components/meta";
 
-// eslint-disable-nxt
+// eslint-disable-next-line
+import styles from "./html.module.scss";
 
 export interface IImageHTMLProps
   extends Omit<IChildlessBlockProps<"img">, "src"> {

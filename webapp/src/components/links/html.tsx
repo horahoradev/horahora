@@ -1,9 +1,10 @@
 import { forwardRef, type LegacyRef } from "react";
 
-import styles from "./html.module.scss";
-
 import { blockComponent, type IBlockProps } from "#components/meta";
 import { Icon, type IIconID } from "#components/icons";
+
+// eslint-disable-next-line
+import styles from "./html.module.scss";
 
 export interface IAnchourHTMLProps extends Omit<IBlockProps<"a">, "href"> {
   /**

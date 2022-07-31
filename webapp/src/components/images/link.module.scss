@@ -1,5 +1,19 @@
 @use "../../styles/variables/sass.scss" as *;
 
 .block {
+  --local-colour1-primary: var(--colour1-secondary-transparent);
+  --local-colour1-secondary: var(--colour1-secondary-transparent);
+  --local-colour2-primary: var(--colour1-secondary-transparent);
+  --local-colour2-secondary: var(--colour1-secondary-transparent);
+
+  display: block;
   height: var(--local-image-height, 10em);
+  background-color: var(--colour1-tertiary-transparent);
+  border: none;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }

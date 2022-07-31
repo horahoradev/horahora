@@ -45,6 +45,9 @@
   grid-area: body;
   align-self: center;
   padding: $size-small $size-normal;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
 }
 
 .footer {
