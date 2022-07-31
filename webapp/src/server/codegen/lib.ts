@@ -60,30 +60,26 @@ export async function runCodegen() {
 
         const resultInfo = {
           module: finalResult,
-          index: indexContent
+          index: indexContent,
         };
 
         Object.entries(resultInfo).forEach(([key, code]) => {
           try {
-            const formattedCode = prettier.format(code);
+            const formattedCode = prettier.format(code, {
+              parser: "typescript",
+            });
             // @ts-expect-error dict mutation
-            resultInfo[key] = formattedCode
+            resultInfo[key] = formattedCode;
           } catch (error) {
             console.warn(
               `Failed to format the ${key} at "${resultPath}"`,
               "Continue unformatted"
             );
           }
-        })
+        });
 
-        await fs.writeFile(
-          resultPath,
-          resultInfo.module
-        );
-        await fs.writeFile(
-          indexPath,
-          resultInfo.index
-        );
+        await fs.writeFile(resultPath, resultInfo.module);
+        await fs.writeFile(indexPath, resultInfo.index);
 
         codegenDirs.push(path.relative(codegenPath, entryPath.dir));
 
