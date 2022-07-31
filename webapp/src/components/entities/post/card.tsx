@@ -17,7 +17,7 @@ export interface IPostVideoCardProps extends ICardProps {
 /**
  * Not showing rating and views because they are not needed on the card list level.
  *
- * Bait title and bait preview is more than enough
+ * Bait title and a bait preview are more than enough
  * to make a decision to go to the full page.
  */
 export const PostCard = blockComponent(undefined, Component);

@@ -3,9 +3,10 @@ import { useRouter } from "next/router";
 
 import { getComments, getVideo } from "#api/index";
 import { VideoView } from "#components/posts";
-import { type IVideoDetailed, type IVideo } from "#types/entities";
+import { type IVideoDetailed } from "#types/entities";
 import { Page } from "#components/page";
 import { VideoList } from "#components/video-list";
+import { type IVideo } from "#codegen/schema/001_interfaces";
 
 interface IPageData extends IVideoDetailed {
   RecommendedVideos: IVideo[];

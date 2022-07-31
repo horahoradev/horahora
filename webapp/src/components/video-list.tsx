@@ -4,8 +4,8 @@ import { type IVideo } from "#codegen/schema/001_interfaces";
 const VIDEO_ELEMENT_WIDTH = "w-44";
 
 interface IVideoListProps {
-  title: string;
-  inline: boolean;
+  title?: string;
+  inline?: boolean;
   videos: IVideo[];
 }
 

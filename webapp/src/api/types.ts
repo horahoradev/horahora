@@ -21,7 +21,7 @@ export class PublicAPIURL extends URL {
    */
   constructor(path: string, searchParams?: URLSearchParams) {
     if (!path.startsWith("/")) {
-      throw new Error("Public URL argument should start with a slash.");
+      throw new Error("Public URL `path` argument should start with a slash.");
     }
 
     super(`${PUBLIC_API_URL.pathname}${path}`, PUBLIC_API_URL.origin);
