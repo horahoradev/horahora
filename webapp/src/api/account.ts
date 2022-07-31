@@ -3,7 +3,7 @@ import { FetchError, PublicAPIURL } from "./types";
 import { type IAccountClient } from "#codegen/schema/001_interfaces";
 
 export async function fetchAccountInfo() {
-  const url = new PublicAPIURL("/currentuserprofile");
+  const url = new PublicAPIURL("/currentuserprofile/");
   const response = await fetch(url, {
     method: "GET",
   });
