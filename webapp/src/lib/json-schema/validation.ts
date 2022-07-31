@@ -62,8 +62,8 @@ export function createValidator<SchemaInterface>(
     const result = validate(inputJSON);
 
     if (!result) {
-      // `errors` key is always an array when validation is failed
-      const errors = [...(validate.errors! as DefinedError[])];
+      // @ts-expect-error `errors` key is always an array when validation is failed
+      const errors: DefinedError[] = [...validate.errors];
       throw new ValidationError(errors, schema.$id);
     }
 
