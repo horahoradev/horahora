@@ -46,14 +46,19 @@ export function createValidator<SchemaInterface>(
   schema: IJSONSchema,
   ajv: ReturnType<typeof createAJV>
 ) {
-  const validate: ValidateFunction<SchemaInterface> | undefined =
-    ajv.getSchema<SchemaInterface>(schema.$id);
-
-  if (!validate) {
-    throw new Error(`JSON Schema with "$id" "${schema.$id}" doesn't exist.`);
-  }
+  let validate: ValidateFunction<SchemaInterface> | undefined = undefined;
 
   return (inputJSON: unknown): inputJSON is SchemaInterface => {
+    if (!validate) {
+      validate = ajv.getSchema<SchemaInterface>(schema.$id);
+
+      if (!validate) {
+        throw new Error(
+          `JSON Schema with "$id" "${schema.$id}" doesn't exist.`
+        );
+      }
+    }
+
     const result = validate(inputJSON);
 
     if (!result) {
