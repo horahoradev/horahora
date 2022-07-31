@@ -75,7 +75,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        if (isRegistered()) {
+        if (!isRegistered()) {
           return;
         }
 
