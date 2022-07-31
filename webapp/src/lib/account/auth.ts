@@ -46,6 +46,8 @@ export async function loginAccount(
 
   await fetchLoginAccount(formParams);
 
+  setLocalStoreItem<boolean>(LOCAL_STORAGE.IS_REGISTERED, true);
+
   const account = await fetchAccountInfo();
 
   setLocalStoreItem<IAccountClient>(LOCAL_STORAGE.ACCOUNT, account);
