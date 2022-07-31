@@ -6,6 +6,21 @@ export interface ILinkExternalProps extends IAnchourHTMLProps {}
 
 export const LinkExternal = blockComponent(undefined, Component);
 
-function Component({ children, ...blockProps }: ILinkExternalProps) {
-  return <AnchourHTML {...blockProps}>{children}</AnchourHTML>;
+function Component({
+  referrerPolicy = "no-referrer",
+  rel = "external noreferrer noopener",
+  target = "_blank",
+  children,
+  ...blockProps
+}: ILinkExternalProps) {
+  return (
+    <AnchourHTML
+      referrerPolicy={referrerPolicy}
+      rel={rel}
+      target={target}
+      {...blockProps}
+    >
+      {children}
+    </AnchourHTML>
+  );
 }

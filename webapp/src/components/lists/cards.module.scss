@@ -43,7 +43,7 @@
 
 .body {
   grid-area: body;
-  align-self: center;
+  align-self: flex-end;
   padding: $size-small $size-normal;
   display: flex;
   flex-flow: column nowrap;

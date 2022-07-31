@@ -7,6 +7,8 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  DL,
+  DS,
   type ICardProps,
 } from "#components/lists";
 import { blockComponent } from "#components/meta";
@@ -21,13 +23,13 @@ export interface IPostVideoCardProps extends ICardProps {
 /**
  * Not showing rating and views because they are not needed on the card list level.
  *
- * Bait title and a bait preview are more than enough
- * to make a decision to go to the full page.
+ * Bait title and a bait preview along with the author link
+ * are more than enough to make a decision to go to the full page.
  */
 export const PostCard = blockComponent(undefined, Component);
 
 function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
-  const { Title, VideoID, ThumbnailLoc } = post;
+  const { Title, VideoID, ThumbnailLoc, AuthorID, AuthorName } = post;
 
   return (
     <Card {...blockProps}>
@@ -50,7 +52,30 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
         />
       </CardBody>
       <CardFooter>
-        <LinkInternal className={styles.link} href={`/videos/${VideoID}`}>
+        <DL>
+          <DS
+            dKey={"By:"}
+            dValue={
+              AuthorName
+              // @TODO: `AuthorID` should point to the imported profile
+              // not the account which made the request.
+              // <LinkInternal
+              //   // @ts-expect-error schema type
+              //   href={new ProfileURL(AuthorID)}
+              //   rel={"referrer"}
+              //   target={"_blank"}
+              // >
+              //   {AuthorName}
+              // </LinkInternal>
+            }
+          />
+        </DL>
+        <LinkInternal
+          className={styles.link}
+          href={`/videos/${VideoID}`}
+          rel={"referrer"}
+          target={"_blank"}
+        >
           Details
         </LinkInternal>
       </CardFooter>

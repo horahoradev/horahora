@@ -5,15 +5,15 @@ import { useRouter } from "next/router";
 
 import { getUser, banUser, setUserMod, setUserAdmin } from "#api/index";
 import { type IUserRank, UserRank } from "#api/types";
-import { VideoList } from "#components/video-list";
 import Paginatione from "#components/pagination";
 import { Page } from "#components/page";
 import { Button } from "#components/buttons";
 import { type IVideo } from "#codegen/schema/001_interfaces";
+import { PostList } from "#components/entities/post";
 
 // {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":11,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 
-interface IPageUserData extends Record<string, unknown> {
+interface IPageUserData {
   Username: string;
   banned: boolean;
   L: Record<string, unknown> & {
@@ -21,6 +21,7 @@ interface IPageUserData extends Record<string, unknown> {
   };
   Videos: IVideo[];
   UserID: number;
+  PaginationData: Record<string, unknown>;
 }
 
 /**
@@ -86,14 +87,12 @@ function UsersPage() {
       )}
 
       {/* TODO: no more copy pasta! */}
-      <div className="flex justify-center mx-4 min-h-screen">
-        <div className="max-w-screen-lg w-screen my-6">
-          <VideoList videos={pageUserData.Videos} />
-          <Paginatione
-            paginationData={pageUserData.PaginationData}
-            onPageChange={setPage}
-          />
-        </div>
+      <div>
+        <PostList posts={pageUserData.Videos} />
+        <Paginatione
+          paginationData={pageUserData.PaginationData}
+          onPageChange={setPage}
+        />
       </div>
     </Page>
   );

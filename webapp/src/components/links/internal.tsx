@@ -17,6 +17,7 @@ import styles from "./internal.module.scss";
 export interface ILinkInternalProps extends Omit<LinkProps, "passHref"> {
   href: string | HorahoraURL;
   target?: HTMLAttributeAnchorTarget;
+  rel?: string;
   iconID?: IIconID;
   className?: string;
   children?: ReactNode;
@@ -29,6 +30,7 @@ export function Component({
   href,
   iconID,
   target = "_self",
+  rel,
   className,
   onClick,
   children,
@@ -42,6 +44,7 @@ export function Component({
     >
       <AnchourHTML
         className={className}
+        rel={rel}
         target={target}
         iconID={iconID}
         onClick={onClick}

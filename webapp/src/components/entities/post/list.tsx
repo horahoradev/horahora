@@ -10,7 +10,11 @@ export interface IPostListProps extends ICardListProps {
 
 export const PostList = blockComponent(undefined, Component);
 
-function Component({ posts, headingLevel, ...blockProps }: IPostListProps) {
+function Component({
+  posts = [],
+  headingLevel,
+  ...blockProps
+}: IPostListProps) {
   return (
     <CardList {...blockProps}>
       {posts.map((post) => (

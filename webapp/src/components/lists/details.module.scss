@@ -1,0 +1,22 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: inline-block;
+}
+
+.section {
+  &_keyValue {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: $size-small;
+  }
+}
+
+.term {
+  display: inline-block;
+}
+
+.definition {
+  display: inline-block;
+}
