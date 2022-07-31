@@ -99,9 +99,9 @@ export function AccountNavigation() {
                 <LinkInternal
                   className={styles.link}
                   iconID={faArchive}
-                  href="/account/archive-requests"
+                  href="/account/archives"
                 >
-                  Archive Requests
+                  Archives
                 </LinkInternal>
               </ListItem>
             )}
