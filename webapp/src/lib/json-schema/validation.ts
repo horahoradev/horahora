@@ -1,5 +1,6 @@
 import Ajv, { type ValidateFunction, type DefinedError } from "ajv";
 import { type JSONSchema7 } from "json-schema";
+import addFormats from "ajv-formats";
 
 import { multilineString } from "#lib/strings";
 
@@ -32,9 +33,13 @@ export class ValidationError extends Error {
 }
 
 export function createAJV(schemaMap: ISchemaMap) {
-  return new Ajv({
+  const ajv = new Ajv({
     schemas: Object.values(schemaMap),
   });
+
+  addFormats(ajv);
+
+  return ajv;
 }
 
 export function createValidator<SchemaInterface>(
