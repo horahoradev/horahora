@@ -3,18 +3,22 @@ import { PublicAPIURL, FetchError } from "./types";
 export interface IAPIFetchArgs {
   pathname: ConstructorParameters<typeof PublicAPIURL>["0"];
   searchParams?: ConstructorParameters<typeof PublicAPIURL>["1"];
+  baseErrorMessage?: string;
+  options?: IAPIFetchOptions;
 }
 
 export interface IAPIFetchOptions extends RequestInit {
-  baseErrorMessage?: string;
+  method?: "GET" | "POST";
 }
 
-export async function apiFetch<ResBody = never>(
-  { pathname, searchParams }: IAPIFetchArgs,
-  { baseErrorMessage = "Failed to fetch", ...fetchOptions }: IAPIFetchOptions
-): Promise<ResBody> {
+export async function apiFetch<ResBody = never>({
+  pathname,
+  searchParams,
+  baseErrorMessage = "Failed to fetch",
+  options,
+}: IAPIFetchArgs): Promise<ResBody> {
   const url = new PublicAPIURL(pathname, searchParams);
-  const response = await fetch(url, fetchOptions);
+  const response = await fetch(url, options);
 
   if (!response.ok) {
     // @TODO: 403 status handling
