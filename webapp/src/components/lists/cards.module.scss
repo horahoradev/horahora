@@ -14,8 +14,8 @@
   display: grid;
   // prettier-ignore
   grid-template:
-    "header" auto,
-    "body" 1fr,
+    "header" auto
+    "body" 1fr
     "footer" auto
     / minmax(auto, 1fr);
   overflow: hidden;
@@ -43,8 +43,11 @@
 
 .body {
   grid-area: body;
-  align-self: center;
+  align-self: flex-end;
   padding: $size-small $size-normal;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
 }
 
 .footer {
