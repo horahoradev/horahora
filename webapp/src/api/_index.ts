@@ -1,12 +1,6 @@
 import axios from "axios";
 import FormData from "form-data";
 
-import { API_ENDPOINT } from "#environment/vars";
-
-function e(name: string) {
-  return `${API_ENDPOINT}${name}`;
-}
-
 export async function getHome(
   page: number = 1,
   search: string = "",

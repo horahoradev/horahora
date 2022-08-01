@@ -1,19 +1,14 @@
-import { FetchError, PublicAPIURL } from "./types";
-
-import { type IAccountClient } from "#codegen/schema/001_interfaces";
+import { type IAccountClient } from "#lib/account";
+import { apiFetch } from "#lib/fetch";
 
 export async function fetchAccountInfo() {
-  const url = new PublicAPIURL("/currentuserprofile/");
-  const response = await fetch(url, {
-    method: "GET",
-  });
+  const accountInfo = await apiFetch<IAccountClient>(
+    { pathname: "/currentuserprofile/" },
+    {
+      method: "GET",
+      baseErrorMessage: "Failed fetch account info",
+    }
+  );
 
-  if (!response.ok) {
-    const error = new FetchError("Failed fetch account info", response);
-    throw error;
-  }
-
-  const result: IAccountClient = await response.json();
-
-  return result;
+  return accountInfo;
 }
