@@ -14,9 +14,9 @@ import {
   logoutAccount,
   registerAccount,
   type IAccount,
+  UserRank,
 } from "#lib/account";
 import { fetchAccountInfo } from "#api/account";
-import { UserRank } from "#api/types";
 
 interface IAccountContext {
   account?: IAccount;

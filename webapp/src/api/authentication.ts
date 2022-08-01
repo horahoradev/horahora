@@ -1,4 +1,4 @@
-import { FetchError, formHeader, PublicAPIURL } from "./types";
+import { FetchError, formHeader, PublicAPIURL } from "#lib/fetch";
 
 /**
  * @TODO proper arg typing

@@ -1,5 +1,7 @@
 import { apiFetch, formHeader, IAPIFetchOptions } from "#lib/fetch";
+import { type IUserRank } from "#lib/account";
 import { type IVideo } from "#codegen/schema/001_interfaces";
+import { type IVideoDetailed } from "#types/entities";
 
 export interface IHomeData {
   PaginationData: Record<string, unknown>;
@@ -28,18 +30,33 @@ export async function fetchHome(
   return homePage;
 }
 
+export interface IProfileData {
+  Username: string;
+  banned: boolean;
+  L: Record<string, unknown> & {
+    rank: IUserRank;
+  };
+  Videos: IVideo[];
+  UserID: number;
+  PaginationData: Record<string, unknown>;
+}
+
 export async function fetchProfile(id: number, page: number) {
   const pathname = `/users/${id}`;
   const searchParams = new URLSearchParams([["page", String(page)]]);
 
-  const profile = await apiFetch({ pathname, searchParams });
+  const profile = await apiFetch<IProfileData>({ pathname, searchParams });
 
   return profile;
 }
 
+export interface IPostDetails extends IVideoDetailed {
+  RecommendedVideos: IVideo[];
+}
+
 export async function getPost(postID: number) {
   const pathname = `/videos/${postID}`;
-  const post = await apiFetch({ pathname });
+  const post = await apiFetch<IPostDetails>({ pathname });
 
   return post;
 }

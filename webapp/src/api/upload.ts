@@ -1,4 +1,4 @@
-import { PublicAPIURL } from "./types";
+import { PublicAPIURL } from "#lib/fetch";
 
 /**
  * @TODO proper args typing

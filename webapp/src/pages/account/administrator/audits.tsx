@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import type { ChangeEvent } from "react";
 
-import { getAudits } from "#api/index";
+import { getAudits } from "#api/lib";
 import { Page } from "#components/page";
 
 function AuditsPage() {

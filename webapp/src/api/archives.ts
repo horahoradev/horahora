@@ -1,5 +1,4 @@
-import { FetchError, formHeader, PublicAPIURL } from "./types";
-
+import { FetchError, formHeader, PublicAPIURL } from "#lib/fetch";
 import {
   IArchivalRequest,
   type IArchivalEvent,
