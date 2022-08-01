@@ -1,6 +1,8 @@
 import { type SetStateAction } from "react";
 import { Client as StompClient, StompConfig } from "@stomp/stompjs";
 
+import { PUBLIC_WEBSOCKET_URL } from "#environment/derived";
+
 type ISetConnFunc = (value: SetStateAction<WSClient | null>) => void;
 
 export class WSConfig extends StompConfig {
@@ -48,5 +50,5 @@ export class WSClient extends StompClient {
 }
 
 function webSocketFactory() {
-  return new WebSocket("ws://localhost/ws");
+  return new WebSocket(PUBLIC_WEBSOCKET_URL);
 }
