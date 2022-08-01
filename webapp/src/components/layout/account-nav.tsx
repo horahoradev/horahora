@@ -24,12 +24,12 @@ import styles from "./account-nav.module.scss";
 
 export function AccountNavigation() {
   const [isOpen, switchOpen] = useState(false);
-  const { account, isRegistered, isAdmin, logout } = useAccount();
+  const { account, isInProgress, isRegistered, isAdmin, logout } = useAccount();
 
   const className = clsx(
     styles.block,
     isOpen && styles.block_open,
-    !account && styles.block_loading
+    isInProgress && styles.block_loading
   );
 
   return (
