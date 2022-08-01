@@ -2,7 +2,16 @@
   "$id": "https://horahora-schemas.org/public-api/archival-request.schema.json",
   "title": "ArchivalRequest",
   "type": "object",
-  "required": [],
+  "required": [
+    "UserID",
+    "Url",
+    "ArchivedVideos",
+    "CurrentTotalVideos",
+    "LastSynced",
+    "BackoffFactor",
+    "DownloadID",
+    "UndownloadableVideos"
+  ],
   "additionalProperties": false,
   "properties": {
     "UserID": {

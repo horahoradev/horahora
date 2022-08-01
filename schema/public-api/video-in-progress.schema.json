@@ -2,7 +2,11 @@
   "$id": "https://horahora-schemas.org/public-api/video-in-progress.schema.json",
   "title": "VideoInProgress",
   "type": "object",
-  "required": [],
+  "required": [
+    "Website",
+    "VideoID",
+    "DlStatus"
+  ],
   "additionalProperties": false,
   "properties": {
     "Website": {

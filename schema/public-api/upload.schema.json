@@ -2,7 +2,7 @@
   "$id": "https://horahora-schemas.org/public-api/upload.schema.json",
   "title": "FileUpload",
   "description": "Schema for the upload form",
-  "required": ["file[0]", "file[1]"],
+  "required": ["title", "description", "tags", "file[0]", "file[1]"],
   "additionalProperties": false,
   "properties": {
     "title": { "type": "string" },

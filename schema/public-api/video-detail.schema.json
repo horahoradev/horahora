@@ -2,7 +2,23 @@
   "$id": "https://horahora-schemas.org/public-api/video-detail.schema.json",
   "title": "VideoDetail",
   "type": "object",
-  "required": [],
+  "required": [
+    "Title",
+    "MPDLoc",
+    "Views",
+    "Rating",
+    "VideoID",
+    "AuthorID",
+    "Username",
+    "UserDescription",
+    "VideoDescription",
+    "UserSubscribers",
+    "ProfilePicture",
+    "UploadDate",
+    "Tags",
+    "RecommendedVideos",
+    "L"
+  ],
   "additionalProperties": false,
   "properties": {
     "Title": {

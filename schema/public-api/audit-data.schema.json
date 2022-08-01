@@ -2,7 +2,9 @@
   "$id": "https://horahora-schemas.org/public-api/audit-data.schema.json",
   "title": "AuditData",
   "type": "object",
-  "required": [],
+  "required": [
+    "Events"
+  ],
   "additionalProperties": false,
   "properties": {
     "Length": {

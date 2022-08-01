@@ -2,7 +2,18 @@
   "$id": "https://horahora-schemas.org/public-api/video-metadata.schema.json",
   "title": "VideoMetadata",
   "type": "object",
-  "required": [],
+  "required": [
+    "videoLoc",
+    "videoTitle",
+    "rating",
+    "authorName",
+    "views",
+    "videoID",
+    "uploadDate",
+    "description",
+    "authorID",
+    "tags"
+  ],
   "additionalProperties": false,
   "properties": {
     "videoLoc": {

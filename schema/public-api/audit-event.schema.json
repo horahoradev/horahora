@@ -2,7 +2,12 @@
   "$id": "https://horahora-schemas.org/public-api/audit-event.schema.json",
   "title": "AuditEvent",
   "type": "object",
-  "required": [],
+  "required": [
+    "ID",
+    "UserID",
+    "Message",
+    "Timestamp"
+  ],
   "additionalProperties": false,
   "properties": {
     "ID": {

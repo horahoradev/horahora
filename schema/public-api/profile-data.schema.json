@@ -2,7 +2,15 @@
   "$id": "https://horahora-schemas.org/public-api/profile-data.schema.json",
   "title": "ProfileData",
   "type": "object",
-  "required": [],
+  "required": [
+    "PaginationData",
+    "UserID",
+    "Username",
+    "ProfilePictureURL",
+    "Videos",
+    "Banned",
+    "L"
+  ],
   "additionalProperties": false,
   "properties": {
     "PaginationData": {

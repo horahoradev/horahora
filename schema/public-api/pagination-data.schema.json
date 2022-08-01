@@ -2,7 +2,10 @@
   "$id": "https://horahora-schemas.org/public-api/pagination-data.schema.json",
   "title": "PaginationData",
   "type": "object",
-  "required": [],
+  "required": [
+    "NumberOfItems",
+    "CurrentPage"
+  ],
   "additionalProperties": false,
   "properties": {
     "NumberOfItems": {

@@ -2,7 +2,12 @@
   "$id": "https://horahora-schemas.org/public-api/archival-event.schema.json",
   "title": "ArchivalEvent",
   "type": "object",
-  "required": [],
+  "required": [
+    "video_url",
+    "parent_url",
+    "message",
+    "timestamp"
+  ],
   "additionalProperties": false,
   "properties": {
     "video_url": {
