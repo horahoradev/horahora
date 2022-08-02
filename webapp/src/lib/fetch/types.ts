@@ -1,13 +1,5 @@
 import { PUBLIC_API_URL } from "#environment/derived";
 
-export const UserRank = {
-  REGULAR: 0,
-  TRUSTED: 1,
-  ADMIN: 2,
-} as const;
-
-export type IUserRank = typeof UserRank[keyof typeof UserRank];
-
 export const formHeader = ["content-type", "application/x-www-form-urlencoded"];
 
 /**
@@ -39,6 +31,6 @@ export class FetchError extends Error {
       `Status: ${response.status}`,
       `Message: ${response.statusText}`,
     ].join("\n");
-    super(message)
+    super(message);
   }
 }

@@ -4,6 +4,7 @@ export interface IVideoDetailed {
   Title: string;
   Views: string;
   UploadDate: string;
+  Rating: number
   Tags: string[];
   AuthorID: number;
   Username: string;
