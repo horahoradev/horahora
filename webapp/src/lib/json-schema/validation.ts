@@ -1,5 +1,6 @@
 import Ajv, { type ValidateFunction, type DefinedError } from "ajv";
 import { type JSONSchema7 } from "json-schema";
+import addFormats from "ajv-formats";
 
 import { multilineString } from "#lib/strings";
 
@@ -32,28 +33,37 @@ export class ValidationError extends Error {
 }
 
 export function createAJV(schemaMap: ISchemaMap) {
-  return new Ajv({
+  const ajv = new Ajv({
     schemas: Object.values(schemaMap),
   });
+
+  addFormats(ajv);
+
+  return ajv;
 }
 
 export function createValidator<SchemaInterface>(
   schema: IJSONSchema,
   ajv: ReturnType<typeof createAJV>
 ) {
-  const validate: ValidateFunction<SchemaInterface> | undefined =
-    ajv.getSchema<SchemaInterface>(schema.$id);
-
-  if (!validate) {
-    throw new Error(`JSON Schema with "$id" "${schema.$id}" doesn't exist.`);
-  }
+  let validate: ValidateFunction<SchemaInterface> | undefined = undefined;
 
   return (inputJSON: unknown): inputJSON is SchemaInterface => {
+    if (!validate) {
+      validate = ajv.getSchema<SchemaInterface>(schema.$id);
+
+      if (!validate) {
+        throw new Error(
+          `JSON Schema with "$id" "${schema.$id}" doesn't exist.`
+        );
+      }
+    }
+
     const result = validate(inputJSON);
 
     if (!result) {
-      // `errors` key is always an array when validation is failed
-      const errors = [...(validate.errors! as DefinedError[])];
+      // @ts-expect-error `errors` key is always an array when validation is failed
+      const errors: DefinedError[] = [...validate.errors];
       throw new ValidationError(errors, schema.$id);
     }
 
