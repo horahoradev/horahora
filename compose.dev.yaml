@@ -184,7 +184,7 @@ services:
       - HTTPPROXY_LOG=on
 
   nginx:
-    image: nginx
+    image: ${NGINX_IMAGE}
     restart: unless-stopped
     ports:
       - "80:80"
@@ -197,9 +197,11 @@ services:
       - videoservice
       - stomp_proxy
       - minio
+    environment:
+      - PUBLIC_ORIGIN=${PUBLIC_ORIGIN}
     volumes:
       - ./static:/etc/nginx/html/static/images
-      - ./nginx/dev.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/dev.conf:/etc/nginx/templates/default.conf.template
       - ./videos/otomads:/etc/nginx/html/otomads
 
   rabbitmq:
