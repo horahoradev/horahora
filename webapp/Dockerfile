@@ -1,6 +1,6 @@
-FROM node:14-alpine
+FROM node:18.7-buster
 
-RUN npm install --global npm@8.12
+RUN apt-get -y update && apt-get -y install python3 && npm install --global npm@8.17
 
 WORKDIR /webapp
 

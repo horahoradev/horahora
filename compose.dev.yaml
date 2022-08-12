@@ -22,6 +22,7 @@ services:
       - ./webapp/src:/webapp/src
       - ./webapp/public:/webapp/public
       - ./webapp/next.config.js:/webapp/next.config.js
+    mem_limit: 300m
 
   frontapi:
     build:
@@ -42,6 +43,7 @@ services:
       - JaegerAddress=
     volumes:
       - ./front_api:/horahora/front_api
+    mem_limit: 300m
 
   scheduler:
     build:
@@ -77,6 +79,7 @@ services:
       - rabbit_pass=guest
     volumes:
       - ./scheduler:/horahora/scheduler
+    mem_limit: 300m
 
   videoservice:
     build:
@@ -113,6 +116,7 @@ services:
     volumes:
       - ./video_service:/horahora/videoservice
       - $HOME/.aws/:/root/.aws/:ro
+    mem_limit: 300m
 
   userservice:
     build:
@@ -137,6 +141,7 @@ services:
       - RSA_KEYPAIR=${JWT_KEYPAIR}
     volumes:
       - ./user_service:/horahora/userservice
+    mem_limit: 300m
 
   postgres:
     build:
@@ -166,6 +171,7 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
       - ./videos:/data
+    mem_limit: 300m
 
   gluetun:
     image: qmcgaw/gluetun
@@ -207,6 +213,7 @@ services:
       args:
         ACTIVEMQ_IMAGE: ${ACTIVEMQ_IMAGE}
     restart: unless-stopped
+    mem_limit: 300m
 
   stomp_proxy:
     build:
@@ -220,6 +227,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./stomp_proxy:/horahora/stomp_proxy
+    mem_limit: 300m
 
 volumes:
   postgresdata_dev:

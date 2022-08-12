@@ -215,26 +215,15 @@ func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTD
 		return nil, nil, err
 	}
 
-	bufSize := 300 * 1024 * 1024
-	// surely no video will have a metadata file in excess of 300mb??
-	buf := make([]byte, bufSize)
 	file, err := os.Open(fmt.Sprintf("%s/%s.info.json", d.outputLoc, video.VideoID))
 	if err != nil {
 		return nil, nil, err
 	}
 
-	// I should probably read until EOF here but I think it's fine as is as long as the file isn't too large
-	n, err := file.Read(buf)
+	buf, err := ioutil.ReadAll(file)
 	if err != nil {
 		return nil, nil, err
 	}
-
-	if n == bufSize {
-		return nil, nil, fmt.Errorf("n equal to bufsize, metadata file too large for %d", video.ID)
-	}
-
-	// Truncate
-	buf = buf[:n]
 
 	metadata := YTDLMetadata{}
 

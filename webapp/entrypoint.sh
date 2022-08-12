@@ -1,4 +1,4 @@
 #!/bin/bash
-set -euo pipefail
+set -eu
 
 cd /webapp && npm run dev

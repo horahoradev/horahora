@@ -41,7 +41,7 @@
     "eslint": "^8.18.0",
     "eslint-config-next": "12.2.0",
     "eslint-config-prettier": "^8.5.0",
-    "json-schema-to-typescript": "^11.0.1",
+    "json-schema-to-typescript": "^11.0.2",
     "postcss": "^8.4.14",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-preset-env": "^7.7.2",
