@@ -48,16 +48,16 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: print relevant logs (videoservice)
+      - name: copy env
         run: cp ./configs/.env.dev.example .env.dev
       - name: publish
-        uses: pennsignals/publish_docker-compose@v0.1.0
+        uses: pennsignals/publish_docker-compose@v0.2.5
         with:
           docker_compose: 'compose.dev.yaml' # required
-      - name: print relevant logs (videoservice)
+      - name: copy env
         run: cp ./configs/.env.example .env
         if: always()
       - name: publish
-        uses: pennsignals/publish_docker-compose@v0.1.0
+        uses: pennsignals/publish_docker-compose@v0.2.5
         with:
           docker_compose: 'docker-compose.yml' # required
