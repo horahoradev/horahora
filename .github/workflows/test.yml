@@ -52,6 +52,7 @@ jobs:
       - name: publish
         uses: pennsignals/publish_docker-compose@v0.2.5
         with:
+          version: latest
           docker_compose: 'compose.dev.yaml' # required
       - name: copy env
         run: cp ./configs/.env.example .env
@@ -59,4 +60,5 @@ jobs:
       - name: publish
         uses: pennsignals/publish_docker-compose@v0.2.5
         with:
+          version: latest
           docker_compose: 'docker-compose.yml' # required
