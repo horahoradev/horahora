@@ -47,6 +47,8 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: copy
         run: cp ./configs/.env.dev.example .env
+      - name: copy
+        run: cp ./configs/.env.dev.example .env.dev
       - name: publish
         uses: pennsignals/publish_docker-compose@v0.2.5
         with:
