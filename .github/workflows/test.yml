@@ -35,37 +35,41 @@ jobs:
       - name: print relevant logs (scheduler)
         run: docker logs $(docker ps | grep "scheduler" | awk '{print $1}')
         if: always()
+      - name: Build and push Docker image for userservice dev
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          file: userservice/Dockerfile.dev
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}_userservice_dev
+          labels: ${{ steps.meta.outputs.labels }}_userservice_devways()
       - name: print relevant logs (postgres)
         run: docker logs $(docker ps | grep "postgres" | awk '{print $1}')
         if: always()
       - name: print relevant logs (frontapi)
         run: docker logs $(docker ps | grep "frontapi" | awk '{print $1}')
         if: always()
-      - name: Build and push Docker image for userservice
+    release:
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          service: ["front_api", "minio", "postgres", "scheduler", "stomp_proxy", "user_service", "video_service", "webapp"]
+      - name: Build and push dev Docker images for ${{ matrix.service }}
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: user_service
+          context: ${{ matrix.service }}
+          file: Dockerfile.dev
           push: true
-          tags: ${{ steps.meta.outputs.tags }}_userservice
-          labels: ${{ steps.meta.outputs.labels }}_userservice
-      - name: Build and push Docker image for videoservice
+          tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}_dev
+          labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}_dev
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          service: ["rabbitmq", "front_api", "minio", "postgres", "scheduler", "stomp_proxy", "user_service", "video_service", "webapp"]
+      - name: Build and push main Docker images for ${{ matrix.service }}
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: video_service
+          context: ${{ matrix.service }}
+          file: Dockerfile.dev
           push: true
-          tags: ${{ steps.meta.outputs.tags }}_videoservice
-          labels: ${{ steps.meta.outputs.labels }}_videoservice
-      - name: Build and push Docker image for scheduler
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: scheduler
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}_scheduler
-          labels: ${{ steps.meta.outputs.labels }}_scheduler
-      - name: Build and push Docker image for front_api
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: front_api
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}_front_api
-          labels: ${{ steps.meta.outputs.labels }}_front_api
+          tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}
+          labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}

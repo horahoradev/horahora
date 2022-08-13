@@ -167,8 +167,9 @@ services:
     env_file:
       - ./.env.dev
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_CACHE=off
     volumes:
       - ./videos:/data
     mem_limit: 300m
@@ -186,7 +187,7 @@ services:
       - SERVER_CITIES=${VPN_CITIES}
       - HTTPPROXY=on
       - HTTPPROXY_LOG=on
-
+      - BLOCK_MALCIOUS=off
   nginx:
     image: nginx
     restart: unless-stopped

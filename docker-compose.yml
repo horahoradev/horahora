@@ -90,9 +90,6 @@ services:
       - pgs_db=userservice
       - RSA_KEYPAIR=${JWT_KEYPAIR}
     mem_limit: 300m
-  redis:
-    image: "redis:alpine"
-    restart: always
   postgres:
     build:
       context: .
@@ -109,8 +106,9 @@ services:
     env_file:
       - ./.env
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_CACHE=off
     volumes:
       - ./videos:/data
     mem_limit: 300m
@@ -127,6 +125,7 @@ services:
       - SERVER_CITIES=$VPN_CITIES
       - HTTPPROXY=on
       - HTTPPROXY_LOG=on
+      - BLOCK_MALCIOUS=off
   nginx:
     image: nginx
     restart: always
