@@ -2,9 +2,10 @@ import { Tag, Avatar, Rate, Comment, List } from "antd";
 import { faThumbsUp, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { UserOutlined } from "@ant-design/icons";
 
-import { UserRank } from "#api/types";
+import { ProfileURL } from "#lib/urls";
+import { UserRank } from "#lib/account";
 import { Icon } from "#components/icons";
-import { upvoteComment as apiUpvoteComment, postRating } from "#api/index";
+import { upvoteComment as apiUpvoteComment, ratePost } from "#api/lib";
 import { VideoPlayer } from "#components/video";
 import { LinkInternal } from "#components/links";
 import { VideoAdminControls } from "#components/account";
@@ -13,7 +14,7 @@ import { type IComment, type IVideoDetailed } from "#types/entities";
 
 // eslint-disable-next-line
 import styles from "./video.module.scss";
-import { ProfileURL } from "#lib/urls";
+
 export interface IVideoViewProps {
   id: number;
   data: IVideoDetailed;
@@ -46,7 +47,7 @@ export function VideoView(props: IVideoViewProps) {
       // TODO: throw
       return;
     }
-    await postRating(id, rating);
+    await ratePost(id, rating);
     setRating(rating);
   }
 

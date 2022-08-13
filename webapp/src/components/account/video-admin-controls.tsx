@@ -2,10 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Button } from "#components/buttons";
-import {
-  deleteVideo as apiDeleteVideo,
-  approveVideo as apiApproveVideo,
-} from "#api/index";
+import { deletePost, approvePost } from "#api/lib";
 import { type IVideoDetailed } from "#types/entities";
 
 export interface IVideoAdminControls {
@@ -26,7 +23,7 @@ export function VideoAdminControls(props: IVideoAdminControls) {
     deletingVideo.current = true;
 
     let run = async () => {
-      await apiDeleteVideo(data.VideoID);
+      await deletePost(data.VideoID);
       deletingVideo.current = false;
       router.push("/");
     };
@@ -38,7 +35,7 @@ export function VideoAdminControls(props: IVideoAdminControls) {
     if (approvingVideo.current) return;
 
     let run = async () => {
-      await apiApproveVideo(data.VideoID);
+      await approvePost(data.VideoID);
       setApprovedVideo(true);
     };
     approvingVideo.current = true;
