@@ -14,6 +14,8 @@ services:
     depends_on:
       - frontapi
     restart: unless-stopped
+    labels:
+      name: webapp
     ports:
       - "3000:3000"
     environment:
@@ -34,6 +36,8 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    labels:
+      name: frontapi
     env_file:
       - ./.env.dev
     environment:
@@ -59,6 +63,8 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    labels:
+      name: scheduler
     env_file:
       - ./.env.dev
     environment:
@@ -93,6 +99,8 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    labels:
+      name: videoservice
     env_file:
       - ./.env.dev
     environment:
@@ -130,6 +138,8 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    labels:
+      name: userservice
     env_file:
       - ./.env.dev
     environment:
@@ -151,6 +161,8 @@ services:
         POSTGRES_IMAGE: ${POSTGRES_IMAGE}
         FLYWAY_VERSION: ${FLYWAY_VERSION}
     restart: unless-stopped
+    labels:
+      name: postgres
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -164,6 +176,8 @@ services:
       args:
         UBUNTU_IMAGE: ${UBUNTU_IMAGE}
     restart: unless-stopped
+    labels:
+      name: minio
     env_file:
       - ./.env.dev
     environment:
@@ -176,6 +190,8 @@ services:
 
   gluetun:
     image: qmcgaw/gluetun
+    labels:
+      name: gluetun
     cap_add:
       - NET_ADMIN
     env_file:
@@ -191,6 +207,8 @@ services:
   nginx:
     image: nginx
     restart: unless-stopped
+    labels:
+      name: nginx
     ports:
       - "80:80"
       - "9000:80" # backwards compatibility issue
@@ -210,6 +228,8 @@ services:
   rabbitmq:
     build:
       context: activemq
+    labels:
+      name: activemq
       dockerfile: Dockerfile.dev
       args:
         ACTIVEMQ_IMAGE: ${ACTIVEMQ_IMAGE}
@@ -220,6 +240,8 @@ services:
     build:
       context: stomp_proxy
       dockerfile: Dockerfile.dev
+    labels:
+      name: stomp_proxy
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
