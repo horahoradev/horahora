@@ -49,7 +49,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: print relevant logs (videoservice)
-        run: cp ./configs/.env.dev.example .env
+        run: cp ./configs/.env.dev.example .env.dev
       - name: publish
         uses: pennsignals/publish_docker-compose@v0.1.0
         with:
