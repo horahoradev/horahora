@@ -52,7 +52,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ${{ matrix.service }}
-          file: Dockerfile.dev
+          file: ${{ matrix.service }}/Dockerfile.dev
           push: true
           tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}_dev
           labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}_dev
@@ -60,7 +60,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ${{ matrix.service }}
-          file: Dockerfile.dev
+          file: ${{ matrix.service }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}
           labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}
