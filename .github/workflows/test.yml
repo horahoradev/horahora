@@ -10,17 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build the stack
         run: ./up.sh
       - name: Run integration tests
@@ -35,13 +24,6 @@ jobs:
       - name: print relevant logs (scheduler)
         run: docker logs $(docker ps | grep "scheduler" | awk '{print $1}')
         if: always()
-      - name: Build and push Docker image for userservice dev
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          file: userservice/Dockerfile.dev
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}_userservice_dev
-          labels: ${{ steps.meta.outputs.labels }}_userservice_devways()
       - name: print relevant logs (postgres)
         run: docker logs $(docker ps | grep "postgres" | awk '{print $1}')
         if: always()
@@ -54,6 +36,18 @@ jobs:
       matrix:
         service: ["front_api", "minio", "postgres", "scheduler", "stomp_proxy", "user_service", "video_service", "webapp"]
     steps:
+      - uses: actions/checkout@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build and push dev Docker images for ${{ matrix.service }}
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
