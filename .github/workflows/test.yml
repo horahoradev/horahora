@@ -51,13 +51,13 @@ jobs:
       - name: print relevant logs (videoservice)
         run: cp ./configs/.env.dev.example .env
       - name: publish
-          uses: pennsignals/publish_docker-compose@v0.1.0
-          with:
-            docker_compose: 'compose.dev.yaml' # required
+        uses: pennsignals/publish_docker-compose@v0.1.0
+        with:
+          docker_compose: 'compose.dev.yaml' # required
       - name: print relevant logs (videoservice)
         run: cp ./configs/.env.example .env
         if: always()
       - name: publish
-          uses: pennsignals/publish_docker-compose@v0.1.0
-          with:
-            docker_compose: 'docker-compose.yml' # required
+        uses: pennsignals/publish_docker-compose@v0.1.0
+        with:
+          docker_compose: 'docker-compose.yml' # required
