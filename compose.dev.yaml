@@ -11,11 +11,11 @@ services:
       dockerfile: Dockerfile.dev
       args:
         NODEJS_IMAGE: ${NODEJS_IMAGE}
+      labels:
+        name: webapp
     depends_on:
       - frontapi
     restart: unless-stopped
-    labels:
-      name: webapp
     ports:
       - "3000:3000"
     environment:
@@ -33,11 +33,11 @@ services:
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
+      labels:
+        name: frontapi
     depends_on:
       - postgres
     restart: unless-stopped
-    labels:
-      name: frontapi
     env_file:
       - ./.env.dev
     environment:
@@ -60,11 +60,10 @@ services:
         PYTHON_IMAGE: ${PYTHON_IMAGE}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: scheduler
     depends_on:
       - postgres
     restart: unless-stopped
-    labels:
-      name: scheduler
     env_file:
       - ./.env.dev
     environment:
@@ -96,11 +95,10 @@ services:
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: videoservice
     depends_on:
       - postgres
     restart: unless-stopped
-    labels:
-      name: videoservice
     env_file:
       - ./.env.dev
     environment:
@@ -135,11 +133,10 @@ services:
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: userservice
     depends_on:
       - postgres
     restart: unless-stopped
-    labels:
-      name: userservice
     env_file:
       - ./.env.dev
     environment:
@@ -160,9 +157,9 @@ services:
       args:
         POSTGRES_IMAGE: ${POSTGRES_IMAGE}
         FLYWAY_VERSION: ${FLYWAY_VERSION}
+      labels:
+        name: postgres
     restart: unless-stopped
-    labels:
-      name: postgres
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -175,9 +172,9 @@ services:
       dockerfile: Dockerfile.dev
       args:
         UBUNTU_IMAGE: ${UBUNTU_IMAGE}
+      labels:
+        name: minio
     restart: unless-stopped
-    labels:
-      name: minio
     env_file:
       - ./.env.dev
     environment:
@@ -189,6 +186,10 @@ services:
     mem_limit: 300m
 
   gluetun:
+    build:
+      context: .
+      labels:
+        name: gluetun
     image: qmcgaw/gluetun
     labels:
       name: gluetun
@@ -205,10 +206,11 @@ services:
       - HTTPPROXY_LOG=on
       - BLOCK_MALCIOUS=off
   nginx:
-    image: nginx
+    build:
+      context: .
+      labels:
+        name: nginx
     restart: unless-stopped
-    labels:
-      name: nginx
     ports:
       - "80:80"
       - "9000:80" # backwards compatibility issue
@@ -228,8 +230,8 @@ services:
   rabbitmq:
     build:
       context: activemq
-    labels:
-      name: activemq
+      labels:
+        name: activemq
       dockerfile: Dockerfile.dev
       args:
         ACTIVEMQ_IMAGE: ${ACTIVEMQ_IMAGE}
@@ -240,8 +242,8 @@ services:
     build:
       context: stomp_proxy
       dockerfile: Dockerfile.dev
-    labels:
-      name: stomp_proxy
+      labels:
+        name: stomp_proxy
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
