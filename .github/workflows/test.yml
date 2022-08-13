@@ -48,6 +48,9 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: print relevant logs (videoservice)
+        run: cp ./configs/.env.dev.example .env
+        if: always()
       - name: Build and push dev Docker images for ${{ matrix.service }}
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -56,6 +59,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}_dev
           labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}_dev
+      - name: print relevant logs (videoservice)
+        run: cp ./configs/.env.example .env
+        if: always()
       - name: Build and push main Docker images for ${{ matrix.service }}
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
