@@ -48,28 +48,29 @@ jobs:
       - name: print relevant logs (frontapi)
         run: docker logs $(docker ps | grep "frontapi" | awk '{print $1}')
         if: always()
-    release:
-      runs-on: ubuntu-latest
-      strategy:
-        matrix:
-          service: ["front_api", "minio", "postgres", "scheduler", "stomp_proxy", "user_service", "video_service", "webapp"]
-      - name: Build and push dev Docker images for ${{ matrix.service }}
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: ${{ matrix.service }}
-          file: Dockerfile.dev
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}_dev
-          labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}_dev
-      runs-on: ubuntu-latest
-      strategy:
-        matrix:
-          service: ["rabbitmq", "front_api", "minio", "postgres", "scheduler", "stomp_proxy", "user_service", "video_service", "webapp"]
-      - name: Build and push main Docker images for ${{ matrix.service }}
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: ${{ matrix.service }}
-          file: Dockerfile.dev
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}
-          labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ["front_api", "minio", "postgres", "scheduler", "stomp_proxy", "user_service", "video_service", "webapp"]
+    steps:
+     - name: Build and push dev Docker images for ${{ matrix.service }}
+       uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+       with:
+         context: ${{ matrix.service }}
+         file: Dockerfile.dev
+         push: true
+         tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}_dev
+         labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}_dev
+     runs-on: ubuntu-latest
+     strategy:
+       matrix:
+         service: ["rabbitmq", "front_api", "minio", "postgres", "scheduler", "stomp_proxy", "user_service", "video_service", "webapp"]
+     - name: Build and push main Docker images for ${{ matrix.service }}
+       uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+       with:
+         context: ${{ matrix.service }}
+         file: Dockerfile.dev
+         push: true
+         tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}
+         labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}
