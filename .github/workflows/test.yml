@@ -32,9 +32,6 @@ jobs:
         if: always()
   release:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        service: ["front_api", "minio", "postgres", "scheduler", "stomp_proxy", "user_service", "video_service", "webapp"]
     steps:
       - uses: actions/checkout@v2
       - name: Log in to the Container registry
@@ -48,7 +45,7 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: copy env
+      - name: copy
         run: cp ./configs/.env.dev.example .env.dev
       - name: publish
         uses: pennsignals/publish_docker-compose@v0.2.5
