@@ -50,23 +50,14 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: print relevant logs (videoservice)
         run: cp ./configs/.env.dev.example .env
-        if: always()
-      - name: Build and push dev Docker images for ${{ matrix.service }}
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: ${{ matrix.service }}
-          file: ${{ matrix.service }}/Dockerfile.dev
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}_dev
-          labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}_dev
+      - name: publish
+          uses: pennsignals/publish_docker-compose@v0.1.0
+          with:
+            docker_compose: 'compose.dev.yaml' # required
       - name: print relevant logs (videoservice)
         run: cp ./configs/.env.example .env
         if: always()
-      - name: Build and push main Docker images for ${{ matrix.service }}
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: ${{ matrix.service }}
-          file: ${{ matrix.service }}/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}_${{ matrix.service }}
-          labels: ${{ steps.meta.outputs.labels }}_${{ matrix.service }}
+      - name: publish
+          uses: pennsignals/publish_docker-compose@v0.1.0
+          with:
+            docker_compose: 'docker-compose.yml' # required
