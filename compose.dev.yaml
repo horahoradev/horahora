@@ -189,10 +189,10 @@ services:
 
   gluetun:
     build:
+      dockerfile: Dockerfile.gluetun.dev
       context: .
       labels:
         name: gluetun
-    image: qmcgaw/gluetun
     labels:
       name: gluetun
     cap_add:
@@ -211,6 +211,7 @@ services:
     image: nginx
     build:
       context: .
+      dockerfile: Dockerfile.nginx.dev
       labels:
         name: nginx
     restart: unless-stopped
