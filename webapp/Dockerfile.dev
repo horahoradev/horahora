@@ -2,7 +2,7 @@ ARG NODEJS_IMAGE
 
 FROM ${NODEJS_IMAGE}
 
-RUN npm install --global npm@8.12
+RUN apt-get -y update && apt-get -y install python3 && npm install --global npm@8.17
 
 WORKDIR /webapp
 

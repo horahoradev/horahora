@@ -11,6 +11,8 @@ services:
       dockerfile: Dockerfile.dev
       args:
         NODEJS_IMAGE: ${NODEJS_IMAGE}
+      labels:
+        name: webapp
     depends_on:
       - frontapi
     profiles:
@@ -24,6 +26,7 @@ services:
       - ./webapp/src:/webapp/src
       - ./webapp/public:/webapp/public
       - ./webapp/next.config.js:/webapp/next.config.js
+    mem_limit: 300m
 
   frontapi:
     build:
@@ -32,6 +35,8 @@ services:
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
+      labels:
+        name: frontapi
     depends_on:
       - postgres
     restart: unless-stopped
@@ -44,6 +49,7 @@ services:
       - JaegerAddress=
     volumes:
       - ./front_api:/horahora/front_api
+    mem_limit: 300m
 
   scheduler:
     build:
@@ -56,6 +62,7 @@ services:
         PYTHON_IMAGE: ${PYTHON_IMAGE}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: scheduler
     depends_on:
       - postgres
     restart: unless-stopped
@@ -79,6 +86,7 @@ services:
       - rabbit_pass=guest
     volumes:
       - ./scheduler:/horahora/scheduler
+    mem_limit: 300m
 
   videoservice:
     build:
@@ -89,6 +97,7 @@ services:
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: videoservice
     depends_on:
       - postgres
     restart: unless-stopped
@@ -115,6 +124,7 @@ services:
     volumes:
       - ./video_service:/horahora/videoservice
       - $HOME/.aws/:/root/.aws/:ro
+    mem_limit: 300m
 
   userservice:
     build:
@@ -125,6 +135,7 @@ services:
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: userservice
     depends_on:
       - postgres
     restart: unless-stopped
@@ -139,6 +150,7 @@ services:
       - RSA_KEYPAIR=${JWT_KEYPAIR}
     volumes:
       - ./user_service:/horahora/userservice
+    mem_limit: 300m
 
   postgres:
     build:
@@ -147,6 +159,8 @@ services:
       args:
         POSTGRES_IMAGE: ${POSTGRES_IMAGE}
         FLYWAY_VERSION: ${FLYWAY_VERSION}
+      labels:
+        name: postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: admin
@@ -160,17 +174,27 @@ services:
       dockerfile: Dockerfile.dev
       args:
         UBUNTU_IMAGE: ${UBUNTU_IMAGE}
+      labels:
+        name: minio
     restart: unless-stopped
     env_file:
       - ./.env.dev
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_CACHE=off
     volumes:
       - ./videos:/data
+    mem_limit: 300m
 
   gluetun:
+    build:
+      context: .
+      labels:
+        name: gluetun
     image: qmcgaw/gluetun
+    labels:
+      name: gluetun
     cap_add:
       - NET_ADMIN
     env_file:
@@ -182,9 +206,13 @@ services:
       - SERVER_CITIES=${VPN_CITIES}
       - HTTPPROXY=on
       - HTTPPROXY_LOG=on
-
+      - BLOCK_MALCIOUS=off
   nginx:
-    image: ${NGINX_IMAGE}
+    image: nginx
+    build:
+      context: .
+      labels:
+        name: nginx
     restart: unless-stopped
     ports:
       - "80:80"
@@ -207,15 +235,20 @@ services:
   rabbitmq:
     build:
       context: activemq
+      labels:
+        name: activemq
       dockerfile: Dockerfile.dev
       args:
         ACTIVEMQ_IMAGE: ${ACTIVEMQ_IMAGE}
     restart: unless-stopped
+    mem_limit: 300m
 
   stomp_proxy:
     build:
       context: stomp_proxy
       dockerfile: Dockerfile.dev
+      labels:
+        name: stomp_proxy
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
@@ -224,6 +257,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./stomp_proxy:/horahora/stomp_proxy
+    mem_limit: 300m
 
 volumes:
   postgresdata_dev:

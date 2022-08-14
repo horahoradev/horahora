@@ -1,33 +1,48 @@
-version: "3"
+# top level version is optional
+# https://docs.docker.com/compose/compose-file/#version-top-level-element
+
+# top level name is governed by `COMPOSE_PROJECT_NAME` env var instead
+# https://docs.docker.com/compose/compose-file/#name-top-level-element
 
 services:
   react_app:
-    build: webapp
-    restart: always
-    env_file:
-      - ./.env
+    image: ghcr.io/horahoradev/horahora/horahora.webapp:dev
+    depends_on:
+      - frontapi
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_ORIGIN=${PUBLIC_ORIGIN}
     volumes:
       - ./webapp/src:/webapp/src
       - ./webapp/public:/webapp/public
-    ports:
-      - "3000:3000"
-    mem_limit: 1000m
+      - ./webapp/next.config.js:/webapp/next.config.js
+    mem_limit: 300m
+
   frontapi:
-    image: ghcr.io/horahoradev/horahora:dev_front_api
-    restart: always
+    image: ghcr.io/horahoradev/horahora/horahora.frontapi:dev
+    depends_on:
+      - postgres
+    restart: unless-stopped
     env_file:
-      - ./.env
+      - ./.env.dev
     environment:
       - UserServiceGRPCAddress=userservice:${GRPCPort}
       - VideoServiceGRPCAddress=videoservice:${GRPCPort}
       - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
       - JaegerAddress=
+    volumes:
+      - ./front_api:/horahora/front_api
     mem_limit: 300m
+
   scheduler:
-    image: ghcr.io/horahoradev/horahora:master_scheduler
-    restart: always
+    image: ghcr.io/horahoradev/horahora/horahora.scheduler:dev
+    depends_on:
+      - postgres
+    restart: unless-stopped
     env_file:
-      - ./.env
+      - ./.env.dev
     environment:
       - pgs_host=postgres
       - pgs_port=5432
@@ -44,15 +59,17 @@ services:
       - rabbit_port=61613
       - rabbit_user=guest
       - rabbit_pass=guest
-      - redis_host=redis
-      - redis_port=6379
-      - redis_pass=
+    volumes:
+      - ./scheduler:/horahora/scheduler
     mem_limit: 300m
+
   videoservice:
-    image: ghcr.io/horahoradev/horahora:master_videoservice
-    restart: always
+    image: ghcr.io/horahoradev/horahora/horahora.videoservice:dev
+    depends_on:
+      - postgres
+    restart: unless-stopped
     env_file:
-      - ./.env
+      - ./.env.dev
     environment:
       - pgs_host=postgres
       - pgs_port=5432
@@ -71,17 +88,18 @@ services:
       - StorageEndpoint=${STORAGE_ENDPOINT}
       - ApprovalThreshold=1
       - MaxDLFileSize=300
-      - redis_host=redis
-      - redis_port=6379
-      - redis_pass=
     volumes:
+      - ./video_service:/horahora/videoservice
       - $HOME/.aws/:/root/.aws/:ro
     mem_limit: 300m
+
   userservice:
-    image: ghcr.io/horahoradev/horahora:master_userservice
-    restart: always
+    image: ghcr.io/horahoradev/horahora/horahora.userservice:dev
+    depends_on:
+      - postgres
+    restart: unless-stopped
     env_file:
-      - ./.env
+      - ./.env.dev
     environment:
       - pgs_host=postgres
       - pgs_port=5432
@@ -89,22 +107,24 @@ services:
       - pgs_pass=password
       - pgs_db=userservice
       - RSA_KEYPAIR=${JWT_KEYPAIR}
+    volumes:
+      - ./user_service:/horahora/userservice
     mem_limit: 300m
+
   postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile.postgres
-    restart: always
+    image: ghcr.io/horahoradev/horahora/horahora.postgres:dev
+    restart: unless-stopped
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
     volumes:
-      - postgresdata:/var/lib/postgresql/data
+      - postgresdata_dev:/var/lib/postgresql/data
+
   minio:
-    build: minio
-    restart: always
+    image: ghcr.io/horahoradev/horahora/horahora.minio:dev
+    restart: unless-stopped
     env_file:
-      - ./.env
+      - ./.env.dev
     environment:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
@@ -112,23 +132,26 @@ services:
     volumes:
       - ./videos:/data
     mem_limit: 300m
+
   gluetun:
-    image: qmcgaw/gluetun
+    image: ghcr.io/horahoradev/horahora/horahora.gluetun:dev
+    labels:
+      name: gluetun
     cap_add:
       - NET_ADMIN
     env_file:
-      - ./.env
+      - ./.env.dev
     environment:
       - VPN_SERVICE_PROVIDER=${VPN_PROVIDER}
       - VPN_TYPE=wireguard
       - WIREGUARD_ADDRESSES=${VPN_IP}
-      - SERVER_CITIES=$VPN_CITIES
+      - SERVER_CITIES=${VPN_CITIES}
       - HTTPPROXY=on
       - HTTPPROXY_LOG=on
       - BLOCK_MALCIOUS=off
   nginx:
-    image: nginx
-    restart: always
+    image: ghcr.io/horahoradev/horahora/horahora.nginx:dev
+    restart: unless-stopped
     ports:
       - "80:80"
       - "9000:80" # backwards compatibility issue
@@ -142,16 +165,22 @@ services:
       - minio
     volumes:
       - ./static:/etc/nginx/html/static/images
-      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./videos/otomads:/etc/nginx/html/otomads
+
   rabbitmq:
-    build: activemq
-    restart: always
+    image: ghcr.io/horahoradev/horahora/horahora.activemq:dev
+    restart: unless-stopped
     mem_limit: 300m
+
   stomp_proxy:
-    build: stomp_proxy
-    restart: always
+    image: ghcr.io/horahoradev/horahora/horahora.stomp_proxy:dev
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    volumes:
+      - ./stomp_proxy:/horahora/stomp_proxy
     mem_limit: 300m
 
 volumes:
-  postgresdata:
+  postgresdata_dev:
