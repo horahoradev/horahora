@@ -187,12 +187,10 @@ services:
 
   gluetun:
     build:
-      dockerfile: Dockerfile.gluetun.dev
-      context: .
+      context: gluetun
+      dockerfile: Dockerfile.gluetun
       labels:
         name: gluetun
-    labels:
-      name: gluetun
     cap_add:
       - NET_ADMIN
     env_file:
@@ -207,8 +205,8 @@ services:
       - BLOCK_MALCIOUS=off
   nginx:
     build:
-      context: .
-      dockerfile: Dockerfile.nginx.dev
+      context: nginx
+      dockerfile: Dockerfile.nginx
       labels:
         name: nginx
     restart: unless-stopped
