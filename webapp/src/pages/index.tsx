@@ -1,22 +1,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
 
-import { getHome } from "#api/index";
+import { fetchHome, type IHomeData } from "#api/lib";
 import Paginatione from "#components/pagination";
 import { Page } from "#components/page";
 import { PostList } from "#components/entities/post";
-import { type IVideo } from "#codegen/schema/001_interfaces";
-
-interface IPageData {
-  PaginationData: Record<string, unknown>;
-  Videos: IVideo[];
-}
 
 export function HomePage() {
   const router = useRouter();
   const { query, isReady } = router;
-  const [pageData, setPageData] = useState<IPageData | null>(null);
+  const [pageData, setPageData] = useState<IHomeData | null>(null);
   const [currPage, setPage] = useState(1);
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
@@ -31,7 +24,7 @@ export function HomePage() {
       const { order, category, search } = query;
 
       try {
-        let data: IPageData = await getHome(
+        let data: IHomeData = await fetchHome(
           currPage,
           search as string,
           order as string,
@@ -39,10 +32,7 @@ export function HomePage() {
         );
         if (!ignore) setPageData(data);
       } catch (error) {
-        // Bad redirect if not authenticated
-        if (axios.isAxiosError(error) && error.response!.status === 403) {
-          router.push("/authentication/login");
-        }
+        console.error(error);
       }
     };
 

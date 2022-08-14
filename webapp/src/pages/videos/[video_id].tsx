@@ -1,23 +1,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { getComments, getVideo } from "#api/index";
+import { getPostComments, getPost, type IPostDetails } from "#api/lib";
 import { VideoView } from "#components/posts";
-import { type IVideoDetailed } from "#types/entities";
 import { Page } from "#components/page";
-import { VideoList } from "#components/video-list";
-import { type IVideo } from "#codegen/schema/001_interfaces";
-
-interface IPageData extends IVideoDetailed {
-  RecommendedVideos: IVideo[];
-}
 
 function VideosPage() {
   const router = useRouter();
   const { query, isReady } = router;
   let video_id = Number(query.video_id);
 
-  const [pageData, setPageData] = useState<IPageData | null>(null);
+  const [pageData, setPageData] = useState<IPostDetails | null>(null);
   const [rating, setRating] = useState(0.0);
   const [comments, setComments] = useState([]);
 
@@ -27,7 +20,7 @@ function VideosPage() {
   }
 
   async function refreshComments() {
-    let videoComments = await getComments(video_id);
+    let videoComments = await getPostComments(video_id);
     setComments(videoComments);
   }
 
@@ -39,7 +32,7 @@ function VideosPage() {
     let ignore = false;
 
     let fetchData = async () => {
-      let data = await getVideo(video_id);
+      let data = await getPost(video_id);
       if (data) setRating(data.Rating);
       if (!ignore) setPageData(data);
 

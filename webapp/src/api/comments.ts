@@ -1,4 +1,4 @@
-import { FetchError, formHeader, PublicAPIURL } from "./types";
+import { FetchError, formHeader, PublicAPIURL } from "#lib/fetch";
 
 export async function addComment(formParams: URLSearchParams) {
   const url = new PublicAPIURL("/comments/");
