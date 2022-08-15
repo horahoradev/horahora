@@ -7,7 +7,7 @@ export interface IAPIFetchArgs {
   options?: IAPIFetchOptions;
 }
 
-export interface IAPIFetchOptions extends RequestInit {
+export interface IAPIFetchOptions extends Omit<RequestInit, "credentials"> {
   method?: "GET" | "POST";
 }
 
@@ -18,7 +18,7 @@ export async function apiFetch<ResBody = never>({
   options,
 }: IAPIFetchArgs): Promise<ResBody> {
   const url = new PublicAPIURL(pathname, searchParams);
-  const response = await fetch(url, options);
+  const response = await fetch(url, { ...options, credentials: "include" });
 
   if (!response.ok) {
     // @TODO: 403 status handling
