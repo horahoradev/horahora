@@ -10,7 +10,7 @@ import { VideoPlayer } from "#components/video";
 import { LinkInternal } from "#components/links";
 import { VideoAdminControls } from "#components/account";
 import { NewCommentForm } from "#components/comments";
-import { type IComment, type IVideoDetailed } from "#types/entities";
+import { type IComment } from "#types/entities";
 
 // eslint-disable-next-line
 import styles from "./video.module.scss";

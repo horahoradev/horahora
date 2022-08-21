@@ -1,19 +1,3 @@
-export interface IVideoDetailed {
-  VideoID: number;
-  MPDLoc: string;
-  Title: string;
-  Views: string;
-  UploadDate: string;
-  Rating: number
-  Tags: string[];
-  AuthorID: number;
-  Username: string;
-  VideoDescription: string;
-  L: {
-    rank: number;
-  };
-}
-
 export interface IComment {
   upvote_count: number;
   id: number;
