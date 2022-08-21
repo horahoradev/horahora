@@ -1,5 +1,12 @@
 @use "../../styles/variables/sass.scss" as *;
 
 .block {
-  max-height: 1.25rem;
+  display: inline-grid;
+  width: var(--local-width, 1em);
+  height: var(--local-height, 1em);
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
 }

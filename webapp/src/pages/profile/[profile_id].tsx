@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import {
-  fetchProfile,
-  banAccount,
-  promoteAccountToMod,
-  promoteAccountToAdmin,
-} from "#api/lib";
-import { UserRank } from "#lib/account";
+import { fetchProfile } from "#api/lib";
 import Paginatione from "#components/pagination";
 import { Page } from "#components/page";
-import { Button } from "#components/buttons";
 import { PostList } from "#components/entities/post";
 import { IProfileData, ProfileArticle } from "#entities/profile";
 import { LoadingBar } from "#components/loading-bar";
@@ -53,37 +46,18 @@ function UsersPage() {
       {!pageUserData ? (
         <LoadingBar />
       ) : (
-        <ProfileArticle profile={pageUserData} />
+        <>
+          <ProfileArticle profile={pageUserData} />
+          {/* @TODO make it a part of the article */}
+          <div>
+            <PostList posts={pageUserData.Videos} />
+            <Paginatione
+              paginationData={pageUserData.PaginationData}
+              onPageChange={setPage}
+            />
+          </div>
+        </>
       )}
-
-      {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
-        <p className={"flex justify-center"}>
-          <Button onClick={() => banAccount(pageUserData.UserID)}>Ban</Button>
-        </p>
-      )}
-      {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
-        <p className={"flex justify-center"}>
-          <Button onClick={() => promoteAccountToMod(pageUserData.UserID)}>
-            Promote to mod
-          </Button>
-        </p>
-      )}
-      {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
-        <p className={"flex justify-center"}>
-          <Button onClick={() => promoteAccountToAdmin(pageUserData.UserID)}>
-            Promote to admin
-          </Button>
-        </p>
-      )}
-
-      {/* TODO: no more copy pasta! */}
-      <div>
-        <PostList posts={pageUserData.Videos} />
-        <Paginatione
-          paginationData={pageUserData.PaginationData}
-          onPageChange={setPage}
-        />
-      </div>
     </Page>
   );
 }

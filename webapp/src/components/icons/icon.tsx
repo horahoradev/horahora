@@ -4,20 +4,26 @@ import {
   type FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
 
-import { blockComponent } from "#components/meta";
+import { blockComponent, type IChildlessBlockProps } from "#components/meta";
 
 // eslint-disable-next-line
 import styles from "./icon.module.scss";
+
+export interface IIconProps extends IChildlessBlockProps<"span"> {
+  icon: FontAwesomeIconProps["icon"];
+}
 
 /**
  * An ID of the icon to be used by other components.
  */
 export interface IIconID extends IconDefinition {}
 
-export interface IIconProps extends FontAwesomeIconProps {}
-
 export const Icon = blockComponent(styles.block, Component);
 
-function Component({ ...blockProps }: IIconProps) {
-  return <FontAwesomeIcon {...blockProps} />;
+function Component({ icon, ...blockProps }: IIconProps) {
+  return (
+    <span {...blockProps}>
+      <FontAwesomeIcon className={styles.icon} icon={icon} />
+    </span>
+  );
 }
