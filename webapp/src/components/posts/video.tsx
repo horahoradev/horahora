@@ -35,25 +35,6 @@ export function VideoView(props: IVideoViewProps) {
   return (
     <div className={styles.block}>
       <div>
-        <div className="my-2">
-          <span className="text-xs font-bold text-black dark:text-white mb-2">
-            Tags
-          </span>
-          <div className="border px-2 py-1">
-            {!data.Tags
-              ? "None"
-              : data.Tags.map((tag, idx) => {
-                  return (
-                    <div key={idx} className="my-1 inline-block">
-                      <LinkInternal href={`/?search=${tag}`}>
-                        <Tag color="blue">{tag}</Tag>
-                      </LinkInternal>
-                    </div>
-                  );
-                })}
-          </div>
-        </div>
-
         <hr className="box-border w-full"></hr>
         <div className="my-4">
           <div>

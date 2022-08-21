@@ -10,6 +10,7 @@ export interface IDLProps extends IBlockProps<"dl"> {}
 export interface IDSProps extends IBlockProps<"div"> {
   dKey?: ReactNode;
   dValue?: ReactNode;
+  isHorizontal?: boolean;
 }
 export interface IDTProps extends IBlockProps<"dt"> {}
 export interface IDDProps extends IBlockProps<"dd"> {}
@@ -17,19 +18,19 @@ export interface IDDProps extends IBlockProps<"dd"> {}
 /**
  * An html equivalent of dictionaries.
  */
- export const DL = blockComponent(styles.block, DLComponent);
- /**
-  * A section of details list.
-  */
- export const DS = blockComponent(styles.section, DSComponent);
- /**
-  * A key of the details list.
-  */
- export const DT = blockComponent(styles.term, DTComponent);
- /**
-  * The value of the details list.
-  */
- export const DD = blockComponent(styles.definition, DDComponent);
+export const DL = blockComponent(styles.block, DLComponent);
+/**
+ * A section of details list.
+ */
+export const DS = blockComponent(styles.section, DSComponent);
+/**
+ * A key of the details list.
+ */
+export const DT = blockComponent(styles.term, DTComponent);
+/**
+ * The value of the details list.
+ */
+export const DD = blockComponent(styles.definition, DDComponent);
 
 function DLComponent({ children, ...blockProps }: IDLProps) {
   return <dl {...blockProps}>{children}</dl>;
@@ -38,11 +39,16 @@ function DLComponent({ children, ...blockProps }: IDLProps) {
 function DSComponent({
   dKey,
   dValue,
+  isHorizontal = false,
   children,
   className,
   ...blockProps
 }: IDSProps) {
-  const blockClass = clsx(className, children ?? styles.section_keyValue);
+  const blockClass = clsx(
+    className,
+    children ?? styles.section_keyValue,
+    isHorizontal && styles.section_horizontal
+  );
 
   return (
     <div className={blockClass} {...blockProps}>

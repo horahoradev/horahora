@@ -14,7 +14,8 @@ import {
 import { Heading } from "#components/headings";
 import { blockComponent } from "#components/meta";
 import { VideoPlayer } from "#components/video";
-import { DL, DS } from "#components/lists";
+import { DL, DS, List, ListItem } from "#components/lists";
+import { LinkInternal } from "#components/links";
 
 // eslint-disable-next-line
 import styles from "./article.module.scss";
@@ -35,6 +36,7 @@ function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
     UploadDate,
     VideoID,
     Rating,
+    Tags,
   } = video;
 
   const nextVideo = useCallback(async () => {
@@ -54,6 +56,26 @@ function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
       <ArticleBody>
         <VideoPlayer url={MPDLoc} next_video={nextVideo} />
         <DL>
+          <DS
+            dKey={"Tags"}
+            dValue={
+              !Tags.length ? (
+                "None"
+              ) : (
+                <List className={styles.tags} isHorizontal>
+                  {Tags.map((tag, idx) => {
+                    return (
+                      <ListItem key={idx}>
+                        <LinkInternal href={`/?search=${tag}`} target="_blank">
+                          {tag}
+                        </LinkInternal>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              )
+            }
+          />
           <DS dKey={"Views"} dValue={Views} />
           <DS dKey={"Upload date"} dValue={UploadDate} />
         </DL>

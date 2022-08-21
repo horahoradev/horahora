@@ -1,3 +1,7 @@
 @use "../../styles/variables/sass.scss" as *;
 
 .block {}
+
+.tags {
+  gap: $size-small $size-normal;
+}
