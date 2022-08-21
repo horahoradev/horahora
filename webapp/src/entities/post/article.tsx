@@ -52,9 +52,9 @@ function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
     <Article {...blockProps}>
       <ArticleHeader>
         <Heading level={headingLevel}>{Title}</Heading>
+        <VideoPlayer url={MPDLoc} next_video={nextVideo} />
       </ArticleHeader>
       <ArticleBody>
-        <VideoPlayer url={MPDLoc} next_video={nextVideo} />
         <DL>
           <DS
             dKey={"Tags"}
@@ -76,8 +76,8 @@ function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
               )
             }
           />
-          <DS dKey={"Views"} dValue={Views} />
-          <DS dKey={"Upload date"} dValue={UploadDate} />
+          <DS isHorizontal dKey={"Views"} dValue={Views} />
+          <DS isHorizontal dKey={"Upload date"} dValue={UploadDate} />
         </DL>
         <PostRate postID={VideoID} rating={Rating} />
       </ArticleBody>
