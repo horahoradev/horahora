@@ -4,6 +4,11 @@ import {
   type FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
 
+import { blockComponent } from "#components/meta";
+
+// eslint-disable-next-line
+import styles from "./icon.module.scss";
+
 /**
  * An ID of the icon to be used by other components.
  */
@@ -11,11 +16,8 @@ export interface IIconID extends IconDefinition {}
 
 export interface IIconProps extends FontAwesomeIconProps {}
 
-export function Icon({ ...blockProps }: IIconProps) {
-  return (
-    <FontAwesomeIcon
-      {...blockProps}
-      className="max-h-5 text-black dark:text-white"
-    />
-  );
+export const Icon = blockComponent(styles.block, Component);
+
+function Component({ ...blockProps }: IIconProps) {
+  return <FontAwesomeIcon {...blockProps} />;
 }

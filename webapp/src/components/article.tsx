@@ -9,7 +9,7 @@ export interface IArticleProps extends IBlockProps<"article"> {
    * Is not used by the card itself,
    * but the components extending it have incorporate it.
    */
-  headingLevel: IHeadingLevel;
+  headingLevel?: IHeadingLevel;
 }
 export interface IArticleHeaderProps extends IBlockProps<"header"> {}
 export interface IArticleBodyProps extends IBlockProps<"section"> {}
