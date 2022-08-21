@@ -59,13 +59,13 @@ function VideosPage() {
         rating={rating}
         next_video={navigate_to_next_video}
       />
-      {/* <div className="ml-4 mt-2 w-100 align-top float-right">
+      {/*
         <VideoList
           videos={pageData.RecommendedVideos}
           title="Recommendations"
           inline={true}
         />
-      </div> */}
+      */}
     </Page>
   );
 }

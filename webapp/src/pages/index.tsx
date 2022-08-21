@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { fetchHome, type IHomeData } from "#api/lib";
 import Paginatione from "#components/pagination";
 import { Page } from "#components/page";
-import { PostList } from "#components/entities/post";
+import { PostList } from "#entities/post";
 
 export function HomePage() {
   const router = useRouter();

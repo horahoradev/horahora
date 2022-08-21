@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { fetchProfile } from "#api/lib";
 import Paginatione from "#components/pagination";
 import { Page } from "#components/page";
-import { PostList } from "#components/entities/post";
+import { PostList } from "#entities/post";
 import { IProfileData, ProfileArticle } from "#entities/profile";
 import { LoadingBar } from "#components/loading-bar";
 
