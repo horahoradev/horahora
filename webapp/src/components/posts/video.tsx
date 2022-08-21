@@ -24,7 +24,7 @@ export interface IVideoViewProps {
 }
 
 export function VideoView(props: IVideoViewProps) {
-  let { rating, data, id, videoComments, refreshComments } = props;
+  let {data, id, videoComments, refreshComments } = props;
 
   async function upvoteComment(commentID: number, has_upvoted: boolean) {
     await apiUpvoteComment(commentID, !has_upvoted);

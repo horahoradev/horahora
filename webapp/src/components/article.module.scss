@@ -1,6 +1,8 @@
 @use "../styles/variables/sass.scss" as *;
 
 .block {
+  display: grid;
+  gap: $size-normal;
   max-width: $width-tablet;
   background-color: var(--colour1-primary);
   border-radius: $radius-normal;

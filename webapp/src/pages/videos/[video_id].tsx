@@ -8,11 +8,12 @@ import { IVideoDetail, PostArticle } from "#entities/post";
 
 function VideosPage() {
   const router = useRouter();
-  const { query, isReady } = router;
-  let video_id = Number(query.video_id);
-
   const [videoDetail, changeVideoDetail] = useState<IVideoDetail>();
   const [comments, setComments] = useState([]);
+  const { query, isReady } = router;
+  let video_id = Number(query.video_id);
+  const title = !videoDetail ? "Video" : `Video "${videoDetail.Title}"`
+
 
   async function refreshComments() {
     let videoComments = await getPostComments(video_id);
@@ -43,8 +44,8 @@ function VideosPage() {
   if (videoDetail == null) return null;
 
   return (
-    <Page title="Video">
-      <PostArticle video={videoDetail} />
+    <Page title={title}>
+      <PostArticle video={videoDetail} headingLevel={2}/>
       <VideoView
         data={videoDetail}
         videoComments={comments}
