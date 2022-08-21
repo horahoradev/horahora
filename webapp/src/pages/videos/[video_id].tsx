@@ -12,7 +12,6 @@ function VideosPage() {
   let video_id = Number(query.video_id);
 
   const [videoDetail, changeVideoDetail] = useState<IVideoDetail>();
-  const [rating, setRating] = useState(0.0);
   const [comments, setComments] = useState([]);
 
   async function refreshComments() {
@@ -29,7 +28,6 @@ function VideosPage() {
 
     let fetchData = async () => {
       let data = await getPost(video_id);
-      if (data) setRating(data.Rating);
       if (!ignore) changeVideoDetail(data);
 
       await refreshComments();
@@ -52,8 +50,6 @@ function VideosPage() {
         videoComments={comments}
         id={video_id}
         refreshComments={refreshComments}
-        setRating={setRating}
-        rating={rating}
       />
       {/*
         <VideoList

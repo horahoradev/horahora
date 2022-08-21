@@ -1,3 +1,52 @@
 @use "../../styles/variables/sass.scss" as *;
 
-.block {}
+.block {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: $size-normal;
+  padding: $size-small;
+
+  &_liked {
+    .like {
+      color: var(--positive-colour1-primary);
+      background-color: var(--positive-colour2-primary);
+    }
+    .dislike {
+      color: var(--negative-colour1-tertiary);
+      background-color: var(--negative-colour2-tertiary);
+    }
+  }
+
+  &_disliked {
+    .like {
+      color: var(--positive-colour1-tertiary);
+      background-color: var(--positive-colour2-tertiary);
+    }
+    .dislike {
+      color: var(--negative-colour1-primary);
+      background-color: var(--negative-colour2-primary);
+    }
+  }
+}
+
+.like {
+  width: 7em;
+  justify-content: center;
+  color: var(--positive-colour1-secondary);
+  background-color: var(--positive-colour2-secondary);
+
+  transition-duration: var(--duration-global);
+  transition-property: color, background-color;
+}
+
+.dislike {
+  width: 7em;
+  justify-content: center;
+  color: var(--negative-colour1-secondary);
+  background-color: var(--negative-colour2-secondary);
+
+  transition-duration: var(--duration-global);
+  transition-property: color, background-color;
+}

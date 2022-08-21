@@ -20,48 +20,21 @@ export interface IVideoViewProps {
   data: IVideoDetail;
   videoComments: IComment[];
 
-  rating: number;
   refreshComments: () => Promise<unknown>;
-  setRating: (rating: number) => void;
 }
 
 export function VideoView(props: IVideoViewProps) {
-  let {
-    rating,
-    data,
-    id,
-    setRating,
-    videoComments,
-    refreshComments,
-  } = props;
+  let { rating, data, id, videoComments, refreshComments } = props;
 
   async function upvoteComment(commentID: number, has_upvoted: boolean) {
     await apiUpvoteComment(commentID, !has_upvoted);
     await refreshComments();
   }
 
-  async function rate(rating: number) {
-    if (id == 0) {
-      // TODO: throw
-      return;
-    }
-    await ratePost(id, rating);
-    setRating(rating);
-  }
-
   // FIXME: new API endpoint
   return (
     <div className={styles.block}>
-
       <div>
-        <div>
-          <div className="inline-block relative top-5 float-right left-16 mr-2">
-            <Rate allowHalf={true} value={rating} onChange={rate}></Rate>
-          </div>
-          <br />
-          <span className="text-gray-600 text-xs">{data.UploadDate}</span>
-        </div>
-
         <div className="my-2">
           <span className="text-xs font-bold text-black dark:text-white mb-2">
             Tags
