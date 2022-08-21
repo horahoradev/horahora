@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { getPostComments, getPost, type IPostDetails } from "#api/lib";
+import { getPostComments, getPost } from "#api/lib";
 import { VideoView } from "#components/posts";
 import { Page } from "#components/page";
+import { IVideoDetail } from "#entities/post";
 
 function VideosPage() {
   const router = useRouter();
   const { query, isReady } = router;
   let video_id = Number(query.video_id);
 
-  const [pageData, setPageData] = useState<IPostDetails | null>(null);
+  const [pageData, setPageData] = useState<IVideoDetail>();
   const [rating, setRating] = useState(0.0);
   const [comments, setComments] = useState([]);
 

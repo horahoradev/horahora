@@ -11,13 +11,14 @@ import { LinkInternal } from "#components/links";
 import { VideoAdminControls } from "#components/account";
 import { NewCommentForm } from "#components/comments";
 import { type IComment } from "#types/entities";
+import { IVideoDetail } from "#entities/post";
 
 // eslint-disable-next-line
 import styles from "./video.module.scss";
 
 export interface IVideoViewProps {
   id: number;
-  data: IVideoDetailed;
+  data: IVideoDetail;
   videoComments: IComment[];
 
   rating: number;
