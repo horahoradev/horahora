@@ -44,7 +44,7 @@ function VideosPage() {
   if (videoDetail == null) return null;
 
   return (
-    <Page title={title}>
+    <Page title={title} heading={null}>
       <PostArticle video={videoDetail} headingLevel={2}/>
       <VideoView
         data={videoDetail}

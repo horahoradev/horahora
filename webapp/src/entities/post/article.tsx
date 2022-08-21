@@ -48,9 +48,9 @@ function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
 
   return (
     <Article {...blockProps}>
-      {/* <ArticleHeader>
+      <ArticleHeader>
         <Heading level={headingLevel}>{Title}</Heading>
-      </ArticleHeader> */}
+      </ArticleHeader>
       <ArticleBody>
         <VideoPlayer url={MPDLoc} next_video={nextVideo} />
         <DL>

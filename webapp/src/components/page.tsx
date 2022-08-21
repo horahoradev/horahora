@@ -16,13 +16,13 @@ interface IPageProps {
 export function Page({ title, heading = title, children }: IPageProps) {
   return (
     <>
-      {!title ? (
+      <Head>
+        <title key={title}>{title}</title>
+      </Head>
+      {!heading ? (
         children
       ) : (
         <>
-          <Head>
-            <title key={title}>{title}</title>
-          </Head>
           <Heading level={1}>{heading}</Heading>
           <section>{children}</section>
         </>
