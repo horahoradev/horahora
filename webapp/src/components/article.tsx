@@ -1,7 +1,9 @@
-import styles from "./article.module.scss";
-
 import { blockComponent, type IBlockProps } from "#components/meta";
 import { type IHeadingLevel } from "#components/headings";
+
+// eslint-disable-next-line
+import styles from "./article.module.scss";
+
 export interface IArticleProps extends IBlockProps<"article"> {
   /**
    * Is not used by the card itself,

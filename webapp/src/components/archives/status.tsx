@@ -3,13 +3,16 @@ import { CheckOutlined, SyncOutlined } from "@ant-design/icons";
 
 import { type IArchivalRequest } from "#codegen/schema/001_interfaces";
 
+// eslint-disable-next-line
+import styles from "./status.module.scss"
+
 export interface IArchiverRequestStatusProps {
   record: IArchivalRequest;
 }
 
 export function ArchiveRequestStatus({ record }: IArchiverRequestStatusProps) {
   if (
-    record.ArchivedVideos == record.CurrentTotalVideos &&
+    record.ArchivedVideos === record.CurrentTotalVideos &&
     record.CurrentTotalVideos != 0
   ) {
     return (

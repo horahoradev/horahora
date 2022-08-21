@@ -2,10 +2,12 @@ import { useState } from "react";
 
 import { FormSection } from "./section";
 import { type ISubmitEvent } from "./types";
-import styles from "./form.module.scss";
 
 import { blockComponent, type IBlockProps } from "#components/meta";
 import { ButtonSubmit } from "#components/buttons";
+
+// eslint-disable-next-line
+import styles from "./form.module.scss";
 
 export interface IFormProps extends IBlockProps<"form"> {
   id: string
