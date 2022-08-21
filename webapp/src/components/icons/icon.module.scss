@@ -2,8 +2,8 @@
 
 .block {
   display: inline-grid;
-  width: var(--local-width, 1em);
-  height: var(--local-height, 1em);
+  width: var(--local-icon-size, var(--local-width, 1em));
+  height: var(--local-icon-size, var(--local-height, 1em));
 }
 
 .icon {

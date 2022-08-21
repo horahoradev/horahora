@@ -1,6 +1,6 @@
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
-import { IProfileData } from "./types";
+import { type IProfileData } from "./types";
 
 import { Icon } from "#components/icons";
 import {
@@ -17,7 +17,6 @@ import {
   promoteAccountToMod,
   promoteAccountToAdmin,
 } from "#api/lib";
-import { UserRank } from "#lib/account";
 import { Button } from "#components/buttons";
 import { List, ListItem } from "#components/lists";
 import { useAccount } from "#hooks";
@@ -43,12 +42,11 @@ function Component({
     <Article {...blockProps}>
       <ArticleHeader className={styles.header}>
         <Heading>
-          {Username} <b> {banned && "(banned)"} </b>
+          {Username} {banned && <b>(banned)</b>}
         </Heading>
-        <Icon icon={faUser} />
+        <Icon className={styles.avatar} icon={faUser} />
       </ArticleHeader>
       <ArticleBody></ArticleBody>
-
       {isAdmin && (
         <ArticleFooter>
           <List isHorizontal>
