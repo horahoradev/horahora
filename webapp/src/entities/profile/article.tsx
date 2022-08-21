@@ -19,10 +19,11 @@ import {
 } from "#api/lib";
 import { UserRank } from "#lib/account";
 import { Button } from "#components/buttons";
+import { List, ListItem } from "#components/lists";
+import { useAccount } from "#hooks";
 
 // eslint-disable-next-line
 import styles from "./article.module.scss";
-import { List } from "#components/lists";
 
 export interface IProfileArticleProps extends IArticleProps {
   profile: IProfileData;
@@ -35,6 +36,7 @@ function Component({
   headingLevel,
   ...blockProps
 }: IProfileArticleProps) {
+  const { isAdmin } = useAccount();
   const { Username, banned } = profile;
 
   return (
@@ -46,31 +48,26 @@ function Component({
         <Icon icon={faUser} />
       </ArticleHeader>
       <ArticleBody></ArticleBody>
-      <ArticleFooter>
-        <List></List>
-      </ArticleFooter>
 
-      {profile.L && profile.L.rank === UserRank.ADMIN && (
-        <p className={"flex justify-center"}>
-          <Button onClick={() => banAccount(profile.UserID)}>Ban</Button>
-        </p>
+      {isAdmin && (
+        <ArticleFooter>
+          <List isHorizontal>
+            <ListItem>
+              <Button onClick={() => banAccount(profile.UserID)}>Ban</Button>
+            </ListItem>
+            <ListItem>
+              <Button onClick={() => promoteAccountToMod(profile.UserID)}>
+                Promote to mod
+              </Button>
+            </ListItem>
+            <ListItem>
+              <Button onClick={() => promoteAccountToAdmin(profile.UserID)}>
+                Promote to admin
+              </Button>
+            </ListItem>
+          </List>
+        </ArticleFooter>
       )}
-      {profile.L && profile.L.rank === UserRank.ADMIN && (
-        <p className={"flex justify-center"}>
-          <Button onClick={() => promoteAccountToMod(profile.UserID)}>
-            Promote to mod
-          </Button>
-        </p>
-      )}
-      {profile.L && profile.L.rank === UserRank.ADMIN && (
-        <p className={"flex justify-center"}>
-          <Button onClick={() => promoteAccountToAdmin(profile.UserID)}>
-            Promote to admin
-          </Button>
-        </p>
-      )}
-
-      {/* TODO: no more copy pasta! */}
     </Article>
   );
 }
