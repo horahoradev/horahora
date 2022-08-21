@@ -4,21 +4,16 @@ import { useRouter } from "next/router";
 import { getPostComments, getPost } from "#api/lib";
 import { VideoView } from "#components/posts";
 import { Page } from "#components/page";
-import { IVideoDetail } from "#entities/post";
+import { IVideoDetail, PostArticle } from "#entities/post";
 
 function VideosPage() {
   const router = useRouter();
   const { query, isReady } = router;
   let video_id = Number(query.video_id);
 
-  const [pageData, setPageData] = useState<IVideoDetail>();
+  const [videoDetail, changeVideoDetail] = useState<IVideoDetail>();
   const [rating, setRating] = useState(0.0);
   const [comments, setComments] = useState([]);
-
-  function navigate_to_next_video() {
-    if (!pageData || !pageData.RecommendedVideos) return;
-    router.push("/videos/" + pageData.RecommendedVideos[0].VideoID);
-  }
 
   async function refreshComments() {
     let videoComments = await getPostComments(video_id);
@@ -35,7 +30,7 @@ function VideosPage() {
     let fetchData = async () => {
       let data = await getPost(video_id);
       if (data) setRating(data.Rating);
-      if (!ignore) setPageData(data);
+      if (!ignore) changeVideoDetail(data);
 
       await refreshComments();
     };
@@ -47,18 +42,18 @@ function VideosPage() {
     };
   }, [video_id, isReady]);
 
-  if (pageData == null) return null;
+  if (videoDetail == null) return null;
 
   return (
     <Page title="Video">
+      <PostArticle video={videoDetail} />
       <VideoView
-        data={pageData}
+        data={videoDetail}
         videoComments={comments}
         id={video_id}
         refreshComments={refreshComments}
         setRating={setRating}
         rating={rating}
-        next_video={navigate_to_next_video}
       />
       {/*
         <VideoList

@@ -14,7 +14,7 @@ export const ButtonHTML = blockComponent(styles.block, Component);
  * Base button component for shared styles
  * between standard and submit buttons.
  */
-export function Component({
+function Component({
   iconID,
   children,
   ...blockProps

@@ -14,6 +14,23 @@ export interface IDSProps extends IBlockProps<"div"> {
 export interface IDTProps extends IBlockProps<"dt"> {}
 export interface IDDProps extends IBlockProps<"dd"> {}
 
+/**
+ * An html equivalent of dictionaries.
+ */
+ export const DL = blockComponent(styles.block, DLComponent);
+ /**
+  * A section of details list.
+  */
+ export const DS = blockComponent(styles.section, DSComponent);
+ /**
+  * A key of the details list.
+  */
+ export const DT = blockComponent(styles.term, DTComponent);
+ /**
+  * The value of the details list.
+  */
+ export const DD = blockComponent(styles.definition, DDComponent);
+
 function DLComponent({ children, ...blockProps }: IDLProps) {
   return <dl {...blockProps}>{children}</dl>;
 }
@@ -31,7 +48,7 @@ function DSComponent({
     <div className={blockClass} {...blockProps}>
       {children ?? (
         <>
-          <DT>{dKey}</DT>
+          <DT>{dKey}:</DT>
           <DD>{dValue}</DD>
         </>
       )}
@@ -46,20 +63,3 @@ function DTComponent({ children, ...blockProps }: IDTProps) {
 function DDComponent({ children, ...blockProps }: IDDProps) {
   return <dd {...blockProps}>{children ?? "Unknown"}</dd>;
 }
-
-/**
- * An html equivalent of dictionaries.
- */
-export const DL = blockComponent(styles.block, DLComponent);
-/**
- * A section of details list.
- */
-export const DS = blockComponent(styles.section, DSComponent);
-/**
- * A key of the details list.
- */
-export const DT = blockComponent(styles.term, DTComponent);
-/**
- * The value of the details list.
- */
-export const DD = blockComponent(styles.definition, DDComponent);

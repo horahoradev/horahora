@@ -6,7 +6,6 @@ import { ProfileURL } from "#lib/urls";
 import { UserRank } from "#lib/account";
 import { Icon } from "#components/icons";
 import { upvoteComment as apiUpvoteComment, ratePost } from "#api/lib";
-import { VideoPlayer } from "#components/video";
 import { LinkInternal } from "#components/links";
 import { VideoAdminControls } from "#components/account";
 import { NewCommentForm } from "#components/comments";
@@ -24,7 +23,6 @@ export interface IVideoViewProps {
   rating: number;
   refreshComments: () => Promise<unknown>;
   setRating: (rating: number) => void;
-  next_video: () => void;
 }
 
 export function VideoView(props: IVideoViewProps) {
@@ -33,7 +31,6 @@ export function VideoView(props: IVideoViewProps) {
     data,
     id,
     setRating,
-    next_video,
     videoComments,
     refreshComments,
   } = props;
@@ -55,21 +52,9 @@ export function VideoView(props: IVideoViewProps) {
   // FIXME: new API endpoint
   return (
     <div className={styles.block}>
-      <VideoPlayer
-        className={styles.player}
-        url={data.MPDLoc}
-        next_video={next_video}
-      />
+
       <div>
         <div>
-          <span className="text-lg font-bold text-black dark:text-white">
-            {data.Title}
-          </span>
-          <span className="float-right">
-            <span className="text-black dark:text-white">
-              {data.Views} Views
-            </span>
-          </span>
           <div className="inline-block relative top-5 float-right left-16 mr-2">
             <Rate allowHalf={true} value={rating} onChange={rate}></Rate>
           </div>
