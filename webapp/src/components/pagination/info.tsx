@@ -11,12 +11,13 @@ export interface IPaginationInfoProps extends IChildlessBlockProps<"p"> {
 export const PaginationInfo = blockComponent(styles.block, Component);
 
 function Component({ pagination, ...blockProps }: IPaginationInfoProps) {
-  const { limit, totalCount, currentPage } = pagination;
-  const totalPages = Math.ceil(totalCount / limit);
-  const current = currentPage ?? totalPages;
+  const { limit, totalCount } = pagination;
+  let { currentPage, totalPages } = pagination;
+  totalPages = totalPages ?? Math.ceil(totalCount / limit);
+  currentPage = currentPage ?? totalPages;
   const isLastPage = currentPage === totalPages;
-  const currentMin = (current - 1) * limit + 1;
-  const currentMax = isLastPage ? totalCount : current * limit;
+  const currentMin = (currentPage - 1) * limit + 1;
+  const currentMax = isLastPage ? totalCount : currentPage * limit;
 
   return (
     <p {...blockProps}>
