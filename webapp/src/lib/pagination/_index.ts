@@ -1,1 +1,1 @@
-export type { IPagination, ICollection } from "./types";
+export type { IPagination, ICollection, IURLBuilder } from "./types";
