@@ -3,10 +3,14 @@ import { useRouter } from "next/router";
 
 import { Button } from "#components/buttons";
 import { deletePost, approvePost } from "#api/lib";
-import { type IVideoDetailed } from "#types/entities";
+import { IVideoDetail } from "#entities/post";
+import { List, ListItem } from "#components/lists";
+
+// eslint-disable-next-line
+import styles from "./video-admin-controls.module.scss";
 
 export interface IVideoAdminControls {
-  data: IVideoDetailed;
+  data: IVideoDetail;
 }
 
 export function VideoAdminControls(props: IVideoAdminControls) {
@@ -47,17 +51,15 @@ export function VideoAdminControls(props: IVideoAdminControls) {
   }, [data, approvingVideo, setApprovedVideo]);
 
   return (
-    <>
-      <hr />
-      <div className="my-4">
-        <b className="text-2xl text-black dark:text-white ml-4">
-          Admin controls:
-        </b>
+    <List isHorizontal className={styles.block}>
+      <ListItem>
+        <Button onClick={deleteVideo}>Delete video</Button>
+      </ListItem>
+      <ListItem>
         <Button disabled={approvedVideo} onClick={approveVideo}>
           {approvedVideo ? "Approved" : "Approve"}
         </Button>
-        <Button onClick={deleteVideo}>Delete video</Button>
-      </div>
-    </>
+      </ListItem>
+    </List>
   );
 }

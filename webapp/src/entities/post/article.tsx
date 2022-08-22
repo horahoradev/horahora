@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useCallback } from "react";
+import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
 import { type IVideoDetail } from "./types";
 import { PostRate } from "./rating";
@@ -16,9 +17,12 @@ import { blockComponent } from "#components/meta";
 import { VideoPlayer } from "#components/video";
 import { DL, DS, List, ListItem } from "#components/lists";
 import { LinkInternal } from "#components/links";
+import { ProfileURL } from "#lib/urls";
+import { VideoAdminControls } from "#components/account";
 
 // eslint-disable-next-line
 import styles from "./article.module.scss";
+import { useAccount } from "#hooks";
 
 export interface IPostArticleProps extends IArticleProps {
   video: IVideoDetail;
@@ -28,6 +32,7 @@ export const PostArticle = blockComponent(styles.block, Component);
 
 function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
   const router = useRouter();
+  const { isAdmin } = useAccount();
   const {
     Title,
     MPDLoc,
@@ -37,6 +42,9 @@ function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
     VideoID,
     Rating,
     Tags,
+    AuthorID,
+    Username,
+    VideoDescription,
   } = video;
 
   const nextVideo = useCallback(async () => {
@@ -57,7 +65,25 @@ function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
       <ArticleBody>
         <DL>
           <DS
-            dKey={"Tags"}
+            isHorizontal
+            dKey="Author"
+            dValue={
+              <LinkInternal
+                href={new ProfileURL(AuthorID)}
+                iconID={faUserCircle}
+              >
+                {Username}
+              </LinkInternal>
+            }
+          />
+          <DS
+            dKey="Description"
+            dValue={
+              <p dangerouslySetInnerHTML={{ __html: VideoDescription }}></p>
+            }
+          />
+          <DS
+            dKey="Tags"
             dValue={
               !Tags.length ? (
                 "None"
@@ -76,9 +102,10 @@ function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
               )
             }
           />
-          <DS isHorizontal dKey={"Views"} dValue={Views} />
-          <DS isHorizontal dKey={"Upload date"} dValue={UploadDate} />
+          <DS isHorizontal dKey="Views" dValue={Views} />
+          <DS isHorizontal dKey="Upload date" dValue={UploadDate} />
         </DL>
+        {isAdmin && <VideoAdminControls data={video} />}
         <PostRate postID={VideoID} rating={Rating} />
       </ArticleBody>
       <ArticleFooter></ArticleFooter>

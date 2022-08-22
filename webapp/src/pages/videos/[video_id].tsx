@@ -12,8 +12,9 @@ function VideosPage() {
   const [comments, setComments] = useState([]);
   const { query, isReady } = router;
   let video_id = Number(query.video_id);
-  const title = !videoDetail ? "Video" : `Video "${videoDetail.Title}"`
-
+  const title = !videoDetail
+    ? "Video"
+    : `Video "${videoDetail.Title}" (${videoDetail.VideoID}) by "${videoDetail.Username}" (${videoDetail.AuthorID})`;
 
   async function refreshComments() {
     let videoComments = await getPostComments(video_id);
@@ -45,7 +46,7 @@ function VideosPage() {
 
   return (
     <Page title={title} heading={null}>
-      <PostArticle video={videoDetail} headingLevel={2}/>
+      <PostArticle video={videoDetail} headingLevel={2} />
       <VideoView
         data={videoDetail}
         videoComments={comments}

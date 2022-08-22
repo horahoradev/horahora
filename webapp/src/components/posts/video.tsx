@@ -7,7 +7,7 @@ import { UserRank } from "#lib/account";
 import { Icon } from "#components/icons";
 import { upvoteComment as apiUpvoteComment, ratePost } from "#api/lib";
 import { LinkInternal } from "#components/links";
-import { VideoAdminControls } from "#components/account";
+
 import { NewCommentForm } from "#components/comments";
 import { type IComment } from "#types/entities";
 import { IVideoDetail } from "#entities/post";
@@ -34,34 +34,6 @@ export function VideoView(props: IVideoViewProps) {
   // FIXME: new API endpoint
   return (
     <div className={styles.block}>
-      <div>
-        <hr className="box-border w-full"></hr>
-        <div className="my-4">
-          <div>
-            <span className="h-20 w-20 inline-block">
-              <LinkInternal href={new ProfileURL(data.AuthorID)}>
-                <Avatar size={80} icon={<Icon icon={faUserCircle} />} />
-              </LinkInternal>
-            </span>
-            <span className="ml-2 pl-1 mt-2 inline-block align-top">
-              <LinkInternal href={new ProfileURL(data.AuthorID)}>
-                <b className="font-black text-blue-500 text-xl">
-                  {data.Username}
-                </b>
-              </LinkInternal>
-              <h1 className="text-black dark:text-white">0 subscribers</h1>
-            </span>
-          </div>
-          <div className="ml-20 pl-3 text-black dark:text-white">
-            {/* enjoy your XSS, bro */}
-            <span dangerouslySetInnerHTML={{ __html: data.VideoDescription }} />
-          </div>
-        </div>
-      </div>
-      {data.L && data.L.rank === UserRank.ADMIN && (
-        <VideoAdminControls data={data} />
-      )}
-      <hr></hr>
       <List
         bordered={false}
         split={false}
