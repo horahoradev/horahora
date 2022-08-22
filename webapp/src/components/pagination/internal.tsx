@@ -1,3 +1,6 @@
+import { useRouter } from "next/router";
+
+import { FormClient, ISubmitEvent } from "#components/forms";
 import { LinkInternal } from "#components/links";
 import {
   IListUnorderedProps,
@@ -68,5 +71,23 @@ function Component({
         )}
       </ListItem>
     </ListUnordered>
+  );
+}
+
+interface ICurrentPageProps {
+  pagination: IPagination;
+  urlBuilder: IURLBuilder;
+}
+
+function CurrentPage({ pagination, urlBuilder }: ICurrentPageProps) {
+  const router = useRouter();
+  async function handleSubmit(event: ISubmitEvent) {}
+
+  return (
+    <FormClient
+      id={`pagination`}
+      onSubmit={handleSubmit}
+      isSubmitSection={false}
+    ></FormClient>
   );
 }

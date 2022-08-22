@@ -1,3 +1,13 @@
+import { type IFormSectionProps } from "#components/forms";
+
+export interface IInputSectionProps extends IFormSectionProps {
+  id: string;
+  name: string;
+  disabled?: boolean;
+  form?: string;
+  required?: boolean
+}
+
 /**
  * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/password#allowing_autocomplete
  */
