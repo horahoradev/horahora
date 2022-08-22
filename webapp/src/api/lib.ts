@@ -1,7 +1,7 @@
 import { apiFetch, formHeader, type IAPIFetchOptions } from "#lib/fetch";
 import { type IProfileData } from "#entities/profile";
-import { type IVideoDetail } from "#entities/post";
-import { type IVideo } from "#codegen/schema/001_interfaces";
+import { type IVideoDetail, IVideo } from "#entities/post";
+import { type ICommentData } from "#entities/comment";
 
 export interface IHomeData {
   PaginationData: Record<string, unknown>;
@@ -48,7 +48,7 @@ export async function getPost(postID: number) {
 
 export async function getPostComments(postID: number) {
   const pathname = `/comments/${postID}`;
-  const comments = await apiFetch({ pathname });
+  const comments = await apiFetch<ICommentData[]>({ pathname });
 
   return comments;
 }

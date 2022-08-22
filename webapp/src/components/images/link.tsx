@@ -9,7 +9,7 @@ export interface IImageLinkProps extends ILinkExternalProps {
   src: IImageHTMLProps["src"];
   alt: IImageHTMLProps["alt"];
 
-  onImageError: IImageHTMLProps["onError"];
+  onImageError?: IImageHTMLProps["onError"];
 }
 
 /**
@@ -31,7 +31,7 @@ function Component({
         className={styles.image}
         src={src}
         alt={alt}
-        onError={onImageError ?? onImageError}
+        onError={onImageError}
       />
     </LinkExternal>
   );

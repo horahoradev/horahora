@@ -19,10 +19,11 @@ import { DL, DS, List, ListItem } from "#components/lists";
 import { LinkInternal } from "#components/links";
 import { ProfileURL } from "#lib/urls";
 import { VideoAdminControls } from "#components/account";
+import { useAccount } from "#hooks";
+import { CommentList } from "#entities/comment";
 
 // eslint-disable-next-line
 import styles from "./article.module.scss";
-import { useAccount } from "#hooks";
 
 export interface IPostArticleProps extends IArticleProps {
   video: IVideoDetail;
@@ -30,7 +31,11 @@ export interface IPostArticleProps extends IArticleProps {
 
 export const PostArticle = blockComponent(styles.block, Component);
 
-function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
+function Component({
+  video,
+  headingLevel = 2,
+  ...blockProps
+}: IPostArticleProps) {
   const router = useRouter();
   const { isAdmin } = useAccount();
   const {
@@ -108,7 +113,15 @@ function Component({ video, headingLevel, ...blockProps }: IPostArticleProps) {
         {isAdmin && <VideoAdminControls data={video} />}
         <PostRate postID={VideoID} rating={Rating} />
       </ArticleBody>
-      <ArticleFooter></ArticleFooter>
+      <ArticleFooter>
+        <Heading
+          // @ts-expect-error numbers
+          level={headingLevel + 1}
+        >
+          Comments
+        </Heading>
+        <CommentList postID={VideoID} />
+      </ArticleFooter>
     </Article>
   );
 }
