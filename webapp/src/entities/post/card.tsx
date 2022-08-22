@@ -52,7 +52,8 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
       <CardFooter>
         <DL>
           <DS
-            dKey={"By:"}
+            isHorizontal
+            dKey="By"
             dValue={
               AuthorName
               // @TODO: `AuthorID` should point to the imported profile
