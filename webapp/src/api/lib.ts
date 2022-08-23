@@ -1,10 +1,10 @@
 import { apiFetch, formHeader, IAPIFetchOptions } from "#lib/fetch";
 import { type IUserRank } from "#lib/account";
-import { type IVideo } from "#codegen/schema/001_interfaces";
+import { IPaginationData, type IVideo } from "#codegen/schema/001_interfaces";
 import { type IVideoDetailed } from "#types/entities";
 
 export interface IHomeData {
-  PaginationData: Record<string, unknown>;
+  PaginationData: IPaginationData;
   Videos: IVideo[];
 }
 

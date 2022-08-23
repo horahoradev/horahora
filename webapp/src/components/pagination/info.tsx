@@ -5,13 +5,14 @@ import { type IPagination } from "#lib/pagination";
 import styles from "./info.module.scss";
 
 export interface IPaginationInfoProps extends IChildlessBlockProps<"p"> {
-  pagination: IPagination;
+  pagination: Omit<IPagination, "limit">;
 }
 
 export const PaginationInfo = blockComponent(styles.block, Component);
 
 function Component({ pagination, ...blockProps }: IPaginationInfoProps) {
-  const { limit, totalCount } = pagination;
+  const { totalCount } = pagination;
+  const limit = 50;
   let { currentPage, totalPages } = pagination;
   totalPages = totalPages ?? Math.ceil(totalCount / limit);
   currentPage = currentPage ?? totalPages;
