@@ -22,5 +22,7 @@ export { Password } from "./password";
 export type { IPasswordProps } from "./password";
 export { Hidden } from "./hidden";
 export type { IHiddenProps } from "./hidden";
+export { NumberInput } from "./number";
+export type { INumberInputProps } from "./number";
 export { PASSWORD_AUTOCOMPLETE } from "./types";
 export type { IInputSectionProps, IPasswordAutoComplete } from "./types";

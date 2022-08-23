@@ -6,14 +6,14 @@ import { IInputSectionProps } from "./types";
 import { FormSection } from "#components/forms";
 import { blockComponent } from "#components/meta";
 
-export interface INumberProps extends IInputSectionProps {
+export interface INumberInputProps extends IInputSectionProps {
   inputRef?: Ref<HTMLInputElement>;
   min?: number;
   max?: number;
   step?: number;
 }
 
-export const Number = blockComponent(undefined, Component);
+export const NumberInput = blockComponent(undefined, Component);
 
 function Component({
   id,
@@ -27,7 +27,7 @@ function Component({
   defaultValue,
   inputRef,
   ...blockProps
-}: INumberProps) {
+}: INumberInputProps) {
   return (
     <FormSection {...blockProps}>
       <Input
