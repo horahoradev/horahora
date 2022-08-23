@@ -15,6 +15,8 @@ services:
         name: webapp
     depends_on:
       - frontapi
+    profiles:
+      - client
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -204,6 +206,7 @@ services:
       - HTTPPROXY_LOG=on
       - BLOCK_MALCIOUS=off
   nginx:
+    image: nginx
     build:
       context: nginx
       dockerfile: Dockerfile.nginx
@@ -221,9 +224,11 @@ services:
       - videoservice
       - stomp_proxy
       - minio
+    environment:
+      - PUBLIC_ORIGIN=${PUBLIC_ORIGIN}
     volumes:
       - ./static:/etc/nginx/html/static/images
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/dev.conf:/etc/nginx/templates/default.conf.template
       - ./videos/otomads:/etc/nginx/html/otomads
 
   rabbitmq:

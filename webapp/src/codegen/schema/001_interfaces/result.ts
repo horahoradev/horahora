@@ -93,33 +93,33 @@ export interface IAccountLogin {
 }
 
 export interface IArchivalEvent {
-  video_url?: string;
-  parent_url?: string;
-  message?: string;
-  timestamp?: string;
+  video_url: string;
+  parent_url: string;
+  message: string;
+  timestamp: string;
 }
 
 export interface IArchivalRequest {
-  UserID?: number;
-  Url?: string;
-  ArchivedVideos?: number;
-  CurrentTotalVideos?: number;
-  LastSynced?: string;
-  BackoffFactor?: number;
-  DownloadID?: number;
-  UndownloadableVideos?: number;
+  UserID: number;
+  Url: string;
+  ArchivedVideos: number;
+  CurrentTotalVideos: number;
+  LastSynced: string;
+  BackoffFactor: number;
+  DownloadID: number;
+  UndownloadableVideos: number;
 }
 
 export interface IAuditData {
   Length?: number;
-  Events?: IAuditEvent[];
+  Events: IAuditEvent[];
 }
 
 export interface IAuditEvent {
-  ID?: number;
-  UserID?: number;
-  Message?: string;
-  Timestamp?: string;
+  ID: number;
+  UserID: number;
+  Message: string;
+  Timestamp: string;
 }
 
 export interface ICommentData {
@@ -134,27 +134,27 @@ export interface ICommentData {
 }
 
 export interface IPaginationData {
-  NumberOfItems?: number;
-  CurrentPage?: number;
+  NumberOfItems: number;
+  CurrentPage: number;
 }
 
 export interface IProfileData {
-  PaginationData?: IPaginationData;
-  UserID?: number;
-  Username?: string;
-  ProfilePictureURL?: string;
-  Videos?: IVideo[];
-  Banned?: boolean;
-  L?: IAccount;
+  PaginationData: IPaginationData;
+  UserID: number;
+  Username: string;
+  ProfilePictureURL: string;
+  Videos: IVideo[];
+  banned?: boolean;
+  L: IAccount;
 }
 
 /**
  * Schema for the upload form
  */
 export interface IFileUpload {
-  title?: string;
-  description?: string;
-  tags?: string[];
+  title: string;
+  description: string;
+  tags: string[];
   /**
    * Video file.
    */
@@ -166,57 +166,57 @@ export interface IFileUpload {
 }
 
 export interface IVideoDetail {
-  Title?: string;
-  MPDLoc?: string;
-  Views?: number;
-  Rating?: number;
-  VideoID?: number;
-  AuthorID?: number;
-  Username?: string;
-  UserDescription?: string;
-  VideoDescription?: string;
-  UserSubscribers?: number;
-  ProfilePicture?: string;
+  Title: string;
+  MPDLoc: string;
+  Views: number;
+  Rating: number;
+  VideoID: number;
+  AuthorID: number;
+  Username: string;
+  UserDescription: string;
+  VideoDescription: string;
+  UserSubscribers: number;
+  ProfilePicture: string;
   /**
    * should be a datetime
    */
-  UploadDate?: string;
-  Tags?: string[];
-  RecommendedVideos?: IVideo[];
-  L?: IAccount;
+  UploadDate: string;
+  Tags: string[];
+  RecommendedVideos: IVideo[];
+  L: IAccount;
 }
 
 export interface IVideoInProgress {
-  Website?: string;
-  VideoID?: string;
-  DlStatus?: string;
+  Website: string;
+  VideoID: string;
+  DlStatus: string;
 }
 
 export interface IVideoMetadata {
   /**
    * The location of the DASH manifest
    */
-  videoLoc?: string;
-  videoTitle?: string;
-  rating?: number;
+  videoLoc: string;
+  videoTitle: string;
+  rating: number;
   /**
    * Do I need this? probably not
    */
-  authorName?: string;
-  views?: number;
-  videoID?: number;
-  uploadDate?: string;
-  description?: string;
-  authorID?: number;
-  tags?: string[];
+  authorName: string;
+  views: number;
+  videoID: number;
+  uploadDate: string;
+  description: string;
+  authorID: number;
+  tags: string[];
 }
 
 export interface IVideo {
-  Title?: string;
-  VideoID?: number;
-  Views?: number;
-  AuthorID?: number;
-  AuthorName?: string;
-  ThumbnailLoc?: string;
-  Rating?: number;
+  Title: string;
+  VideoID: number;
+  Views: number;
+  AuthorID: number;
+  AuthorName: string;
+  ThumbnailLoc: string;
+  Rating: number;
 }

@@ -1,8 +1,9 @@
 import clsx from "clsx";
 
-import styles from "./headings.module.scss";
-
 import { blockComponent, type IBlockProps } from "#components/meta";
+
+// eslint-disable-next-line
+import styles from "./headings.module.scss";
 
 const headingLevels = [1, 2, 3, 4, 5, 6] as const;
 export type IHeadingLevel = typeof headingLevels[number];

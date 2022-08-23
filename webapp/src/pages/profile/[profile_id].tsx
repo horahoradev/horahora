@@ -1,20 +1,12 @@
 import { useEffect, useState } from "react";
-import { Avatar } from "antd";
-import { UserOutlined } from "@ant-design/icons";
 import { useRouter } from "next/router";
 
-import {
-  fetchProfile,
-  banAccount,
-  promoteAccountToMod,
-  promoteAccountToAdmin,
-  type IProfileData,
-} from "#api/lib";
-import { UserRank } from "#lib/account";
+import { fetchProfile } from "#api/lib";
 import Paginatione from "#components/pagination";
 import { Page } from "#components/page";
-import { Button } from "#components/buttons";
 import { PostList } from "#components/entities/post";
+import { IProfileData, ProfileArticle } from "#entities/profile";
+import { LoadingBar } from "#components/loading-bar";
 
 // {"PaginationData":{"PathsAndQueryStrings":["/users/1?page=1"],"Pages":[1],"CurrentPage":1},"UserID":1,"Username":"【旧】【旧】電ǂ鯨","ProfilePictureURL":"/static/images/placeholder1.jpg","Videos":[{"Title":"YOAKELAND","VideoID":1,"Views":11,"AuthorID":0,"AuthorName":"【旧】【旧】電ǂ鯨","ThumbnailLoc":"http://localhost:9000/otomads/7feaa38a-1e10-11ec-a6c3-0242ac1c0004.thumb","Rating":0}]}
 
@@ -24,8 +16,7 @@ import { PostList } from "#components/entities/post";
 function UsersPage() {
   const router = useRouter();
   const { query, isReady } = router;
-  // @ts-expect-error typing
-  const [pageUserData, setPageUserData] = useState<IProfileData>({});
+  const [pageUserData, setPageUserData] = useState<IProfileData>();
   const [currPage, setPage] = useState(1);
   const profile_id = Number(
     Array.isArray(query.profile_id) ? query.profile_id[0] : query.profile_id
@@ -52,43 +43,21 @@ function UsersPage() {
 
   return (
     <Page title="Profile information">
-      {/*lol oh no*/}
-      {/* TODO: add user profile image*/}
-      <div className={"flex justify-center mx-4"}>
-        <Avatar shape="square" size={96} icon={<UserOutlined />} />
-      </div>
-
-      <p className={"flex justify-center text-black dark:text-white"}>
-        {pageUserData.Username} <b> {pageUserData.banned && "(banned)"} </b>
-      </p>
-      {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
-        <p className={"flex justify-center"}>
-          <Button onClick={() => banAccount(pageUserData.UserID)}>Ban</Button>
-        </p>
+      {!pageUserData ? (
+        <LoadingBar />
+      ) : (
+        <>
+          <ProfileArticle profile={pageUserData} />
+          {/* @TODO make it a part of the article */}
+          <div>
+            <PostList posts={pageUserData.Videos} />
+            <Paginatione
+              paginationData={pageUserData.PaginationData}
+              onPageChange={setPage}
+            />
+          </div>
+        </>
       )}
-      {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
-        <p className={"flex justify-center"}>
-          <Button onClick={() => promoteAccountToMod(pageUserData.UserID)}>
-            Promote to mod
-          </Button>
-        </p>
-      )}
-      {pageUserData.L && pageUserData.L.rank === UserRank.ADMIN && (
-        <p className={"flex justify-center"}>
-          <Button onClick={() => promoteAccountToAdmin(pageUserData.UserID)}>
-            Promote to admin
-          </Button>
-        </p>
-      )}
-
-      {/* TODO: no more copy pasta! */}
-      <div>
-        <PostList posts={pageUserData.Videos} />
-        <Paginatione
-          paginationData={pageUserData.PaginationData}
-          onPageChange={setPage}
-        />
-      </div>
     </Page>
   );
 }
