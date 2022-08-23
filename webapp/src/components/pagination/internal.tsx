@@ -81,7 +81,9 @@ interface ICurrentPageProps {
 
 function CurrentPage({ pagination, urlBuilder }: ICurrentPageProps) {
   const router = useRouter();
-  async function handleSubmit(event: ISubmitEvent) {}
+  async function handleSubmit(event: ISubmitEvent) {
+    router.push(urlBuilder(page))
+  }
 
   return (
     <FormClient
