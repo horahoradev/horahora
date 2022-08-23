@@ -1,11 +1,19 @@
+import { type IInputProps } from "./input";
+
 import { type IFormSectionProps } from "#components/forms";
 
+/**
+ * A helper interface for input sections.
+ * Components have to manually assign these values
+ * to the underlying input component.
+ */
 export interface IInputSectionProps extends IFormSectionProps {
-  id: string;
-  name: string;
-  disabled?: boolean;
-  form?: string;
-  required?: boolean
+  id: IInputProps["id"];
+  name: IInputProps["name"];
+  disabled?: IInputProps["disabled"];
+  form?: IInputProps["form"];
+  required?: IInputProps["required"];
+  defaultValue?: IInputProps["defaultValue"];
 }
 
 /**
@@ -30,4 +38,5 @@ export const PASSWORD_AUTOCOMPLETE = {
   NEW_PASSWORD: "new-password",
 } as const;
 
-export type IPasswordAutoComplete = typeof PASSWORD_AUTOCOMPLETE[keyof typeof PASSWORD_AUTOCOMPLETE];
+export type IPasswordAutoComplete =
+  typeof PASSWORD_AUTOCOMPLETE[keyof typeof PASSWORD_AUTOCOMPLETE];
