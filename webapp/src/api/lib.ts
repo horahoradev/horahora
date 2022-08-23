@@ -1,5 +1,6 @@
 import { apiFetch, formHeader, IAPIFetchOptions } from "#lib/fetch";
 import { type IUserRank } from "#lib/account";
+import { IProfileData } from "#entities/profile";
 import { type IVideo } from "#codegen/schema/001_interfaces";
 import { type IVideoDetailed } from "#types/entities";
 
@@ -28,17 +29,6 @@ export async function fetchHome(
   });
 
   return homePage;
-}
-
-export interface IProfileData {
-  Username: string;
-  banned: boolean;
-  L: Record<string, unknown> & {
-    rank: IUserRank;
-  };
-  Videos: IVideo[];
-  UserID: number;
-  PaginationData: Record<string, unknown>;
 }
 
 export async function fetchProfile(id: number, page: number) {

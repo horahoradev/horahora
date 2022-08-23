@@ -186,7 +186,7 @@ export const archivalEventSchema = {
   $id: "https://horahora-schemas.org/public-api/archival-event.schema.json",
   title: "ArchivalEvent",
   type: "object",
-  required: [],
+  required: ["video_url", "parent_url", "message", "timestamp"],
   additionalProperties: false,
   properties: {
     video_url: {
@@ -207,7 +207,16 @@ export const archivalRequestSchema = {
   $id: "https://horahora-schemas.org/public-api/archival-request.schema.json",
   title: "ArchivalRequest",
   type: "object",
-  required: [],
+  required: [
+    "UserID",
+    "Url",
+    "ArchivedVideos",
+    "CurrentTotalVideos",
+    "LastSynced",
+    "BackoffFactor",
+    "DownloadID",
+    "UndownloadableVideos",
+  ],
   additionalProperties: false,
   properties: {
     UserID: {
@@ -240,7 +249,7 @@ export const auditDataSchema = {
   $id: "https://horahora-schemas.org/public-api/audit-data.schema.json",
   title: "AuditData",
   type: "object",
-  required: [],
+  required: ["Events"],
   additionalProperties: false,
   properties: {
     Length: {
@@ -258,7 +267,7 @@ export const auditEventSchema = {
   $id: "https://horahora-schemas.org/public-api/audit-event.schema.json",
   title: "AuditEvent",
   type: "object",
-  required: [],
+  required: ["ID", "UserID", "Message", "Timestamp"],
   additionalProperties: false,
   properties: {
     ID: {
@@ -320,7 +329,7 @@ export const paginationDataSchema = {
   $id: "https://horahora-schemas.org/public-api/pagination-data.schema.json",
   title: "PaginationData",
   type: "object",
-  required: [],
+  required: ["NumberOfItems", "CurrentPage"],
   additionalProperties: false,
   properties: {
     NumberOfItems: {
@@ -335,7 +344,15 @@ export const profileDataSchema = {
   $id: "https://horahora-schemas.org/public-api/profile-data.schema.json",
   title: "ProfileData",
   type: "object",
-  required: [],
+  required: [
+    "PaginationData",
+    "UserID",
+    "Username",
+    "ProfilePictureURL",
+    "Videos",
+    "Banned",
+    "L",
+  ],
   additionalProperties: false,
   properties: {
     PaginationData: {
@@ -356,7 +373,7 @@ export const profileDataSchema = {
         $ref: "https://horahora-schemas.org/public-api/video.schema.json",
       },
     },
-    Banned: {
+    banned: {
       type: "boolean",
     },
     L: {
@@ -368,7 +385,7 @@ export const fileUploadSchema = {
   $id: "https://horahora-schemas.org/public-api/upload.schema.json",
   title: "FileUpload",
   description: "Schema for the upload form",
-  required: ["file[0]", "file[1]"],
+  required: ["title", "description", "tags", "file[0]", "file[1]"],
   additionalProperties: false,
   properties: {
     title: {
@@ -397,7 +414,23 @@ export const videoDetailSchema = {
   $id: "https://horahora-schemas.org/public-api/video-detail.schema.json",
   title: "VideoDetail",
   type: "object",
-  required: [],
+  required: [
+    "Title",
+    "MPDLoc",
+    "Views",
+    "Rating",
+    "VideoID",
+    "AuthorID",
+    "Username",
+    "UserDescription",
+    "VideoDescription",
+    "UserSubscribers",
+    "ProfilePicture",
+    "UploadDate",
+    "Tags",
+    "RecommendedVideos",
+    "L",
+  ],
   additionalProperties: false,
   properties: {
     Title: {
@@ -458,7 +491,7 @@ export const videoInProgressSchema = {
   $id: "https://horahora-schemas.org/public-api/video-in-progress.schema.json",
   title: "VideoInProgress",
   type: "object",
-  required: [],
+  required: ["Website", "VideoID", "DlStatus"],
   additionalProperties: false,
   properties: {
     Website: {
@@ -476,7 +509,18 @@ export const videoMetadataSchema = {
   $id: "https://horahora-schemas.org/public-api/video-metadata.schema.json",
   title: "VideoMetadata",
   type: "object",
-  required: [],
+  required: [
+    "videoLoc",
+    "videoTitle",
+    "rating",
+    "authorName",
+    "views",
+    "videoID",
+    "uploadDate",
+    "description",
+    "authorID",
+    "tags",
+  ],
   additionalProperties: false,
   properties: {
     videoLoc: {
@@ -520,7 +564,15 @@ export const videoSchema = {
   $id: "https://horahora-schemas.org/public-api/video.schema.json",
   title: "Video",
   type: "object",
-  required: [],
+  required: [
+    "Title",
+    "VideoID",
+    "Views",
+    "AuthorID",
+    "AuthorName",
+    "ThumbnailLoc",
+    "Rating",
+  ],
   additionalProperties: false,
   properties: {
     Title: {

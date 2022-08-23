@@ -25,6 +25,7 @@ export function Component({
     const [event] = args;
     event.preventDefault();
     await onSubmit(event);
+    (event.target as HTMLFormElement).reset()
   }
 
   return (

@@ -31,7 +31,7 @@
         "$ref": "https://horahora-schemas.org/public-api/video.schema.json"
       }
     },
-    "Banned": {
+    "banned": {
       "type": "boolean"
     },
     "L": {
