@@ -1,37 +1,17 @@
-import { Table, Timeline } from "antd";
 import { useEffect, useState } from "react";
 
 import { Page } from "#components/page";
 import { getArchivalRequests } from "#api/archives";
 import { type IArchivalEvent } from "#codegen/schema/001_interfaces";
+import { CardList } from "#components/lists";
+import { LoadingBar } from "#components/loading-bar";
+import { EventCard } from "#entities/event";
+import Paginatione from "#components/pagination";
 
 function ArchivalEventsPage() {
-  const [timelineEvents, setTimelineEvents] = useState<IArchivalEvent[]>([]);
+  const [events, changeEvents] = useState<IArchivalEvent[]>();
   // I think this is a hack? looks okay to me though!
   const [timerVal, setTimerVal] = useState(0);
-  let timelineElements = [];
-  const timelinTableCols = [
-    {
-      title: "Timestamp",
-      dataIndex: "timestamp",
-    },
-    {
-      title: "Event Message",
-      dataIndex: "message",
-    },
-  ];
-
-  if (timelineEvents) {
-    timelineElements = [
-      timelineEvents.map((event, idx) => (
-        <Timeline.Item key={idx}>
-          {event.message}
-          <br></br>
-          {event.timestamp}
-        </Timeline.Item>
-      )),
-    ];
-  }
 
   function reloadPage() {
     setTimerVal((timerVal) => timerVal + 1);
@@ -48,7 +28,7 @@ function ArchivalEventsPage() {
 
       // TODO: diff downloads in progress vs old downloads state, and unsubscribe!
       if (!ignore) {
-        setTimelineEvents(subscriptionData.ArchivalEvents);
+        changeEvents(subscriptionData.ArchivalEvents);
       }
     };
 
@@ -68,14 +48,13 @@ function ArchivalEventsPage() {
 
   return (
     <Page title="Archival Events">
-      <Table
-        dataSource={timelineEvents}
-        className="align-bottom w-full"
-        scroll={{ y: 700 }}
-        // @ts-expect-error types
-        ellipsis={true}
-        columns={timelinTableCols}
-      />
+      <CardList>
+        {!events ? (
+          <LoadingBar />
+        ) : (
+          events.map((event, index) => <EventCard key={index} event={event} />)
+        )}
+      </CardList>
     </Page>
   );
 }
