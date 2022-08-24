@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import clsx from "clsx";
 
 import { FormClient, FormSection } from "#components/forms";
 import {
@@ -12,7 +13,7 @@ import { NumberInput } from "#components/inputs";
 import { Button, ButtonSubmit } from "#components/buttons";
 
 // eslint-disable-next-line
-import styles from "./internal.module.scss";
+import styles from "./local.module.scss";
 
 export interface IPaginationLocalProps extends IListUnorderedProps {
   pagination: Omit<IPagination, "limit">;
@@ -24,6 +25,7 @@ export const PaginationLocal = blockComponent(styles.block, Component);
 function Component({
   pagination,
   onPageChange,
+  className,
   ...blockProps
 }: IPaginationLocalProps) {
   const [isChangingPage, switchPageChange] = useState(false);
@@ -34,9 +36,13 @@ function Component({
   const isLastPage = currentPage === totalPages;
   const prevPage = currentPage - 1;
   const nextPage = currentPage + 1;
+  const finalClassName = clsx(
+    className,
+    isChangingPage && styles.block_changing
+  );
 
   async function changePage(page: number) {
-    if (isChangingPage || page !== currentPage) {
+    if (isChangingPage || page === currentPage) {
       return;
     }
 
@@ -55,10 +61,10 @@ function Component({
   }
 
   return (
-    <ListUnordered {...blockProps}>
-      <ListItem>
+    <ListUnordered className={finalClassName} {...blockProps}>
+      <ListItem className={styles.page}>
         {currentPage === 1 ? (
-          "..."
+          <span>1</span>
         ) : (
           <Button
             onClick={async () => {
@@ -70,7 +76,7 @@ function Component({
         )}
       </ListItem>
 
-      <ListItem>
+      <ListItem className={styles.page}>
         {prevPage <= 1 ? (
           "..."
         ) : (
@@ -84,7 +90,7 @@ function Component({
         )}
       </ListItem>
 
-      <ListItem>
+      <ListItem className={styles.page}>
         <CurrentPage
           currentPage={currentPage}
           totalPages={totalPages}
@@ -92,7 +98,7 @@ function Component({
         />
       </ListItem>
 
-      <ListItem>
+      <ListItem className={styles.page}>
         {nextPage >= totalPages ? (
           "..."
         ) : (
@@ -106,9 +112,9 @@ function Component({
         )}
       </ListItem>
 
-      <ListItem>
+      <ListItem className={styles.page}>
         {isLastPage ? (
-          "..."
+          <span>{totalPages}</span>
         ) : (
           <Button
             onClick={async () => {
@@ -151,9 +157,16 @@ function CurrentPage({
   }
 
   return (
-    <FormClient id="pagination" onSubmit={handleSubmit} isSubmitSection={false}>
+    <FormClient
+      id="pagination"
+      className={styles.form}
+      onSubmit={handleSubmit}
+      isSubmitSection={false}
+      isErrorsSection={false}
+    >
       <NumberInput
         id="pagination-page"
+        className={styles.current}
         name="page"
         min={1}
         max={totalPages}
@@ -161,7 +174,7 @@ function CurrentPage({
         defaultValue={currentPage}
         inputRef={inputRef}
       />
-      <FormSection>
+      <FormSection className={styles.down}>
         <Button
           onClick={() => {
             inputRef.current?.stepDown();
@@ -170,7 +183,7 @@ function CurrentPage({
           -1
         </Button>
       </FormSection>
-      <FormSection>
+      <FormSection className={styles.up}>
         <Button
           onClick={() => {
             inputRef.current?.stepUp();
@@ -179,7 +192,7 @@ function CurrentPage({
           +1
         </Button>
       </FormSection>
-      <FormSection>
+      <FormSection className={styles.go}>
         <ButtonSubmit>Go!</ButtonSubmit>
       </FormSection>
     </FormClient>

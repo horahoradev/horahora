@@ -1,4 +1,73 @@
 @use "../../styles/variables/sass.scss" as *;
 
 .block {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: $size-normal;
+
+  &_changing {
+    cursor: progress;
+
+    & * {
+      pointer-events: none;
+    }
+  }
+}
+
+.page {
+  flex: 0 0 $button-size;
+  min-height: $button-size;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+
+.form {
+  position: relative;
+  background-color: transparent;
+  padding: 0;
+
+  &:focus-within {
+    & .down,
+    & .up,
+    & .go {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+.current {
+}
+
+.down {
+  position: absolute;
+  right: calc(100% + #{$size-normal});
+  visibility: hidden;
+  opacity: 0;
+
+  transition-duration: var(--duration-global);
+  transition-property: visibility, opacity;
+}
+
+.up {
+  position: absolute;
+  left: calc(100% + #{$size-normal});
+  visibility: hidden;
+  opacity: 0;
+
+  transition-duration: var(--duration-global);
+  transition-property: visibility, opacity;
+}
+
+.go {
+  position: absolute;
+  top: calc(100% + #{$size-normal});
+  visibility: hidden;
+  opacity: 0;
+
+  transition-duration: var(--duration-global);
+  transition-property: visibility, opacity;
 }

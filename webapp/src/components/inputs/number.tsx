@@ -6,6 +6,9 @@ import { IInputSectionProps } from "./types";
 import { FormSection } from "#components/forms";
 import { blockComponent } from "#components/meta";
 
+// eslint-disable-next-line
+import styles from "./number.module.scss";
+
 export interface INumberInputProps extends IInputSectionProps {
   inputRef?: Ref<HTMLInputElement>;
   min?: number;
@@ -13,7 +16,10 @@ export interface INumberInputProps extends IInputSectionProps {
   step?: number;
 }
 
-export const NumberInput = blockComponent(undefined, Component);
+/**
+ * @TODO antd blocks the style reset somehow
+ */
+export const NumberInput = blockComponent(styles.block, Component);
 
 function Component({
   id,
@@ -32,6 +38,7 @@ function Component({
     <FormSection {...blockProps}>
       <Input
         id={id}
+        className={styles.input}
         name={name}
         type="number"
         min={min}

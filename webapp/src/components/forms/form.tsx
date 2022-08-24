@@ -11,6 +11,7 @@ export interface IFormProps extends IBlockProps<"form"> {
   id: string;
   onSubmit?: (event: ISubmitEvent) => Promise<void> | void;
   isSubmitSection?: boolean;
+  isErrorsSection?: boolean;
 }
 
 export const Form = blockComponent(styles.block, Component);
@@ -18,6 +19,7 @@ export const Form = blockComponent(styles.block, Component);
 export function Component({
   onSubmit,
   isSubmitSection = true,
+  isErrorsSection = true,
   children,
   ...blockProps
 }: IFormProps) {
@@ -51,15 +53,18 @@ export function Component({
   return (
     <form onSubmit={handleSubmit} {...blockProps}>
       {children}
-      <FormSection>
-        <ul>
-          {isSubmitting ? (
-            <li>Submit is in progress...</li>
-          ) : (
-            errors.map((message, index) => <li key={index}>{message}</li>)
-          )}
-        </ul>
-      </FormSection>
+      {isErrorsSection && (
+        <FormSection>
+          <ul>
+            {isSubmitting ? (
+              <li>Submit is in progress...</li>
+            ) : (
+              errors.map((message, index) => <li key={index}>{message}</li>)
+            )}
+          </ul>
+        </FormSection>
+      )}
+
       {isSubmitSection && (
         <FormSection>
           <ButtonSubmit>Submit</ButtonSubmit>

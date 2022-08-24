@@ -3,9 +3,13 @@
 .block {
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   gap: $size-small;
+  min-width: $button-size;
+  min-height: $button-size;
+  font-family: inherit;
+  font-size: 100%;
   background-color: var(--colour1-secondary);
   border-radius: $radius-small;
   padding: $size-small;
