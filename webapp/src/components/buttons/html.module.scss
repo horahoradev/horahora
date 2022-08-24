@@ -3,7 +3,7 @@
 .block {
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   gap: $size-small;
   background-color: var(--colour1-secondary);
@@ -11,7 +11,7 @@
   padding: $size-small;
 
   transition-duration: var(--duration-global);
-  transition-property: background-color;
+  transition-property: background-color, color;
 
   &:active {
     background-color: var(--colour1-primary);
