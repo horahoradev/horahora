@@ -6,22 +6,23 @@ import { Article } from "#components/article";
 function ArchivesPage() {
   return (
     <Page title="Archives">
-      <Article><ListUnordered>
-        <ListItem>
-          <LinkInternal href="/account/archives/requests">
-            Requests
-          </LinkInternal>
-        </ListItem>
-        <ListItem>
-          <LinkInternal href="/account/archives/events">Events</LinkInternal>
-        </ListItem>
-        <ListItem>
-          <LinkInternal href="/account/archives/downloads">
-            Download Progress
-          </LinkInternal>
-        </ListItem>
-      </ListUnordered></Article>
-
+      <Article>
+        <ListUnordered>
+          <ListItem>
+            <LinkInternal href="/account/archives/requests">
+              Requests
+            </LinkInternal>
+          </ListItem>
+          <ListItem>
+            <LinkInternal href="/account/archives/events">Events</LinkInternal>
+          </ListItem>
+          <ListItem>
+            <LinkInternal href="/account/archives/downloads">
+              Download Progress
+            </LinkInternal>
+          </ListItem>
+        </ListUnordered>
+      </Article>
     </Page>
   );
 }
