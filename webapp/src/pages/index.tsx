@@ -7,7 +7,7 @@ import Paginatione, {
   PaginationLocal,
 } from "#components/pagination";
 import { Page } from "#components/page";
-import { PostList } from "#components/entities/post";
+import { PostList } from "#entities/post";
 
 export function HomePage() {
   const router = useRouter();

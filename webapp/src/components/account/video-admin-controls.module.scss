@@ -1,0 +1,6 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  justify-content: space-between;
+  padding: $size-small;
+}

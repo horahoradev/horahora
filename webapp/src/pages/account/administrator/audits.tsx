@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Table, Input } from "antd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Table } from "antd";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import type { ChangeEvent } from "react";
 
 import { getAudits } from "#api/lib";
 import { Page } from "#components/page";
+import { Icon } from "#components/icons";
+import { Text } from "#components/inputs";
+import { FormClient, IFormElements } from "#components/forms";
 
 function AuditsPage() {
   const [pageData, setPageData] = useState<{
@@ -38,10 +39,6 @@ function AuditsPage() {
     },
   ];
 
-  function UserIDFFromSearch(e: ChangeEvent<HTMLInputElement>) {
-    setUserID(Number(e.currentTarget.value));
-  }
-
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
     let ignore = false;
@@ -61,23 +58,20 @@ function AuditsPage() {
 
   return (
     <Page title="Audit logs">
-      <Input
-        name="search"
-        size="large"
-        placeholder="Search for user ID"
-        className="bg-white children:m-5 w-full text-black font-bold"
-        onChange={(event) => {
-          UserIDFFromSearch;
+      <FormClient
+        id="search"
+        onSubmit={async (event) => {
+          const elements = event.currentTarget
+            .elements as IFormElements<"search">;
+          setUserID(Number(elements["search"].value));
         }}
-        prefix={
-          <FontAwesomeIcon
-            className="mr-1 text-gray-400 dark:text-white"
-            icon={faSearch}
-          />
-        }
-      />
+      >
+        <Text id="user-search" name="search" maxLength={19}>
+          <Icon icon={faSearch} /> Search for user ID
+        </Text>
+      </FormClient>
+
       <Table
-        className="bg-black"
         dataSource={pageData.Events}
         columns={columns}
         pagination={{

@@ -1,0 +1,31 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.complete {
+  display: inline-flex;
+  align-items: center;
+  gap: $size-small;
+  color: var(--positive-colour1-primary);
+  background-color: var(--positive-colour2-primary);
+  border: $size-thin solid var(--positive-colour1-primary);
+  padding: $size-small;
+}
+
+.fetch {
+  display: inline-flex;
+  align-items: center;
+  gap: $size-small;
+  color: var(--submit-colour1-primary);
+  background-color: var(--submit-colour2-primary);
+  border: $size-thin solid var(--submit-colour1-primary);
+  padding: $size-small;
+}
+
+.archive {
+  display: inline-flex;
+  align-items: center;
+  gap: $size-small;
+  color: var(--submit-colour1-primary);
+  background-color: var(--submit-colour2-primary);
+  border: $size-thin solid var(--submit-colour1-primary);
+  padding: $size-small;
+}

@@ -1,7 +1,14 @@
-import { Tag } from "antd";
-import { CheckOutlined, SyncOutlined } from "@ant-design/icons";
+import {
+  faCheck,
+  faRotate,
+  faBoxArchive,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { type IArchivalRequest } from "#codegen/schema/001_interfaces";
+import { Icon } from "#components/icons";
+
+// eslint-disable-next-line
+import styles from "./status.module.scss";
 
 export interface IArchiverRequestStatusProps {
   record: IArchivalRequest;
@@ -9,26 +16,25 @@ export interface IArchiverRequestStatusProps {
 
 export function ArchiveRequestStatus({ record }: IArchiverRequestStatusProps) {
   if (
-    record.ArchivedVideos == record.CurrentTotalVideos &&
+    record.ArchivedVideos === record.CurrentTotalVideos &&
     record.CurrentTotalVideos != 0
   ) {
     return (
-      <Tag color="green" className="p-1 text-base" icon={<CheckOutlined />}>
-        Complete
-      </Tag>
+      <span className={styles.complete}>
+        <Icon icon={faCheck} /> <span>Complete</span>
+      </span>
     );
   } else if (record.CurrentTotalVideos == 0 || record.LastSynced == null) {
     return (
-      <Tag color="blue" className="text-base" icon={<SyncOutlined spin />}>
-        Fetching...
-      </Tag>
+      <span className={styles.fetch}>
+        <Icon icon={faRotate} /> <span>Fetching...</span>
+      </span>
     );
   } else {
     return (
-      <Tag color="blue" className="text-base" icon={<SyncOutlined spin />}>
-        {" "}
-        Archiving...
-      </Tag>
+      <span className={styles.archive}>
+        <Icon icon={faBoxArchive} /> <span>Archiving...</span>
+      </span>
     );
   }
 }

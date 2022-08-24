@@ -7,14 +7,19 @@
 .section {
   &_keyValue {
     display: flex;
+    flex-flow: column nowrap;
+    gap: $size-small;
+  }
+
+  &_horizontal {
     flex-flow: row nowrap;
     align-items: center;
-    gap: $size-small;
   }
 }
 
 .term {
   display: inline-block;
+  font-weight: bold;
 }
 
 .definition {

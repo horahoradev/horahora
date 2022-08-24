@@ -31,7 +31,10 @@ function NewArchivePage() {
         }
       ) => (
         <span>
-          <ArchiveStatus record={record} />
+          <ArchiveStatus
+            // @ts-expect-error some type mismatch
+            record={record}
+          />
         </span>
       ),
     },
@@ -151,6 +154,7 @@ function NewArchivePage() {
       { Url: url, ArchivedVideos: 0, CurrentTotalVideos: 0, BackoffFactor: 1 },
       ...subs,
     ];
+    // @ts-expect-error some type mismatch
     setArchivalSubscriptions(newList);
   }
 
