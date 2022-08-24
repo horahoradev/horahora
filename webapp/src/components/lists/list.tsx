@@ -26,7 +26,6 @@ export const ListItem = blockComponent(styles.item, ItemComponent);
 
 function Component({
   type = "unordered",
-  className,
   ...blockProps
 }: IListProps) {
   switch (type) {

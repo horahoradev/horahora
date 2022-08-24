@@ -39,14 +39,12 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
       <CardBody>
         <ImageLink
           className={styles.preview}
-          // @ts-expect-error schema type
           src={ThumbnailLoc}
           href={`/videos/${VideoID}`}
           alt={Title}
           onError={(e) => {
             const img = e.target as HTMLImageElement;
             img.onerror = null;
-            // @ts-expect-error schema type
             img.src = `${ThumbnailLoc.slice(0, -6)}.jpg`;
           }}
         />
@@ -54,7 +52,8 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
       <CardFooter>
         <DL>
           <DS
-            dKey={"By:"}
+            isHorizontal
+            dKey="By"
             dValue={
               AuthorName
               // @TODO: `AuthorID` should point to the imported profile
