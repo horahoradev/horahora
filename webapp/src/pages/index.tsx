@@ -53,16 +53,16 @@ export function HomePage() {
         <>
           <PaginationInfo
             pagination={{
-              totalCount: 10000,
-              // totalCount: pageData.PaginationData.NumberOfItems!,
+              // totalCount: 10000,
+              totalCount: pageData.PaginationData.NumberOfItems!,
               currentPage: pageData.PaginationData.CurrentPage,
             }}
           />
           <PostList posts={pageData ? pageData.Videos : []} />
           <PaginationLocal
             pagination={{
-              totalCount: 10000,
-              // totalCount: pageData.PaginationData.NumberOfItems!,
+              // totalCount: 10000,
+              totalCount: pageData.PaginationData.NumberOfItems!,
               currentPage: pageData.PaginationData.CurrentPage,
             }}
             onPageChange={async (page) => {
