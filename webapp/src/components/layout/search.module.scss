@@ -1,3 +1,39 @@
 @use "../../styles/variables/sass.scss" as *;
 
-.block {}
+.block {
+  position: relative;
+  flex-flow: row nowrap;
+  background-color: transparent;
+  align-items: center;
+
+  &:focus-within {
+    .advanced {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
+
+.search {
+  grid-template:
+    "label input" auto
+    / auto;
+  gap: $size-small;
+}
+
+.advanced {
+  position: absolute;
+  top: 100%;
+  // a hack to place it visually along the input line
+  // @TODO find a better way
+  left: 4.5em;
+  background-color: var(--colour1-primary);
+  box-shadow: 0px 0px 10px var(--colour1-secondary);
+  padding: $size-small;
+
+  visibility: hidden;
+  opacity: 0;
+
+  transition-duration: var(--duration-global);
+  transition-property: visibility, opacity;
+}

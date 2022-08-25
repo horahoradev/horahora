@@ -20,3 +20,22 @@ export class VideoURL extends HorahoraURL {
     super(`/videos/${videoID}`);
   }
 }
+
+const categories = ["upload_date", "rating", "views", "my_ratings"] as const;
+const orders = ["asc", "desc"] as const;
+type ICategory = typeof categories[number];
+type IOrder = typeof orders[number];
+
+export class SearchURL extends HorahoraURL {
+  constructor(
+    query: string,
+    category: ICategory = "upload_date",
+    order: IOrder = "desc"
+  ) {
+    super(`/search`);
+
+    this.searchParams.set("search", query);
+    this.searchParams.set("category", category);
+    this.searchParams.set("order", order);
+  }
+}
