@@ -1,0 +1,53 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    max-width: 24rem;
+
+    &__search {
+        margin-right: 0.25rem;
+        color: #9CA3AF;
+        max-height: 1rem;
+    }
+
+    &__focus {
+        position: absolute;
+        top: 3.5rem;
+        visibility: visible;
+        z-index: 10;
+        padding: 1rem;
+        background-color: #ffffff;
+        transition-property: opacity;
+        color: #000000;
+        width: 100%;
+        max-width: 24rem;
+    }
+
+    &__blur {
+        position: absolute;
+        top: 3.5rem;
+        visibility: hidden;
+        z-index: 10;
+        padding: 1rem;
+        background-color: #ffffff;
+        transition-property: opacity;
+        color: #000000;
+        width: 100%;
+        max-width: 24rem;
+        opacity: 0;
+    }
+
+    &__label {
+        color: #000000;
+        font-size: 1rem;
+        line-height: 1.5rem;
+
+    }
+
+    &&__select {
+        background-color: #ffffff;
+    }
+}

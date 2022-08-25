@@ -8,6 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { onParentBlur } from "#lib/dom";
 
+import clsx from "clsx";
+import styles from "./search.module.scss";
+
 export function GlobalSearch() {
   const router = useRouter();
   const [redirectVal, setRedirectVal] = useState<string | null>(null);
@@ -30,6 +33,7 @@ export function GlobalSearch() {
       ["search", search],
     ]);
 
+
     setRedirectVal(`/?${params.toString()}`);
   }, []);
 
@@ -38,10 +42,15 @@ export function GlobalSearch() {
     setRedirectVal(null);
   }
 
+  const className = clsx(
+    isFocused && styles.form__focus,
+    !isFocused && styles.form__blur
+  );
+
   return (
     <form
       onSubmit={handleSearch}
-      className="flex-grow flex flex-col w-full max-w-sm"
+      className={styles.form}
       onBlur={onParentBlur(() => {
         switchFocus(false);
       })}
@@ -52,7 +61,7 @@ export function GlobalSearch() {
         placeholder="Search"
         prefix={
           <FontAwesomeIcon
-            className="mr-1 text-gray-400 max-h-4"
+            className={styles.form__search}
             icon={faSearch}
           />
         }
@@ -64,22 +73,18 @@ export function GlobalSearch() {
         }}
       />
       <div
-        className={
-          isFocused
-            ? "absolute top-14 z-10 text-black bg-white dark:text-white dark:bg-black  w-full max-w-sm p-4 visible opacity-1 duration-250 transition-opacity transition-visibility"
-            : "absolute top-14 z-10 text-black bg-white dark:text-white dark:bg-black w-full max-w-sm p-4 invisible opacity-0 duration-250 transition-opacity transition-visibility"
-        }
+        className={className}
         tabIndex={0}
       >
         <label
           htmlFor="category"
-          className="text-black dark:text-white text-base"
+          className={styles.form__label}
         >
           Order by:{" "}
         </label>
         <select
           name="category"
-          className="bg-white dark:bg-black"
+          className={styles.form__select}
           id="category"
         >
           <option value="upload_date">upload date</option>
