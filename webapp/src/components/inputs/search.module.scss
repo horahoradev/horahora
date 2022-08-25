@@ -1,0 +1,10 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: grid;
+  grid-template:
+    "label" auto
+    "input" auto
+    / auto;
+  justify-items: stretch;
+}
