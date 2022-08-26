@@ -11,22 +11,18 @@
     "export": "next export -o ./build"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
     "@stomp/stompjs": "^6.1.2",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
-    "antd": "^4.16.2",
     "clsx": "^1.1.1",
     "js-cookie": "^3.0.1",
     "next": "12.2.0",
     "react": "^17.0.2",
     "react-context-mutex": "^2.0.0",
     "react-dom": "^17.0.2",
-    "react-modal": "^3.14.3",
-    "tailwind-children": "^0.5.0",
     "video.js": "^7.15.4"
   },
   "devDependencies": {
