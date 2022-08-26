@@ -2,6 +2,8 @@
 @use "../../styles/mixins.scss" as mixin;
 
 .block {
+  grid-area: input;
   @include mixin.form-input();
+  width: 100%;
   background-color: var(--colour1-secondary);
 }

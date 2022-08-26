@@ -1,6 +1,7 @@
 @use "../../styles/variables/sass.scss" as *;
 
 .block {
+  grid-area: label;
   display: inline-flex;
   justify-content: flex-start;
   align-items: center;
