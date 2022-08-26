@@ -1,6 +1,6 @@
 FROM node:18.7-buster
 
-RUN apt-get -y update && apt-get -y install python3 && npm install --global npm@8.17
+RUN apk update && apk add python3 && npm install --global npm@8.17
 
 WORKDIR /webapp
 

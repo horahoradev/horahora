@@ -6,8 +6,8 @@ FROM postgres:13
 
 # install flyway
 ENV FLYWAY_VERSION 7.9.1
-RUN apt -y update && \
-  apt -y install wget && \
+RUN apk update && \
+  apk install wget && \
   wget -qO- https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/$FLYWAY_VERSION/flyway-commandline-$FLYWAY_VERSION-linux-x64.tar.gz | tar xvz \
   && ln -s `pwd`/flyway-7.9.1/flyway /usr/local/bin \
   && chmod a+x /usr/local/bin/flyway
