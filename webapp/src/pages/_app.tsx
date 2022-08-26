@@ -1,4 +1,3 @@
-import "antd/dist/antd.css";
 import "#styles/index.scss";
 
 import Head from "next/head";

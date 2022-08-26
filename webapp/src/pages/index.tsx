@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { fetchHome, type IHomeData } from "#api/lib";
-import Paginatione, {
-  PaginationInfo,
-  PaginationLocal,
-} from "#components/pagination";
+import { PaginationInfo, PaginationLocal } from "#components/pagination";
 import { Page } from "#components/page";
 import { PostList } from "#entities/post";
 
@@ -53,7 +50,6 @@ export function HomePage() {
         <>
           <PaginationInfo
             pagination={{
-              // totalCount: 10000,
               totalCount: pageData.PaginationData.NumberOfItems!,
               currentPage: pageData.PaginationData.CurrentPage,
             }}
@@ -61,7 +57,6 @@ export function HomePage() {
           <PostList posts={pageData ? pageData.Videos : []} />
           <PaginationLocal
             pagination={{
-              // totalCount: 10000,
               totalCount: pageData.PaginationData.NumberOfItems!,
               currentPage: pageData.PaginationData.CurrentPage,
             }}

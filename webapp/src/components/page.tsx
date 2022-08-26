@@ -3,6 +3,9 @@ import Head from "next/head";
 
 import { Heading } from "#components/headings";
 
+// eslint-disable-next-line
+import styles from "./page.module.scss";
+
 interface IPageProps {
   title?: string;
   heading?: ReactNode;
@@ -24,7 +27,7 @@ export function Page({ title, heading = title, children }: IPageProps) {
       ) : (
         <>
           <Heading level={1}>{heading}</Heading>
-          <section>{children}</section>
+          <section className={styles.content}>{children}</section>
         </>
       )}
     </>

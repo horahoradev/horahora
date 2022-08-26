@@ -5,6 +5,8 @@
   flex-flow: row nowrap;
   background-color: transparent;
   align-items: center;
+  gap: 1px;
+  padding: 0;
 
   &:focus-within {
     .advanced {
@@ -16,17 +18,39 @@
 
 .search {
   grid-template:
+    "input" auto
+    / auto;
+  gap: none;
+
+  // @TODO better way to handle label
+  & > label {
+    display: none;
+  }
+
+  & > input {
+    border-radius: $radius-small 0 0 $radius-small;
+  }
+
+  @media (min-width: $width-tablet) {
+    grid-template:
     "label input" auto
     / auto;
-  gap: $size-small;
+    gap: $size-small;
+  }
+}
+
+// @TODO fix an off-pixel height difference
+.submit {
+  min-height: 45px;
+  border-radius: 0 $radius-small $radius-small 0;
 }
 
 .advanced {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 0.5em);
   // a hack to place it visually along the input line
   // @TODO find a better way
-  left: 4.5em;
+  left: 0.5em;
   background-color: var(--colour1-primary);
   box-shadow: 0px 0px 10px var(--colour1-secondary);
   padding: $size-small;

@@ -16,9 +16,6 @@ export interface INumberInputProps extends IInputSectionProps {
   step?: number;
 }
 
-/**
- * @TODO antd blocks the style reset somehow
- */
 export const NumberInput = blockComponent(styles.block, Component);
 
 function Component({

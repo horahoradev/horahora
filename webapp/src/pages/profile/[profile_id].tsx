@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { fetchProfile } from "#api/lib";
-import Paginatione from "#components/pagination";
+import { PaginationInfo, PaginationLocal } from "#components/pagination";
 import { Page } from "#components/page";
 import { PostList } from "#entities/post";
 import { IProfileData, ProfileArticle } from "#entities/profile";
@@ -48,14 +48,24 @@ function UsersPage() {
       ) : (
         <>
           <ProfileArticle profile={pageUserData} />
+
           {/* @TODO make it a part of the article */}
-          <div>
-            <PostList posts={pageUserData.Videos} />
-            <Paginatione
-              paginationData={pageUserData.PaginationData}
-              onPageChange={setPage}
-            />
-          </div>
+          <PaginationInfo
+            pagination={{
+              totalCount: pageUserData.PaginationData.NumberOfItems!,
+              currentPage: pageUserData.PaginationData.CurrentPage,
+            }}
+          />
+          <PostList posts={pageUserData.Videos} />
+          <PaginationLocal
+            pagination={{
+              totalCount: pageUserData.PaginationData.NumberOfItems!,
+              currentPage: pageUserData.PaginationData.CurrentPage,
+            }}
+            onPageChange={async (page) => {
+              setPage(page);
+            }}
+          />
         </>
       )}
     </Page>
