@@ -15,7 +15,7 @@
   padding: $size-small;
 
   transition-duration: var(--duration-global);
-  transition-property: background-color;
+  transition-property: background-color, color;
 
   &:active {
     background-color: var(--colour1-primary);

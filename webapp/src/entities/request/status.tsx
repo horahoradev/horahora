@@ -11,20 +11,20 @@ import { Icon } from "#components/icons";
 import styles from "./status.module.scss";
 
 export interface IArchiverRequestStatusProps {
-  record: IArchivalRequest;
+  request: IArchivalRequest;
 }
 
-export function ArchiveRequestStatus({ record }: IArchiverRequestStatusProps) {
+export function ArchiveRequestStatus({ request }: IArchiverRequestStatusProps) {
   if (
-    record.ArchivedVideos === record.CurrentTotalVideos &&
-    record.CurrentTotalVideos != 0
+    request.ArchivedVideos === request.CurrentTotalVideos &&
+    request.CurrentTotalVideos != 0
   ) {
     return (
       <span className={styles.complete}>
         <Icon icon={faCheck} /> <span>Complete</span>
       </span>
     );
-  } else if (record.CurrentTotalVideos == 0 || record.LastSynced == null) {
+  } else if (request.CurrentTotalVideos == 0 || request.LastSynced == null) {
     return (
       <span className={styles.fetch}>
         <Icon icon={faRotate} /> <span>Fetching...</span>
