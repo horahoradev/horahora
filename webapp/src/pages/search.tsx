@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { Page } from "#components/page";
 import { fetchHome, type IHomeData } from "#api/lib";
 import { PostList } from "#entities/post";
-import Paginatione from "#components/pagination";
+import { PaginationInfo, PaginationLocal } from "#components/pagination";
 import { FormClient, IFormElements, ISubmitEvent } from "#components/forms";
 import { RadioGroup, Select, Text } from "#components/inputs";
+import { LoadingBar } from "#components/loading-bar";
 
 function PostSearch() {
   const router = useRouter();
@@ -64,7 +65,7 @@ function PostSearch() {
       order as string,
       category as string
     );
-    setPageData(data)
+    setPageData(data);
   }
 
   return (
@@ -95,14 +96,28 @@ function PostSearch() {
           Order
         </RadioGroup>
       </FormClient>
-      <p>
-        Number of videos: {pageData ? pageData.PaginationData.NumberOfItems : 0}
-      </p>
-      <PostList posts={pageData ? pageData.Videos : []} />
-      <Paginatione
-        paginationData={pageData ? pageData.PaginationData : {}}
-        onPageChange={setPage}
-      />
+      {!pageData ? (
+        <LoadingBar />
+      ) : (
+        <>
+          <PaginationInfo
+            pagination={{
+              totalCount: pageData.PaginationData.NumberOfItems!,
+              currentPage: pageData.PaginationData.CurrentPage,
+            }}
+          />
+          <PostList posts={pageData ? pageData.Videos : []} />
+          <PaginationLocal
+            pagination={{
+              totalCount: pageData.PaginationData.NumberOfItems!,
+              currentPage: pageData.PaginationData.CurrentPage,
+            }}
+            onPageChange={async (page) => {
+              setPage(page);
+            }}
+          />
+        </>
+      )}
     </Page>
   );
 }
