@@ -1,15 +1,21 @@
 @use "../styles/variables/sass.scss" as *;
 
 .block {
+  justify-self: center;
   display: grid;
+  // @TODO: make the content respect the max size
+  grid-template-columns: $width-tablet;
   gap: $size-normal;
-  max-width: $width-tablet;
   background-color: var(--colour1-primary);
   border-radius: $radius-normal;
   padding: $size-normal;
-  margin: 0 auto;
 
   @media (min-width: $width-tablet) {
     padding: $size-big;
   }
+}
+
+.body {
+  display: grid;
+grid-template-columns: 100%;
 }

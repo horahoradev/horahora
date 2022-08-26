@@ -23,7 +23,7 @@ export interface IArticleFooterProps extends IBlockProps<"footer"> {}
  */
 export const Article = blockComponent(styles.block, ArticleComponent);
 export const ArticleHeader = blockComponent(undefined, ArticleHeaderComponent);
-export const ArticleBody = blockComponent(undefined, ArticleBodyComponent);
+export const ArticleBody = blockComponent(styles.body, ArticleBodyComponent);
 export const ArticleFooter = blockComponent(undefined, ArticleFooterComponent);
 
 function ArticleComponent({ children, ...blockProps }: IArticleProps) {
