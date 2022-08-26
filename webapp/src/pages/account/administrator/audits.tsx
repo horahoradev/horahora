@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Table } from "antd";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 import { getAudits } from "#api/lib";
@@ -7,37 +6,15 @@ import { Page } from "#components/page";
 import { Icon } from "#components/icons";
 import { Text } from "#components/inputs";
 import { FormClient, IFormElements } from "#components/forms";
+import { CardList } from "#components/lists";
+import { LoadingBar } from "#components/loading-bar";
+import { AuditCard, IAuditData } from "#entities/audit";
+import Paginatione from "#components/pagination";
 
 function AuditsPage() {
-  const [pageData, setPageData] = useState<{
-    Events: Record<string, unknown>[];
-    Length: number;
-  } | null>(null);
+  const [pageData, setPageData] = useState<IAuditData>();
   const [userID, setUserID] = useState(-1);
   const [currPage, setPage] = useState(1);
-
-  const columns = [
-    {
-      title: "id",
-      dataIndex: "ID",
-      key: "ID",
-    },
-    {
-      title: "User ID",
-      dataIndex: "UserID",
-      key: "UserID",
-    },
-    {
-      title: "Message",
-      dataIndex: "Message",
-      key: "Message",
-    },
-    {
-      title: "Timestamp",
-      dataIndex: "Timestamp",
-      key: "Timestamp",
-    },
-  ];
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
@@ -70,16 +47,21 @@ function AuditsPage() {
           <Icon icon={faSearch} /> Search for user ID
         </Text>
       </FormClient>
-
-      <Table
-        dataSource={pageData.Events}
-        columns={columns}
-        pagination={{
-          current: currPage,
-          onChange: setPage,
-          pageSize: 50,
-          total: pageData.Length,
+      <CardList>
+        {!pageData ? (
+          <LoadingBar />
+        ) : (
+          pageData.Events.map((audit) => (
+            <AuditCard key={audit.ID} audit={audit} />
+          ))
+        )}
+      </CardList>
+      <Paginatione
+        paginationData={{
+          CurrentPage: currPage,
+          NumberOfItems: pageData.Length,
         }}
+        onPageChange={setPage}
       />
     </Page>
   );
