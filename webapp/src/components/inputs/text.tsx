@@ -1,4 +1,4 @@
-import { Input } from "./input";
+import { IInputProps, Input } from "./input";
 import { TextArea } from "./textarea";
 
 import { type IFormSectionProps, FormSection, Label } from "#components/forms";
@@ -7,7 +7,12 @@ import { blockComponent } from "#components/meta";
 export interface ITextProps extends IFormSectionProps {
   id: string;
   name: string;
-  maxLength?: number;
+  minLength?: IInputProps["minLength"];
+  maxLength?: IInputProps["maxLength"];
+  /**
+   * @TODO typed values
+   */
+  autoComplete?: IInputProps["autoComplete"];
 }
 
 export const Text = blockComponent(undefined, Component);
@@ -15,7 +20,9 @@ export const Text = blockComponent(undefined, Component);
 function Component({
   id,
   name,
+  minLength,
   maxLength,
+  autoComplete,
   children,
   ...blockProps
 }: ITextProps) {
@@ -25,9 +32,22 @@ function Component({
     <FormSection {...blockProps}>
       <Label htmlFor={id}>{children}</Label>
       {isShort ? (
-        <Input id={id} type="text" name={name} maxLength={maxLength} />
+        <Input
+          id={id}
+          type="text"
+          name={name}
+          minLength={minLength}
+          maxLength={maxLength}
+          autoComplete={autoComplete}
+        />
       ) : (
-        <TextArea id={id} name={name} maxLength={maxLength} />
+        <TextArea
+          id={id}
+          name={name}
+          minLength={minLength}
+          maxLength={maxLength}
+          autoComplete={autoComplete}
+        />
       )}
     </FormSection>
   );

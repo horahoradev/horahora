@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { fetchHome, type IHomeData } from "#api/lib";
-import Paginatione from "#components/pagination";
+import Paginatione, {
+  PaginationInfo,
+  PaginationLocal,
+} from "#components/pagination";
 import { Page } from "#components/page";
 import { PostList } from "#entities/post";
 
 export function HomePage() {
   const router = useRouter();
   const { query, isReady } = router;
-  const [pageData, setPageData] = useState<IHomeData | null>(null);
+  const [pageData, setPageData] = useState<IHomeData>();
   const [currPage, setPage] = useState(1);
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
@@ -44,14 +47,30 @@ export function HomePage() {
 
   return (
     <Page title="Videos">
-      <p>
-        Number of videos: {pageData ? pageData.PaginationData.NumberOfItems : 0}
-      </p>
-      <PostList posts={pageData ? pageData.Videos : []} />
-      <Paginatione
-        paginationData={pageData ? pageData.PaginationData : {}}
-        onPageChange={setPage}
-      />
+      {!pageData ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <PaginationInfo
+            pagination={{
+              // totalCount: 10000,
+              totalCount: pageData.PaginationData.NumberOfItems!,
+              currentPage: pageData.PaginationData.CurrentPage,
+            }}
+          />
+          <PostList posts={pageData ? pageData.Videos : []} />
+          <PaginationLocal
+            pagination={{
+              // totalCount: 10000,
+              totalCount: pageData.PaginationData.NumberOfItems!,
+              currentPage: pageData.PaginationData.CurrentPage,
+            }}
+            onPageChange={async (page) => {
+              setPage(page);
+            }}
+          />
+        </>
+      )}
     </Page>
   );
 }

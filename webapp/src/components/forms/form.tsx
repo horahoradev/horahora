@@ -10,13 +10,21 @@ import { ButtonSubmit } from "#components/buttons";
 import styles from "./form.module.scss";
 
 export interface IFormProps extends IBlockProps<"form"> {
-  id: string
+  id: string;
   onSubmit?: (event: ISubmitEvent) => Promise<void> | void;
+  isSubmitSection?: boolean;
+  isErrorsSection?: boolean;
 }
 
 export const Form = blockComponent(styles.block, Component);
 
-export function Component({ onSubmit, children, ...blockProps }: IFormProps) {
+export function Component({
+  onSubmit,
+  isSubmitSection = true,
+  isErrorsSection = true,
+  children,
+  ...blockProps
+}: IFormProps) {
   const [isSubmitting, switchSubmit] = useState(false);
   const [errors, changeErrors] = useState<string[]>([]);
 
@@ -47,18 +55,23 @@ export function Component({ onSubmit, children, ...blockProps }: IFormProps) {
   return (
     <form onSubmit={handleSubmit} {...blockProps}>
       {children}
-      <FormSection>
-        <ul>
-          {isSubmitting ? (
-            <li>Submit is in progress...</li>
-          ) : (
-            errors.map((message, index) => <li key={index}>{message}</li>)
-          )}
-        </ul>
-      </FormSection>
-      <FormSection>
-        <ButtonSubmit>Submit</ButtonSubmit>
-      </FormSection>
+      {isErrorsSection && (
+        <FormSection>
+          <ul>
+            {isSubmitting ? (
+              <li>Submit is in progress...</li>
+            ) : (
+              errors.map((message, index) => <li key={index}>{message}</li>)
+            )}
+          </ul>
+        </FormSection>
+      )}
+
+      {isSubmitSection && (
+        <FormSection>
+          <ButtonSubmit>Submit</ButtonSubmit>
+        </FormSection>
+      )}
     </form>
   );
 }

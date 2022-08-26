@@ -1,6 +1,7 @@
+@use "../../styles/variables/sass.scss" as *;
+@use "../../styles/mixins.scss" as mixin;
+
 .block {
-  width: 100%;
+  @include mixin.form-input();
   background-color: var(--colour1-secondary);
-  border-radius: 0.375rem;
-  padding: 0.5rem;
 }
