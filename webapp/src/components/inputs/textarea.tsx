@@ -10,5 +10,5 @@ export interface ITextAreaProps extends IBlockProps<"textarea"> {
 export const TextArea = blockComponent(styles.block, Component);
 
 function Component({ children, ...blockProps }: ITextAreaProps) {
-  return <textarea {...blockProps}>{children}</textarea>;
+  return <textarea {...blockProps} rows={1}>{children}</textarea>;
 }

@@ -3,8 +3,6 @@
     // https://prettier.io/docs/en/editors.html#visual-studio-code
     "esbenp.prettier-vscode",
     // https://eslint.org/docs/user-guide/integrations#editors
-    "dbaeumer.vscode-eslint",
-    // https://tailwindcss.com/docs/editor-setup#intelli-sense-for-vs-code
-    "bradlc.vscode-tailwindcss"
+    "dbaeumer.vscode-eslint"
   ]
 }
