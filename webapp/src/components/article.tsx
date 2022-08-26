@@ -20,6 +20,8 @@ export interface IArticleFooterProps extends IBlockProps<"footer"> {}
  * create an article component which extends its props.
  * The main difference between this and card is card is a part of a list.
  * But article is one of a kind per page.
+ *
+ * @TODO adaptive width
  */
 export const Article = blockComponent(styles.block, ArticleComponent);
 export const ArticleHeader = blockComponent(undefined, ArticleHeaderComponent);

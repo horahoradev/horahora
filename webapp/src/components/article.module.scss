@@ -3,14 +3,15 @@
 .block {
   justify-self: center;
   display: grid;
-  // @TODO: make the content respect the max size
-  grid-template-columns: $width-tablet;
+  grid-template-columns: 100%;
   gap: $size-normal;
+  max-width: 100%;
   background-color: var(--colour1-primary);
   border-radius: $radius-normal;
   padding: $size-normal;
 
   @media (min-width: $width-tablet) {
+    max-width: $width-tablet;
     padding: $size-big;
   }
 }
