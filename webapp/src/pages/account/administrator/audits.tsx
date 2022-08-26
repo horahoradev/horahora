@@ -9,7 +9,7 @@ import { FormClient, IFormElements } from "#components/forms";
 import { CardList } from "#components/lists";
 import { LoadingBar } from "#components/loading-bar";
 import { AuditCard, IAuditData } from "#entities/audit";
-import Paginatione from "#components/pagination";
+import { PaginationInfo, PaginationLocal } from "#components/pagination";
 
 function AuditsPage() {
   const [pageData, setPageData] = useState<IAuditData>();
@@ -47,22 +47,32 @@ function AuditsPage() {
           <Icon icon={faSearch} /> Search for user ID
         </Text>
       </FormClient>
-      <CardList>
-        {!pageData ? (
-          <LoadingBar />
-        ) : (
-          pageData.Events.map((audit) => (
-            <AuditCard key={audit.ID} audit={audit} />
-          ))
-        )}
-      </CardList>
-      <Paginatione
-        paginationData={{
-          CurrentPage: currPage,
-          NumberOfItems: pageData.Length,
-        }}
-        onPageChange={setPage}
-      />
+      {!pageData ? (
+        <LoadingBar />
+      ) : (
+        <>
+          <PaginationInfo
+            pagination={{
+              totalCount: pageData.Length!,
+              currentPage: currPage,
+            }}
+          />
+          <CardList>
+            {pageData.Events.map((audit) => (
+              <AuditCard key={audit.ID} audit={audit} />
+            ))}
+          </CardList>
+          <PaginationLocal
+            pagination={{
+              totalCount: pageData.Length!,
+              currentPage: currPage,
+            }}
+            onPageChange={async (page) => {
+              setPage(page);
+            }}
+          />
+        </>
+      )}
     </Page>
   );
 }
