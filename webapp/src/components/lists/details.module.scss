@@ -8,12 +8,13 @@
   &_keyValue {
     display: flex;
     flex-flow: column nowrap;
-    gap: $size-small;
+    gap: $size-little;
   }
 
   &_horizontal {
     flex-flow: row nowrap;
     align-items: center;
+    gap: $size-small;
   }
 }
 
