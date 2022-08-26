@@ -6,7 +6,6 @@ import { type IArchivalEvent } from "#codegen/schema/001_interfaces";
 import { CardList } from "#components/lists";
 import { LoadingBar } from "#components/loading-bar";
 import { EventCard } from "#entities/event";
-import Paginatione from "#components/pagination";
 
 function ArchivalEventsPage() {
   const [events, changeEvents] = useState<IArchivalEvent[]>();
