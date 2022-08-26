@@ -56,8 +56,10 @@ export async function loginAccount(
 }
 
 export async function logoutAccount(): Promise<void> {
-  await fetchLogoutAccount();
-
-  deleteLocaleStoreItem(LOCAL_STORAGE.IS_REGISTERED);
-  deleteLocaleStoreItem(LOCAL_STORAGE.ACCOUNT);
+  try {
+    await fetchLogoutAccount();
+  } finally {
+    deleteLocaleStoreItem(LOCAL_STORAGE.IS_REGISTERED);
+    deleteLocaleStoreItem(LOCAL_STORAGE.ACCOUNT);
+  }
 }
