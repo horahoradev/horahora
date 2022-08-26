@@ -18,8 +18,6 @@ services:
     profiles:
       - client
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     environment:
       - NEXT_PUBLIC_ORIGIN=${PUBLIC_ORIGIN}
     volumes:
@@ -225,7 +223,7 @@ services:
       - stomp_proxy
       - minio
     environment:
-      - PUBLIC_ORIGIN=${PUBLIC_ORIGIN}
+      - WEBAPP_ORIGIN=${WEBAPP_ORIGIN}
     volumes:
       - ./static:/etc/nginx/html/static/images
       - ./nginx/dev.conf:/etc/nginx/templates/default.conf.template
