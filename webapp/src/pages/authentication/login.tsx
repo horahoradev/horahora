@@ -55,7 +55,11 @@ function LoginPage() {
           Not registered?{" "}
           <LinkInternal href="/authentication/register">Register</LinkInternal>
         </p>
-        <Text id="auth-login-name" name={FIELD_NAMES.NAME}>
+        <Text
+          id="auth-login-name"
+          name={FIELD_NAMES.NAME}
+          autoComplete="username"
+        >
           Name
         </Text>
         <Password

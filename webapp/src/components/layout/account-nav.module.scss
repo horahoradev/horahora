@@ -3,6 +3,8 @@
 .block {
   position: relative;
   flex-basis: 8em;
+  display: flex;
+  align-items: center;
 
   &:focus-within,
   &_open {
@@ -27,16 +29,25 @@
   justify-content: center;
 }
 
+.title {
+  display: none;
+  @media (min-width: $width-tablet) {
+    display: unset;
+  }
+}
+
 .list {
   position: absolute;
+  top: 100%;
   right: 0;
   z-index: 1;
   display: flex;
   flex-flow: column nowrap;
   gap: $size-normal;
-  width: 150%;
+  width: 10em;
   background-color: var(--colour1-primary);
   border-radius: $radius-small;
+  box-shadow: 0px 0px 10px var(--colour1-secondary);
   padding: $size-normal;
 
   visibility: hidden;

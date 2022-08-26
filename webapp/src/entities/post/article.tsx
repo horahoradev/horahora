@@ -24,6 +24,7 @@ import { CommentList } from "#entities/comment";
 
 // eslint-disable-next-line
 import styles from "./article.module.scss";
+import { Pre } from "#components/pre";
 
 export interface IPostArticleProps extends IArticleProps {
   video: IVideoDetail;
@@ -64,7 +65,7 @@ function Component({
   return (
     <Article {...blockProps}>
       <ArticleHeader>
-        <Heading level={headingLevel}>{Title}</Heading>
+        <Heading className={styles.title} level={headingLevel}>{Title}</Heading>
         <VideoPlayer url={MPDLoc} next_video={nextVideo} />
       </ArticleHeader>
       <ArticleBody>
@@ -84,7 +85,9 @@ function Component({
           <DS
             dKey="Description"
             dValue={
-              <p dangerouslySetInnerHTML={{ __html: VideoDescription }}></p>
+              <p>
+                <Pre>{VideoDescription}</Pre>
+              </p>
             }
           />
           <DS

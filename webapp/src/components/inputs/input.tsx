@@ -1,14 +1,22 @@
-import styles from "./input.module.scss";
+import { forwardRef, type LegacyRef } from "react";
 
 import { blockComponent, type IChildlessBlockProps } from "#components/meta";
 
+// eslint-disable-next-line
+import styles from "./input.module.scss";
+
 export interface IInputProps extends IChildlessBlockProps<"input"> {
-  id: string,
-  name: string
+  id: string;
+  name: string;
 }
 
-export const Input = blockComponent(styles.block, Component);
+export const Input = forwardRef<HTMLInputElement, IInputProps>(
+  blockComponent(styles.block, Component)
+);
 
-function Component({ ...blockProps }: IInputProps) {
-  return <input {...blockProps} />;
+function Component(
+  { ...blockProps }: IInputProps,
+  ref?: LegacyRef<HTMLInputElement>
+) {
+  return <input {...blockProps} ref={ref} />;
 }

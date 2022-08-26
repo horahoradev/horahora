@@ -44,14 +44,16 @@
 .body {
   grid-area: body;
   align-self: flex-end;
-  padding: $size-small $size-normal;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
+  padding: $size-small $size-normal;
 }
 
 .footer {
   grid-area: footer;
   align-self: flex-end;
+  display: grid;
+  gap: $size-small;
   padding-top: $size-small;
 }

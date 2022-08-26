@@ -37,7 +37,7 @@ function VideosPage() {
 
   return (
     <Page title={title} heading={null}>
-      <PostArticle video={videoDetail} headingLevel={2} />
+      <PostArticle video={videoDetail} headingLevel={1} />
       {/*
         <VideoList
           videos={pageData.RecommendedVideos}

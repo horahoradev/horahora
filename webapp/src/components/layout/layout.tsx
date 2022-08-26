@@ -11,6 +11,9 @@ export interface ILayoutProps {
   children: ReactNode;
 }
 
+/**
+ * @TODO responsive width
+ */
 export function Layout({ children }: ILayoutProps) {
   return (
     <>
