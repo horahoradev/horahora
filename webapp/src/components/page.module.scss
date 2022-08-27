@@ -1,0 +1,7 @@
+@use "../styles/variables/sass.scss" as *;
+
+.content {
+  display: grid;
+  grid-template-columns: 100%;
+  align-content: baseline;
+}

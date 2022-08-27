@@ -1,5 +1,11 @@
+@use "../../styles/variables/sass.scss" as *;
+
 .block {
-  display: inline-block;
+  grid-area: label;
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: $size-small;
   color: var(--colour0-primary);
   padding: 0.25rem 0;
   cursor: pointer;

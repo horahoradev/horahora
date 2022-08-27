@@ -21,6 +21,7 @@ import { Button } from "#components/buttons";
 
 // eslint-disable-next-line
 import styles from "./account-nav.module.scss";
+import { Icon } from "#components/icons";
 
 export function AccountNavigation() {
   const [isOpen, switchOpen] = useState(false);
@@ -41,12 +42,12 @@ export function AccountNavigation() {
     >
       <Button
         className={styles.switch}
-        iconID={faUser}
         onClick={() => {
           switchOpen(!isOpen);
         }}
       >
-        Account
+        <Icon icon={faUser} />
+        <span className={styles.title}>Account</span>
       </Button>
       <ListUnordered className={styles.list}>
         {!isRegistered ? (

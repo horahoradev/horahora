@@ -1,100 +1,17 @@
 import { useEffect, useState } from "react";
-import { Table, Button, Space } from "antd";
 
 import { Page } from "#components/page";
 import { NewVideoForm } from "#components/posts";
 import { IArchivalRequest } from "#codegen/schema/001_interfaces";
-import { ArchiveStatus } from "#components/archives";
-import {
-  deleteArchivalRequest,
-  getArchivalRequests,
-  retryArchivalRequest,
-} from "#api/archives";
+import { getArchivalRequests } from "#api/archives";
+import { CardList } from "#components/lists";
+import { LoadingBar } from "#components/loading-bar";
+import { RequestCard } from "#entities/request";
 
 function NewArchivePage() {
-  const [archivalSubscriptions, setArchivalSubscriptions] = useState<
-    IArchivalRequest[]
-  >([]);
+  const [requests, changeRequests] = useState<IArchivalRequest[]>();
   // I think this is a hack? looks okay to me though!
   const [timerVal, setTimerVal] = useState(0);
-
-  const columns = [
-    {
-      title: "Status",
-      key: "Status",
-      render: (
-        text: string,
-        record: {
-          ArchivedVideos: number;
-          CurrentTotalVideos: number;
-          LastSynced: undefined;
-        }
-      ) => (
-        <span>
-          <ArchiveStatus record={record} />
-        </span>
-      ),
-    },
-    {
-      title: "URL",
-      dataIndex: "Url",
-    },
-    {
-      title: "Last synced",
-      dataIndex: "LastSynced",
-    },
-    // {
-    //     title: 'Days until next sync',
-    //     'dataIndex': 'BackoffFactor',
-    //     key: 'BackoffFactor',
-    // },
-    {
-      title: "Downloaded",
-      key: "Downloaded",
-      render: (
-        text: string,
-        record: {
-          ArchivedVideos: number;
-          CurrentTotalVideos: number;
-          LastSynced: null;
-          UndownloadableVideos: number;
-        }
-      ) => (
-        <span>
-          <b>{record.ArchivedVideos + "/" + record.CurrentTotalVideos}</b>{" "}
-          videos ({record.UndownloadableVideos} undownloadable)
-        </span>
-      ),
-    },
-    {
-      title: "Actions",
-      key: "Actions",
-      render: (
-        text: string,
-        record: {
-          ArchivedVideos: number;
-          CurrentTotalVideos: number;
-          LastSynced: null;
-          DownloadID: number;
-        }
-      ) => (
-        <Space size="middle">
-          <Button
-            className="background-blue"
-            onClick={() => retryRequest(record.DownloadID)}
-          >
-            Retry {record.DownloadID}
-          </Button>
-          <Button
-            className="background-blue"
-            onClick={() => deleteRequest(record.DownloadID)}
-          >
-            Delete {record.DownloadID}
-          </Button>
-        </Space>
-      ),
-    },
-  ];
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
@@ -107,7 +24,7 @@ function NewArchivePage() {
 
       // TODO: diff downloads in progress vs old downloads state, and unsubscribe!
       if (!ignore) {
-        setArchivalSubscriptions(subscriptionData.ArchivalRequests);
+        changeRequests(subscriptionData.ArchivalRequests);
       }
     };
 
@@ -129,45 +46,28 @@ function NewArchivePage() {
     setTimerVal((timerVal) => timerVal + 1);
   }
 
-  async function deleteRequest(download_id: number) {
-    const formParams = new URLSearchParams([
-      ["download_id", String(download_id)],
-    ]);
-    await deleteArchivalRequest(formParams);
-    reloadPage();
-  }
-
-  async function retryRequest(download_id: number) {
-    const formParams = new URLSearchParams([
-      ["download_id", String(download_id)],
-    ]);
-    await retryArchivalRequest(formParams);
-    reloadPage();
-  }
-
   async function createNewArchival(url: string) {
-    const subs = archivalSubscriptions ? archivalSubscriptions : [];
+    const subs = requests ? requests : [];
     const newList = [
       { Url: url, ArchivedVideos: 0, CurrentTotalVideos: 0, BackoffFactor: 1 },
       ...subs,
     ];
-    setArchivalSubscriptions(newList);
+    // @ts-expect-error some type mismatch
+    changeRequests(newList);
   }
 
   return (
     <Page title="View and manage your archives">
-      <div>
-        <NewVideoForm onNewURL={createNewArchival} />
-        <Table
-          // @ts-expect-error types
-          dataSource={archivalSubscriptions}
-          scroll={{ y: 700 }}
-          className="align-bottom w-full "
-          ellipsis={true}
-          // @ts-expect-error types
-          columns={columns}
-        />
-      </div>
+      <NewVideoForm onNewURL={createNewArchival} />
+      <CardList>
+        {!requests ? (
+          <LoadingBar />
+        ) : (
+          requests.map((request) => (
+            <RequestCard key={request.DownloadID} request={request} />
+          ))
+        )}
+      </CardList>
     </Page>
   );
 }

@@ -1,7 +1,8 @@
-import styles from "./cards.module.scss";
-
 import { type IHeadingLevel } from "#components/headings";
 import { blockComponent, type IBlockProps } from "#components/meta";
+
+// eslint-disable-next-line
+import styles from "./cards.module.scss";
 
 export interface ICardListProps extends IBlockProps<"div"> {
   /**

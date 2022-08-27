@@ -1,0 +1,12 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {}
+
+.title {
+  text-transform: none;
+  text-align: start;
+}
+
+.tags {
+  gap: $size-small $size-normal;
+}

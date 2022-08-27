@@ -142,7 +142,7 @@ services:
       - minio
     volumes:
       - ./static:/etc/nginx/html/static/images
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./videos/otomads:/etc/nginx/html/otomads
   rabbitmq:
     build: activemq

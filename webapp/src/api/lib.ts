@@ -1,10 +1,11 @@
-import { apiFetch, formHeader, IAPIFetchOptions } from "#lib/fetch";
-import { type IUserRank } from "#lib/account";
-import { type IVideo } from "#codegen/schema/001_interfaces";
-import { type IVideoDetailed } from "#types/entities";
+import { IPaginationData } from "#codegen/schema/001_interfaces";
+import { apiFetch, formHeader, type IAPIFetchOptions } from "#lib/fetch";
+import { type IProfileData } from "#entities/profile";
+import { type IVideoDetail, IVideo } from "#entities/post";
+import { type ICommentData } from "#entities/comment";
 
 export interface IHomeData {
-  PaginationData: Record<string, unknown>;
+  PaginationData: IPaginationData;
   Videos: IVideo[];
 }
 
@@ -30,17 +31,6 @@ export async function fetchHome(
   return homePage;
 }
 
-export interface IProfileData {
-  Username: string;
-  banned: boolean;
-  L: Record<string, unknown> & {
-    rank: IUserRank;
-  };
-  Videos: IVideo[];
-  UserID: number;
-  PaginationData: Record<string, unknown>;
-}
-
 export async function fetchProfile(id: number, page: number) {
   const pathname = `/users/${id}`;
   const searchParams = new URLSearchParams([["page", String(page)]]);
@@ -50,20 +40,16 @@ export async function fetchProfile(id: number, page: number) {
   return profile;
 }
 
-export interface IPostDetails extends IVideoDetailed {
-  RecommendedVideos: IVideo[];
-}
-
 export async function getPost(postID: number) {
   const pathname = `/videos/${postID}`;
-  const post = await apiFetch<IPostDetails>({ pathname });
+  const post = await apiFetch<IVideoDetail>({ pathname });
 
   return post;
 }
 
 export async function getPostComments(postID: number) {
   const pathname = `/comments/${postID}`;
-  const comments = await apiFetch({ pathname });
+  const comments = await apiFetch<ICommentData[]>({ pathname });
 
   return comments;
 }
