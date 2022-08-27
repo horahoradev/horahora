@@ -101,6 +101,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./.env.dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - pgs_host=postgres
       - pgs_port=5432
