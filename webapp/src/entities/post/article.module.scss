@@ -4,9 +4,15 @@
 
 .title {
   text-transform: none;
-  text-align: start;
+  text-align: center;
 }
 
 .tags {
   gap: $size-small $size-normal;
+  border: 1px solid var(--colour0-primary);
+  padding: $size-small;
+}
+
+.tag {
+  border: 1px solid var(--anchour-internal-colour1-secondary);
 }
