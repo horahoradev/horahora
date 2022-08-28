@@ -7,6 +7,8 @@ import (
 	"io"
 	"io/ioutil"
 	"net"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,13 +17,12 @@ import (
 	"github.com/google/uuid"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/horahoradev/horahora/video_service/internal/dashutils"
 	"github.com/horahoradev/horahora/video_service/storage"
 	"github.com/jmoiron/sqlx"
 	"github.com/opentracing/opentracing-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	"github.com/horahoradev/horahora/video_service/internal/dashutils"
 
 	"github.com/horahoradev/horahora/video_service/internal/models"
 
@@ -239,13 +240,41 @@ loop:
 		}
 	}
 
+	videoLoc := fmt.Sprintf("%s/%s", g.OriginFQDN, filepath.Base(video.FileData.Name()))
+	u, err := url.Parse(videoLoc)
+	if err != nil {
+		return err
+	}
+
+	spl := strings.Split(u.Host, ":")
+	host := spl[0]
+	port := spl[1]
+
+	switch host {
+	case "localhost":
+		u.Host = fmt.Sprintf("%v:%v", "host.docker.internal", port)
+	default:
+	}
+
+	log.Infof("Trying to reach origin file at %v", u.String())
+
+	// We've uploaded the video... can we reach it?
+	// If we can't reach it with a head request, don't commit it to the db
+	res, err := http.Head(u.String())
+	switch {
+	case err != nil:
+		return err
+	case res != nil && res.StatusCode >= 400:
+		return fmt.Errorf("recieved bad status code %v for request to %v", res.StatusCode, videoLoc)
+	}
+
 	// This is MESSY
 	// thumbnail and original video locations are inferred from the mpd location (which is dumb), so it's written even though
 	// the video hasn't been transcoded/chunked and the mpd hasn't been uploaded yet
 	// a better solution will be provided in the future... I will fix this... (I'm keeping it backwards compatible for now)
 	// TODO: switch to struct for args
 	// (FIXME)
-	manifestLoc := fmt.Sprintf("%s/%s", g.OriginFQDN, filepath.Base(video.FileData.Name()+".mpd"))
+	manifestLoc := videoLoc + ".mpd"
 
 	videoID, err := g.VideoModel.SaveForeignVideo(context.TODO(), video.Meta.Meta.Title, video.Meta.Meta.Description,
 		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, video.Meta.Meta.OriginalSite,
