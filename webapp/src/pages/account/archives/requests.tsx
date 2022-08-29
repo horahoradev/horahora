@@ -48,12 +48,7 @@ function NewArchivePage() {
 
   async function createNewArchival(url: string) {
     const subs = requests ? requests : [];
-    const newList = [
-      { Url: url, ArchivedVideos: 0, CurrentTotalVideos: 0, BackoffFactor: 1 },
-      ...subs,
-    ];
-    // @ts-expect-error some type mismatch
-    changeRequests(newList);
+    reloadPage();
   }
 
   return (
@@ -64,7 +59,11 @@ function NewArchivePage() {
           <LoadingBar />
         ) : (
           requests.map((request) => (
-            <RequestCard key={request.DownloadID} request={request} />
+            <RequestCard
+              key={request.DownloadID}
+              request={request}
+              onUpdate={reloadPage}
+            />
           ))
         )}
       </CardList>

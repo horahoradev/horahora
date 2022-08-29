@@ -28,12 +28,14 @@ import styles from "./card.module.scss";
 
 export interface IRequestCardProps extends ICardProps {
   request: IArchivalRequest;
+  onUpdate: Function;
 }
 
 export const RequestCard = blockComponent(styles.block, Component);
 
 function Component({
   request,
+  onUpdate,
   headingLevel,
   ...blockProps
 }: IRequestCardProps) {
@@ -61,14 +63,18 @@ function Component({
     const formParams = new URLSearchParams([
       ["download_id", String(download_id)],
     ]);
-    await deleteArchivalRequest(formParams);
+    var resp = await deleteArchivalRequest(formParams);
+    onUpdate();
+    return resp;
   }
 
   async function retryRequest(download_id: number) {
     const formParams = new URLSearchParams([
       ["download_id", String(download_id)],
     ]);
-    await retryArchivalRequest(formParams);
+    var resp = await retryArchivalRequest(formParams);
+    onUpdate();
+    return resp;
   }
 
   return (

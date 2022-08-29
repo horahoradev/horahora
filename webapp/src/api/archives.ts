@@ -64,9 +64,7 @@ export async function deleteArchivalRequest(formParams: URLSearchParams) {
     throw error;
   }
 
-  const result: null = await response.json();
-
-  return result;
+  return null;
 }
 
 export async function retryArchivalRequest(formParams: URLSearchParams) {
