@@ -65,11 +65,15 @@ function Component({
   return (
     <Article {...blockProps}>
       <ArticleHeader>
-        <Heading className={styles.title} level={headingLevel}>{Title}</Heading>
+        <Heading className={styles.title} level={headingLevel}>
+          {Title}
+        </Heading>
         <VideoPlayer url={MPDLoc} next_video={nextVideo} />
       </ArticleHeader>
+      <PostRate postID={VideoID} rating={Rating} />
       <ArticleBody>
         <DL>
+          <DS isHorizontal dKey="Views" dValue={Views} />
           <DS
             isHorizontal
             dKey="Author"
@@ -82,6 +86,25 @@ function Component({
               </LinkInternal>
             }
           />
+          <DS isHorizontal dKey="Upload date" dValue={UploadDate} />
+          {!Tags ? null : (
+            <DS
+              dKey="Tags"
+              dValue={
+                <List className={styles.tags} isHorizontal>
+                  {Tags.map((tag, idx) => {
+                    return (
+                      <ListItem className={styles.tag} key={idx}>
+                        <LinkInternal href={`/?search=${tag}`} target="_blank">
+                          {tag}
+                        </LinkInternal>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              }
+            />
+          )}
           <DS
             dKey="Description"
             dValue={
@@ -90,31 +113,8 @@ function Component({
               </p>
             }
           />
-          <DS
-            dKey="Tags"
-            dValue={
-              !Tags.length ? (
-                "None"
-              ) : (
-                <List className={styles.tags} isHorizontal>
-                  {Tags.map((tag, idx) => {
-                    return (
-                      <ListItem key={idx}>
-                        <LinkInternal href={`/?search=${tag}`} target="_blank">
-                          {tag}
-                        </LinkInternal>
-                      </ListItem>
-                    );
-                  })}
-                </List>
-              )
-            }
-          />
-          <DS isHorizontal dKey="Views" dValue={Views} />
-          <DS isHorizontal dKey="Upload date" dValue={UploadDate} />
         </DL>
         {isAdmin && <VideoAdminControls data={video} />}
-        <PostRate postID={VideoID} rating={Rating} />
       </ArticleBody>
       <ArticleFooter>
         <Heading

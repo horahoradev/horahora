@@ -6,7 +6,8 @@
   justify-content: space-between;
   align-items: center;
   gap: $size-normal;
-  padding: $size-small;
+
+  padding: $size-small 0 $size-small 0;
 
   &_liked {
     .like {

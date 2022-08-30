@@ -83,7 +83,7 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 
 	err := video.SetDownloadInProgress()
 	if err != nil {
-		log.Errorf("Failed to set download in progress")
+		log.Errorf("Failed to set download in progress: %v", err)
 	}
 
 	website, err := models.GetWebsiteFromURL(video.URL)
