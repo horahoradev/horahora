@@ -1,0 +1,9 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  border: $size-thin solid var(--colour0-tertiary-transparent);
+}
+
+.upvoted {
+  color: var(--positive-colour1-primary);
+}

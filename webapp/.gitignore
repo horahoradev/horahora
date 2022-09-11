@@ -1,5 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# nextjs build output
+.next
+
+# temp yarn stuff
+.yarn
+
 # dependencies
 /node_modules
 /.pnp
@@ -21,6 +27,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-public/antd.dark.min.css
-public/antd.min.css

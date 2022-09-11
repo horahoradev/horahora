@@ -1,0 +1,10 @@
+**/.dockerignore
+**/.git
+**/.gitignore
+**/.vscode
+**/Dockerfile*
+**/node_modules
+**/.yarn
+/build
+/.next
+README.md

@@ -6,22 +6,22 @@ import (
 	"io"
 	"io/ioutil"
 	"net"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/go-redis/redis"
 	"github.com/google/uuid"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/horahoradev/horahora/video_service/internal/dashutils"
 	"github.com/horahoradev/horahora/video_service/storage"
 	"github.com/jmoiron/sqlx"
 	"github.com/opentracing/opentracing-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	"github.com/horahoradev/horahora/video_service/internal/dashutils"
 
 	"github.com/horahoradev/horahora/video_service/internal/models"
 
@@ -49,9 +49,9 @@ type GRPCServer struct {
 
 // TODO: API is getting bloated
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
-	redisClient *redis.Client, client userproto.UserServiceClient, tracer opentracing.Tracer,
-	storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) error {
-	g, err := initGRPCServer(bucketName, db, client, local, redisClient, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, storageEndpoint, MaxDLFileSize)
+	client userproto.UserServiceClient, tracer opentracing.Tracer, storageBackend, apiID,
+	apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) error {
+	g, err := initGRPCServer(bucketName, db, client, local, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, storageEndpoint, MaxDLFileSize)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 }
 
 func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
-	redisClient *redis.Client, originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) (*GRPCServer, error) {
+	originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) (*GRPCServer, error) {
 
 	g := &GRPCServer{
 		Local:      local,
@@ -102,7 +102,7 @@ func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserService
 		return nil, fmt.Errorf("Unknown storage backend %s", storageBackend)
 	}
 
-	g.VideoModel, err = models.NewVideoModel(db, client, redisClient, approvalThreshold)
+	g.VideoModel, err = models.NewVideoModel(db, client, approvalThreshold)
 	if err != nil {
 		return nil, err
 	}
@@ -239,13 +239,41 @@ loop:
 		}
 	}
 
+	videoLoc := fmt.Sprintf("%s/%s", g.OriginFQDN, filepath.Base(video.FileData.Name()))
+	u, err := url.Parse(videoLoc)
+	if err != nil {
+		return err
+	}
+
+	spl := strings.Split(u.Host, ":")
+	host := spl[0]
+	port := spl[1]
+
+	switch host {
+	case "localhost":
+		u.Host = fmt.Sprintf("%v:%v", "host.docker.internal", port)
+	default:
+	}
+
+	log.Infof("Trying to reach origin file at %v", u.String())
+
+	// We've uploaded the video... can we reach it?
+	// If we can't reach it with a head request, don't commit it to the db
+	res, err := http.Head(u.String())
+	switch {
+	case err != nil:
+		return err
+	case res != nil && res.StatusCode >= 400:
+		return fmt.Errorf("recieved bad status code %v for request to %v", res.StatusCode, videoLoc)
+	}
+
 	// This is MESSY
 	// thumbnail and original video locations are inferred from the mpd location (which is dumb), so it's written even though
 	// the video hasn't been transcoded/chunked and the mpd hasn't been uploaded yet
 	// a better solution will be provided in the future... I will fix this... (I'm keeping it backwards compatible for now)
 	// TODO: switch to struct for args
 	// (FIXME)
-	manifestLoc := fmt.Sprintf("%s/%s", g.OriginFQDN, filepath.Base(video.FileData.Name()+".mpd"))
+	manifestLoc := videoLoc + ".mpd"
 
 	videoID, err := g.VideoModel.SaveForeignVideo(context.TODO(), video.Meta.Meta.Title, video.Meta.Meta.Description,
 		video.Meta.Meta.AuthorUsername, video.Meta.Meta.AuthorUID, video.Meta.Meta.OriginalSite,

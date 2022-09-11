@@ -1,0 +1,17 @@
+@use "../../styles/variables/sass.scss" as *;
+@use "../../styles/mixins.scss" as mixin;
+
+.block {
+}
+
+.select {
+  @include mixin.form-input();
+  background-color: var(--colour1-secondary);
+  cursor: pointer;
+}
+
+// limited styling options
+.option {
+  background-color: var(--colour1-secondary);
+  cursor: pointer;
+}

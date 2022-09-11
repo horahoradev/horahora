@@ -241,5 +241,5 @@ var Scheduler_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "scheduler/protocol/scheduler.proto",
+	Metadata: "scheduler.proto",
 }

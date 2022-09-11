@@ -4,7 +4,7 @@
 #       we build this image from project root, symlinking this file to
 #       Dockerfile.front_api
 
-FROM golang:1.16.5-buster as builder
+FROM golang:1.18.1-alpine as builder
 
 WORKDIR /horahora/front_api
 

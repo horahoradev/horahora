@@ -1,0 +1,46 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  --local-colour1-primary: var(--anchour-colour1-primary);
+  --local-colour1-secondary: var(--anchour-colour1-secondary);
+  --local-colour2-primary: var(--anchour-colour2-primary);
+  --local-colour2-secondary: var(--anchour-colour2-secondary);
+
+  display: inline-flex;
+  align-items: center;
+  gap: $size-small;
+  outline: none;
+  text-decoration: none;
+  border-bottom: $size-nano solid transparent;
+  padding: 2px;
+  transition-property: color, border-color, background-color;
+  transition-duration: var(--duration-global);
+
+  &:link {
+    --local-icon-colour-primary: var(--local-colour1-primary);
+    color: var(--local-colour1-primary);
+  }
+
+  &:visited {
+    --local-icon-colour-primary: var(--local-colour1-secondary);
+    color: var(--local-colour1-secondary);
+  }
+
+  &:focus {
+    background-color: var(--local-colour2-primary);
+    border-bottom-color: var(--local-colour1-primary);
+  }
+
+  &:hover {
+    background-color: var(--local-colour2-secondary);
+    border-bottom-color: var(--local-colour1-primary);
+  }
+
+  &:active {
+    // a hack to make links to work with icons
+    --local-icon-colour-primary: var(--local-colour2-primary);
+    color: var(--local-colour2-primary);
+    background-color: var(--local-colour1-primary);
+    border-bottom-color: var(--local-colour2-primary);
+  }
+}

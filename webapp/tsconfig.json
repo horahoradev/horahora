@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#environment/*": ["./environment/*"],
+      "#codegen/*": ["./src/codegen/*/_index.ts"],
+      "#api/*": ["./src/api/*"],
+      "#lib/*": ["./src/lib/*/_index.ts", "./src/lib/*"],
+      "#entities/*": ["./src/entities/*/_index.ts"],
+      "#hooks": ["./src/hooks/_index.ts"],
+      "#components/*": ["./src/components/*/_index.ts", "./src/components/*"],
+      "#pages/*": ["./src/pages/*"],
+      "#server/*": ["./src/server/*/_index.ts"],
+      "#store/*": ["./src/store/*"],
+      "#styles/*": ["./src/styles/*"],
+      "#types/*": ["./src/types/*/_index.ts", "./src/types/*"]
+    },
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "checkJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  "ts-node": {
+    // don't need typecheck here
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
+  "include": ["next-env.d.ts", "additional.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", ".next", "build"]
+}

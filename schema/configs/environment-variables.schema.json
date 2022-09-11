@@ -1,0 +1,89 @@
+{
+  "$id": "https://horahora-schemas.org/configs/environment-variables.schema.json",
+  "title": "EnvironmentVariables",
+  "description": "The environment variables used by Horahora project.",
+  "type": "object",
+  "required": ["JWT_KEYPAIR"],
+  "properties": {
+    "COMPOSE_PROJECT_NAME": {
+      "type": "string",
+      "default": "horahora",
+      "description": "https://docs.docker.com/compose/reference/envvars/#compose_project_name"
+    },
+    "COMPOSE_FILE": {
+      "type": "string",
+      "default": "./docker-compose.yml",
+      "description": "https://docs.docker.com/compose/reference/envvars/#compose_file"
+    },
+    "COMPOSE_DOCKER_CLI_BUILD": {
+      "type": "integer",
+      "enum": [0, 1],
+      "default": 1,
+      "description": "https://docs.docker.com/compose/reference/envvars/#compose_docker_cli_build"
+    },
+    "DOCKER_BUILDKIT": {
+      "type": "integer",
+      "enum": [0, 1],
+      "default": 1,
+      "description": "Enable buildkit for docker."
+    },
+    "BUCKET_NAME": {
+      "type": "string",
+      "default": "otomads",
+      "description": "The storage bucket name for b2 or s3.\nIf you want to use S3, you need to include your aws credentials and config in $HOME/.aws. The config and credentials will be mounted into the relevant services at runtime.\nSee https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html for more information."
+    },
+    "ORIGIN_FQDN": {
+      "type": "string",
+      "default": "http://localhost:9000/$BUCKET_NAME",
+      "description": "For non-local applications, should be the public address of the server (if minio) or storage origin.\nThis will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads for backblaze, or https://horahora-dev-otomads.s3-us-west-1.amazonaws.com for s3."
+    },
+    "STORAGE_BACKEND": {
+      "type": "string",
+      "enum": ["b2", "s3"],
+      "default": "s3"
+    },
+    "STORAGE_API_ID": {
+      "type": "string",
+      "default": "minioadmin",
+      "description": "The API ID for your Backblaze account if using backblaze, otherwise blank"
+    },
+    "STORAGE_API_KEY": {
+      "type": "string",
+      "default": "minioadmin",
+      "description": "The API key for your Backblaze account, otherwise blank"
+    },
+    "STORAGE_ENDPOINT": {
+      "type": "string",
+      "default": "http://minio:9000"
+    },
+    "VPN_PROVIDER": {
+      "type": "string",
+      "default": "mullvad"
+    },
+    "VPN_IP": {
+      "type": "string",
+      "default": "10.64.168.1/32"
+    },
+    "WIREGUARD_PRIVATE_KEY": {
+      "type": "string"
+    },
+    "VPN_CITIES": {
+      "type": "string",
+      "default": "Tokyo"
+    },
+    "SOCKS_ADDR": {
+      "type": "string"
+    },
+    "GOLANG_PROTOBUF_REGISTRATION_CONFLICT": {
+      "type": "string",
+      "default": "warn"
+    },
+    "GRPCPort": {
+      "type": "integer",
+      "default": 7777
+    },
+    "JWT_KEYPAIR": {
+      "type": "string"
+    }
+  }
+}

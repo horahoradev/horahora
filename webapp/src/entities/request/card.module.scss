@@ -1,0 +1,31 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: block;
+}
+
+.actions {
+  justify-content: space-between;
+}
+
+.delete {
+  width: 4em;
+  color: var(--negative-colour1-primary);
+  background-color: var(--negative-colour2-primary);
+
+  &:active {
+    color: var(--negative-colour2-primary);
+    background-color: var(--negative-colour1-primary);
+  }
+}
+
+.retry {
+  width: 4em;
+  color: var(--submit-colour1-primary);
+  background-color: var(--submit-colour2-primary);
+
+  &:active {
+    color: var(--submit-colour2-primary);
+    background-color: var(--submit-colour1-primary);
+  }
+}

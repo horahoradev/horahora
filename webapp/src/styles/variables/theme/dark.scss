@@ -1,0 +1,64 @@
+:root[data-theme="dark"] {
+  // base colours
+  --colour0-primary: hsl(0, 0%, 95%);
+  --colour0-primary-transparent: hsla(0, 0%, 95%, 50%);
+  --colour0-secondary: hsl(0, 0%, 85%);
+  --colour0-secondary-transparent: hsla(0, 0%, 85%, 50%);
+  --colour0-tertiary: hsla(0, 0%, 75%);
+  --colour0-tertiary-transparent: hsla(0, 0%, 75%, 50%);
+  --colour1-primary: hsl(200, 40%, 10%);
+  --colour1-primary-transparent: hsl(200, 40%, 10%, 90%);
+  --colour1-secondary: hsl(200, 30%, 15%);
+  --colour1-secondary-transparent: hsla(200, 30%, 15%, 90%);
+  --colour1-tertiary: hsla(200, 30%, 20%);
+  --colour1-tertiary-transparent: hsla(200, 30%, 20%, 90%);
+
+  /* Buttons */
+  --submit-colour1-primary: hsl(240, 100%, 80%);
+  --submit-colour1-secondary: hsl(240, 70%, 70%);
+  --submit-colour1-tertiary: hsl(240, 60%, 60%);
+  --submit-colour2-primary: hsl(240, 100%, 20%);
+  --submit-colour2-secondary: hsl(240, 80%, 20%);
+  --submit-colour2-secondary: hsl(240, 60%, 15%);
+
+  --positive-colour1-primary: hsl(120, 100%, 80%);
+  --positive-colour1-secondary: hsl(120, 70%, 70%);
+  --positive-colour1-tertiary: hsl(120, 60%, 60%);
+  --positive-colour2-primary: hsl(120, 100%, 20%);
+  --positive-colour2-secondary: hsl(120, 80%, 20%);
+  --positive-colour2-tertiary: hsl(120, 60%, 15%);
+
+  --negative-colour1-primary: hsl(0, 100%, 80%);
+  --negative-colour1-secondary: hsl(0, 70%, 70%);
+  --negative-colour1-tertiary: hsl(0, 60%, 60%);
+  --negative-colour2-primary: hsl(0, 100%, 20%);
+  --negative-colour2-secondary: hsl(0, 80%, 20%);
+  --negative-colour2-tertiary: hsl(0, 60%, 15%);
+
+  --favourite-colour1-primary: hsl(60, 100%, 30%);
+  --favourite-colour2-primary: hsl(51, 100%, 50%);
+  /* END Buttons */
+
+  /* Links */
+  // external
+  --anchour-colour1-primary: hsl(200, 100%, 80%);
+  --anchour-colour1-secondary: hsla(210, 70%, 70%);
+  --anchour-colour2-primary: hsl(240, 100%, 40%);
+  --anchour-colour2-secondary: hsla(230, 70%, 40%);
+  // internal
+  --anchour-internal-colour1-primary: hsl(160, 100%, 80%);
+  --anchour-internal-colour1-secondary: hsla(160, 70%, 70%);
+  --anchour-internal-colour2-primary: hsl(170, 100%, 20%);
+  --anchour-internal-colour2-secondary: hsla(170, 80%, 20%);
+  // local
+  --anchour-local-colour1-primary: hsl(260, 100%, 80%);
+  --anchour-local-colour1-secondary: hsla(260, 70%, 70%);
+  --anchour-local-colour2-primary: hsl(280, 100%, 30%);
+  --anchour-local-colour2-secondary: hsla(280, 70%, 30%);
+  // email
+  // --anchour-email-colour1-primary: hsl(260, 100%, 80%);
+  // --anchour-email-colour1-secondary: hsla(260, 70%, 70%);
+  // --anchour-email-colour2-primary: hsl(280, 100%, 30%);
+  // --anchour-email-colour2-secondary: hsla(280, 70%, 30%);
+  /* END Links */
+}

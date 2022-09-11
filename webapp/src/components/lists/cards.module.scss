@@ -1,0 +1,59 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: $size-normal;
+  padding: $size-normal 0;
+}
+
+.card {
+  flex: 0 1 $width-mobile;
+  display: grid;
+  // prettier-ignore
+  grid-template:
+    "header" auto
+    "body" 1fr
+    "footer" auto
+    / minmax(auto, 1fr);
+  overflow: hidden;
+  background-color: var(--colour1-primary);
+  border-radius: 10px;
+  border: $size-thin solid transparent;
+  transition-property: border, box-shadow;
+  transition-duration: var(--duration-global);
+
+  & > * {
+    padding: $size-normal;
+  }
+
+  &:hover,
+  &:focus-within {
+    box-shadow: 0 0 5px var(--positive-colour1-primary);
+  }
+}
+
+.header {
+  grid-area: header;
+  align-self: flex-start;
+  padding-bottom: $size-small;
+}
+
+.body {
+  grid-area: body;
+  align-self: flex-end;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  padding: $size-small $size-normal;
+}
+
+.footer {
+  grid-area: footer;
+  align-self: flex-end;
+  display: grid;
+  gap: $size-small;
+  padding-top: $size-small;
+}

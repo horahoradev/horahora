@@ -1,0 +1,18 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/pagination-data.schema.json",
+  "title": "PaginationData",
+  "type": "object",
+  "required": [
+    "NumberOfItems",
+    "CurrentPage"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "NumberOfItems": {
+      "type": "integer"
+    },
+    "CurrentPage": {
+      "type": "integer"
+    }
+  }
+}

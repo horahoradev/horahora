@@ -1,0 +1,25 @@
+{
+  "$id": "https://horahora-schemas.org/entities/account/entity.schema.json",
+  "title": "Account",
+  "description": "An account on horahora.",
+  "type": "object",
+  "required": ["userID"],
+  "additionalProperties": false,
+  "properties": {
+    "userID": {
+      "type": "integer"
+    },
+    "username": {
+      "type": "string"
+    },
+    "profile_picture_url": {
+      "type": "string"
+    },
+    "rank": {
+      "type": "integer"
+    },
+    "banned": {
+      "type": "boolean"
+    }
+  }
+}

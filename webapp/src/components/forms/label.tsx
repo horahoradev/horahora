@@ -1,0 +1,14 @@
+import { blockComponent, type IBlockProps } from "#components/meta";
+
+// eslint-disable-next-line
+import styles from "./label.module.scss";
+
+export interface ILabelProps extends IBlockProps<"label"> {
+  htmlFor: string;
+}
+
+export const Label = blockComponent(styles.block, Component);
+
+export function Component({ children, ...blockProps }: ILabelProps) {
+  return <label {...blockProps}>{children}</label>;
+}
