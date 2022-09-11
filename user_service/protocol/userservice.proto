@@ -6,6 +6,7 @@ package proto;
 
 import "validate/validate.proto";
 
+
 service UserService {
     rpc Register(RegisterRequest) returns (RegisterResponse){}
     rpc Login(LoginRequest) returns (LoginResponse){}
