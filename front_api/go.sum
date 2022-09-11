@@ -96,6 +96,8 @@ github.com/horahoradev/horahora/user_service v0.0.0-20210710200304-9892f28bcdf0/
 github.com/horahoradev/horahora/user_service v0.0.0-20210922030328-dee03a489f47/go.mod h1:z8FQUYNG7s+DiNmMkdAPG8BwuWjY0zUT+3980/VCjUM=
 github.com/horahoradev/horahora/user_service v0.0.0-20220501205714-89dd03bf6e1e h1:d565NGKtGUUWuJ015zTDP/piztNqgF46HKqf1e3uCRY=
 github.com/horahoradev/horahora/user_service v0.0.0-20220501205714-89dd03bf6e1e/go.mod h1:z8FQUYNG7s+DiNmMkdAPG8BwuWjY0zUT+3980/VCjUM=
+github.com/horahoradev/horahora/user_service v0.0.0-20220615065242-005ce0eb6540 h1:9bsq13oRs5YHFGkFhmk4ggPdaaAhrs/jmMeB07CAKCo=
+github.com/horahoradev/horahora/user_service v0.0.0-20220615065242-005ce0eb6540/go.mod h1:laBhpP7WlvLyERVy9OYquATSeVQ6BOvR3s26jOwomCo=
 github.com/horahoradev/horahora/video_service v0.0.0-20210922030328-dee03a489f47/go.mod h1:1K7li7af9OfuPp1QKfxbuKde8lUKkCHtPE7/7bDaXCQ=
 github.com/horahoradev/horahora/video_service v0.0.0-20220423205115-72d6369be489 h1:yizV44+zx035a+JIOGsUCbQS9irLDixkMIIGZsNg91I=
 github.com/horahoradev/horahora/video_service v0.0.0-20220423205115-72d6369be489/go.mod h1:0dT1RVOD5PhWumJCYUT3Rf8JHMVEQXHf6GZ2Lwl2TDE=
