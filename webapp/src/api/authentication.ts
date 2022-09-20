@@ -1,4 +1,5 @@
 import { FetchError, formHeader, PublicAPIURL } from "#lib/fetch";
+import { FetchErrorWithBody } from "#lib/fetch/types";
 
 /**
  * @TODO proper arg typing
@@ -13,7 +14,7 @@ export async function registerAccount(formParams: URLSearchParams) {
   });
 
   if (!response.ok) {
-    const error = new FetchError("Failed to register an account", response);
+    const error = await FetchErrorWithBody("Failed to register an account", response);
     throw error;
   }
 

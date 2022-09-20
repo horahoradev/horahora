@@ -1666,7 +1666,27 @@ func (m *RegisterRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Username
+	if len(m.GetUsername()) > 10 {
+		err := RegisterRequestValidationError{
+			field:  "Username",
+			reason: "value length must be at most 10 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_RegisterRequest_Username_Pattern.MatchString(m.GetUsername()) {
+		err := RegisterRequestValidationError{
+			field:  "Username",
+			reason: "value does not match regex pattern \"^[^[0-9]A-Za-z]+( [^[0-9]A-Za-z]+)*$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Password
 
@@ -1803,6 +1823,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RegisterRequestValidationError{}
+
+var _RegisterRequest_Username_Pattern = regexp.MustCompile("^[^[0-9]A-Za-z]+( [^[0-9]A-Za-z]+)*$")
 
 // Validate checks the field values on LoginRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

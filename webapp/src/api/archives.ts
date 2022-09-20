@@ -14,7 +14,7 @@ export async function createNewArchivalRequest(formParams: URLSearchParams) {
   });
 
   if (!response.ok) {
-    const error = new FetchError(
+    const error = NewAsyncFetchError(
       "Failed to create a new archival request",
       response
     );
