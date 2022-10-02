@@ -71,7 +71,7 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 	// This is an MVP fix
 	// nvm i misread it is lol
 	sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id FROM " +
-		"downloads INNER JOIN user_download_subscriptions s ON downloads.id = s.download_id WHERE s.user_id=$1 ORDER BY event_time DESC"
+		"downloads INNER JOIN user_download_subscriptions s ON downloads.id = s.download_id WHERE s.user_id=$1"
 
 	rows, err := m.Db.Query(sql, userID)
 	if err != nil {

@@ -133,6 +133,9 @@ function Component({
             </Button>
           </ListItem>
           <ListItem>
+            <a href={"/account/archives/events/" + DownloadID}>Logs</a>
+          </ListItem>
+          <ListItem>
             <Button
               className={styles.retry}
               onClick={() => retryRequest(DownloadID)}

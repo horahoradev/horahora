@@ -31,6 +31,22 @@ interface IRequestInfo {
   ArchivalRequests: IArchivalRequest[];
 }
 
+export async function getArchivalEvents(downloadID: number) {
+  const url = new PublicAPIURL("/archiveevents/" + downloadID);
+  const response = await fetch(url, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    const error = new FetchError("Failed to fetch archival requests", response);
+    throw error;
+  }
+
+  const result: IRequestInfo = await response.json();
+
+  return result;
+}
+
 export async function getArchivalRequests() {
   const url = new PublicAPIURL("/archiverequests");
   const response = await fetch(url, {
