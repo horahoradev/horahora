@@ -36,8 +36,9 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
       <CardHeader>
         <Heading level={headingLevel}>{Title}</Heading>
       </CardHeader>
-      <CardBody>
-        <ImageLink
+
+      <CardFooter>
+      <ImageLink
           className={styles.preview}
           src={ThumbnailLoc}
           href={`/videos/${VideoID}`}
@@ -48,8 +49,6 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
             img.src = `${ThumbnailLoc.slice(0, -6)}.jpg`;
           }}
         />
-      </CardBody>
-      <CardFooter>
         <DL>
           <DS
             isHorizontal

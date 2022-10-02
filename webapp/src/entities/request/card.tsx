@@ -117,12 +117,10 @@ function Component({
             dValue={UndownloadableVideos}
           />
           <DS isHorizontal dKey="Backoff factor" dValue={BackoffFactor} />
+          <DS dKey="Last Sync" dValue={LastSynced} />
         </DL>
       </CardBody>
       <CardFooter>
-        <DL>
-          <DS dKey="Last Sync" dValue={LastSynced} />
-        </DL>
         <ListUnordered className={styles.actions} isHorizontal>
           <ListItem>
             <Button

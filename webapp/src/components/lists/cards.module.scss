@@ -4,7 +4,7 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  align-items: flex-end;
+  align-items: stretch;
   gap: $size-normal;
   padding: $size-normal 0;
 }
@@ -12,7 +12,7 @@
 .card {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex: 0 1 $width-mobile;
   background-color: var(--colour1-primary);
   border-radius: 10px;
@@ -31,8 +31,7 @@
 }
 
 .header {
-  grid-area: header;
-  align-self: flex-start;
+  margin: 0px auto;
   padding-bottom: $size-small;
   overflow-wrap: anywhere;
 }
@@ -44,7 +43,7 @@
 
 .footer {
   width: 100%;
-  grid-area: footer;
+  align-self: flex-end;
   gap: $size-small;
   padding-top: $size-small;
 }
