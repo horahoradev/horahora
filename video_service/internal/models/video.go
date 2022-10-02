@@ -86,7 +86,7 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 			log.Infof("User %s does not exist for video %s, creating...", foreignAuthorUsername, originalVideoID)
 
 			regReq := proto.RegisterRequest{
-				Email:          "",
+				Email:          "fake@user.com", // NO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				Username:       foreignAuthorUsername,
 				Password:       "",
 				ForeignUser:    true,

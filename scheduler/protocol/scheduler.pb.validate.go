@@ -787,6 +787,110 @@ var _ interface {
 	ErrorName() string
 } = ListArchivalEntriesRequestValidationError{}
 
+// Validate checks the field values on ListArchivalEventsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListArchivalEventsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListArchivalEventsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListArchivalEventsRequestMultiError, or nil if none found.
+func (m *ListArchivalEventsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListArchivalEventsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DownloadID
+
+	if len(errors) > 0 {
+		return ListArchivalEventsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListArchivalEventsRequestMultiError is an error wrapping multiple validation
+// errors returned by ListArchivalEventsRequest.ValidateAll() if the
+// designated constraints aren't met.
+type ListArchivalEventsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListArchivalEventsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListArchivalEventsRequestMultiError) AllErrors() []error { return m }
+
+// ListArchivalEventsRequestValidationError is the validation error returned by
+// ListArchivalEventsRequest.Validate if the designated constraints aren't met.
+type ListArchivalEventsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListArchivalEventsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListArchivalEventsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListArchivalEventsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListArchivalEventsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListArchivalEventsRequestValidationError) ErrorName() string {
+	return "ListArchivalEventsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListArchivalEventsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListArchivalEventsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListArchivalEventsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListArchivalEventsRequestValidationError{}
+
 // Validate checks the field values on ListArchivalEntriesResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -835,40 +939,6 @@ func (m *ListArchivalEntriesResponse) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return ListArchivalEntriesResponseValidationError{
 					field:  fmt.Sprintf("Entries[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	for idx, item := range m.GetEvents() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListArchivalEntriesResponseValidationError{
-						field:  fmt.Sprintf("Events[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ListArchivalEntriesResponseValidationError{
-						field:  fmt.Sprintf("Events[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ListArchivalEntriesResponseValidationError{
-					field:  fmt.Sprintf("Events[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -957,6 +1027,142 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListArchivalEntriesResponseValidationError{}
+
+// Validate checks the field values on ListArchivalEventsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListArchivalEventsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListArchivalEventsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListArchivalEventsResponseMultiError, or nil if none found.
+func (m *ListArchivalEventsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListArchivalEventsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetEvents() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListArchivalEventsResponseValidationError{
+						field:  fmt.Sprintf("Events[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListArchivalEventsResponseValidationError{
+						field:  fmt.Sprintf("Events[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListArchivalEventsResponseValidationError{
+					field:  fmt.Sprintf("Events[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListArchivalEventsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListArchivalEventsResponseMultiError is an error wrapping multiple
+// validation errors returned by ListArchivalEventsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ListArchivalEventsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListArchivalEventsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListArchivalEventsResponseMultiError) AllErrors() []error { return m }
+
+// ListArchivalEventsResponseValidationError is the validation error returned
+// by ListArchivalEventsResponse.Validate if the designated constraints aren't met.
+type ListArchivalEventsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListArchivalEventsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListArchivalEventsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListArchivalEventsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListArchivalEventsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListArchivalEventsResponseValidationError) ErrorName() string {
+	return "ListArchivalEventsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListArchivalEventsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListArchivalEventsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListArchivalEventsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListArchivalEventsResponseValidationError{}
 
 // Validate checks the field values on ArchivalEvent with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

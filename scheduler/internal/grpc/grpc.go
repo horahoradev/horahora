@@ -58,8 +58,30 @@ func (s schedulerServer) DeleteArchivalRequest(ctx context.Context, req *proto.D
 	return ret, err
 }
 
+func (s schedulerServer) ListArchivalEvents(ctx context.Context, req *proto.ListArchivalEventsRequest) (*proto.ListArchivalEventsResponse, error) {
+	events, err := s.M.GetArchivalEvents(req.DownloadID)
+	if err != nil {
+		return nil, err
+	}
+
+	var protoEvents []*proto.ArchivalEvent
+	for _, event := range events {
+		eventObj := proto.ArchivalEvent{
+			VideoUrl:  event.VideoURL,
+			ParentUrl: event.ParentURL,
+			Message:   event.Message,
+			Timestamp: event.EventTimestamp,
+		}
+		protoEvents = append(protoEvents, &eventObj)
+	}
+
+	return &proto.ListArchivalEventsResponse{
+		Events: protoEvents,
+	}, nil
+}
+
 func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.ListArchivalEntriesRequest) (*proto.ListArchivalEntriesResponse, error) {
-	archives, events, err := s.M.GetContentArchivalRequests(req.UserID)
+	archives, err := s.M.GetContentArchivalRequests(req.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -81,20 +103,8 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 		entries = append(entries, &entry)
 	}
 
-	var protoEvents []*proto.ArchivalEvent
-	for _, event := range events {
-		eventObj := proto.ArchivalEvent{
-			VideoUrl:  event.VideoURL,
-			ParentUrl: event.ParentURL,
-			Message:   event.Message,
-			Timestamp: event.EventTimestamp,
-		}
-		protoEvents = append(protoEvents, &eventObj)
-	}
-
 	resp := proto.ListArchivalEntriesResponse{
 		Entries: entries,
-		Events:  protoEvents,
 	}
 
 	return &resp, nil

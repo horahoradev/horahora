@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type SchedulerClient interface {
 	DlURL(ctx context.Context, in *URLRequest, opts ...grpc.CallOption) (*Empty, error)
 	ListArchivalEntries(ctx context.Context, in *ListArchivalEntriesRequest, opts ...grpc.CallOption) (*ListArchivalEntriesResponse, error)
+	ListArchivalEvents(ctx context.Context, in *ListArchivalEventsRequest, opts ...grpc.CallOption) (*ListArchivalEventsResponse, error)
 	DeleteArchivalRequest(ctx context.Context, in *DeletionRequest, opts ...grpc.CallOption) (*Empty, error)
 	RetryArchivalRequestDownloadss(ctx context.Context, in *RetryRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetDownloadsInProgress(ctx context.Context, in *DownloadsInProgressRequest, opts ...grpc.CallOption) (*DownloadsInProgressResponse, error)
@@ -45,6 +46,15 @@ func (c *schedulerClient) DlURL(ctx context.Context, in *URLRequest, opts ...grp
 func (c *schedulerClient) ListArchivalEntries(ctx context.Context, in *ListArchivalEntriesRequest, opts ...grpc.CallOption) (*ListArchivalEntriesResponse, error) {
 	out := new(ListArchivalEntriesResponse)
 	err := c.cc.Invoke(ctx, "/proto.Scheduler/listArchivalEntries", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *schedulerClient) ListArchivalEvents(ctx context.Context, in *ListArchivalEventsRequest, opts ...grpc.CallOption) (*ListArchivalEventsResponse, error) {
+	out := new(ListArchivalEventsResponse)
+	err := c.cc.Invoke(ctx, "/proto.Scheduler/listArchivalEvents", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +94,7 @@ func (c *schedulerClient) GetDownloadsInProgress(ctx context.Context, in *Downlo
 type SchedulerServer interface {
 	DlURL(context.Context, *URLRequest) (*Empty, error)
 	ListArchivalEntries(context.Context, *ListArchivalEntriesRequest) (*ListArchivalEntriesResponse, error)
+	ListArchivalEvents(context.Context, *ListArchivalEventsRequest) (*ListArchivalEventsResponse, error)
 	DeleteArchivalRequest(context.Context, *DeletionRequest) (*Empty, error)
 	RetryArchivalRequestDownloadss(context.Context, *RetryRequest) (*Empty, error)
 	GetDownloadsInProgress(context.Context, *DownloadsInProgressRequest) (*DownloadsInProgressResponse, error)
@@ -99,6 +110,9 @@ func (UnimplementedSchedulerServer) DlURL(context.Context, *URLRequest) (*Empty,
 }
 func (UnimplementedSchedulerServer) ListArchivalEntries(context.Context, *ListArchivalEntriesRequest) (*ListArchivalEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListArchivalEntries not implemented")
+}
+func (UnimplementedSchedulerServer) ListArchivalEvents(context.Context, *ListArchivalEventsRequest) (*ListArchivalEventsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListArchivalEvents not implemented")
 }
 func (UnimplementedSchedulerServer) DeleteArchivalRequest(context.Context, *DeletionRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteArchivalRequest not implemented")
@@ -154,6 +168,24 @@ func _Scheduler_ListArchivalEntries_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SchedulerServer).ListArchivalEntries(ctx, req.(*ListArchivalEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Scheduler_ListArchivalEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListArchivalEventsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchedulerServer).ListArchivalEvents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Scheduler/listArchivalEvents",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchedulerServer).ListArchivalEvents(ctx, req.(*ListArchivalEventsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -226,6 +258,10 @@ var Scheduler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "listArchivalEntries",
 			Handler:    _Scheduler_ListArchivalEntries_Handler,
+		},
+		{
+			MethodName: "listArchivalEvents",
+			Handler:    _Scheduler_ListArchivalEvents_Handler,
 		},
 		{
 			MethodName: "deleteArchivalRequest",
