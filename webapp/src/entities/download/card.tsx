@@ -1,4 +1,5 @@
 import { type IDownload } from "./types";
+import { LinearProgress } from '@mui/material/LinearProgress';
 
 import { blockComponent } from "#components/meta";
 import {
@@ -27,7 +28,7 @@ function Component({
   return (
     <Card {...blockProps}>
       <CardHeader>
-        <Heading level={headingLevel}>{VideoID}</Heading>
+        <Heading level={headingLevel}>Video {VideoID}</Heading>
       </CardHeader>
       <CardBody>
         <DL>
@@ -36,7 +37,7 @@ function Component({
           <DS
             isHorizontal
             dKey="Progress"
-            dValue={<span>{Math.floor(progress)}%</span>}
+            dValue={<LinearProgress variant="determinate" value={progress} />}
           />
         </DL>
       </CardBody>

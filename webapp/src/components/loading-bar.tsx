@@ -5,5 +5,5 @@ export interface ILoadingBarProps extends IChildlessBlockProps<"span"> {}
 export const LoadingBar = blockComponent(undefined, Component)
 
 function Component({...blockProps}:ILoadingBarProps) {
-  return <span {...blockProps}>Loading...</span>
+  return <span {...blockProps}>No data</span>
 }

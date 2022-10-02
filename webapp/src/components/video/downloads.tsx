@@ -171,10 +171,10 @@ export function ArchivalDownloadsPage() {
   }
 
   return (
-    <Page title="Downloads in progress">
+    <Page>
       <CardList>
         {!videoInProgressDataset ? (
-          <LoadingBar />
+          <></>
         ) : (
           videoInProgressDataset.map((download, index) => (
             <DownloadCard key={index} download={download} />

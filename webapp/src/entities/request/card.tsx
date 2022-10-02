@@ -133,7 +133,7 @@ function Component({
             </Button>
           </ListItem>
           <ListItem>
-            <a href={"/account/archives/events/" + DownloadID}>Logs</a>
+            <LinkInternal href={"/account/archives/events/" + DownloadID}>Logs</LinkInternal>
           </ListItem>
           <ListItem>
             <Button

@@ -4,21 +4,16 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  align-items: stretch;
+  align-items: flex-end;
   gap: $size-normal;
   padding: $size-normal 0;
 }
 
 .card {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
   flex: 0 1 $width-mobile;
-  display: grid;
-  // prettier-ignore
-  grid-template:
-    "header" auto
-    "body" 1fr
-    "footer" auto
-    / minmax(auto, 1fr);
-  overflow: hidden;
   background-color: var(--colour1-primary);
   border-radius: 10px;
   border: $size-thin solid transparent;
@@ -39,21 +34,17 @@
   grid-area: header;
   align-self: flex-start;
   padding-bottom: $size-small;
+  overflow-wrap: anywhere;
 }
 
 .body {
-  grid-area: body;
-  align-self: flex-end;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
+  width: 100%;
   padding: $size-small $size-normal;
 }
 
 .footer {
+  width: 100%;
   grid-area: footer;
-  align-self: flex-end;
-  display: grid;
   gap: $size-small;
   padding-top: $size-small;
 }
