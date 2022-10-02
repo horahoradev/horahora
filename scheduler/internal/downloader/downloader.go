@@ -407,6 +407,13 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
+		// This line was originally authored by Soichiro
+		// according to him, it was licensed under the
+		// "Do What The Fuck You Want license", for which
+		// usage is permitted as long as the name is changed
+		// Thank you for your work!
+		"-S",
+		"res,hdr,fps,vcodec:av01:h265:vp9.2:vp9:h264,vbr",
 		"--add-header",
 		"Accept:*/*",
 		// "Why do we need this?"
