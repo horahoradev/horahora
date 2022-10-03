@@ -51,8 +51,10 @@ func NewGRPCServer(db *sqlx.DB, privateKey *rsa.PrivateKey, port int64) error {
 }
 
 func (g GRPCServer) Register(ctx context.Context, req *proto.RegisterRequest) (*proto.RegisterResponse, error) {
-	if err := req.Validate(); err != nil {
-		return nil, err
+	if !req.ForeignUser {
+		if err := req.Validate(); err != nil {
+			return nil, err
+		}
 	}
 
 	log.Infof("Handling registration for user %s", req.Username)

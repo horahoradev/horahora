@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { StompSubscription, type IMessage } from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 import { WSClient, WSConfig } from "#lib/fetch";
 import { Page } from "#components/page";
@@ -8,6 +10,21 @@ import { fetchDownloadsInProgress } from "#api/archives";
 import { CardList } from "#components/lists";
 import { LoadingBar } from "#components/loading-bar";
 import { DownloadCard, type IDownload } from "#entities/download";
+import LinearProgress from '@mui/material/LinearProgress';
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
+const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+    },
+  });
 
 export function ArchivalDownloadsPage() {
   const MutexRunner = useMutex();
@@ -170,17 +187,44 @@ export function ArchivalDownloadsPage() {
     mutex.unlock();
   }
 
+  let columns = [
+    {field: "VideoID", headerName: "Video"},
+    {field: "Website", headerName: "Website"},
+    {field: "DlStatus", headerName: "Status"},
+    {field: "progress", headerName: "Progress"},
+  ]
+
   return (
-    <Page>
-      <CardList>
-        {!videoInProgressDataset ? (
-          <></>
-        ) : (
-          videoInProgressDataset.map((download, index) => (
-            <DownloadCard key={index} download={download} />
-          ))
-        )}
-      </CardList>
-    </Page>
+    <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Page>
+        <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+            <TableRow>
+                <TableCell align="right">VideoID</TableCell>
+                <TableCell align="right">Website</TableCell>
+                <TableCell align="right">Status</TableCell>
+                <TableCell align="right">Progress</TableCell>
+            </TableRow>
+            </TableHead>
+            <TableBody>
+            {videoInProgressDataset ? videoInProgressDataset.filter((row) => row.DlStatus == "Downloading").map((row) => (
+                <TableRow
+                key={row.name}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                <TableCell align="right">{row.VideoID}</TableCell>
+                <TableCell align="right">{row.Website}</TableCell>
+                <TableCell align="right">{row.DlStatus}</TableCell>
+                <TableCell>Progress: <LinearProgress color="success" variant="determinate" value={row.progress} />{row.progress}%</TableCell>
+                </TableRow>
+            )): null }
+            </TableBody>
+        </Table>
+        </TableContainer>
+        </Page>
+    </ThemeProvider>
+
   );
 }

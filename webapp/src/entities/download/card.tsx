@@ -1,6 +1,11 @@
 import { type IDownload } from "./types";
-import { LinearProgress } from '@mui/material/LinearProgress';
-
+import LinearProgress from '@mui/material/LinearProgress';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import { blockComponent } from "#components/meta";
 import {
   Card,
@@ -34,11 +39,9 @@ function Component({
         <DL>
           <DS isHorizontal dKey="Website" dValue={Website} />
           <DS isHorizontal dKey="Status" dValue={DlStatus} />
-          <DS
-            isHorizontal
-            dKey="Progress"
-            dValue={<LinearProgress variant="determinate" value={progress} />}
-          />
+          <p></p>
+         <span>Progress: <LinearProgress color="success" variant="determinate" value={progress} />{progress}%</span>
+
         </DL>
       </CardBody>
     </Card>
