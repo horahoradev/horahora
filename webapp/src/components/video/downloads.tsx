@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
 import { StompSubscription, type IMessage } from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 
 import { WSClient, WSConfig } from "#lib/fetch";
 import { Page } from "#components/page";
 import { fetchDownloadsInProgress } from "#api/archives";
-import { CardList } from "#components/lists";
-import { LoadingBar } from "#components/loading-bar";
-import { DownloadCard, type IDownload } from "#entities/download";
 import LinearProgress from '@mui/material/LinearProgress';
 
 import Table from '@mui/material/Table';
@@ -19,12 +14,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-
-const darkTheme = createTheme({
-    palette: {
-      mode: 'dark',
-    },
-  });
 
 export function ArchivalDownloadsPage() {
   const MutexRunner = useMutex();
@@ -195,8 +184,6 @@ export function ArchivalDownloadsPage() {
   ]
 
   return (
-    <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
         <Page>
         <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -209,7 +196,7 @@ export function ArchivalDownloadsPage() {
             </TableRow>
             </TableHead>
             <TableBody>
-            {videoInProgressDataset ? videoInProgressDataset.filter((row) => row.DlStatus == "Downloading").map((row) => (
+            {videoInProgressDataset ? videoInProgressDataset.map((row) => (
                 <TableRow
                 key={row.name}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -224,7 +211,6 @@ export function ArchivalDownloadsPage() {
         </Table>
         </TableContainer>
         </Page>
-    </ThemeProvider>
 
   );
 }

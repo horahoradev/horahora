@@ -9,6 +9,15 @@
   padding: $size-normal 0;
 }
 
+.cardlist {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: $size-normal;
+  padding: 0;
+}
+
 .card {
   display: flex;
   flex-flow: row wrap;

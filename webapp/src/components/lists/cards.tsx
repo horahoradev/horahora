@@ -23,6 +23,8 @@ export interface ICardBodyProps extends IBlockProps<"section"> {}
 export interface ICardFooterProps extends IBlockProps<"footer"> {}
 
 export const CardList = blockComponent(styles.block, CardListComponent);
+export const StartCardList = blockComponent(styles.cardlist, CardListComponent);
+
 /**
  * Skeleton component, do not use it directly but instead
  * create a card component which extends its props.
