@@ -811,6 +811,8 @@ func (m *ListArchivalEventsRequest) validate(all bool) error {
 
 	// no validation rules for DownloadID
 
+	// no validation rules for ShowAll
+
 	if len(errors) > 0 {
 		return ListArchivalEventsRequestMultiError(errors)
 	}

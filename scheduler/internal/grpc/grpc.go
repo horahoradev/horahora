@@ -59,7 +59,7 @@ func (s schedulerServer) DeleteArchivalRequest(ctx context.Context, req *proto.D
 }
 
 func (s schedulerServer) ListArchivalEvents(ctx context.Context, req *proto.ListArchivalEventsRequest) (*proto.ListArchivalEventsResponse, error) {
-	events, err := s.M.GetArchivalEvents(req.DownloadID)
+	events, err := s.M.GetArchivalEvents(req.DownloadID, req.ShowAll)
 	if err != nil {
 		return nil, err
 	}

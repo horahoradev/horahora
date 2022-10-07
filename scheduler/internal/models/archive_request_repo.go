@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"net/url"
 
 	log "github.com/sirupsen/logrus"
@@ -38,17 +39,28 @@ type Event struct {
 	EventTimestamp string
 }
 
-func (m *ArchiveRequestRepo) GetArchivalEvents(downloadID int64) ([]Event, error) {
-	/*
-		sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM " +
-		"downloads INNER JOIN user_download_subscriptions s ON downloads.id = s.download_id LEFT JOIN archival_events ON downloads.id = archival_events.download_id WHERE s.user_id=$1 ORDER BY event_time DESC"
-	*/
+func (m *ArchiveRequestRepo) GetArchivalEvents(downloadID int64, showAll bool) ([]Event, error) {
 	var events []Event
 
-	sql := "Select video_url, parent_url, event_message, event_time FROM archival_events WHERE download_id = $1"
-	rows, err := m.Db.Query(sql, downloadID)
-	if err != nil {
-		return nil, err
+	var rows *sql.Rows
+	var err error
+
+	switch showAll {
+	case true:
+		sql := "Select video_url, parent_url, event_message, event_time FROM archival_events"
+
+		rows, err = m.Db.Query(sql)
+		if err != nil {
+			return nil, err
+		}
+
+	case false:
+		sql := "Select video_url, parent_url, event_message, event_time FROM archival_events WHERE download_id = $1"
+
+		rows, err = m.Db.Query(sql, downloadID)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	for rows.Next() {

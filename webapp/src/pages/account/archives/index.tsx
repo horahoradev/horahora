@@ -116,7 +116,7 @@ function NewArchivePage() {
       <Page title="View and manage your archives">
         <span><NewVideoForm onNewURL={createNewArchival} /></span>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label={<b>Video Downloads</b>} {...a11yProps(0)} />
+          <Tab label={<b>Archives</b>} {...a11yProps(0)} />
           <Tab label={<b>Video Downloads</b>} {...a11yProps(1)} />
         </Tabs>
         <TabPanel value={value} index={0}>

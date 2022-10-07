@@ -52,6 +52,7 @@ message listArchivalEntriesRequest {
 
 message listArchivalEventsRequest {
     int64 DownloadID = 1;
+    bool ShowAll = 2;
 }
 
 
