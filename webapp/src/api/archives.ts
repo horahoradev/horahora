@@ -31,7 +31,7 @@ interface IRequestInfo {
   ArchivalRequests: IArchivalRequest[];
 }
 
-export async function getArchivalEvents(downloadID: number) {
+export async function getArchivalEvents(downloadID: any) {
   const url = new PublicAPIURL("/archiveevents/" + downloadID);
   const response = await fetch(url, {
     method: "GET",

@@ -21,19 +21,32 @@ func (r RouteHandler) getArchiveEvents(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	downloadIDInt, err := strconv.ParseInt(downloadID, 10, 64)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+	if downloadID == "all" {
+		data := ArchiveEventsData{}
+
+		resp, err := r.s.ListArchivalEvents(context.TODO(), &schedulerproto.ListArchivalEventsRequest{DownloadID: 0, ShowAll: true})
+		if err != nil {
+			return err
+		}
+
+		data.ArchivalEvents = resp.Events
+		return c.JSON(http.StatusOK, data)
+	} else {
+		downloadIDInt, err := strconv.ParseInt(downloadID, 10, 64)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, err.Error())
+		}
+
+		data := ArchiveEventsData{}
+
+		resp, err := r.s.ListArchivalEvents(context.TODO(), &schedulerproto.ListArchivalEventsRequest{DownloadID: downloadIDInt})
+		if err != nil {
+			return err
+		}
+
+		data.ArchivalEvents = resp.Events
+
+		return c.JSON(http.StatusOK, data)
 	}
 
-	data := ArchiveEventsData{}
-
-	resp, err := r.s.ListArchivalEvents(context.TODO(), &schedulerproto.ListArchivalEventsRequest{DownloadID: downloadIDInt})
-	if err != nil {
-		return err
-	}
-
-	data.ArchivalEvents = resp.Events
-
-	return c.JSON(http.StatusOK, data)
 }

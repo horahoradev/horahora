@@ -18,6 +18,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import ArchivalEventsPage from "./events/[download_id]";
 
 const darkTheme = createTheme({
   palette: {
@@ -111,6 +112,7 @@ function NewArchivePage() {
   }
 
   return (
+
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Page title="View and manage your archives">
@@ -118,6 +120,7 @@ function NewArchivePage() {
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label={<b>Archives</b>} {...a11yProps(0)} />
           <Tab label={<b>Video Downloads</b>} {...a11yProps(1)} />
+          <Tab label={<b>Logs</b>} {...a11yProps(2)} />
         </Tabs>
         <TabPanel value={value} index={0}>
         <StartCardList>
@@ -136,6 +139,9 @@ function NewArchivePage() {
         </TabPanel>
         <TabPanel value={value} index={1}>
         {<ArchivalDownloadsPage></ArchivalDownloadsPage>}
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+        <ArchivalEventsPage downloadID="all"></ArchivalEventsPage>
         </TabPanel>
       </Page>
     </ThemeProvider>

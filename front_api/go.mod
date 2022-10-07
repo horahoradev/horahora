@@ -6,7 +6,7 @@ require (
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/doug-martin/goqu v5.0.0+incompatible // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
-	github.com/horahoradev/horahora/scheduler v0.0.0-20221002035434-27b8c7ec0477
+	github.com/horahoradev/horahora/scheduler v0.0.0-20221007025403-b65c4157a3ca
 	github.com/horahoradev/horahora/user_service v0.0.0-20220615065242-005ce0eb6540
 	github.com/horahoradev/horahora/video_service v0.0.0-20220423205115-72d6369be489
 	github.com/jellydator/ttlcache/v2 v2.11.1

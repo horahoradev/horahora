@@ -47,7 +47,7 @@ func (m *ArchiveRequestRepo) GetArchivalEvents(downloadID int64, showAll bool) (
 
 	switch showAll {
 	case true:
-		sql := "Select video_url, parent_url, event_message, event_time FROM archival_events"
+		sql := "Select video_url, parent_url, event_message, event_time FROM archival_events ORDER BY event_time DESC LIMIT 100"
 
 		rows, err = m.Db.Query(sql)
 		if err != nil {
@@ -55,7 +55,7 @@ func (m *ArchiveRequestRepo) GetArchivalEvents(downloadID int64, showAll bool) (
 		}
 
 	case false:
-		sql := "Select video_url, parent_url, event_message, event_time FROM archival_events WHERE download_id = $1"
+		sql := "Select video_url, parent_url, event_message, event_time FROM archival_events WHERE download_id = $1 ORDER BY event_time DESC LIMIT 100"
 
 		rows, err = m.Db.Query(sql, downloadID)
 		if err != nil {

@@ -189,10 +189,10 @@ export function ArchivalDownloadsPage() {
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
             <TableRow>
-                <TableCell align="right">VideoID</TableCell>
-                <TableCell align="right">Website</TableCell>
-                <TableCell align="right">Status</TableCell>
-                <TableCell align="right">Progress</TableCell>
+                <TableCell align="left">VideoID</TableCell>
+                <TableCell align="left">Website</TableCell>
+                <TableCell align="left">Status</TableCell>
+                <TableCell align="left">Progress</TableCell>
             </TableRow>
             </TableHead>
             <TableBody>
@@ -201,10 +201,10 @@ export function ArchivalDownloadsPage() {
                 key={row.name}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                <TableCell align="right">{row.VideoID}</TableCell>
-                <TableCell align="right">{row.Website}</TableCell>
-                <TableCell align="right">{row.DlStatus}</TableCell>
-                <TableCell>Progress: <LinearProgress color="success" variant="determinate" value={row.progress} />{row.progress}%</TableCell>
+                <TableCell align="left">{row.VideoID}</TableCell>
+                <TableCell align="left">{row.Website}</TableCell>
+                <TableCell align="left">{row.DlStatus}</TableCell>
+                <TableCell align="left">Progress: <LinearProgress color="success" variant="determinate" value={row.progress} />{row.progress}%</TableCell>
                 </TableRow>
             )): null }
             </TableBody>
