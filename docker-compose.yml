@@ -11,7 +11,6 @@ services:
       - ./webapp/public:/webapp/public
     ports:
       - "3000:3000"
-    mem_limit: 1000m
   frontapi:
     image: ghcr.io/horahoradev/horahora/horahora.frontapi:main
     restart: always
@@ -22,7 +21,6 @@ services:
       - VideoServiceGRPCAddress=videoservice:${GRPCPort}
       - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
       - JaegerAddress=
-    mem_limit: 300m
   scheduler:
     image: ghcr.io/horahoradev/horahora/horahora.scheduler:main
     restart: always
@@ -47,7 +45,6 @@ services:
       - redis_host=redis
       - redis_port=6379
       - redis_pass=
-    mem_limit: 300m
   videoservice:
     image: ghcr.io/horahoradev/horahora/horahora.videoservice:main
     restart: always
@@ -76,7 +73,6 @@ services:
       - redis_pass=
     volumes:
       - $HOME/.aws/:/root/.aws/:ro
-    mem_limit: 300m
   userservice:
     image: ghcr.io/horahoradev/horahora/horahora.userservice:main
     restart: always
@@ -89,7 +85,6 @@ services:
       - pgs_pass=password
       - pgs_db=userservice
       - RSA_KEYPAIR=${JWT_KEYPAIR}
-    mem_limit: 300m
   postgres:
     build:
       context: .
@@ -111,7 +106,6 @@ services:
       - MINIO_CACHE=off
     volumes:
       - ./videos:/data
-    mem_limit: 300m
   gluetun:
     image: qmcgaw/gluetun
     cap_add:
@@ -147,11 +141,9 @@ services:
   rabbitmq:
     build: activemq
     restart: always
-    mem_limit: 300m
   stomp_proxy:
     build: stomp_proxy
     restart: always
-    mem_limit: 300m
 
 volumes:
   postgresdata:
