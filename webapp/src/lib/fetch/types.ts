@@ -36,7 +36,6 @@ export class FetchError extends Error {
   }
 }
 
-
 export async function FetchErrorWithBody(baseMessage: string, response: Response) {
   let body: Uint8Array = await response.json();
   return new FetchError(baseMessage, response, body)

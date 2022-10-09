@@ -63,7 +63,7 @@ func New() (*config, error) {
 
 	// I'm putting this here because it makes it easier to do integration tests
 	// https://www.calhoun.io/connecting-to-a-postgresql-database-with-gos-database-sql-package/
-	config.Conn, err = sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
+	config.Conn, err = sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable connect_timeout=180",
 		config.PostgresInfo.Hostname, config.PostgresInfo.Username, config.PostgresInfo.Password, config.PostgresInfo.Db))
 	if err != nil {
 		log.Fatalf("Could not connect to postgres. Err: %s", err)

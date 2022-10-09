@@ -48,13 +48,13 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 		jwtDecoded, err := base64.StdEncoding.DecodeString(jwt)
 		if err != nil {
 			log.Errorf("Failed to decode jwt. Err: %s", err)
-			return c.String(http.StatusForbidden, "")
+			return c.Redirect(http.StatusMovedPermanently, "/authentication/login")
 		}
 
 		uid, err := j.authenticate(string(jwtDecoded))
 		if err != nil {
 			log.Errorf("Error while authenticating: %s", err)
-			return c.String(http.StatusForbidden, "")
+			return c.Redirect(http.StatusMovedPermanently, "/authentication/login")
 		}
 
 		c.Set(UserIDKey, uid)
