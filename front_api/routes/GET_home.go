@@ -100,7 +100,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 			Title:        video.VideoTitle,
 			VideoID:      video.VideoID,
 			Views:        video.Views,
-			AuthorID:     0, // TODO
+			AuthorID:     video.AuthorID, // TODO
 			AuthorName:   video.AuthorName,
 			ThumbnailLoc: video.ThumbnailLoc,
 			Rating:       video.Rating,
