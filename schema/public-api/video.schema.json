@@ -1,0 +1,38 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/video.schema.json",
+  "title": "Video",
+  "type": "object",
+  "required": [
+    "Title",
+    "VideoID",
+    "Views",
+    "AuthorID",
+    "AuthorName",
+    "ThumbnailLoc",
+    "Rating"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "Title": {
+      "type": "string"
+    },
+    "VideoID": {
+      "type": "integer"
+    },
+    "Views": {
+      "type": "integer"
+    },
+    "AuthorID": {
+      "type": "integer"
+    },
+    "AuthorName": {
+      "type": "string"
+    },
+    "ThumbnailLoc": {
+      "type": "string"
+    },
+    "Rating": {
+      "type": "number"
+    }
+  }
+}

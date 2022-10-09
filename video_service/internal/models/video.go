@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/go-redis/redis"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/horahoradev/horahora/user_service/errors"
@@ -35,13 +33,12 @@ const (
 type VideoModel struct {
 	db *sqlx.DB
 	// TODO: do we really need a grpc client here? bad cohesion ;(
-	grpcClient proto.UserServiceClient
-	//redisClient *redis.Client
+	grpcClient        proto.UserServiceClient
 	ApprovalThreshold int
 	r                 Recommender
 }
 
-func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, redisClient *redis.Client, approvalThreshold int) (*VideoModel, error) {
+func NewVideoModel(db *sqlx.DB, client proto.UserServiceClient, approvalThreshold int) (*VideoModel, error) {
 	rec := NewBayesianTagSum(db)
 
 	return &VideoModel{db: db,
@@ -62,11 +59,11 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 		return 0, err
 	}
 
-	if foreignAuthorID == "" || foreignAuthorUsername == "" {
+	if domesticAuthorID == 0 && (foreignAuthorID == "" || foreignAuthorUsername == "") {
 		return 0, serror.New("foreign author info cannot be blank")
 	}
 
-	if originalVideoLink == "" || originalVideoID == "" {
+	if domesticAuthorID == 0 && (originalVideoLink == "" || originalVideoID == "") {
 		return 0, serror.New("original video info cannot be blank")
 	}
 
@@ -89,7 +86,7 @@ func (v *VideoModel) SaveForeignVideo(ctx context.Context, title, description st
 			log.Infof("User %s does not exist for video %s, creating...", foreignAuthorUsername, originalVideoID)
 
 			regReq := proto.RegisterRequest{
-				Email:          "",
+				Email:          "fake@user.com", // NO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				Username:       foreignAuthorUsername,
 				Password:       "",
 				ForeignUser:    true,
@@ -245,6 +242,7 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 
 		video.Rating = basicInfo.rating
 		video.AuthorName = basicInfo.authorName
+		video.AuthorID = basicInfo.authorID
 		video.Views = uint64(views)
 
 		// FIXME: nothing is quite as dumb as this
@@ -357,9 +355,9 @@ func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pa
 
 	case videoproto.OrderCategory_my_ratings:
 		ds = ds.LeftJoin(
-						goqu.T("ratings"),
-						goqu.On(goqu.Ex{"videos.id": goqu.I("ratings.video_id")})).
-						Where(goqu.I("user_id").Eq(fromUserID))
+			goqu.T("ratings"),
+			goqu.On(goqu.Ex{"videos.id": goqu.I("ratings.video_id")})).
+			Where(goqu.I("user_id").Eq(fromUserID))
 		switch direction {
 		case videoproto.SortDirection_asc:
 			ds = ds.Order(goqu.I("ratings.rating").Asc())
@@ -495,6 +493,7 @@ func extractSearchTerms(search string) (includeTerms, excludeTerms []string) {
 
 type basicVideoInfo struct {
 	authorName string
+	authorID   int64
 	rating     float64
 }
 
@@ -579,6 +578,7 @@ func (v *VideoModel) getBasicVideoInfo(authorID int64, videoID int64) (*basicVid
 	}
 
 	videoInfo.authorName = resp.Username
+	videoInfo.authorID = authorID
 
 	// Look up ratings from redis
 	videoInfo.rating, err = v.GetAverageRatingForVideoID(videoID)

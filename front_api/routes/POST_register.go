@@ -2,6 +2,8 @@ package routes
 
 import (
 	"context"
+	"net/http"
+	"strings"
 
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	"github.com/labstack/echo/v4"
@@ -22,7 +24,10 @@ func (r RouteHandler) handleRegister(c echo.Context) error {
 	}
 
 	regisResp, err := r.u.Register(context.Background(), &registrationReq)
-	if err != nil {
+	switch {
+	case err != nil && strings.Contains(err.Error(), "invalid"): // no, don't do this TODO FIXME
+		return echo.NewHTTPError(http.StatusForbidden, err.Error())
+	case err != nil:
 		return err
 	}
 

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/caarlos0/env"
-	"github.com/go-redis/redis"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
@@ -27,16 +26,8 @@ type PostgresInfo struct {
 	Db       string `env:"pgs_db,required"`
 }
 
-type RedisInfo struct {
-	Hostname string `env:"redis_host,required"`
-	Port     int    `env:"redis_port,required"`
-	Password string `env:"redis_pass,required"`
-}
-
 type config struct {
 	PostgresInfo
-	RedisInfo
-	RedisConn              *redis.Client
 	GRPCPort               int    `env:"GRPCPort,required"`
 	UserServiceGRPCAddress string `env:"UserServiceGRPCAddress,required"`
 	BucketName             string `env:"BucketName,required"`
@@ -52,7 +43,7 @@ type config struct {
 	StorageAPIKey     string `env:"StorageAPIKey"`
 	StorageEndpoint   string `env:"StorageEndpoint"`
 	ApprovalThreshold int    `env:"ApprovalThreshold,required"`
-	MaxDLFileSize     int64 `env:"MaxDLFileSize,required"`
+	MaxDLFileSize     int64  `env:"MaxDLFileSize,required"`
 }
 
 func New() (*config, error) {
@@ -62,23 +53,12 @@ func New() (*config, error) {
 		return nil, err
 	}
 
-	err = env.Parse(&config.RedisInfo)
-	if err != nil {
-		return nil, err
-	}
-
 	err = env.Parse(&config)
 	if err != nil {
 		return nil, err
 	}
 
-	config.RedisConn = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", config.RedisInfo.Hostname, config.RedisInfo.Port),
-		Password: config.RedisInfo.Password, // no password set
-		DB:       0,                         // use default DB
-	})
-
-	config.SqlClient, err = sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", config.PostgresInfo.Hostname, config.PostgresInfo.Username, config.PostgresInfo.Password, config.PostgresInfo.Db))
+	config.SqlClient, err = sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable connect_timeout=180", config.PostgresInfo.Hostname, config.PostgresInfo.Username, config.PostgresInfo.Password, config.PostgresInfo.Db))
 	if err != nil {
 		return nil, fmt.Errorf("Could not connect to postgres. Err: %s", err)
 	}

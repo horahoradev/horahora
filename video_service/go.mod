@@ -11,7 +11,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.5
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/doug-martin/goqu/v9 v9.9.0
-	github.com/go-redis/redis v6.15.8+incompatible
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/golang/mock v1.4.3
 	github.com/google/uuid v1.1.2
@@ -21,8 +20,6 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kurin/blazer v0.5.3
 	github.com/lib/pq v1.4.0
-	github.com/minio/minio-go/v7 v7.0.10
-	github.com/onsi/gomega v1.15.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/sirupsen/logrus v1.6.0
 	github.com/stretchr/testify v1.7.0

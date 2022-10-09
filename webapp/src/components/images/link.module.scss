@@ -1,0 +1,18 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  --local-colour1-primary: var(--colour1-primary-transparent);
+  --local-colour1-secondary: var(--colour1-primary-transparent);
+  --local-colour2-primary: var(--colour1-primary-transparent);
+  --local-colour2-secondary: var(--colour1-primary-transparent);
+
+  display: block;
+  height: var(--local-image-height, 10em);
+  // background-color: var(--colour1-secondary-transparent);
+  border: none;
+}
+
+.image {
+  height: 200px;
+  width: 100%;
+}

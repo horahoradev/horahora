@@ -3,9 +3,9 @@ package models
 import (
 	"context"
 	"errors"
-	"github.com/go-redsync/redsync"
-	"github.com/jmoiron/sqlx"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type CategoryDLRequest struct {
@@ -13,17 +13,7 @@ type CategoryDLRequest struct {
 	Website string
 	Id      string
 	Db      *sqlx.DB
-	Redsync *redsync.Redsync
 }
-
-//func NewVideoDlRequest(Url, id string, Db *sqlx.DB, redsync2 *redsync.Redsync) *CategoryDLRequest {
-//	return &CategoryDLRequest{
-//		Url: Url,
-//		Id:      id,
-//		Db:      Db,
-//		Redsync: redsync2,
-//	}
-//}
 
 // RefreshLock refreshes the lock for this download request, preventing it from being acquired by another scheduler.
 func (v *CategoryDLRequest) RefreshLock() error {
@@ -32,35 +22,6 @@ func (v *CategoryDLRequest) RefreshLock() error {
 }
 
 var NeverDownloaded = errors.New("no video for category")
-
-//// Only relevant for tags
-//func (v *CategoryDLRequest) GetLatestVideoForRequest() (*string, error) {
-//	curs, err := v.Db.Query("SELECT videos.video_id from videos INNER JOIN downloads ON videos.download_id = downloads.id "+
-//		"WHERE attribute_type=$1 AND attribute_value=$2 AND downloads.website=$3 AND videos.upload_time IS NOT NULL "+
-//		"ORDER BY upload_time desc LIMIT 1",
-//		v.ContentType, v.ContentValue, v.Website)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	var videoIDList []string
-//	for curs.Next() {
-//		var i string
-//		err := curs.Scan(&i)
-//		if err != nil {
-//			return nil, err
-//		}
-//		videoIDList = append(videoIDList, i)
-//	}
-//
-//	if len(videoIDList) == 0 {
-//		return nil, NeverDownloaded
-//	} else if len(videoIDList) != 1 {
-//		return nil, fmt.Errorf("videoIDList had the wrong length. Length: %d", len(videoIDList))
-//	}
-//
-//	return &videoIDList[0], nil
-//}
 
 const (
 	MINIMUM_BACKOFF_TIME   = time.Hour * 24

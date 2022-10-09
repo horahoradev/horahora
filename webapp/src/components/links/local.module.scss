@@ -1,0 +1,7 @@
+.block {
+  --local-colour1-primary: var(--anchour-local-colour1-primary);
+  // the same color because visited state is irrelevant
+  --local-colour1-secondary: var(--anchour-local-colour1-primary);
+  --local-colour2-primary: var(--anchour-local-colour2-primary);
+  --local-colour2-secondary: var(--anchour-local-colour2-secondary);
+}

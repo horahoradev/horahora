@@ -2,27 +2,24 @@ package models
 
 import (
 	"context"
-	"math"
+	"database/sql"
 	"net/url"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/go-redsync/redsync"
 	"github.com/jmoiron/sqlx"
 )
 
 // ArchiveRequest is the model for the creation of new archive requests
 // It's very similar to video_dl_request, but video_dl_request has different utility.
 type ArchiveRequestRepo struct {
-	Db      *sqlx.DB
-	Redsync *redsync.Redsync
+	Db *sqlx.DB
 }
 
 // FIXME: this API feels a little dumb
 
-func NewArchiveRequest(db *sqlx.DB, rs *redsync.Redsync) *ArchiveRequestRepo {
-	return &ArchiveRequestRepo{Db: db,
-		Redsync: rs}
+func NewArchiveRequest(db *sqlx.DB) *ArchiveRequestRepo {
+	return &ArchiveRequestRepo{Db: db}
 }
 
 type Archival struct {
@@ -42,35 +39,66 @@ type Event struct {
 	EventTimestamp string
 }
 
-func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archival, []Event, error) {
+func (m *ArchiveRequestRepo) GetArchivalEvents(downloadID int64, showAll bool) ([]Event, error) {
+	var events []Event
+
+	var rows *sql.Rows
+	var err error
+
+	switch showAll {
+	case true:
+		sql := "Select video_url, parent_url, event_message, event_time FROM archival_events ORDER BY event_time DESC LIMIT 100"
+
+		rows, err = m.Db.Query(sql)
+		if err != nil {
+			return nil, err
+		}
+
+	case false:
+		sql := "Select video_url, parent_url, event_message, event_time FROM archival_events WHERE download_id = $1 ORDER BY event_time DESC LIMIT 100"
+
+		rows, err = m.Db.Query(sql, downloadID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	for rows.Next() {
+		var event Event
+
+		err = rows.Scan(&event.VideoURL, &event.ParentURL, &event.Message, &event.EventTimestamp)
+		if err != nil {
+			return nil, err
+		}
+
+		events = append(events, event)
+	}
+
+	return events, nil
+}
+
+func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archival, error) {
 	// This query is pretty dumb. Event and archive queries should be separate. FIXME
 	// TODO: this query should be joined on archival subscriptions, not the download user id
 	// This is an MVP fix
 	// nvm i misread it is lol
-	sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id, coalesce(archival_events.video_url, ''), coalesce(archival_events.parent_url, ''), coalesce(event_message, ''), coalesce(event_time, Now()) FROM " +
-		"downloads INNER JOIN user_download_subscriptions s ON downloads.id = s.download_id LEFT JOIN archival_events ON downloads.id = archival_events.download_id WHERE s.user_id=$1 ORDER BY event_time DESC"
+	sql := "SELECT Url, coalesce(last_synced, Now()), backoff_factor, downloads.id FROM " +
+		"downloads INNER JOIN user_download_subscriptions s ON downloads.id = s.download_id WHERE s.user_id=$1"
 
 	rows, err := m.Db.Query(sql, userID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	var archives []Archival
-	var events []Event
 	urlMap := make(map[string]bool)
 
 	for rows.Next() {
 		var archive Archival
-		var event Event
 
-		err = rows.Scan(&archive.Url, &archive.LastSynced, &archive.BackoffFactor, &archive.DownloadID, &event.VideoURL,
-			&event.ParentURL, &event.Message, &event.EventTimestamp)
+		err = rows.Scan(&archive.Url, &archive.LastSynced, &archive.BackoffFactor, &archive.DownloadID)
 		if err != nil {
-			return nil, nil, err
-		}
-
-		if event.ParentURL != "" {
-			events = append(events, event)
+			return nil, err
 		}
 
 		// ok so this is really dumb but I'm going to let it go for now.
@@ -85,12 +113,12 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 
 			row := m.Db.QueryRow(progressSql, archive.DownloadID)
 			if err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 
 			err = row.Scan(&archive.Numerator, &archive.Denominator, &archive.Undownloadable)
 			if err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 
 			urlMap[archive.Url] = true
@@ -99,13 +127,7 @@ func (m *ArchiveRequestRepo) GetContentArchivalRequests(userID int64) ([]Archiva
 
 	}
 
-	// This slice is similarly dumb
-	// also a minor FIXME
-	if events != nil {
-		events = events[:uint64(math.Min(200, float64(len(events))))]
-	}
-
-	return archives, events, nil
+	return archives, nil
 }
 
 func (m *ArchiveRequestRepo) New(url string, userID int64) error {
@@ -148,7 +170,7 @@ func (m *ArchiveRequestRepo) GetUnsyncedCategoryDLRequests() ([]CategoryDLReques
 
 	var ret []CategoryDLRequest
 	for res.Next() {
-		c := CategoryDLRequest{Redsync: m.Redsync, Db: m.Db}
+		c := CategoryDLRequest{Db: m.Db}
 
 		err = res.Scan(&c.Id, &c.Url)
 		if err != nil {

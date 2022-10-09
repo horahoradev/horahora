@@ -1,0 +1,41 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/comment-data.schema.json",
+  "title": "CommentData",
+  "type": "object",
+  "required": [
+    "id",
+    "created",
+    "content",
+    "fullname",
+    "profile_picture_url",
+    "upvote_count",
+    "user_has_upvoted"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "created": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "fullname": {
+      "type": "string"
+    },
+    "profile_picture_url": {
+      "type": "string"
+    },
+    "upvote_count": {
+      "type": "integer"
+    },
+    "user_has_upvoted": {
+      "type": "boolean"
+    },
+    "parent": {
+      "type": "integer"
+    }
+  }
+}

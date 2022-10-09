@@ -19,10 +19,16 @@ func (r RouteHandler) upload(c echo.Context) error {
 
 	title := c.FormValue("title")
 	description := c.FormValue("description")
-	tagsInt := c.FormValue("tags")
+	tagsList := c.FormValue("tags")
 
 	var tags []string
-	err = json.Unmarshal([]byte(tagsInt), &tags)
+	log.Info(tagsList)
+	log.Info(description)
+	log.Info(title)
+
+	// log.Info(string(res))
+
+	err = json.Unmarshal([]byte(tagsList), &tags)
 	if err != nil {
 		return err
 	}

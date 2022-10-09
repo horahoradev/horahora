@@ -1,0 +1,17 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+
+}
+
+.player {
+  --video-width: 44rem;
+  --video-height: calc((9 / 16) * var(--video-width));
+
+  z-index: 0;
+  width: 100%;
+  height: var(--video-height);
+  object-fit: contain;
+  object-position: center;
+  background-color: var(--colour1-primary-transparent);
+}

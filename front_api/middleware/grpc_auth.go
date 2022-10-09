@@ -33,7 +33,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 	return func(c echo.Context) error {
 		reqPath := c.Request().URL.Path
 		switch { // obv if they're trying to login or register we don't need to try to auth them
-		case strings.HasPrefix(reqPath, "/api/login") || strings.HasPrefix(reqPath, "/api/register"):
+		case strings.HasPrefix(reqPath, "/api/login") || strings.HasPrefix(reqPath, "/api/register") || strings.HasPrefix(reqPath, "/api/logout"):
 			return next(c)
 		}
 
@@ -48,13 +48,13 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 		jwtDecoded, err := base64.StdEncoding.DecodeString(jwt)
 		if err != nil {
 			log.Errorf("Failed to decode jwt. Err: %s", err)
-			return c.String(http.StatusForbidden, "")
+			return c.Redirect(http.StatusMovedPermanently, "/authentication/login")
 		}
 
 		uid, err := j.authenticate(string(jwtDecoded))
 		if err != nil {
 			log.Errorf("Error while authenticating: %s", err)
-			return c.String(http.StatusForbidden, "")
+			return c.Redirect(http.StatusMovedPermanently, "/authentication/login")
 		}
 
 		c.Set(UserIDKey, uid)

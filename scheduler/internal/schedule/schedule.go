@@ -43,7 +43,7 @@ func (p *poller) PollDatabaseAndSendIntoQueue(ctx context.Context, videoQueue ch
 					log.Errorf("failed to get items. Err: %s", err)
 				} else {
 					// Back off
-					log.Errorf("failed to get items. Backing off...")
+					log.Debugf("failed to get items. Backing off...")
 					time.Sleep(p.PollingDelay)
 				}
 				break // try again
@@ -87,7 +87,6 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 		for res.Next() {
 			req := models.VideoDLRequest{
 				ParentURL: url,
-				Redsync:   p.Redsync,
 				Db:        p.Db,
 				Rabbitmq:  p.Rabbit,
 			}

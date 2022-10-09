@@ -4,6 +4,9 @@ option go_package = "github.com/horahoradev/horahora/user_service/protocol";
 
 package proto;
 
+import "validate/validate.proto";
+
+
 service UserService {
     rpc Register(RegisterRequest) returns (RegisterResponse){}
     rpc Login(LoginRequest) returns (LoginResponse){}
@@ -91,8 +94,11 @@ message validateJWTResponse {
 }
 
 message RegisterRequest {
-    string email = 1;
-    string username = 2;
+    string email = 1 [(validate.rules).string.email = true];
+    string username = 2 [(validate.rules).string = {
+        pattern:   "^[^[0-9]A-Za-z]+( [^[0-9]A-Za-z]+)*$",
+        max_bytes: 10,
+     }];
     string password = 3;
     bool foreignUser = 4; // If true, indicates that the user was created due to archival from another website, in which case
     // the password field will not be used

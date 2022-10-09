@@ -1,0 +1,20 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/audit-data.schema.json",
+  "title": "AuditData",
+  "type": "object",
+  "required": [
+    "Events"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "Length": {
+      "type": "integer"
+    },
+    "Events": {
+      "type": "array",
+      "items": {
+        "$ref": "https://horahora-schemas.org/public-api/audit-event.schema.json"
+      }
+    }
+  }
+}

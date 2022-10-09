@@ -54,7 +54,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	orderCat, ok := videoproto.OrderCategory_value[orderByVal]
 	if !ok {
-		return fmt.Errorf("Invalid category supplied: %s", orderByVal)
+		return fmt.Errorf("invalid category supplied: %s", orderByVal)
 	}
 
 	orderBy := videoproto.OrderCategory(orderCat)
@@ -100,7 +100,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 			Title:        video.VideoTitle,
 			VideoID:      video.VideoID,
 			Views:        video.Views,
-			AuthorID:     0, // TODO
+			AuthorID:     video.AuthorID, // TODO
 			AuthorName:   video.AuthorName,
 			ThumbnailLoc: video.ThumbnailLoc,
 			Rating:       video.Rating,

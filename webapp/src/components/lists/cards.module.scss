@@ -1,0 +1,62 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: $size-normal;
+  padding: $size-normal 0;
+}
+
+.cardlist {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: $size-normal;
+  padding: 0;
+}
+
+.hrefblock {
+  display: block;
+}
+
+.card {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  flex: 0 1 $width-mobile;
+  background-color: var(--colour1-primary);
+  border-radius: 10px;
+  border: $size-thin solid transparent;
+  transition-property: border, box-shadow;
+  transition-duration: var(--duration-global);
+
+  & > * {
+    padding: $size-normal;
+  }
+
+  &:hover,
+  &:focus-within {
+    box-shadow: 0 0 5px var(--positive-colour1-primary);
+  }
+}
+
+.header {
+  margin: 0px auto;
+  padding-bottom: $size-small;
+  overflow-wrap: anywhere;
+}
+
+.body {
+  width: 100%;
+  padding: $size-small $size-normal;
+}
+
+.footer {
+  width: 100%;
+  align-self: flex-end;
+  gap: $size-small;
+  padding-top: $size-small;
+}

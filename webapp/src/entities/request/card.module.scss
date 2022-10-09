@@ -1,0 +1,40 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex-flow: row wrap;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.delete {
+  width: 4em;
+  color: var(--negative-colour1-primary);
+  background-color: var(--negative-colour2-primary);
+
+  &:active {
+    color: var(--negative-colour2-primary);
+    background-color: var(--negative-colour1-primary);
+  }
+}
+
+.thumb {
+  width: 10px;
+}
+
+.retry {
+  width: 4em;
+  color: var(--submit-colour1-primary);
+  background-color: var(--submit-colour2-primary);
+
+  &:active {
+    color: var(--submit-colour2-primary);
+    background-color: var(--submit-colour1-primary);
+  }
+}
