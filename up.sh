@@ -28,5 +28,5 @@ fi
 
 # docker compose by default reads `.env` file
 # so no need to pass it as an option
-docker-compose build --memory=500mb --parallel --progress=plain && \
+docker-compose build --parallel --progress=plain && \
 docker-compose up --build -d

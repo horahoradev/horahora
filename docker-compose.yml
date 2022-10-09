@@ -13,7 +13,7 @@ services:
       - "3000:3000"
     mem_limit: 1000m
   frontapi:
-    image: ghcr.io/horahoradev/horahora:dev_front_api
+    image: ghcr.io/horahoradev/horahora/horahora.frontapi:main
     restart: always
     env_file:
       - ./.env
@@ -24,7 +24,7 @@ services:
       - JaegerAddress=
     mem_limit: 300m
   scheduler:
-    image: ghcr.io/horahoradev/horahora:master_scheduler
+    image: ghcr.io/horahoradev/horahora/horahora.scheduler:main
     restart: always
     env_file:
       - ./.env
@@ -49,7 +49,7 @@ services:
       - redis_pass=
     mem_limit: 300m
   videoservice:
-    image: ghcr.io/horahoradev/horahora:master_videoservice
+    image: ghcr.io/horahoradev/horahora/horahora.videoservice:main
     restart: always
     env_file:
       - ./.env
@@ -78,7 +78,7 @@ services:
       - $HOME/.aws/:/root/.aws/:ro
     mem_limit: 300m
   userservice:
-    image: ghcr.io/horahoradev/horahora:master_userservice
+    image: ghcr.io/horahoradev/horahora/horahora.userservice:main
     restart: always
     env_file:
       - ./.env
