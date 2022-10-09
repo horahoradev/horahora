@@ -424,8 +424,6 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"--socket-timeout",
 		"1800",
 		"--verbose",
-		"--limit-rate",
-		"1k",
 		"-o",
 		// Some websites have two IDs per video, so I made it explicit just to avoid issues
 		fmt.Sprintf("%s/%s.%s", d.outputLoc, video.VideoID, "%(ext)s"),
