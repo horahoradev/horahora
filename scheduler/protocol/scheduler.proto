@@ -8,6 +8,8 @@ service Scheduler {
 
     rpc listArchivalEntries(listArchivalEntriesRequest) returns (listArchivalEntriesResponse) {}
 
+    rpc listArchivalEvents(listArchivalEventsRequest) returns (listArchivalEventsResponse) {}
+
     rpc deleteArchivalRequest(deletionRequest) returns (Empty) {}
 
     rpc retryArchivalRequestDownloadss(retryRequest) returns (Empty) {}
@@ -48,9 +50,18 @@ message listArchivalEntriesRequest {
     int64 UserID = 1; // Need to standardize type on userID
 }
 
+message listArchivalEventsRequest {
+    int64 DownloadID = 1;
+    bool ShowAll = 2;
+}
+
+
 message listArchivalEntriesResponse {
     repeated contentArchivalEntry entries = 1;
-    repeated archivalEvent events = 2;
+}
+
+message listArchivalEventsResponse {
+    repeated archivalEvent events = 1;
 }
 
 message archivalEvent {
@@ -75,4 +86,3 @@ message contentArchivalEntry {
     uint64 downloadID = 7;
     uint64 UndownloadableVideos = 8;
 }
-

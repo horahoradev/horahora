@@ -10,7 +10,6 @@ import (
 	"github.com/caarlos0/env"
 	"github.com/go-redsync/redsync"
 	stomp "github.com/go-stomp/stomp/v3"
-	"github.com/gomodule/redigo/redis"
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	proto "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/jmoiron/sqlx"
@@ -25,13 +24,6 @@ type PostgresInfo struct {
 	Password string `env:"pgs_pass"`
 	Db       string `env:"pgs_db,required"`
 }
-
-type RedisInfo struct {
-	Hostname string `env:"redis_host,required"`
-	Port     int    `env:"redis_port,required"`
-	Password string `env:"redis_pass,required"`
-}
-
 type RabbitmqInfo struct {
 	Hostname string `env:"rabbit_host,required"`
 	Port     int    `env:"rabbit_port,required"`
@@ -41,10 +33,8 @@ type RabbitmqInfo struct {
 
 type config struct {
 	PostgresInfo
-	RedisInfo
 	RabbitmqInfo
 	RabbitConn              *stomp.Conn
-	RedisPool               *redis.Pool
 	Redlock                 *redsync.Redsync
 	VideoOutputLoc          string
 	VideoServiceGRPCAddress string `env:"VideoServiceGRPCAddress,required"`
@@ -73,7 +63,7 @@ func New() (*config, error) {
 
 	// I'm putting this here because it makes it easier to do integration tests
 	// https://www.calhoun.io/connecting-to-a-postgresql-database-with-gos-database-sql-package/
-	config.Conn, err = sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
+	config.Conn, err = sqlx.Connect("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable connect_timeout=180",
 		config.PostgresInfo.Hostname, config.PostgresInfo.Username, config.PostgresInfo.Password, config.PostgresInfo.Db))
 	if err != nil {
 		log.Fatalf("Could not connect to postgres. Err: %s", err)
@@ -100,26 +90,6 @@ func New() (*config, error) {
 		return nil, err
 	}
 	config.RabbitConn = conn
-
-	err = env.Parse(&config.RedisInfo)
-	if err != nil {
-		return nil, err
-	}
-
-	config.RedisPool = &redis.Pool{
-		Dial: func() (redis.Conn, error) {
-			return redis.Dial("tcp", fmt.Sprintf("%s:%d", config.RedisInfo.Hostname, config.RedisInfo.Port),
-				redis.DialPassword(config.RedisInfo.Password))
-		},
-		TestOnBorrow:    nil,
-		MaxIdle:         10,
-		MaxActive:       10,
-		IdleTimeout:     2 * time.Minute,
-		Wait:            false,
-		MaxConnLifetime: 0,
-	}
-
-	config.Redlock = redsync.New([]redsync.Pool{config.RedisPool})
 
 	opts := []grpc_retry.CallOption{
 		grpc_retry.WithBackoff(grpc_retry.BackoffExponential(100 * time.Millisecond)),

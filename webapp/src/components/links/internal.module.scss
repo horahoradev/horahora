@@ -1,0 +1,8 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  --local-colour1-primary: var(--anchour-internal-colour1-primary);
+  --local-colour1-secondary: var(--anchour-internal-colour1-secondary);
+  --local-colour2-primary: var(--anchour-internal-colour2-primary);
+  --local-colour2-secondary: var(--anchour-internal-colour2-secondary);
+}

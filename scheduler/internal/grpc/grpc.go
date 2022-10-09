@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/go-redsync/redsync"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
 
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -18,8 +17,8 @@ type schedulerServer struct {
 	M *models.ArchiveRequestRepo
 }
 
-func NewGRPCServer(ctx context.Context, conn *sqlx.DB, rs *redsync.Redsync, port int) error {
-	schedulerServer := initializeSchedulerServer(conn, rs)
+func NewGRPCServer(ctx context.Context, conn *sqlx.DB, port int) error {
+	schedulerServer := initializeSchedulerServer(conn)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
@@ -37,9 +36,9 @@ func NewGRPCServer(ctx context.Context, conn *sqlx.DB, rs *redsync.Redsync, port
 	return serv.Serve(lis)
 }
 
-func initializeSchedulerServer(conn *sqlx.DB, rs *redsync.Redsync) schedulerServer {
+func initializeSchedulerServer(conn *sqlx.DB) schedulerServer {
 	return schedulerServer{
-		M: models.NewArchiveRequest(conn, rs),
+		M: models.NewArchiveRequest(conn),
 	}
 }
 
@@ -59,8 +58,30 @@ func (s schedulerServer) DeleteArchivalRequest(ctx context.Context, req *proto.D
 	return ret, err
 }
 
+func (s schedulerServer) ListArchivalEvents(ctx context.Context, req *proto.ListArchivalEventsRequest) (*proto.ListArchivalEventsResponse, error) {
+	events, err := s.M.GetArchivalEvents(req.DownloadID, req.ShowAll)
+	if err != nil {
+		return nil, err
+	}
+
+	var protoEvents []*proto.ArchivalEvent
+	for _, event := range events {
+		eventObj := proto.ArchivalEvent{
+			VideoUrl:  event.VideoURL,
+			ParentUrl: event.ParentURL,
+			Message:   event.Message,
+			Timestamp: event.EventTimestamp,
+		}
+		protoEvents = append(protoEvents, &eventObj)
+	}
+
+	return &proto.ListArchivalEventsResponse{
+		Events: protoEvents,
+	}, nil
+}
+
 func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.ListArchivalEntriesRequest) (*proto.ListArchivalEntriesResponse, error) {
-	archives, events, err := s.M.GetContentArchivalRequests(req.UserID)
+	archives, err := s.M.GetContentArchivalRequests(req.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -82,20 +103,8 @@ func (s schedulerServer) ListArchivalEntries(ctx context.Context, req *proto.Lis
 		entries = append(entries, &entry)
 	}
 
-	var protoEvents []*proto.ArchivalEvent
-	for _, event := range events {
-		eventObj := proto.ArchivalEvent{
-			VideoUrl:  event.VideoURL,
-			ParentUrl: event.ParentURL,
-			Message:   event.Message,
-			Timestamp: event.EventTimestamp,
-		}
-		protoEvents = append(protoEvents, &eventObj)
-	}
-
 	resp := proto.ListArchivalEntriesResponse{
 		Entries: entries,
-		Events:  protoEvents,
 	}
 
 	return &resp, nil

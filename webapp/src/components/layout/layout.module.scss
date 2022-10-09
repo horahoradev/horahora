@@ -1,0 +1,95 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.header,
+.main,
+.footer {
+  color: var(--colour0-primary);
+
+  transition-duration: var(--duration-global);
+  transition-property: color, background-color;
+}
+
+.header {
+  grid-area: header;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: $size-normal;
+  background-color: var(--colour1-secondary-transparent);
+  padding: $size-small $size-normal;
+
+  @media (min-width: $width-tablet) {
+    padding: $size-small $size-big;
+  }
+}
+
+.nav {
+  flex-basis: $width-laptop;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.list {
+  display: flex;
+  justify-content: space-between;
+  gap: $size-normal;
+}
+
+.logo {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: bold;
+}
+
+.search {
+  display: flex;
+  justify-content: flex-start;
+  flex-grow: 0;
+}
+
+.main {
+  grid-area: main;
+  display: grid;
+  grid-template-columns: 100%;
+  align-content: baseline;
+  gap: $size-normal;
+  background-color: var(--colour1-tertiary-transparent);
+  padding-bottom: $size-normal;
+
+  & > * {
+    padding: 0 $size-small;
+
+    @media (min-width: $width-phone) {
+      padding: 0 $size-normal;
+    }
+
+    @media (min-width: $width-tablet) {
+      padding: 0 $size-big;
+    }
+  }
+}
+
+.footer {
+  grid-area: footer;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $size-normal;
+  background-color: var(--colour1-secondary-transparent);
+  padding: $size-small $size-normal;
+
+  @media (min-width: $width-tablet) {
+    padding: $size-small $size-big;
+  }
+}
+
+.link {
+  font-size: 1.25rem;
+  line-height: 2rem;
+  font-weight: bold;
+}

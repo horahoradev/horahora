@@ -1,14 +1,15 @@
-FROM node:14-alpine
+FROM node:18.7-buster
 
-RUN apk add --update npm
+RUN apt-get -y update && apt-get -y install python3 && npm install --global npm@8.17
 
 WORKDIR /webapp
 
-COPY . .
+# https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy
+COPY ["package.json", "package-lock.json", "/webapp/"]
 
-RUN cd /webapp && \ 
-    npm install && \
-    npm install -D tailwindcss@npm:@tailwindcss/postcss7-compat postcss@^7 autoprefixer@^9 && npm install @craco/craco
+RUN npm install
+
+COPY . .
 
 COPY entrypoint.sh /entrypoint.sh
 

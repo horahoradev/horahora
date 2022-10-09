@@ -46,6 +46,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/api/logout", r.handleLogout)
 
 	e.GET("/api/archiverequests", r.getArchiveRequests)
+	e.GET("/api/archiveevents/:id", r.getArchiveEvents)
 	e.POST("/api/archiverequests", r.handleArchiveRequest)
 	e.POST("/api/delete-archiverequest", r.handleDeleteArchivalRequest)
 	e.POST("/api/retry-archiverequest", r.handleRetryArchivalRequest)
@@ -131,7 +132,10 @@ type PaginationData struct {
 
 type ArchiveRequestsPageData struct {
 	ArchivalRequests []ArchivalRequest
-	ArchivalEvents   []*schedulerproto.ArchivalEvent
+}
+
+type ArchiveEventsData struct {
+	ArchivalEvents []*schedulerproto.ArchivalEvent
 }
 
 type ArchivalRequest struct {

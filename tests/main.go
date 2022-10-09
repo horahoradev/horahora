@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	baseURL    = "http://localhost:8083/api"
+	baseURL    = "http://localhost/api"
 	sm9TestTag = "今年レンコンコマンダー常盤"
 )
 
@@ -24,6 +24,7 @@ func main() {
 
 	var client *http.Client
 	var err error
+authloop:
 	for start := time.Now(); time.Since(start) < time.Minute*5; time.Sleep(time.Second * 30) {
 		client, err = authenticate("admin", "admin")
 		if err != nil {
@@ -42,7 +43,7 @@ func main() {
 			err := makeArchiveRequest(client, url)
 			if err != nil {
 				fmt.Errorf("Failed to make archival request. Err: %s", err)
-				continue
+				goto authloop
 			}
 		}
 		break
@@ -64,11 +65,11 @@ func main() {
 		//	continue
 		//}
 
-		err = pageHasVideos(client, "風野灯織", 1) // nico channel
-		if err != nil {
-			log.Println(err)
-			continue
-		}
+// 		err = pageHasVideos(client, "風野灯織", 1) // nico channel
+// 		if err != nil {
+// 			log.Println(err)
+// 			continue
+// 		}
 
 		err = pageHasVideos(client, "中の", 1) // there's some bizarre nico bug here where the tags keep switching on the video. very strange
 		if err != nil {

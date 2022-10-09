@@ -1,0 +1,12 @@
+@use "../../styles/variables/sass.scss" as *;
+
+.block {
+  display: inline-grid;
+  width: var(--local-icon-size, var(--local-width, 1em));
+  height: var(--local-icon-size, var(--local-height, 1em));
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+}

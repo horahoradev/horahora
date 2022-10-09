@@ -83,15 +83,8 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 
 	err := video.SetDownloadInProgress()
 	if err != nil {
-		log.Errorf("Failed to set download in progress")
+		log.Errorf("Failed to set download in progress: %v", err)
 	}
-
-	defer func() {
-		video.ReleaseLockForVideo()
-		if err != nil {
-			log.Errorf("Could not release lock for video %s", video.VideoID)
-		}
-	}()
 
 	website, err := models.GetWebsiteFromURL(video.URL)
 	if err != nil {
@@ -222,26 +215,15 @@ func (d *downloader) downloadVideo(video *models.VideoDLRequest) (*os.File, *YTD
 		return nil, nil, err
 	}
 
-	bufSize := 300 * 1024 * 1024
-	// surely no video will have a metadata file in excess of 300mb??
-	buf := make([]byte, bufSize)
 	file, err := os.Open(fmt.Sprintf("%s/%s.info.json", d.outputLoc, video.VideoID))
 	if err != nil {
 		return nil, nil, err
 	}
 
-	// I should probably read until EOF here but I think it's fine as is as long as the file isn't too large
-	n, err := file.Read(buf)
+	buf, err := ioutil.ReadAll(file)
 	if err != nil {
 		return nil, nil, err
 	}
-
-	if n == bufSize {
-		return nil, nil, fmt.Errorf("n equal to bufsize, metadata file too large for %d", video.ID)
-	}
-
-	// Truncate
-	buf = buf[:n]
 
 	metadata := YTDLMetadata{}
 
@@ -425,6 +407,13 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		video.URL,
 		"--write-info-json", // I'd like to use -j, but doesn't seem to work for some videos
 		"--write-thumbnail",
+		// This line was originally authored by Soichiro
+		// according to him, it was licensed under the
+		// "Do What The Fuck You Want license", for which
+		// usage is permitted as long as the name is changed
+		// Thank you for your work!
+		"-S",
+		"res,hdr,fps,vcodec:av01:h265:vp9.2:vp9:h264,vbr",
 		"--add-header",
 		"Accept:*/*",
 		// "Why do we need this?"

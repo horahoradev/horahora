@@ -1,0 +1,55 @@
+{
+  "$id": "https://horahora-schemas.org/public-api/video-metadata.schema.json",
+  "title": "VideoMetadata",
+  "type": "object",
+  "required": [
+    "videoLoc",
+    "videoTitle",
+    "rating",
+    "authorName",
+    "views",
+    "videoID",
+    "uploadDate",
+    "description",
+    "authorID",
+    "tags"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "videoLoc": {
+      "type": "string",
+      "description": "The location of the DASH manifest"
+    },
+    "videoTitle": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number"
+    },
+    "authorName": {
+      "type": "string",
+      "description": "Do I need this? probably not"
+    },
+    "views": {
+      "type": "integer"
+    },
+    "videoID": {
+      "type": "integer"
+    },
+    "uploadDate": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "authorID": {
+      "type": "integer"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -38,7 +38,6 @@ func New() (*Config, error) {
 
 	dialOpts := []grpc.DialOption{
 		grpc.WithInsecure(),
-		grpc.WithStreamInterceptor(grpc_retry.StreamClientInterceptor(retryCallOpts...)),
 		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(retryCallOpts...)),
 	}
 

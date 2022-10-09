@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    // https://go.dev/doc/editors#options
+    "golang.go",
+  ]
+}
