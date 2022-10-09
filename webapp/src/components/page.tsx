@@ -26,7 +26,7 @@ export function Page({ title, heading = title, children }: IPageProps) {
         children
       ) : (
         <>
-          <Heading level={1}>{heading}</Heading>
+          {heading != null ? <Heading level={1}>{heading}</Heading> : <div className="whiteblock"></div>}
           <section className={styles.content}>{children}</section>
         </>
       )}

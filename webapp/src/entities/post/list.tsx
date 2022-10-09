@@ -18,7 +18,7 @@ function Component({
   return (
     <CardList {...blockProps}>
       {posts.map((post) => (
-        <PostCard key={post.VideoID} headingLevel={headingLevel} post={post} />
+        <PostCard key={post.VideoID} headingLevel={headingLevel} post={post} {...<a href="/"></a>}></PostCard>
       ))}
     </CardList>
   );

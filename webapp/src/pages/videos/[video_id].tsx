@@ -37,6 +37,8 @@ function VideosPage() {
 
   return (
     <Page title={title} heading={null}>
+      {/* lolz */}
+      {<div className="whiteblock"></div>}
       <PostArticle video={videoDetail} headingLevel={1} />
       {/*
         <VideoList

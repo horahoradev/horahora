@@ -1429,6 +1429,8 @@ func (m *Video) validate(all bool) error {
 
 	// no validation rules for UploadDate
 
+	// no validation rules for AuthorID
+
 	if len(errors) > 0 {
 		return VideoMultiError(errors)
 	}

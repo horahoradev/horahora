@@ -105,6 +105,7 @@ message Video {
     int64 videoID = 5;
     string authorName = 6;
     string uploadDate = 7;
+    int64 authorID = 8;
 }
 
 message videoRating {

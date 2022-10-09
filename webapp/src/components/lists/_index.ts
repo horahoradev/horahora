@@ -7,7 +7,7 @@ export type {
 } from "./list";
 export { DL, DS, DT, DD } from "./details";
 export type { IDLProps, IDSProps, IDTProps, IDDProps } from "./details";
-export { StartCardList, CardList, Card, CardHeader, CardBody, CardFooter } from "./cards";
+export { StartCardList, CardList, Card, CardLink, CardHeader, CardBody, CardFooter } from "./cards";
 export type {
   ICardListProps,
   ICardProps,
