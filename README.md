@@ -11,11 +11,13 @@ It allows you to:
 
 Join our Discord: https://discord.gg/vfwfpctJRZ
 
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/video_page_dark.png)
+![](https://github.com/horahoradev/horahora-designs/blob/master/Screenshot%20from%202022-10-09%2011-56-34.png?raw=true)
 
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/homepage_dark.png)
+![](https://github.com/horahoradev/horahora-designs/blob/master/Screenshot%20from%202022-10-09%2011-54-48.png?raw=true)
 
-![](https://raw.githubusercontent.com/horahoradev/horahora-designs/master/archival_page_dark.png)
+![](https://github.com/horahoradev/horahora-designs/blob/master/Screenshot%20from%202022-10-09%2011-57-35.png?raw=true)
+
+![](https://github.com/horahoradev/horahora-designs/blob/master/Screenshot%20from%202022-10-09%2011-57-52.png?raw=true)
 
 Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 
