@@ -29,7 +29,7 @@ RUN go mod download
 # build binary
 COPY . /horahora/videoservice
 
-RUN --mount=type=cache,target=/root/.cache/go-build go build -o /videoservice.bin
+RUN go build -o /videoservice.bin
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
