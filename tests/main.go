@@ -71,7 +71,7 @@ authloop:
 		// 			continue
 		// 		}
 
-		err = pageHasVideos(client, "中の", 1) // there's some bizarre nico bug here where the tags keep switching on the video. very strange
+		err = pageHasVideos(client, "公式", 1) // there's some bizarre nico bug here where the tags keep switching on the video. very strange
 		if err != nil {
 			log.Println(err)
 			continue
