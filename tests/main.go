@@ -33,7 +33,7 @@ authloop:
 		}
 
 		urls := []string{
-			"https://www.nicovideo.jp/search/TEST_sm9",
+			"https://www.nicovideo.jp/watch/sm9",
 			"https://www.nicovideo.jp/user/119163275",
 			"https://www.nicovideo.jp/mylist/58583228",
 			"https://www.youtube.com/channel/UCF43Xa8ZNQqKs1jrhxlntlw",
@@ -65,11 +65,11 @@ authloop:
 		//	continue
 		//}
 
-// 		err = pageHasVideos(client, "風野灯織", 1) // nico channel
-// 		if err != nil {
-// 			log.Println(err)
-// 			continue
-// 		}
+		// 		err = pageHasVideos(client, "風野灯織", 1) // nico channel
+		// 		if err != nil {
+		// 			log.Println(err)
+		// 			continue
+		// 		}
 
 		err = pageHasVideos(client, "中の", 1) // there's some bizarre nico bug here where the tags keep switching on the video. very strange
 		if err != nil {
