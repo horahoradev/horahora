@@ -16,7 +16,7 @@ RUN go mod download
 # build binary
 COPY . /horahora/userservice
 
-RUN --mount=type=cache,target=/root/.cache/go-build go build -o /userservice.bin
+RUN go build -o /userservice.bin
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

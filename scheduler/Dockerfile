@@ -28,7 +28,7 @@ RUN go mod download
 # build binary
 COPY . /horahora/scheduler
 
-RUN --mount=type=cache,target=/root/.cache/go-build go build -o /scheduler.bin
+RUN go build -o /scheduler.bin
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
