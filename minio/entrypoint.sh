@@ -14,7 +14,7 @@ set -euo pipefail
   # TODO(ivan): How do we make this run once?
   mc mb minio/$BUCKET_NAME || true
   # make it so we can download files from it
-  mc policy set download minio/$BUCKET_NAME
+  mc anonymous set download minio/$BUCKET_NAME
 } &
 
 exec minio server /data

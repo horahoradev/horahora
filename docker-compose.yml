@@ -66,6 +66,8 @@ services:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
         name: video_service
     restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file:
       - ./.env
     environment:
@@ -120,7 +122,12 @@ services:
     volumes:
       - postgresdata:/var/lib/postgresql/data
   minio:
-    build: minio
+    build:
+      context: minio
+      args:
+        UBUNTU_IMAGE: ${UBUNTU_IMAGE}
+      labels:
+        name: minio
     restart: always
     env_file:
       - ./.env
@@ -160,7 +167,7 @@ services:
       - minio
     volumes:
       - ./static:/etc/nginx/html/static/images
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./videos/otomads:/etc/nginx/html/otomads
   rabbitmq:
     build: activemq
