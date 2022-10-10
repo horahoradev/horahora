@@ -39,15 +39,19 @@ Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
    -----END RSA PRIVATE KEY-----"
    ```
    The value should be double-quoted.
-5. Start up the stack:
+5. if you're on a non-localhost domain, you need to modify:
+   1. the .env file ORIGIN FQDN
+   2. nginx/nginx.conf (server name)
+   3. webapp/.env (change all localhost origins to your origin)
+6. Start up the stack:
     ```sh
     sudo ./up.sh
     ```
-6. Wait a minute, then visit localhost:80
-7. Login as admin/admin
+7. Wait a minute, then visit localhost:80
+8. Login as admin/admin
     - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
     - it's recommended to visit /password-reset immediately to change the admin user's default password if using in an untrusted environment
-8. navigate to the archival requests page from the hamburger menu, add a link, and wait a few minutes
+9. navigate to the archival requests page from the hamburger menu, add a link, and wait a few minutes
 
 That's it for basic usage, and should work. If that doesn't work, bug me on Discord.
 
