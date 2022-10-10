@@ -247,7 +247,11 @@ loop:
 
 	spl := strings.Split(u.Host, ":")
 	host := spl[0]
-	port := spl[1]
+
+	port := "80"
+	if len(spl) == 2 {
+		port = spl[1]
+	}
 
 	switch host {
 	case "localhost":
