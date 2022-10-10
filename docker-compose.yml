@@ -12,7 +12,13 @@ services:
     ports:
       - "3000:3000"
   frontapi:
-    image: ghcr.io/horahoradev/horahora/horahora.frontapi:main
+    build:
+      context: front_api
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+      labels:
+        org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: frontapi
     restart: always
     env_file:
       - ./.env
@@ -22,7 +28,13 @@ services:
       - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
       - JaegerAddress=
   scheduler:
-    image: ghcr.io/horahoradev/horahora/horahora.scheduler:main
+    build:
+      context: scheduler
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+      labels:
+        org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: scheduler
     restart: always
     env_file:
       - ./.env
@@ -46,7 +58,13 @@ services:
       - redis_port=6379
       - redis_pass=
   videoservice:
-    image: ghcr.io/horahoradev/horahora/horahora.videoservice:main
+    build:
+      context: video_service
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+      labels:
+        org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: video_service
     restart: always
     env_file:
       - ./.env
@@ -74,7 +92,13 @@ services:
     volumes:
       - $HOME/.aws/:/root/.aws/:ro
   userservice:
-    image: ghcr.io/horahoradev/horahora/horahora.userservice:main
+    build:
+      context: user_service
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+      labels:
+        org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: userservice
     restart: always
     env_file:
       - ./.env
