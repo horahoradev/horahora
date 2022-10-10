@@ -165,7 +165,7 @@ services:
       - minio
     volumes:
       - ./static:/etc/nginx/html/static/images
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./videos/otomads:/etc/nginx/html/otomads
 
   rabbitmq:
