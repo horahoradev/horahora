@@ -21,6 +21,8 @@ Join our Discord: https://discord.gg/vfwfpctJRZ
 
 Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 
+A word of warning: this application is pretty heavy, and setup can be complicated. If you're looking for something simpler, check out: https://github.com/tubearchivist/tubearchivist
+
 ## Local Use Instructions (START HERE)
 
 1. Install docker and docker-compose
