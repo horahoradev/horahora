@@ -40,10 +40,19 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 		c.Set(UserLoggedIn, false)
 
 		if len(c.Cookies()) < 1 {
-			return c.String(http.StatusForbidden, "")
+			return c.String(http.StatusForbidden, "no cookies")
 		}
 
-		jwt := c.Cookies()[0].Value
+		var jwt string
+		for _, cookie := range c.Cookies() {
+			if cookie.Name == "jwt" {
+				jwt = cookie.Value
+			}
+		}
+
+		if jwt == "" {
+			return c.String(http.StatusForbidden, "no jwt cookie")
+		}
 
 		jwtDecoded, err := base64.StdEncoding.DecodeString(jwt)
 		if err != nil {
