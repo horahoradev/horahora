@@ -16,7 +16,7 @@ jobs:
         run: ./selenium/setup_origin.sh
         if: always()
       - name: Run Selenium tests
-        run: cd selenium && sudo docker run --net horahora_default $(docker build -q .)
+        run: cd selenium && sleep 180 && sudo docker run --net horahora_default $(docker build -q .)
         if: always()
       - name: revert origin
         run: ./selenium/revert_origin.sh
