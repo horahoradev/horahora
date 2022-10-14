@@ -12,8 +12,17 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build the stack
         run: ./up.sh
-      - name: Run integration tests
+      - name: Run integration API tests
         run: cd tests && go run main.go
+        if: always()
+      - name: setup origin
+        run: ./selenium/setup_origin.sh
+        if: always()
+      - name: Run Selenium tests
+        run: cd selenium && sudo docker run --net horahora_default -it $(docker build -q .)
+        if: always()
+      - name: revert origin
+        run: ./selenium/revert_origin.sh
         if: always()
       - name: print relevant logs (videoservice)
         run: docker logs $(docker ps | grep "videoservice" | awk '{print $1}')
