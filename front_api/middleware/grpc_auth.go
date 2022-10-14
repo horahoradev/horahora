@@ -40,6 +40,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 		c.Set(UserLoggedIn, false)
 
 		if len(c.Cookies()) < 1 {
+			log.Errorf("No cookies for user")
 			return c.String(http.StatusForbidden, "no cookies")
 		}
 
@@ -51,7 +52,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 		}
 
 		if jwt == "" {
-			return c.String(http.StatusForbidden, "no jwt cookie")
+			return c.Redirect(http.StatusMovedPermanently, "/authentication/login")
 		}
 
 		jwtDecoded, err := base64.StdEncoding.DecodeString(jwt)
@@ -73,7 +74,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 		_, err = j.config.UserClient.GetUserFromID(context.Background(), &userproto.GetUserFromIDRequest{UserID: uid})
 		if err != nil {
 			log.Errorf("Could not retrieve authenticated users metadata. Err: %s", err)
-			return c.String(http.StatusForbidden, "")
+			return c.String(http.StatusForbidden, "could not get user")
 		}
 
 		c.Set(UserLoggedIn, true)
