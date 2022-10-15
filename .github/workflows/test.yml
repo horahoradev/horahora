@@ -10,9 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build the stack
-        run: ./up.sh
-      - name: Run integration tests
+      - name: Build the stack alternative origin
+        run: echo "nginx" | ./up.sh
+        if: always()
+      - name: Run Selenium tests
+        run: cd selenium && sleep 30 && sudo docker run --net horahora_default $(docker build -q .)
+        if: always()
+      - name: Build the stack localhost
+        run: echo "localhost" | ./up.sh
+        if: always()
+      - name: Run integration API tests
         run: cd tests && go run main.go
         if: always()
       - name: print relevant logs (videoservice)
@@ -48,8 +55,8 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: copy env
-        run: cp ./configs/.env.example .env
+      - name: Build the stack localhost
+        run: echo "localhost" | ./up.sh
         if: always()
       - name: publish main
         uses: pennsignals/publish_docker-compose@v0.2.5

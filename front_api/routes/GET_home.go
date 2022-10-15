@@ -32,6 +32,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	profileInfo, err := h.getUserProfileInfo(c)
 	if err != nil {
+		log.Error("Failed to get profile info")
 		return c.String(http.StatusForbidden, err.Error())
 	}
 
@@ -44,7 +45,8 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 
 	orderByVal, err := url.QueryUnescape(c.QueryParam("category"))
 	if err != nil {
-		return err
+		log.Error("Failed to unecape category data")
+		return c.String(http.StatusForbidden, err.Error())
 	}
 
 	// Default

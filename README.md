@@ -23,37 +23,16 @@ Archival capabilities are provided by yt-dlp (a fork of youtube-dl).
 
 A word of warning: this application is pretty heavy, and setup can be complicated. If you're looking for something simpler, check out: https://github.com/tubearchivist/tubearchivist
 
-## Local Use Instructions (START HERE)
+## Usage Instructions (START HERE)
 
-1. Install docker and docker-compose
-2. Generate private key:
-   ```sh
-   openssl genrsa 2048
-   ```
-3. Create env vars file:
-   ```sh
-   cp configs/.env.example .env
-   ```
-4. Save the private key into `JWT_KEYPAIR` value:
-   ```sh
-   JWT_KEYPAIR="-----BEGIN RSA PRIVATE KEY-----
-   ...
-   -----END RSA PRIVATE KEY-----"
-   ```
-   The value should be double-quoted.
-5. if you're on a non-localhost domain, you need to modify:
-   1. the .env file ORIGIN FQDN
-   2. nginx/nginx.conf (server name)
-   3. webapp/.env (change all localhost origins to your origin)
-6. Start up the stack:
-    ```sh
-    sudo ./up.sh
-    ```
-7. Wait a minute, then visit localhost:80
-8. Login as admin/admin
+1. Install docker, python3, and docker-compose
+2. ./up.sh
+   1. respond to requests for input
+2. Wait a minute, then visit localhost:80
+3. Login as admin/admin
     - note that with the current video approval workflow, non-admin users won't be able to view unapproved videos
     - it's recommended to visit /password-reset immediately to change the admin user's default password if using in an untrusted environment
-9. navigate to the archival requests page from the hamburger menu, add a link, and wait a few minutes
+4. navigate to the archival requests page from the hamburger menu, add a link, and wait a few minutes
 
 That's it for basic usage, and should work. If that doesn't work, bug me on Discord.
 

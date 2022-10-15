@@ -6,13 +6,17 @@
 
 services:
   react_app:
+    {% if build_images %}
     build:
       context: webapp
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       args:
         NODEJS_IMAGE: ${NODEJS_IMAGE}
       labels:
         name: webapp
+    {%- else -%}
+    image: ghcr.io/horahoradev/horahora/horahora.webapp:main
+    {% endif %}
     depends_on:
       - frontapi
     profiles:
@@ -26,19 +30,23 @@ services:
       - ./webapp/next.config.js:/webapp/next.config.js
 
   frontapi:
+    {% if build_images %}
     build:
       context: front_api
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
       labels:
         name: frontapi
+    {%- else -%}
+    image: ghcr.io/horahoradev/horahora/horahora.frontapi:main
+    {% endif %}
     depends_on:
       - postgres
     restart: unless-stopped
     env_file:
-      - ./.env.dev
+      - ./.env
     environment:
       - UserServiceGRPCAddress=userservice:${GRPCPort}
       - VideoServiceGRPCAddress=videoservice:${GRPCPort}
@@ -48,9 +56,10 @@ services:
       - ./front_api:/horahora/front_api
 
   scheduler:
+    {% if build_images %}
     build:
       context: scheduler
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       args:
         GOLANG_VERSION: ${GOLANG_VERSION}
         GOLANG_IMAGE: ${GOLANG_IMAGE}
@@ -59,11 +68,14 @@ services:
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
         name: scheduler
+    {%- else -%}
+    image: ghcr.io/horahoradev/horahora/horahora.scheduler:main
+    {% endif %}
     depends_on:
       - postgres
     restart: unless-stopped
     env_file:
-      - ./.env.dev
+      - ./.env
     environment:
       - pgs_host=postgres
       - pgs_port=5432
@@ -84,20 +96,24 @@ services:
       - ./scheduler:/horahora/scheduler
 
   videoservice:
+    {% if build_images %}
     build:
       context: video_service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
         name: videoservice
+    {%- else -%}
+    image: ghcr.io/horahoradev/horahora/horahora.videoservice:main
+    {% endif %}
     depends_on:
       - postgres
     restart: unless-stopped
     env_file:
-      - ./.env.dev
+      - ./.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
@@ -123,20 +139,24 @@ services:
       - $HOME/.aws/:/root/.aws/:ro
 
   userservice:
+    {% if build_images %}
     build:
       context: user_service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       args:
         GOLANG_IMAGE: ${GOLANG_IMAGE}
         GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
       labels:
         org.opencontainers.image.source: https://github.com/horahoradev/horahora
         name: userservice
+    {%- else -%}
+    image: ghcr.io/horahoradev/horahora/horahora.userservice:main
+    {% endif %}
     depends_on:
       - postgres
     restart: unless-stopped
     env_file:
-      - ./.env.dev
+      - ./.env
     environment:
       - pgs_host=postgres
       - pgs_port=5432
@@ -150,7 +170,7 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: Dockerfile.postgres.dev
+      dockerfile: Dockerfile.postgres
       args:
         POSTGRES_IMAGE: ${POSTGRES_IMAGE}
         FLYWAY_VERSION: ${FLYWAY_VERSION}
@@ -166,14 +186,14 @@ services:
   minio:
     build:
       context: minio
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       args:
         UBUNTU_IMAGE: ${UBUNTU_IMAGE}
       labels:
         name: minio
     restart: unless-stopped
     env_file:
-      - ./.env.dev
+      - ./.env
     environment:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
@@ -190,7 +210,7 @@ services:
     cap_add:
       - NET_ADMIN
     env_file:
-      - ./.env.dev
+      - ./.env
     environment:
       - VPN_SERVICE_PROVIDER=${VPN_PROVIDER}
       - VPN_TYPE=wireguard
@@ -200,12 +220,7 @@ services:
       - HTTPPROXY_LOG=on
       - BLOCK_MALCIOUS=off
   nginx:
-    image: nginx
-    build:
-      context: nginx
-      dockerfile: Dockerfile.nginx
-      labels:
-        name: nginx
+    image: nginx:mainline
     restart: unless-stopped
     ports:
       - "80:80"
@@ -222,7 +237,7 @@ services:
       - WEBAPP_ORIGIN=${WEBAPP_ORIGIN}
     volumes:
       - ./static:/etc/nginx/html/static/images
-      - ./nginx/dev.conf:/etc/nginx/templates/default.conf.template
+      - ./configs/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./videos/otomads:/etc/nginx/html/otomads
 
   rabbitmq:
@@ -230,7 +245,7 @@ services:
       context: activemq
       labels:
         name: activemq
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       args:
         ACTIVEMQ_IMAGE: ${ACTIVEMQ_IMAGE}
     restart: unless-stopped
@@ -238,7 +253,7 @@ services:
   stomp_proxy:
     build:
       context: stomp_proxy
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       labels:
         name: stomp_proxy
       args:
@@ -249,6 +264,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./stomp_proxy:/horahora/stomp_proxy
+
 
 volumes:
   postgresdata_dev:
