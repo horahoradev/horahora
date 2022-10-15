@@ -7,6 +7,7 @@
     "lint": "next lint",
     "codegen": "ts-node --require tsconfig-paths/register scripts/codegen.ts",
     "build": "next build",
+    "start": "next start",
     "preexport": "npm run build",
     "export": "next export -o ./build"
   },
