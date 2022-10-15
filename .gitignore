@@ -19,3 +19,7 @@ sql/backup*
 # env file is used for the docker compose
 /.env
 /.env*
+
+docker-compose.yaml
+webapp/.env
+configs/*

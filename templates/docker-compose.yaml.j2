@@ -6,7 +6,7 @@
 
 services:
   react_app:
-    {%- if build_images -%}
+    {% if build_images %}
     build:
       context: webapp
       dockerfile: Dockerfile
@@ -16,7 +16,7 @@ services:
         name: webapp
     {%- else -%}
     image: ghcr.io/horahoradev/horahora/horahora.webapp:main
-    {%- endif -%}
+    {% endif %}
     depends_on:
       - frontapi
     profiles:
@@ -30,7 +30,7 @@ services:
       - ./webapp/next.config.js:/webapp/next.config.js
 
   frontapi:
-    {%- if build_images -%}
+    {% if build_images %}
     build:
       context: front_api
       dockerfile: Dockerfile
@@ -41,7 +41,7 @@ services:
         name: frontapi
     {%- else -%}
     image: ghcr.io/horahoradev/horahora/horahora.frontapi:main
-    {%- endif -%}
+    {% endif %}
     depends_on:
       - postgres
     restart: unless-stopped
@@ -56,7 +56,7 @@ services:
       - ./front_api:/horahora/front_api
 
   scheduler:
-    {%- if build_images -%}
+    {% if build_images %}
     build:
       context: scheduler
       dockerfile: Dockerfile
@@ -70,7 +70,7 @@ services:
         name: scheduler
     {%- else -%}
     image: ghcr.io/horahoradev/horahora/horahora.scheduler:main
-    {%- endif -%}
+    {% endif %}
     depends_on:
       - postgres
     restart: unless-stopped
@@ -96,7 +96,7 @@ services:
       - ./scheduler:/horahora/scheduler
 
   videoservice:
-    {%- if build_images -%}
+    {% if build_images %}
     build:
       context: video_service
       dockerfile: Dockerfile
@@ -108,7 +108,7 @@ services:
         name: videoservice
     {%- else -%}
     image: ghcr.io/horahoradev/horahora/horahora.videoservice:main
-    {%- endif -%}
+    {% endif %}
     depends_on:
       - postgres
     restart: unless-stopped
@@ -139,7 +139,7 @@ services:
       - $HOME/.aws/:/root/.aws/:ro
 
   userservice:
-    {%- if build_images -%}
+    {% if build_images %}
     build:
       context: user_service
       dockerfile: Dockerfile
@@ -151,7 +151,7 @@ services:
         name: userservice
     {%- else -%}
     image: ghcr.io/horahoradev/horahora/horahora.userservice:main
-    {%- endif -%}
+    {% endif %}
     depends_on:
       - postgres
     restart: unless-stopped
@@ -237,7 +237,7 @@ services:
       - WEBAPP_ORIGIN=${WEBAPP_ORIGIN}
     volumes:
       - ./static:/etc/nginx/html/static/images
-      - ./nginx/nginx.conf:/etc/nginx/templates/default.conf.template
+      - ./configs/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./videos/otomads:/etc/nginx/html/otomads
 
   rabbitmq:

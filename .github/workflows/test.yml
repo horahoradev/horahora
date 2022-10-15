@@ -10,23 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build the stack
-        run: ./up.sh
-        if: always()
-      - name: setup origin
-        run: ./selenium/setup_origin.sh
-        if: always()
-      - name: Build the stack
-        run: ./up.sh
+      - name: Build the stack alternative origin
+        run: echo "nginx" | ./up.sh
         if: always()
       - name: Run Selenium tests
-        run: cd selenium && sleep 180 && sudo docker run --net horahora_default $(docker build -q .)
+        run: cd selenium && sleep 30 && sudo docker run --net horahora_default $(docker build -q .)
         if: always()
-      - name: revert origin
-        run: ./selenium/revert_origin.sh
-        if: always()
-      - name: Build the stack
-        run: ./up.sh
+      - name: Build the stack localhost
+        run: echo "localhost" | ./up.sh
         if: always()
       - name: Run integration API tests
         run: cd tests && go run main.go
