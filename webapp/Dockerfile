@@ -15,4 +15,4 @@ COPY entrypoint.sh /entrypoint.sh
 
 RUN cd /webapp && npm run build
 
-ENTRYPOINT npm run dev
+ENTRYPOINT npm run start

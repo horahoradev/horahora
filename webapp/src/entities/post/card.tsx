@@ -49,7 +49,7 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
           onError={(e) => {
             const img = e.target as HTMLImageElement;
             img.onerror = null;
-            img.src = ThumbnailLoc != nil ? `${ThumbnailLoc.slice(0, -6)}.jpg` : "";
+            img.src = ThumbnailLoc != null ? `${ThumbnailLoc.slice(0, -6)}.jpg` : "";
           }}
         />
         <DL>
