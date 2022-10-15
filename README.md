@@ -36,47 +36,6 @@ A word of warning: this application is pretty heavy, and setup can be complicate
 
 That's it for basic usage, and should work. If that doesn't work, bug me on Discord.
 
-## Develop
-**DO NOT RUN THIS SETUP IN ANY PUBLIC CONTEXT.**
-
-### Requirements
-
-Golang - 1.18+
-
-### Docker stack
-1. Copy example env file:
-   ```sh
-   cp ./configs/.env.dev.example .env.dev
-   ```
-
-2. Build the local images:
-   ```sh
-   docker-compose --env-file .env.dev build
-   ```
-
-3. Start the dev stack:
-   ```sh
-   docker-compose --env-file .env.dev up --build
-   ```
-
-4. Tear down the dev stack:
-   ```sh
-   docker-compose --env-file .env.dev down
-   ```
-
-### CLI (experimental)
-
-1. Build CLI tool in the project root:
-   ```sh
-   cd cli && go build -o ../horahora . && cd ..
-   ```
-
-2. Use CLI tool:
-   ```sh
-   ./horahora
-   ```
-   Instructions and available commands will be shown within it.
-
 ## Contributing
 Contributions are always welcome. Please see [CONTRIBUTING.md](https://github.com/horahoradev/horahora/blob/master/CONTRIBUTING.md) for details, including an architectural rundown.
 
@@ -100,7 +59,7 @@ https://github.com/horahoradev/horahora-designs
 ### Other Storage Backends (s3, backblaze, anything s3-compatible)
 By default, Horahora will store videos locally using Minio.
 
-If you don't want videos to be stored locally, modify secrets.env.template, adding the relevant values for your use case.
+If you don't want videos to be stored locally, modify .env, adding the relevant values for your use case.
 
     - ORIGIN_FQDN: this will be the public URL of your Backblaze bucket WITH NO TRAILING SLASH. E.g. for me it's: https://f002.backblazeb2.com/file/otomads for backblaze, or https://horahora-dev-otomads.s3-us-west-1.amazonaws.com for s3.
     - STORAGE_BACKEND: 'b2' or 's3' (depending on which you want to use)
