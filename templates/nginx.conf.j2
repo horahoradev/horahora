@@ -1,7 +1,7 @@
 server {
     listen       80;
     listen  [::]:80;
-    server_name  localhost;
+    server_name  {% origin %};
 
     error_log /dev/stderr debug;
     client_max_body_size 20M;
@@ -14,7 +14,6 @@ server {
 
     location /otomads {
         proxy_pass http://minio:9000$request_uri;
-        limit_except GET { deny  all; }
     }
 
     location /api/ {
@@ -33,7 +32,7 @@ server {
     }
 
     location /_next/webpack-hmr {
-        proxy_pass ${WEBAPP_ORIGIN}/_next/webpack-hmr;
+        proxy_pass http://react_app:3000/_next/webpack-hmr;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
@@ -41,6 +40,6 @@ server {
     }
 
     location / {
-        proxy_pass ${WEBAPP_ORIGIN}$request_uri;
+        proxy_pass http://react_app:3000$request_uri;
     }
 }
