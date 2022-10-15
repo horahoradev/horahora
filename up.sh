@@ -15,18 +15,9 @@ then
   exit 1
 fi
 
-# copy example env file if it doesn't exist
-if [ ! -f .env ]
-then
-  cp configs/.env.example .env
-  # oh no no no no no
-  sed -i '$d' .env
-  echo -n 'JWT_KEYPAIR="' >> .env
-  openssl genrsa 2048 >> .env
-  echo '"' >> .env
-fi
+pip3 install jinja2 pycryptodome && python3 ./templates/generate-compose.py
 
 # docker compose by default reads `.env` file
 # so no need to pass it as an option
-DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker-compose build --parallel --progress=plain && \
-docker-compose up -d
+DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 sudo docker-compose build --parallel --progress=plain && \
+sudo docker-compose up -d

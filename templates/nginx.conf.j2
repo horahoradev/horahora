@@ -1,7 +1,7 @@
 server {
     listen       80;
     listen  [::]:80;
-    server_name  localhost;
+    server_name  {{ origin }};
 
     error_log /dev/stderr debug;
     client_max_body_size 20M;
@@ -13,18 +13,21 @@ server {
     }
 
     location /otomads {
-        proxy_pass http://minio:9000$request_uri;
+        set $backend_service minio;
+        proxy_pass http://$backend_service:9000$request_uri;
     }
 
     location /api/ {
         proxy_set_header X-Forwarded-Host $http_host;
         proxy_pass_request_headers      on;
-        proxy_pass http://frontapi:8083$request_uri;
+        set $backend_service frontapi;
+        proxy_pass http://$backend_service:8083$request_uri;
         proxy_request_buffering off;
     }
 
     location /ws {
-        proxy_pass http://stomp_proxy:15674/ws;
+        set $backend_service stomp_proxy;
+        proxy_pass http://$backend_service:15674/ws;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
@@ -32,7 +35,8 @@ server {
     }
 
     location /_next/webpack-hmr {
-        proxy_pass ${WEBAPP_ORIGIN}/_next/webpack-hmr;
+        set $backend_service react_app;
+        proxy_pass http://$backend_service:3000/_next/webpack-hmr;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
@@ -40,6 +44,7 @@ server {
     }
 
     location / {
-        proxy_pass ${WEBAPP_ORIGIN}$request_uri;
+        set $backend_service react_app;
+        proxy_pass http://$backend_service:3000$request_uri;
     }
 }
