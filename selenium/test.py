@@ -14,10 +14,10 @@ if __name__ == "__main__":
 
     driver.get("http://nginx/authentication/login")
 
-    time.sleep(1)
+    time.sleep(3)
     assert driver.title == "Log in"
 
-    time.sleep(1)
+    time.sleep(3)
 
     username_box = driver.find_element(by=By.ID, value="auth-login-name")
     password_box = driver.find_element(by=By.ID, value="auth-login-password")
