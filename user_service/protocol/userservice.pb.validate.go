@@ -1680,7 +1680,7 @@ func (m *RegisterRequest) validate(all bool) error {
 	if !_RegisterRequest_Username_Pattern.MatchString(m.GetUsername()) {
 		err := RegisterRequestValidationError{
 			field:  "Username",
-			reason: "value does not match regex pattern \"^[^[0-9]A-Za-z]+( [^[0-9]A-Za-z]+)*$\"",
+			reason: "value does not match regex pattern \"^[a-zA-Z0-9]+$\"",
 		}
 		if !all {
 			return err
@@ -1824,7 +1824,7 @@ var _ interface {
 	ErrorName() string
 } = RegisterRequestValidationError{}
 
-var _RegisterRequest_Username_Pattern = regexp.MustCompile("^[^[0-9]A-Za-z]+( [^[0-9]A-Za-z]+)*$")
+var _RegisterRequest_Username_Pattern = regexp.MustCompile("^[a-zA-Z0-9]+$")
 
 // Validate checks the field values on LoginRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

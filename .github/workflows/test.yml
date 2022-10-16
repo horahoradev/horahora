@@ -14,7 +14,7 @@ jobs:
         run: echo "nginx" | ./up.sh
         if: always()
       - name: Run Selenium tests
-        run: cd selenium && sleep 30 && sudo docker run --net horahora_default $(docker build -q .)
+        run: cd selenium && sleep 90 && sudo docker run --net horahora_default $(docker build -q .)
         if: always()
       - name: Build the stack localhost
         run: echo "localhost" | ./up.sh
