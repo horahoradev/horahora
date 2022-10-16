@@ -13,4 +13,6 @@ COPY . .
 
 COPY entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+RUN cd /webapp && npm run build
+
+ENTRYPOINT npm run start

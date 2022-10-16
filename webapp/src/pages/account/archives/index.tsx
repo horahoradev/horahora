@@ -9,7 +9,6 @@ import { getArchivalRequests } from "#api/archives";
 import { StartCardList } from "#components/lists";
 import { WSClient, WSConfig } from "#lib/fetch";
 import { fetchDownloadsInProgress } from "#api/archives";
-import { DownloadCard, IDownload} from "#entities/download";
 import { LoadingBar } from "#components/loading-bar";
 import { ArchivalDownloadsPage } from "#components/video";
 import { RequestCard } from "#entities/request";
