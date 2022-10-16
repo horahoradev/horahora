@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { StompSubscription, type IMessage } from "@stomp/stompjs";
 import { useMutex } from "react-context-mutex";
+import { DownloadCard, IDownload} from "#entities/download";
 
 import { WSClient, WSConfig } from "#lib/fetch";
 import { Page } from "#components/page";
@@ -198,7 +199,7 @@ export function ArchivalDownloadsPage() {
             <TableBody>
             {videoInProgressDataset ? videoInProgressDataset.map((row) => (
                 <TableRow
-                key={row.name}
+                key={row.VideoID}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                 <TableCell align="left">{row.VideoID}</TableCell>

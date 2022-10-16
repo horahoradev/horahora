@@ -23,7 +23,7 @@ const darkTheme = createTheme({
   },
 });
 
-function ArchivalEventsPage(params) {
+function ArchivalEventsPage(params: any) {
   const [events, changeEvents] = useState<IArchivalEvent[]>();
   // I think this is a hack? looks okay to me though!
   const [timerVal, setTimerVal] = useState(0);
@@ -90,7 +90,7 @@ function ArchivalEventsPage(params) {
         <TableBody>
         {events ? events.map((row) => (
             <TableRow
-            key={row.name}
+            key={row.video_url}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
             <TableCell align="left">{row.timestamp}</TableCell>

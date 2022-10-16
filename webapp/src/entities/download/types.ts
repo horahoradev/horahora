@@ -1,4 +1,4 @@
-export default interface IDownload {
+export interface IDownload {
   VideoID: string;
   progress: number;
   DlStatus: "Downloading" | "Queued";

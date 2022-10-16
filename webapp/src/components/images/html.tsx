@@ -13,7 +13,7 @@ export const ImageHTML = blockComponent(styles.block, Component);
 function Component({ src, alt = "", onError, ...blockProps }: IImageHTMLProps) {
   return (
     <img
-      src={typeof src == "string" ? src : src.toString()}
+      src={typeof src == "string" || src == null ? src : src.toString()}
       alt={alt}
       onError={onError ?? onError}
       {...blockProps}
