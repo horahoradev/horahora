@@ -35,7 +35,7 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
   return (
     <Card {...blockProps}>
       <CardHeader>
-        <a href={`/videos/${VideoID}`}>
+        <a id={`/videos/${VideoID}`} href={`/videos/${VideoID}`}>
           <Heading level={headingLevel}>{Title}</Heading>
         </a>
       </CardHeader>

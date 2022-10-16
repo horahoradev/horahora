@@ -96,7 +96,7 @@ message validateJWTResponse {
 message RegisterRequest {
     string email = 1 [(validate.rules).string.email = true];
     string username = 2 [(validate.rules).string = {
-        pattern:   "^[^[0-9]A-Za-z]+( [^[0-9]A-Za-z]+)*$",
+        pattern:   "^[a-zA-Z0-9]+$",
         max_bytes: 10,
      }];
     string password = 3;
