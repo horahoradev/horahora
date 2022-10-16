@@ -43,7 +43,7 @@ if __name__ == "__main__":
     assert dl_card is not None
 
     # Search for author
-    for i in range(1, 40):
+    for i in range(1, 80):
         try:
             driver.get('http://nginx/search?search=%E3%82%82%E3%81%A1%E3%81%86%E3%81%A4%E3%81%AD&category=upload_date&order=desc')
             time.sleep(3)
