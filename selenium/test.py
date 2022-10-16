@@ -31,10 +31,12 @@ if __name__ == "__main__":
     assert driver.title == "Videos"
 
     driver.get('http://nginx/api/home')
+    time.sleep(1)
     assert len(driver.get_cookies()) >= 1
 
     driver.get('http://nginx/account/archives')
-    time.sleep(1)
+    time.sleep(3)
+    assert driver.title == "View and manage your archives"
     video_box = driver.find_element(by=By.ID, value="new-video-url")
     video_form = driver.find_element(by=By.ID, value="new-video")
     video_box.send_keys("https://www.youtube.com/watch?v=GWAtnzcbfFQ")
