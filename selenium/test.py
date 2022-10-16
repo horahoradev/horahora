@@ -38,7 +38,7 @@ if __name__ == "__main__":
     video_box.send_keys("https://www.youtube.com/watch?v=GWAtnzcbfFQ")
     video_form.submit()
 
-    time.sleep(2)
+    time.sleep(3)
     dl_card = driver.find_element(by=By.ID, value="download-request-1")
     assert dl_card is not None
 
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     for i in range(1, 80):
         try:
             driver.get('http://nginx/search?search=%E3%82%82%E3%81%A1%E3%81%86%E3%81%A4%E3%81%AD&category=upload_date&order=desc')
-            time.sleep(3)
+            time.sleep(5) # why do we need...
             video_href = driver.find_element(by=By.ID, value="/videos/1")
             if video_href is None:
                 print("Failed to find video 1 on page, attempt " + str(i))
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         except:
             print("Failed to find video 1 on page, attempt " + str(i))
 
-    time.sleep(1)
+    time.sleep(3)
     assert driver.current_url == "http://nginx/videos/1"
     assert driver.title == 'Video "おくすり飲んで寝よう / 初音ミク - もちうつね" (1) by "もちうつね" (1)'
 
