@@ -58,7 +58,7 @@ function AuditsPage() {
             }}
           />
           <CardList>
-            {pageData.Events.map((audit) => (
+            {pageData.Events != null && pageData.Events.map((audit) => (
               <AuditCard key={audit.ID} audit={audit} />
             ))}
           </CardList>
