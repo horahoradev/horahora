@@ -116,6 +116,7 @@ func (d *downloader) downloadVideoReq(ctx context.Context, video *models.VideoDL
 	// LOL
 	// there's a race condition in which ffprobe can stall indefinitely if its cookies are invalidated before its stream metadata
 	// request succeeds. This is my attempt to lower the likelihood of this issue occurring.
+	// FIXME TODO
 	m.Lock()
 	go func() {
 		time.Sleep(time.Second * 10)
@@ -180,6 +181,19 @@ currVideoLoop:
 			//}
 
 			break
+		}
+		if err.Error() == "the daily upload limit has been exceeded" {
+			// sleep until next day
+			today, err := time.Parse("01-02-2006", time.Now().Format("01-02-2006"))
+			if err != nil {
+				log.Errorf("Received time parse error: %v", err)
+				return err
+			}
+
+			nextDay := today.Add(time.Hour * 24)
+
+			log.Infof("Received error on daily upload limit, sleeping until %v", nextDay)
+			time.Sleep(time.Until(nextDay))
 		}
 		// Just keep trying to download until we succeed
 		// TODO: check for specific errors indicating we should skip to the next entry
