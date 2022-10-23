@@ -50,7 +50,7 @@ type config struct {
 	Tracer            opentracing.Tracer
 	StorageBackend    string `env:"StorageBackend,required"`
 	StorageAPIID      string `env:"StorageAPIID"`
-	StorageAPIKey     string `env:"StorageAPIRedisPoolKey"`
+	StorageAPIKey     string `env:"StorageAPIKey"`
 	StorageEndpoint   string `env:"StorageEndpoint"`
 	ApprovalThreshold int    `env:"ApprovalThreshold,required"`
 	MaxDLFileSize     int64  `env:"MaxDLFileSize,required"`

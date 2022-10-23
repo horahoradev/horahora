@@ -230,7 +230,7 @@ loop:
 		return LogAndRetErr("could not write thumbnail. Err: %s", err)
 	}
 
-	log.Infof("Finished receiving file data for %s", video.Meta.Meta.Title)
+	log.Infof("Finished receiving file data for %s, uploading to %v", video.Meta.Meta.Title, g.OriginFQDN)
 
 	// If not local, upload the thumbnail and original video before returning
 	if !g.Local {
