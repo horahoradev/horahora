@@ -15,7 +15,7 @@ func main() {
 
 	err = grpcserver.NewGRPCServer(conf.BucketName, conf.SqlClient, conf.GRPCPort, conf.OriginFQDN, conf.Local,
 		conf.UserClient, conf.Tracer, conf.StorageBackend, conf.StorageAPIID, conf.StorageAPIKey,
-		conf.ApprovalThreshold, conf.StorageEndpoint, conf.MaxDLFileSize)
+		conf.ApprovalThreshold, conf.StorageEndpoint, conf.MaxDLFileSize, conf.RedisConn, conf.MaxDailyUploadMB)
 	if err != nil {
 		log.Fatal(err)
 	}
