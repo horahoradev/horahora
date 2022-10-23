@@ -2,6 +2,7 @@ package grpcserver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -12,6 +13,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 
 	"github.com/google/uuid"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -44,14 +47,16 @@ type GRPCServer struct {
 	Local      bool
 	OriginFQDN string
 	Storage    storage.Storage
+	RedisConn  *redis.Client
 	proto.UnsafeVideoServiceServer
+	MaxDailyUploadMB int
 }
 
 // TODO: API is getting bloated
 func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, local bool,
 	client userproto.UserServiceClient, tracer opentracing.Tracer, storageBackend, apiID,
-	apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) error {
-	g, err := initGRPCServer(bucketName, db, client, local, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, storageEndpoint, MaxDLFileSize)
+	apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64, redisConn *redis.Client, maxDailyUploadMB int) error {
+	g, err := initGRPCServer(bucketName, db, client, local, originFQDN, storageBackend, apiID, apiKey, approvalThreshold, storageEndpoint, MaxDLFileSize, redisConn, maxDailyUploadMB)
 	if err != nil {
 		return err
 	}
@@ -71,11 +76,13 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 }
 
 func initGRPCServer(bucketName string, db *sqlx.DB, client userproto.UserServiceClient, local bool,
-	originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64) (*GRPCServer, error) {
+	originFQDN, storageBackend, apiID, apiKey string, approvalThreshold int, storageEndpoint string, MaxDLFileSize int64, redisConn *redis.Client, maxDailyUploadMB int) (*GRPCServer, error) {
 
 	g := &GRPCServer{
-		Local:      local,
-		OriginFQDN: originFQDN,
+		Local:            local,
+		OriginFQDN:       originFQDN,
+		RedisConn:        redisConn,
+		MaxDailyUploadMB: maxDailyUploadMB,
 	}
 
 	var err error
@@ -115,6 +122,8 @@ type VideoUpload struct {
 	FileData     *os.File
 	MetaFileData *os.File
 }
+
+var DailyUploadLimitError error = errors.New("the daily upload limit has been exceeded")
 
 func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) error {
 	log.Info("Handling video upload")
@@ -167,6 +176,10 @@ loop:
 
 		switch r := chunk.Payload.(type) {
 		case *proto.InputVideoChunk_Content:
+			if g.isOverDailyUploadLimit(len(r.Content.Data)) {
+				return DailyUploadLimitError
+			}
+
 			_, err := video.FileData.Write(r.Content.Data)
 			if err != nil {
 				err = fmt.Errorf("could not write video data to file, err: %s", err)
@@ -175,6 +188,10 @@ loop:
 			}
 
 		case *proto.InputVideoChunk_Rawmeta:
+			if g.isOverDailyUploadLimit(len(r.Rawmeta.Data)) {
+				return DailyUploadLimitError
+			}
+
 			// lol
 			_, err := video.MetaFileData.Write(r.Rawmeta.Data)
 			if err != nil {
@@ -213,7 +230,7 @@ loop:
 		return LogAndRetErr("could not write thumbnail. Err: %s", err)
 	}
 
-	log.Infof("Finished receiving file data for %s", video.Meta.Meta.Title)
+	log.Infof("Finished receiving file data for %s, uploading to %v", video.Meta.Meta.Title, g.OriginFQDN)
 
 	// If not local, upload the thumbnail and original video before returning
 	if !g.Local {
@@ -292,6 +309,22 @@ loop:
 
 	log.Infof("Finished handling video %s", video.Meta.Meta.Title)
 	return inpStream.SendAndClose(&uploadResp)
+}
+
+func (g GRPCServer) isOverDailyUploadLimit(sizeBytes int) bool {
+	sizeMB := sizeBytes / 1024 / 1024
+
+	dateTS := time.Now().Format("01-02-2006")
+
+	ret, err := g.RedisConn.IncrBy(context.Background(), dateTS, int64(sizeMB)).Result()
+	if err != nil {
+		log.Errorf("could not incr upload limit. Err: %v", err)
+		return true
+	}
+
+	log.Infof("current count: %v", ret)
+
+	return ret > int64(g.MaxDailyUploadMB)
 }
 
 func LogAndRetErr(fmtStr string, err error) error {
