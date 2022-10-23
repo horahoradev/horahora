@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     driver.get("http://nginx/authentication/login")
 
-    time.sleep(3)
+    time.sleep(10)
     assert driver.title == "Log in"
 
     time.sleep(3)
