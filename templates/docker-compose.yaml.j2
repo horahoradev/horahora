@@ -303,9 +303,15 @@ services:
 
   # Web App (revite)
   web:
-    image: ghcr.io/revoltchat/client:master
+    build:
+      context: revite
+      dockerfile: Dockerfile
     env_file: .env
     restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./revite/src:/usr/src/app/src
 
   # S3-compatible storage server
   minio:
