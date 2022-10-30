@@ -42,6 +42,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/api/approve/:id", r.handleApproval)
 
 	e.POST("/api/login", r.handleLogin)
+	e.POST("/api/revoltlogin", r.handleRevoltLogin)
 	e.POST("/api/register", r.handleRegister)
 	e.POST("/api/logout", r.handleLogout)
 
@@ -159,6 +160,7 @@ func setCookie(c echo.Context, jwt string) error {
 	cookie.SameSite = http.SameSiteStrictMode
 	//cookie.Secure = true // set this later
 	cookie.HttpOnly = false
+	cookie.Path = "/"
 
 	c.SetCookie(cookie)
 

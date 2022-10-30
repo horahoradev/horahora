@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/horahoradev/horahora/user_service/internal/model"
@@ -60,7 +59,7 @@ type revoltPayload struct {
 func RegisterRevolt(email string) error {
 	payload := revoltPayload{
 		Email:    email,
-		Password: "null",
+		Password: "null01010",
 	}
 
 	buf, err := json.Marshal(&payload)
@@ -68,7 +67,7 @@ func RegisterRevolt(email string) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", "http://nginx/chat/api/auth/account/create", bytes.NewBuffer(buf))
+	req, err := http.NewRequest("POST", "http://api:8000/auth/account/create", bytes.NewBuffer(buf))
 	if err != nil {
 		return err
 	}
@@ -76,14 +75,14 @@ func RegisterRevolt(email string) error {
 	req.Header.Set("Content-Type", "application/json")
 
 	client := http.DefaultClient
-	resp, err := client.Do(req)
+	_, err = client.Do(req)
 	if err != nil {
 		return err
 	}
 
-	if resp.StatusCode != 204 {
-		return fmt.Errorf("bad revolt response status for registration: %v", resp.StatusCode)
-	}
+	// if resp.StatusCode != 204 {
+	// 	return fmt.Errorf("bad revolt response status for registration: %v", resp.StatusCode)
+	// }
 
 	return nil
 }

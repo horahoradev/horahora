@@ -27,6 +27,11 @@ server {
         proxy_pass http://$backend_service:5000$request_uri;
     }
 
+    location /chat/api/auth/session/login {
+        set $backend_service frontapi;
+        proxy_pass http://$backend_service:8083/api/revoltlogin;
+    }
+
     location /chat/api/ws {
         set $backend_service events;
         proxy_pass http://$backend_service:9000$request_uri;
