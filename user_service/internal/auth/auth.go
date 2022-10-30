@@ -1,11 +1,14 @@
 package auth
 
 import (
+	"bytes"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
+	"fmt"
+	"net/http"
 
 	"github.com/horahoradev/horahora/user_service/internal/model"
 	"golang.org/x/crypto/bcrypt"
@@ -47,6 +50,42 @@ func Login(username, password string, privateKey *rsa.PrivateKey, u *model.UserM
 	// Password is valid
 	payload := JWTPayload{UID: uid}
 	return CreateJWT(payload, privateKey)
+}
+
+type revoltPayload struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func RegisterRevolt(email string) error {
+	payload := revoltPayload{
+		Email:    email,
+		Password: "null",
+	}
+
+	buf, err := json.Marshal(&payload)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", "http://nginx/chat/api/auth/account/create", bytes.NewBuffer(buf))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := http.DefaultClient
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != 204 {
+		return fmt.Errorf("bad revolt response status for registration: %v", resp.StatusCode)
+	}
+
+	return nil
 }
 
 func Register(username, email, password string, u *model.UserModel, privateKey *rsa.PrivateKey, foreignUser bool,

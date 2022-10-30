@@ -305,8 +305,6 @@ services:
   web:
     image: ghcr.io/revoltchat/client:master
     env_file: .env
-    ports:
-      - "5000:5000"
     restart: always
 
   # S3-compatible storage server
@@ -316,8 +314,6 @@ services:
     env_file: .env
     volumes:
       - ./data/minio:/data
-    ports:
-      - "10000:9000"
     restart: always
 
   # Create buckets for minio.
@@ -347,15 +343,11 @@ services:
       - createbuckets
     environment:
       - AUTUMN_MONGO_URI=mongodb://database
-    ports:
-      - "3000:3000"
     restart: always
 
   # Metadata and image proxy (january)
   january:
     image: ghcr.io/revoltchat/january:master
-    ports:
-      - "7000:7000"
     restart: always
 
 volumes:
