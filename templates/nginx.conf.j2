@@ -19,12 +19,12 @@ server {
 
     location /chat {
         set $backend_service web;
-        proxy_pass http://$backend_service:5000$request_uri;
+        proxy_pass http://$backend_service:5173$request_uri;
     }
 
     location /assets {
         set $backend_service web;
-        proxy_pass http://$backend_service:5000$request_uri;
+        proxy_pass http://$backend_service:5173$request_uri;
     }
 
     location /chat/api/auth/session/login {
