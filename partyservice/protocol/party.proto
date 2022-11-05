@@ -4,11 +4,20 @@ package proto;
 option go_package = "github.com/horahoradev/horahora/partyservice/protocol";
 
 service Partyservice {
+    rpc NewWatchParty(NewPartyRequest) returns (NewPartyResponse) {}
     rpc BecomeLeader(PartyRequest) returns (LeaderResponse) {}
     rpc JoinParty(PartyRequest) returns (Empty) {}
     rpc HeartBeat(PartyRequest) returns (Empty) {}
     rpc GetPartyState(PartyRequest) returns (PartyState) {}
     rpc NextVideo(PartyRequest) returns (Empty) {}
+}
+
+message NewPartyRequest {
+    int64 UserID = 1;
+}
+
+message NewPartyResponse {
+    int64 PartyID = 1;
 }
 
 message PartyRequest {

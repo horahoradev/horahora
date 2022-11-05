@@ -35,6 +35,210 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on NewPartyRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *NewPartyRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on NewPartyRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// NewPartyRequestMultiError, or nil if none found.
+func (m *NewPartyRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *NewPartyRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserID
+
+	if len(errors) > 0 {
+		return NewPartyRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// NewPartyRequestMultiError is an error wrapping multiple validation errors
+// returned by NewPartyRequest.ValidateAll() if the designated constraints
+// aren't met.
+type NewPartyRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NewPartyRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NewPartyRequestMultiError) AllErrors() []error { return m }
+
+// NewPartyRequestValidationError is the validation error returned by
+// NewPartyRequest.Validate if the designated constraints aren't met.
+type NewPartyRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NewPartyRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NewPartyRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NewPartyRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NewPartyRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NewPartyRequestValidationError) ErrorName() string { return "NewPartyRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e NewPartyRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNewPartyRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NewPartyRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NewPartyRequestValidationError{}
+
+// Validate checks the field values on NewPartyResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *NewPartyResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on NewPartyResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// NewPartyResponseMultiError, or nil if none found.
+func (m *NewPartyResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *NewPartyResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PartyID
+
+	if len(errors) > 0 {
+		return NewPartyResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// NewPartyResponseMultiError is an error wrapping multiple validation errors
+// returned by NewPartyResponse.ValidateAll() if the designated constraints
+// aren't met.
+type NewPartyResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NewPartyResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NewPartyResponseMultiError) AllErrors() []error { return m }
+
+// NewPartyResponseValidationError is the validation error returned by
+// NewPartyResponse.Validate if the designated constraints aren't met.
+type NewPartyResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NewPartyResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NewPartyResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NewPartyResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NewPartyResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NewPartyResponseValidationError) ErrorName() string { return "NewPartyResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e NewPartyResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNewPartyResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NewPartyResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NewPartyResponseValidationError{}
+
 // Validate checks the field values on PartyRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

@@ -18,6 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PartyserviceClient interface {
+	NewWatchParty(ctx context.Context, in *NewPartyRequest, opts ...grpc.CallOption) (*NewPartyResponse, error)
 	BecomeLeader(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*LeaderResponse, error)
 	JoinParty(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*Empty, error)
 	HeartBeat(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*Empty, error)
@@ -31,6 +32,15 @@ type partyserviceClient struct {
 
 func NewPartyserviceClient(cc grpc.ClientConnInterface) PartyserviceClient {
 	return &partyserviceClient{cc}
+}
+
+func (c *partyserviceClient) NewWatchParty(ctx context.Context, in *NewPartyRequest, opts ...grpc.CallOption) (*NewPartyResponse, error) {
+	out := new(NewPartyResponse)
+	err := c.cc.Invoke(ctx, "/proto.Partyservice/NewWatchParty", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *partyserviceClient) BecomeLeader(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*LeaderResponse, error) {
@@ -82,6 +92,7 @@ func (c *partyserviceClient) NextVideo(ctx context.Context, in *PartyRequest, op
 // All implementations must embed UnimplementedPartyserviceServer
 // for forward compatibility
 type PartyserviceServer interface {
+	NewWatchParty(context.Context, *NewPartyRequest) (*NewPartyResponse, error)
 	BecomeLeader(context.Context, *PartyRequest) (*LeaderResponse, error)
 	JoinParty(context.Context, *PartyRequest) (*Empty, error)
 	HeartBeat(context.Context, *PartyRequest) (*Empty, error)
@@ -94,6 +105,9 @@ type PartyserviceServer interface {
 type UnimplementedPartyserviceServer struct {
 }
 
+func (UnimplementedPartyserviceServer) NewWatchParty(context.Context, *NewPartyRequest) (*NewPartyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewWatchParty not implemented")
+}
 func (UnimplementedPartyserviceServer) BecomeLeader(context.Context, *PartyRequest) (*LeaderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BecomeLeader not implemented")
 }
@@ -120,6 +134,24 @@ type UnsafePartyserviceServer interface {
 
 func RegisterPartyserviceServer(s grpc.ServiceRegistrar, srv PartyserviceServer) {
 	s.RegisterService(&Partyservice_ServiceDesc, srv)
+}
+
+func _Partyservice_NewWatchParty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewPartyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PartyserviceServer).NewWatchParty(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Partyservice/NewWatchParty",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PartyserviceServer).NewWatchParty(ctx, req.(*NewPartyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Partyservice_BecomeLeader_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -219,6 +251,10 @@ var Partyservice_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "proto.Partyservice",
 	HandlerType: (*PartyserviceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "NewWatchParty",
+			Handler:    _Partyservice_NewWatchParty_Handler,
+		},
 		{
 			MethodName: "BecomeLeader",
 			Handler:    _Partyservice_BecomeLeader_Handler,
