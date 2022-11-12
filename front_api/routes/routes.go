@@ -8,9 +8,11 @@ import (
 	"time"
 
 	"github.com/horahoradev/horahora/front_api/config"
+	partyproto "github.com/horahoradev/horahora/partyservice/protocol"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,18 +20,20 @@ type RouteHandler struct {
 	v videoproto.VideoServiceClient
 	u userproto.UserServiceClient
 	s schedulerproto.SchedulerClient
+	p partyproto.PartyserviceClient
 }
 
-func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient, s schedulerproto.SchedulerClient) *RouteHandler {
+func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient, s schedulerproto.SchedulerClient, p partyproto.PartyserviceClient) *RouteHandler {
 	return &RouteHandler{
 		v: v,
 		u: u,
 		s: s,
+		p: p,
 	}
 }
 
 func SetupRoutes(e *echo.Echo, cfg *config.Config) {
-	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient)
+	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient, cfg.PartyClient)
 
 	e.GET("/api/home", r.getHome)
 	e.GET("/api/users/:id", r.getUser)
@@ -62,6 +66,22 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/api/delete/:id", r.handleDelete)
 	e.POST("/api/setrank/:userid/:rank", r.handleSetRank)
 	e.POST("/api/password-reset", r.handlePasswordReset)
+
+	// Watch party stuff goes here
+	/*
+		POST /api/newwatchparty
+		POST /api/joinwachparty
+		POST /api/heartbeat
+		GET /api/partystate:id
+		POST /api/addvideo/:id
+		POST /api/nextvideo/:id
+	*/
+	e.POST("/api/newwatchparty", r.handleNewWatchParty)
+	e.POST("/api/joinwatchparty", r.handleJoinWatchParty)
+	e.POST("/api/heartbeat", r.handleHeartbeat)
+	e.GET("/api/partystate/:id", r.handleGetPartyState)
+	e.POST("/api/addvideo/:id", r.handleAddVideo)
+	e.POST("/api/nextvideo/:id", r.handleNextVideo)
 }
 
 type Video struct {
