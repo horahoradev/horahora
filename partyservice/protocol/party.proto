@@ -39,6 +39,7 @@ message PartyState {
 message User {
     int64 UserID = 1;
     bool IsLeader = 2;
+    string Username = 3;
 }
 
 message Video {

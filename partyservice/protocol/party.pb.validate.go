@@ -734,6 +734,8 @@ func (m *User) validate(all bool) error {
 
 	// no validation rules for IsLeader
 
+	// no validation rules for Username
+
 	if len(errors) > 0 {
 		return UserMultiError(errors)
 	}
