@@ -342,6 +342,109 @@ var _ interface {
 	ErrorName() string
 } = PartyRequestValidationError{}
 
+// Validate checks the field values on VideoRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *VideoRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on VideoRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in VideoRequestMultiError, or
+// nil if none found.
+func (m *VideoRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *VideoRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PartyID
+
+	// no validation rules for VideoURL
+
+	if len(errors) > 0 {
+		return VideoRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// VideoRequestMultiError is an error wrapping multiple validation errors
+// returned by VideoRequest.ValidateAll() if the designated constraints aren't met.
+type VideoRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m VideoRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m VideoRequestMultiError) AllErrors() []error { return m }
+
+// VideoRequestValidationError is the validation error returned by
+// VideoRequest.Validate if the designated constraints aren't met.
+type VideoRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e VideoRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e VideoRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e VideoRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e VideoRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e VideoRequestValidationError) ErrorName() string { return "VideoRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e VideoRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sVideoRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = VideoRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = VideoRequestValidationError{}
+
 // Validate checks the field values on Empty with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

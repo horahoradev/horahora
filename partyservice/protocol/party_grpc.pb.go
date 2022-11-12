@@ -23,6 +23,7 @@ type PartyserviceClient interface {
 	JoinParty(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*Empty, error)
 	HeartBeat(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetPartyState(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*PartyState, error)
+	AddVideo(ctx context.Context, in *VideoRequest, opts ...grpc.CallOption) (*Empty, error)
 	NextVideo(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
@@ -79,6 +80,15 @@ func (c *partyserviceClient) GetPartyState(ctx context.Context, in *PartyRequest
 	return out, nil
 }
 
+func (c *partyserviceClient) AddVideo(ctx context.Context, in *VideoRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/proto.Partyservice/AddVideo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *partyserviceClient) NextVideo(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/proto.Partyservice/NextVideo", in, out, opts...)
@@ -97,6 +107,7 @@ type PartyserviceServer interface {
 	JoinParty(context.Context, *PartyRequest) (*Empty, error)
 	HeartBeat(context.Context, *PartyRequest) (*Empty, error)
 	GetPartyState(context.Context, *PartyRequest) (*PartyState, error)
+	AddVideo(context.Context, *VideoRequest) (*Empty, error)
 	NextVideo(context.Context, *PartyRequest) (*Empty, error)
 	mustEmbedUnimplementedPartyserviceServer()
 }
@@ -119,6 +130,9 @@ func (UnimplementedPartyserviceServer) HeartBeat(context.Context, *PartyRequest)
 }
 func (UnimplementedPartyserviceServer) GetPartyState(context.Context, *PartyRequest) (*PartyState, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPartyState not implemented")
+}
+func (UnimplementedPartyserviceServer) AddVideo(context.Context, *VideoRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddVideo not implemented")
 }
 func (UnimplementedPartyserviceServer) NextVideo(context.Context, *PartyRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NextVideo not implemented")
@@ -226,6 +240,24 @@ func _Partyservice_GetPartyState_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Partyservice_AddVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VideoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PartyserviceServer).AddVideo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Partyservice/AddVideo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PartyserviceServer).AddVideo(ctx, req.(*VideoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Partyservice_NextVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PartyRequest)
 	if err := dec(in); err != nil {
@@ -270,6 +302,10 @@ var Partyservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPartyState",
 			Handler:    _Partyservice_GetPartyState_Handler,
+		},
+		{
+			MethodName: "AddVideo",
+			Handler:    _Partyservice_AddVideo_Handler,
 		},
 		{
 			MethodName: "NextVideo",

@@ -9,6 +9,8 @@ service Partyservice {
     rpc JoinParty(PartyRequest) returns (Empty) {}
     rpc HeartBeat(PartyRequest) returns (Empty) {}
     rpc GetPartyState(PartyRequest) returns (PartyState) {}
+
+    rpc AddVideo (VideoRequest) returns (Empty) {}
     rpc NextVideo(PartyRequest) returns (Empty) {}
 }
 
@@ -23,6 +25,11 @@ message NewPartyResponse {
 message PartyRequest {
     int64 UserID = 1;
     int64 PartyID = 2;
+}
+
+message VideoRequest {
+    int64 PartyID = 1;
+    string VideoURL = 2;
 }
 
 message Empty {}

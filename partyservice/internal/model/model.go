@@ -35,6 +35,12 @@ func (p *PartyRepo) DeleteFromWatchParty(userID, partyID int) error {
 	return err
 }
 
+func (p *PartyRepo) NewVideo(videoLocation, Title string, VideoID int) error {
+	sql := "INSERT INTO video_queue (Title, VideoID, Location, TS) VALUES ($1, $2, $3, Now())"
+	_, err := p.db.Exec(sql, Title, VideoID, videoLocation)
+	return err
+}
+
 func (p *PartyRepo) NextVideo(partyID int) error {
 	sql := "DELETE FROM videos WHERE id in (select id from video_queue WHERE PartyID = $1 ORDER BY TS desc LIMIT 1 ) LIMIT 1"
 	_, err := p.db.Exec(sql, partyID)
