@@ -68,14 +68,6 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/api/password-reset", r.handlePasswordReset)
 
 	// Watch party stuff goes here
-	/*
-		POST /api/newwatchparty
-		POST /api/joinwachparty
-		POST /api/heartbeat
-		GET /api/partystate:id
-		POST /api/addvideo/:id
-		POST /api/nextvideo/:id
-	*/
 	e.POST("/api/newwatchparty", r.handleNewWatchParty)
 	e.POST("/api/joinwatchparty", r.handleJoinWatchParty)
 	e.POST("/api/heartbeat", r.handleHeartbeat)

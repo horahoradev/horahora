@@ -1,5 +1,5 @@
 CREATE TABLE parties (
-    id SERIAL primary key,
+    id int primary key,
     LeaderID int
 );
 

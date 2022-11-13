@@ -15,8 +15,8 @@ func New(db *sqlx.DB) *PartyRepo {
 	}
 }
 
-func (p *PartyRepo) CreateWatchParty(userID int) error {
-	sql := "INSERT INTO parties (LeaderID) VALUES ($1)"
+func (p *PartyRepo) CreateWatchParty(userID, channelID int) error {
+	sql := "INSERT INTO parties (LeaderID, id) VALUES ($1, $2)"
 
 	_, err := p.db.Exec(sql, userID)
 	return err

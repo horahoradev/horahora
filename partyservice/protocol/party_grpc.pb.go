@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PartyserviceClient interface {
-	NewWatchParty(ctx context.Context, in *NewPartyRequest, opts ...grpc.CallOption) (*NewPartyResponse, error)
+	NewWatchParty(ctx context.Context, in *NewPartyRequest, opts ...grpc.CallOption) (*Empty, error)
 	BecomeLeader(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*LeaderResponse, error)
 	JoinParty(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*Empty, error)
 	HeartBeat(ctx context.Context, in *PartyRequest, opts ...grpc.CallOption) (*Empty, error)
@@ -35,8 +35,8 @@ func NewPartyserviceClient(cc grpc.ClientConnInterface) PartyserviceClient {
 	return &partyserviceClient{cc}
 }
 
-func (c *partyserviceClient) NewWatchParty(ctx context.Context, in *NewPartyRequest, opts ...grpc.CallOption) (*NewPartyResponse, error) {
-	out := new(NewPartyResponse)
+func (c *partyserviceClient) NewWatchParty(ctx context.Context, in *NewPartyRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/proto.Partyservice/NewWatchParty", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (c *partyserviceClient) NextVideo(ctx context.Context, in *PartyRequest, op
 // All implementations must embed UnimplementedPartyserviceServer
 // for forward compatibility
 type PartyserviceServer interface {
-	NewWatchParty(context.Context, *NewPartyRequest) (*NewPartyResponse, error)
+	NewWatchParty(context.Context, *NewPartyRequest) (*Empty, error)
 	BecomeLeader(context.Context, *PartyRequest) (*LeaderResponse, error)
 	JoinParty(context.Context, *PartyRequest) (*Empty, error)
 	HeartBeat(context.Context, *PartyRequest) (*Empty, error)
@@ -116,7 +116,7 @@ type PartyserviceServer interface {
 type UnimplementedPartyserviceServer struct {
 }
 
-func (UnimplementedPartyserviceServer) NewWatchParty(context.Context, *NewPartyRequest) (*NewPartyResponse, error) {
+func (UnimplementedPartyserviceServer) NewWatchParty(context.Context, *NewPartyRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewWatchParty not implemented")
 }
 func (UnimplementedPartyserviceServer) BecomeLeader(context.Context, *PartyRequest) (*LeaderResponse, error) {

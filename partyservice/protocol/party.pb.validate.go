@@ -59,6 +59,8 @@ func (m *NewPartyRequest) validate(all bool) error {
 
 	// no validation rules for UserID
 
+	// no validation rules for ChannelID
+
 	if len(errors) > 0 {
 		return NewPartyRequestMultiError(errors)
 	}
