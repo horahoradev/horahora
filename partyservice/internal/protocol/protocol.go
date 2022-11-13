@@ -20,13 +20,14 @@ import (
 )
 
 type partyServer struct {
+	proto.UnimplementedPartyserviceServer
 	PartyRepo *model.PartyRepo
 	mut       sync.Mutex
 	timerMap  map[int]*time.Timer
 	v         videoservice.VideoServiceClient
 }
 
-var _ proto.UnimplementedPartyserviceServer = (*partyServer)(nil)
+var _ proto.PartyserviceServer = (*partyServer)(nil)
 
 func New(db *sqlx.DB, v videoservice.VideoServiceClient) (*partyServer, error) {
 	return &partyServer{
@@ -49,7 +50,7 @@ func (p *partyServer) Run(port int) error {
 
 }
 
-func (p *partyServer) NewWatchParty(ctx context.Context, req *proto.NewPartyRequest) (*proto.NewPartyResponse, error) {
+func (p *partyServer) NewWatchParty(ctx context.Context, req *proto.NewPartyRequest) (*proto.Empty, error) {
 	err := p.PartyRepo.CreateWatchParty(int(req.UserID), int(req.ChannelID))
 	if err != nil {
 		return nil, err
