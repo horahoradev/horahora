@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net"
 	"net/url"
+	"path"
 	"sync"
 	"time"
 
@@ -14,6 +14,7 @@ import (
 	proto "github.com/horahoradev/horahora/partyservice/protocol"
 	videoservice "github.com/horahoradev/horahora/video_service/protocol"
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -39,7 +40,9 @@ func New(db *sqlx.DB, v videoservice.VideoServiceClient) (*partyServer, error) {
 }
 
 func (p *partyServer) Run(port int) error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	addr := fmt.Sprintf(":%d", port)
+	log.Infof("Listening on %v", addr)
+	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -114,7 +117,8 @@ func (p *partyServer) AddVideo(ctx context.Context, req *proto.VideoRequest) (*p
 
 	// happy path
 	// FIXME
-	videoID := url.Path[len(url.Path)-1]
+	videoID := path.Base(url.Path)
+	log.Infof("Video ID: %v", videoID)
 
 	resp, err := p.v.GetVideo(context.Background(), &videoservice.VideoRequest{
 		VideoID: fmt.Sprintf("%v", videoID),
@@ -123,7 +127,7 @@ func (p *partyServer) AddVideo(ctx context.Context, req *proto.VideoRequest) (*p
 		return nil, err
 	}
 
-	return &proto.Empty{}, p.PartyRepo.NewVideo(resp.VideoLoc, resp.VideoTitle, int(resp.VideoID))
+	return &proto.Empty{}, p.PartyRepo.NewVideo(resp.VideoLoc, resp.VideoTitle, int(resp.VideoID), int(req.PartyID))
 }
 
 func (p *partyServer) NextVideo(ctx context.Context, req *proto.PartyRequest) (*proto.Empty, error) {

@@ -19,6 +19,7 @@ set -euo pipefail
   flyway -user=$POSTGRES_USER -password=$POSTGRES_PASSWORD -url=jdbc:postgresql://localhost:5432/userservice -locations=filesystem:///postgres/user_service/migrations migrate
   flyway -user=$POSTGRES_USER -password=$POSTGRES_PASSWORD -url=jdbc:postgresql://localhost:5432/scheduler -locations=filesystem:///postgres/scheduler/migrations migrate
   flyway -user=$POSTGRES_USER -password=$POSTGRES_PASSWORD -url=jdbc:postgresql://localhost:5432/videoservice -locations=filesystem:///postgres/video_service/migrations migrate
+  flyway -user=$POSTGRES_USER -password=$POSTGRES_PASSWORD -url=jdbc:postgresql://localhost:5432/partyservice -locations=filesystem:///postgres/partyservice/migrations migrate
 
   echo "Seeding databases"
   # TODO(ivan): how do we want to make this so it runs only once

@@ -19,5 +19,7 @@ COPY --chown=postgres:postgres postgres/ /postgres/
 COPY --chown=postgres:postgres user_service/migrations/ /postgres/user_service/migrations/
 COPY --chown=postgres:postgres scheduler/migrations/ /postgres/scheduler/migrations/
 COPY --chown=postgres:postgres video_service/migrations/ /postgres/video_service/migrations/
+COPY --chown=postgres:postgres partyservice/migrations/ /postgres/partyservice/migrations/
+
 
 ENTRYPOINT ["/postgres/entrypoint.sh"]

@@ -36,8 +36,15 @@ func (v RouteHandler) handleNewWatchParty(c echo.Context) error {
 		return err
 	}
 
+	id := c.Param("id")
+	channelIDInt, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
 	_, err = v.p.NewWatchParty(context.Background(), &partyproto.NewPartyRequest{
-		UserID: profile.UserID,
+		UserID:    profile.UserID,
+		ChannelID: channelIDInt,
 	})
 
 	if err != nil {
@@ -53,8 +60,8 @@ func (v RouteHandler) handleJoinWatchParty(c echo.Context) error {
 		return err
 	}
 
-	partyID := c.FormValue("PartyID")
-	partyIDInt, err := strconv.ParseInt(partyID, 10, 64)
+	id := c.Param("id")
+	partyIDInt, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return err
 	}

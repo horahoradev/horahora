@@ -51,6 +51,7 @@ services:
       - UserServiceGRPCAddress=userservice:${GRPCPort}
       - VideoServiceGRPCAddress=videoservice:${GRPCPort}
       - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
+      - PartyServiceGRPCAddress=partyservice:${GRPCPort}
       - JaegerAddress=
     volumes:
       - ./front_api:/horahora/front_api
@@ -171,6 +172,36 @@ services:
     volumes:
       - ./user_service:/horahora/userservice
 
+  partyservice:
+    {% if build_images %}
+    build:
+      context: partyservice
+      dockerfile: Dockerfile
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+        GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
+      labels:
+        org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: partyservice
+    {%- else -%}
+    image: ghcr.io/horahoradev/horahora/horahora.partyservice:main
+    {% endif %}
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - pgs_host=postgres
+      - pgs_port=5432
+      - pgs_user=admin
+      - pgs_pass=password
+      - pgs_db=partyservice
+      - VideoServiceGRPCAddress=videoservice:7777
+      - GRPCPort=7777
+    volumes:
+      - ./partyservice:/horahora/partyservice
+
   postgres:
     build:
       context: .
@@ -187,7 +218,7 @@ services:
     volumes:
       - postgresdata_dev:/var/lib/postgresql/data
 
-  minio:
+  horaminio:
     build:
       context: minio
       dockerfile: Dockerfile

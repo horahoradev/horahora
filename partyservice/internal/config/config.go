@@ -24,7 +24,7 @@ type PostgresInfo struct {
 type config struct {
 	GRPCPort int `env:"GRPCPort,required"`
 
-	VideoserviceGRPCAddress string `env:"UserServiceGRPCAddress,required"`
+	VideoserviceGRPCAddress string `env:"VideoServiceGRPCAddress,required"`
 	VideoClient             videoproto.VideoServiceClient
 
 	PostgresInfo
@@ -33,7 +33,12 @@ type config struct {
 
 func New() (*config, error) {
 	config := config{}
-	err := env.Parse(&config.PostgresInfo)
+	err := env.Parse(&config)
+	if err != nil {
+		return nil, err
+	}
+
+	err = env.Parse(&config.PostgresInfo)
 	if err != nil {
 		return nil, err
 	}

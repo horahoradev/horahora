@@ -13,7 +13,7 @@ server {
     }
 
     location /otomads {
-        set $backend_service minio;
+        set $backend_service horaminio;
         proxy_pass http://$backend_service:9000$request_uri;
     }
 
