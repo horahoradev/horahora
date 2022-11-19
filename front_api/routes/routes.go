@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	socketio "github.com/googollee/go-socket.io"
 	"github.com/horahoradev/horahora/front_api/config"
 	partyproto "github.com/horahoradev/horahora/partyservice/protocol"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
@@ -17,23 +18,25 @@ import (
 )
 
 type RouteHandler struct {
-	v videoproto.VideoServiceClient
-	u userproto.UserServiceClient
-	s schedulerproto.SchedulerClient
-	p partyproto.PartyserviceClient
+	v   videoproto.VideoServiceClient
+	u   userproto.UserServiceClient
+	s   schedulerproto.SchedulerClient
+	p   partyproto.PartyserviceClient
+	srv *socketio.Server
 }
 
-func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient, s schedulerproto.SchedulerClient, p partyproto.PartyserviceClient) *RouteHandler {
+func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient, s schedulerproto.SchedulerClient, p partyproto.PartyserviceClient, srv *socketio.Server) *RouteHandler {
 	return &RouteHandler{
-		v: v,
-		u: u,
-		s: s,
-		p: p,
+		v:   v,
+		u:   u,
+		s:   s,
+		p:   p,
+		srv: srv,
 	}
 }
 
-func SetupRoutes(e *echo.Echo, cfg *config.Config) {
-	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient, cfg.PartyClient)
+func SetupRoutes(e *echo.Echo, cfg *config.Config, srv *socketio.Server) {
+	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient, cfg.PartyClient, srv)
 
 	e.GET("/api/home", r.getHome)
 	e.GET("/api/users/:id", r.getUser)

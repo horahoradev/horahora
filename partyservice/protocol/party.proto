@@ -30,7 +30,7 @@ message PartyRequest {
 
 message VideoRequest {
     int64 PartyID = 1;
-    string VideoURL = 2;
+    Video video = 2;
 }
 
 message Empty {}

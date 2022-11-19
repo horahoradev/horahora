@@ -47,6 +47,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./.env
+    ports:
+      - "8005:8000"
     environment:
       - UserServiceGRPCAddress=userservice:${GRPCPort}
       - VideoServiceGRPCAddress=videoservice:${GRPCPort}

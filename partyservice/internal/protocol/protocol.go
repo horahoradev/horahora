@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"net/url"
-	"path"
 	"sync"
 	"time"
 
@@ -110,24 +108,7 @@ func (p *partyServer) GetPartyState(ctx context.Context, req *proto.PartyRequest
 }
 
 func (p *partyServer) AddVideo(ctx context.Context, req *proto.VideoRequest) (*proto.Empty, error) {
-	url, err := url.Parse(req.VideoURL)
-	if err != nil {
-		return nil, err
-	}
-
-	// happy path
-	// FIXME
-	videoID := path.Base(url.Path)
-	log.Infof("Video ID: %v", videoID)
-
-	resp, err := p.v.GetVideo(context.Background(), &videoservice.VideoRequest{
-		VideoID: fmt.Sprintf("%v", videoID),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto.Empty{}, p.PartyRepo.NewVideo(resp.VideoLoc, resp.VideoTitle, int(resp.VideoID), int(req.PartyID))
+	return &proto.Empty{}, p.PartyRepo.NewVideo(req.Video.Location, req.Video.Title, int(req.Video.ID), int(req.PartyID))
 }
 
 func (p *partyServer) NextVideo(ctx context.Context, req *proto.PartyRequest) (*proto.Empty, error) {

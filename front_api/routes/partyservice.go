@@ -117,6 +117,11 @@ func (v RouteHandler) handleGetPartyState(c echo.Context) error {
 		UserID:  profile.UserID,
 		PartyID: idInt,
 	})
+	/*
+		title := c.FormValue("title")
+		description := c.FormValue("description")
+		tagsList := c.FormValue("tags")
+	*/
 
 	if err != nil {
 		return err
@@ -139,6 +144,23 @@ func (v RouteHandler) handleAddVideo(c echo.Context) error {
 
 	videoURL := c.FormValue("VideoURL")
 
+	url, err := url.Parse(videoURL))
+	if err != nil {
+		return nil, err
+	}
+
+	// happy path
+	// FIXME
+	videoID := path.Base(url.Path)
+	log.Infof("Video ID: %v", videoID)
+
+	resp, err := v.v.GetVideo(context.Background(), &videoservice.VideoRequest{
+		VideoID: fmt.Sprintf("%v", videoID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	_, err = v.p.AddVideo(context.Background(), &partyproto.VideoRequest{
 		PartyID:  partyID,
 		VideoURL: videoURL,
@@ -146,6 +168,11 @@ func (v RouteHandler) handleAddVideo(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	// Extremely dumb: just trigger a poll when we've added a new video
+	// I will fix this later to include all relevant info in events
+	// FIXME
+	v.srv.BroadcastToRoom("", "bcast", "event:addvideo", "addvideo")
 
 	return c.JSON(http.StatusOK, nil)
 }
@@ -170,11 +197,7 @@ func (v RouteHandler) handleNextVideo(c echo.Context) error {
 		return err
 	}
 
+	v.srv.BroadcastToRoom("", "bcast", "event:nextvideo", "nextvideo")
+
 	return c.JSON(http.StatusOK, nil)
 }
-
-/*
-	title := c.FormValue("title")
-	description := c.FormValue("description")
-	tagsList := c.FormValue("tags")
-*/
