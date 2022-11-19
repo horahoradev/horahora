@@ -135,6 +135,8 @@ github.com/horahoradev/horahora/partyservice v0.0.0-20221112210953-d9e26138d2ba 
 github.com/horahoradev/horahora/partyservice v0.0.0-20221112210953-d9e26138d2ba/go.mod h1:mOWKslyo5g0J+92GVnPjJqHn0m+pUtwxHbz71Ianp6A=
 github.com/horahoradev/horahora/partyservice v0.0.0-20221113202031-7bfa4ba23f59 h1:aciq1GFjcxBAiNbtLtLbTpIB3PVkaG0yWmKn1MZYWFA=
 github.com/horahoradev/horahora/partyservice v0.0.0-20221113202031-7bfa4ba23f59/go.mod h1:mOWKslyo5g0J+92GVnPjJqHn0m+pUtwxHbz71Ianp6A=
+github.com/horahoradev/horahora/partyservice v0.0.0-20221119201938-57cd4dc334da h1:GOt925CcrlZeBKJ5JH1m8f60++mVfVHde9BOZAcaoPI=
+github.com/horahoradev/horahora/partyservice v0.0.0-20221119201938-57cd4dc334da/go.mod h1:W3mFrLBcBbR3hFlO5RFMxkQbIKuxoQ1CI7GMyHqFruM=
 github.com/horahoradev/horahora/scheduler v0.0.0-20221007025403-b65c4157a3ca h1:vhpbYkA4MDjphqw6U5wr8S/22GMeE2swhyXZy7EWo6o=
 github.com/horahoradev/horahora/scheduler v0.0.0-20221007025403-b65c4157a3ca/go.mod h1:cYpwXaKWyY2cKD2DAjrZDRM+EsQM9/tYrojcRJaWSS4=
 github.com/horahoradev/horahora/user_service v0.0.0-20210710200304-9892f28bcdf0/go.mod h1:c2+68tn7GMxziU+YXln0KRssXWtaB8kYqe8zONW5PN4=

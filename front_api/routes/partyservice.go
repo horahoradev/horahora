@@ -2,12 +2,17 @@ package routes
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"net/url"
+	"path"
 	"strconv"
 
 	partyproto "github.com/horahoradev/horahora/partyservice/protocol"
+	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 /*
@@ -130,6 +135,12 @@ func (v RouteHandler) handleGetPartyState(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
+type NewVideoMsg struct {
+	Title    string
+	ID       int
+	Location string
+}
+
 func (v RouteHandler) handleAddVideo(c echo.Context) error {
 	id := c.Param("id")
 	partyID, err := strconv.ParseInt(id, 10, 64)
@@ -144,9 +155,9 @@ func (v RouteHandler) handleAddVideo(c echo.Context) error {
 
 	videoURL := c.FormValue("VideoURL")
 
-	url, err := url.Parse(videoURL))
+	url, err := url.Parse(videoURL)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// happy path
@@ -154,25 +165,31 @@ func (v RouteHandler) handleAddVideo(c echo.Context) error {
 	videoID := path.Base(url.Path)
 	log.Infof("Video ID: %v", videoID)
 
-	resp, err := v.v.GetVideo(context.Background(), &videoservice.VideoRequest{
+	resp, err := v.v.GetVideo(context.Background(), &videoproto.VideoRequest{
 		VideoID: fmt.Sprintf("%v", videoID),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = v.p.AddVideo(context.Background(), &partyproto.VideoRequest{
-		PartyID:  partyID,
-		VideoURL: videoURL,
 	})
 	if err != nil {
 		return err
 	}
 
-	// Extremely dumb: just trigger a poll when we've added a new video
-	// I will fix this later to include all relevant info in events
-	// FIXME
-	v.srv.BroadcastToRoom("", "bcast", "event:addvideo", "addvideo")
+	_, err = v.p.AddVideo(context.Background(), &partyproto.VideoRequest{
+		PartyID: partyID,
+		Video: &partyproto.Video{
+			Title:    resp.VideoTitle,
+			ID:       resp.VideoID,
+			Location: resp.VideoLoc,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	msg := NewVideoMsg{
+		Title:    resp.VideoTitle,
+		ID:       int(resp.VideoID),
+		Location: resp.VideoLoc,
+	}
+
+	v.srv.BroadcastToRoom("", "bcast", "event:addvideo", msg)
 
 	return c.JSON(http.StatusOK, nil)
 }

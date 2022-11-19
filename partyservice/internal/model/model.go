@@ -42,7 +42,7 @@ func (p *PartyRepo) NewVideo(videoLocation, Title string, VideoID, PartyID int) 
 }
 
 func (p *PartyRepo) NextVideo(partyID int) error {
-	sql := "DELETE FROM video_queue WHERE id in (select id from video_queue WHERE PartyID = $1 ORDER BY TS desc LIMIT 1 )"
+	sql := "DELETE FROM video_queue WHERE id in (select id from video_queue WHERE PartyID = $1 ORDER BY TS asc LIMIT 1 )"
 	_, err := p.db.Exec(sql, partyID)
 	return err
 }
