@@ -25,7 +25,6 @@ export async function apiFetch<ResBody = never>({
   // Why the hell does the status say 200 if it's a 301??
   if (response.redirected) {
     console.log(`Redirecting to new location: ${response.url}`);
-    location.replace(response.url);
   }
 
   if (!response.ok) {
