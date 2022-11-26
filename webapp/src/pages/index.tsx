@@ -45,7 +45,7 @@ export function HomePage() {
   }, [currPage, isReady]);
 
   return (
-    <Page title="Videos">
+    <Page>
       {!pageData ? (
         <p>Loading...</p>
       ) : (

@@ -7,12 +7,20 @@
   --local-colour2-secondary: var(--colour1-primary-transparent);
 
   display: block;
-  height: var(--local-image-height, 10em);
+  padding: 0px;
+  margin: 0px;
   // background-color: var(--colour1-secondary-transparent);
   border: none;
 }
 
-.image {
-  height: 200px;
+.a {
   width: 100%;
+  display: inline-block;
+}
+
+.image {
+  height: 150px;
+  display: relative;
+  // object-fit: cover;
+  border-radius: 15px;
 }

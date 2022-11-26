@@ -1,4 +1,24 @@
 server {
+    listen  80;
+    server_name  neko.{{ origin }};
+
+
+    location / {
+        proxy_pass http://neko:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 86400;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $server_port;
+        proxy_set_header X-Forwarded-Protocol $scheme;
+    }
+}
+
+server {
     listen       80;
     listen  [::]:80;
     server_name  {{ origin }};
@@ -107,6 +127,11 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
         proxy_set_header Host $host;
+    }
+
+    location /nicovideo {
+        proxy_pass https://embed.nicovideo.jp/;
+        rewrite /nicovideo(.*) /watch$1 break;
     }
 
     location / {

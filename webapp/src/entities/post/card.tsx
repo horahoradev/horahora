@@ -35,12 +35,6 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
   return (
     <Card {...blockProps}>
       <CardHeader>
-        <a id={`/videos/${VideoID}`} href={`/videos/${VideoID}`}>
-          <Heading level={headingLevel}>{Title}</Heading>
-        </a>
-      </CardHeader>
-
-      <CardFooter>
       <ImageLink
           className={styles.preview}
           src={ThumbnailLoc}
@@ -52,6 +46,12 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
             img.src = ThumbnailLoc != null ? `${ThumbnailLoc.slice(0, -6)}.jpg` : "";
           }}
         />
+        <a id={`/videos/${VideoID}`} href={`/videos/${VideoID}`}>
+          {Title}
+        </a>
+      </CardHeader>
+
+      {/* <CardFooter>
         <DL>
           <DS
             isHorizontal
@@ -71,7 +71,7 @@ function Component({ post, headingLevel, ...blockProps }: IPostVideoCardProps) {
 
           />
         </DL>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 }

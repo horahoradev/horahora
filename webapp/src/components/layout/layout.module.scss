@@ -17,15 +17,11 @@
   align-items: center;
   gap: $size-normal;
   background-color: var(--colour1-secondary-transparent);
-  padding: $size-small $size-normal;
-
-  @media (min-width: $width-tablet) {
-    padding: $size-small $size-big;
-  }
+  padding: $size-small $size-large;
 }
 
 .nav {
-  flex-basis: $width-laptop;
+  flex-basis: 100%;
 }
 
 .logo {
@@ -36,7 +32,7 @@
 .list {
   display: flex;
   justify-content: space-between;
-  gap: $size-normal;
+  gap: 0px;
 }
 
 .logo {

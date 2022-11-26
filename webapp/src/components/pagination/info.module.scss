@@ -1,5 +1,8 @@
 @use "../../styles/variables/sass.scss" as *;
 
 .block {
-  text-align: center;
+  text-align: left;
+  padding-left: $size-large;
+  padding-top: $size-large;
+  padding-bottom: 0px;
 }

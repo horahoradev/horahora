@@ -3,10 +3,10 @@
 .block {
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
   gap: $size-normal;
-  padding: $size-normal 0;
+  padding: 0px $size-large;
 }
 
 .cardlist {
@@ -26,7 +26,7 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
-  flex: 0 1 $width-mobile;
+  flex: 0 1 200px;
   background-color: var(--colour1-primary);
   border-radius: 10px;
   border: $size-thin solid transparent;
@@ -34,7 +34,7 @@
   transition-duration: var(--duration-global);
 
   & > * {
-    padding: $size-normal;
+    padding: 0;
   }
 
   &:hover,
@@ -44,19 +44,12 @@
 }
 
 .header {
-  margin: 0px auto;
-  padding-bottom: $size-small;
+  margin: 0px 0px;
+  width: 100%;
   overflow-wrap: anywhere;
 }
 
 .body {
   width: 100%;
   padding: $size-small $size-normal;
-}
-
-.footer {
-  width: 100%;
-  align-self: flex-end;
-  gap: $size-small;
-  padding-top: $size-small;
 }
