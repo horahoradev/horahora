@@ -269,14 +269,21 @@ services:
       - scheduler
       - videoservice
       - stomp_proxy
-      - minio
+      - horaminio
     environment:
       - WEBAPP_ORIGIN=${WEBAPP_ORIGIN}
     volumes:
       - ./static:/etc/nginx/html/static/images
       - ./configs/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./videos/otomads:/etc/nginx/html/otomads
-
+  prometheus:
+    image: prom/prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
   rabbitmq:
     build:
       context: activemq
@@ -307,87 +314,51 @@ services:
     image: eqalpha/keydb
     restart: always
 
-  # MongoDB database
-  database:
-    image: mongo
-    restart: always
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
     volumes:
-      - ./data/db:/data/db
-
-  # API server (delta)
-  api:
-    image: ghcr.io/revoltchat/server:20220715-1
-    env_file: .env
-    depends_on:
-      - database
-      - redis
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     ports:
-      - "8000:8000"
+      - 9100:9100
     restart: always
+    deploy:
+      mode: global
 
-  # Events service (quark)
-  events:
-    image: ghcr.io/revoltchat/bonfire:20220715-1
-    env_file: .env
-    depends_on:
-      - database
-      - redis
-    restart: always
-
-  # Web App (revite)
-  web:
-    build:
-      context: revite
-      dockerfile: Dockerfile
-    env_file: .env
-    restart: always
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
     ports:
-      - "5000:5000"
-    volumes:
-      - ./revite/src:/usr/src/app/src
-
-  # S3-compatible storage server
-  minio:
-    image: minio/minio
-    command: server /data
-    env_file: .env
-    volumes:
-      - ./data/minio:/data
+      - 8080:8080
     restart: always
+    deploy:
+      mode: global
 
-  # Create buckets for minio.
-  createbuckets:
-    image: minio/mc
+  grafana:
+    image: grafana/grafana
+    user: "472"
     depends_on:
-      - minio
-    env_file: .env
-    entrypoint: >
-      /bin/sh -c "
-      while ! curl -s --output /dev/null --connect-timeout 1 http://minio:9000; do echo 'Waiting minio...' && sleep 0.1; done;
-      /usr/bin/mc alias set minio http://minio:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD;
-      /usr/bin/mc mb minio/attachments;
-      /usr/bin/mc mb minio/avatars;
-      /usr/bin/mc mb minio/backgrounds;
-      /usr/bin/mc mb minio/icons;
-      /usr/bin/mc mb minio/banners;
-      /usr/bin/mc mb minio/emojis;
-      exit 0;
-      "
-  # File server (autumn)
-  autumn:
-    image: ghcr.io/revoltchat/autumn:1.1.5
-    env_file: .env
-    depends_on:
-      - database
-      - createbuckets
-    environment:
-      - AUTUMN_MONGO_URI=mongodb://database
-    restart: always
-
-  # Metadata and image proxy (january)
-  january:
-    image: ghcr.io/revoltchat/january:master
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/:/etc/grafana/provisioning/
     restart: always
 
 volumes:
-  postgresdata_dev:
+  postgresdata_dev: {}
+  prometheus_data: {}
+  grafana_data: {}

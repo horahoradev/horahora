@@ -91,9 +91,9 @@ function UnapprovedVideosPage(params: any) {
         </TableRow>
         </TableHead>
         <TableBody>
-        {unapprovedvideos ? unapprovedvideos.map((row) => (
+        {unapprovedvideos ? unapprovedvideos.map((row: any) => (
             <TableRow
-            key={row.video_url}
+            key={row.VideoID}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
             <TableCell align="left">{row.VideoID}</TableCell>
