@@ -274,6 +274,346 @@ var _ interface {
 	ErrorName() string
 } = DownloadsInProgressResponseValidationError{}
 
+// Validate checks the field values on UnapprovedList with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UnapprovedList) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnapprovedList with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UnapprovedListMultiError,
+// or nil if none found.
+func (m *UnapprovedList) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnapprovedList) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetUnapprovedVideos() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UnapprovedListValidationError{
+						field:  fmt.Sprintf("UnapprovedVideos[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UnapprovedListValidationError{
+						field:  fmt.Sprintf("UnapprovedVideos[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UnapprovedListValidationError{
+					field:  fmt.Sprintf("UnapprovedVideos[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return UnapprovedListMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnapprovedListMultiError is an error wrapping multiple validation errors
+// returned by UnapprovedList.ValidateAll() if the designated constraints
+// aren't met.
+type UnapprovedListMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnapprovedListMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnapprovedListMultiError) AllErrors() []error { return m }
+
+// UnapprovedListValidationError is the validation error returned by
+// UnapprovedList.Validate if the designated constraints aren't met.
+type UnapprovedListValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnapprovedListValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnapprovedListValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnapprovedListValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnapprovedListValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnapprovedListValidationError) ErrorName() string { return "UnapprovedListValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UnapprovedListValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnapprovedList.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnapprovedListValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnapprovedListValidationError{}
+
+// Validate checks the field values on UnapprovedVideo with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UnapprovedVideo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnapprovedVideo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UnapprovedVideoMultiError, or nil if none found.
+func (m *UnapprovedVideo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnapprovedVideo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for VideoID
+
+	// no validation rules for Url
+
+	if len(errors) > 0 {
+		return UnapprovedVideoMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnapprovedVideoMultiError is an error wrapping multiple validation errors
+// returned by UnapprovedVideo.ValidateAll() if the designated constraints
+// aren't met.
+type UnapprovedVideoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnapprovedVideoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnapprovedVideoMultiError) AllErrors() []error { return m }
+
+// UnapprovedVideoValidationError is the validation error returned by
+// UnapprovedVideo.Validate if the designated constraints aren't met.
+type UnapprovedVideoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnapprovedVideoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnapprovedVideoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnapprovedVideoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnapprovedVideoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnapprovedVideoValidationError) ErrorName() string { return "UnapprovedVideoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UnapprovedVideoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnapprovedVideo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnapprovedVideoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnapprovedVideoValidationError{}
+
+// Validate checks the field values on ApproveVideoReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ApproveVideoReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ApproveVideoReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ApproveVideoReqMultiError, or nil if none found.
+func (m *ApproveVideoReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ApproveVideoReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for VideoID
+
+	if len(errors) > 0 {
+		return ApproveVideoReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// ApproveVideoReqMultiError is an error wrapping multiple validation errors
+// returned by ApproveVideoReq.ValidateAll() if the designated constraints
+// aren't met.
+type ApproveVideoReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ApproveVideoReqMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ApproveVideoReqMultiError) AllErrors() []error { return m }
+
+// ApproveVideoReqValidationError is the validation error returned by
+// ApproveVideoReq.Validate if the designated constraints aren't met.
+type ApproveVideoReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ApproveVideoReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ApproveVideoReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ApproveVideoReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ApproveVideoReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ApproveVideoReqValidationError) ErrorName() string { return "ApproveVideoReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ApproveVideoReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sApproveVideoReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ApproveVideoReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ApproveVideoReqValidationError{}
+
 // Validate checks the field values on Video with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
