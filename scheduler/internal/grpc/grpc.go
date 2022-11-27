@@ -142,3 +142,12 @@ func (s schedulerServer) GetDownloadsInProgress(ctx context.Context, req *proto.
 
 	return &proto.DownloadsInProgressResponse{Videos: ret}, nil
 }
+
+func (s schedulerServer) GetUnapprovedVideoList(ctx context.Context, in *proto.Empty) (*proto.UnapprovedList, error) {
+	return s.M.GetAllUnapprovedVideos()
+}
+
+func (s schedulerServer) ApproveVideo(ctx context.Context, req *proto.ApproveVideoReq) (*proto.Empty, error) {
+	err := s.M.ApproveVideo(req.VideoID)
+	return &proto.Empty{}, err
+}
