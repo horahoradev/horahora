@@ -66,12 +66,14 @@ github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2
 github.com/go-logfmt/logfmt v0.4.0/go.mod h1:3RMwSq7FuexP4Kalkev3ejPJsZTpXXBr9+V4qmtdjCk=
 github.com/go-redis/redis v6.15.8+incompatible/go.mod h1:NAIEuMOZ/fxfXJIrKDQDz8wamY7mA7PouImQ2Jvg6kA=
 github.com/go-redis/redis/v8 v8.11.5/go.mod h1:gREzHqY1hg6oD9ngVRbLStwAWKhA0FEgq8Jd4h5lpwo=
+github.com/go-redsync/redsync v1.4.2 h1:KADEZ2rlaHMZWnlkthQCxfGP+8ZWwJLiSjOYN3mntKA=
 github.com/go-redsync/redsync v1.4.2/go.mod h1:my8/M5YL986u2jBMtZTLkBIgBsKNNSixJWzWwISH6Uw=
 github.com/go-sql-driver/mysql v1.4.0/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/go-sql-driver/mysql v1.4.1/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/go-sql-driver/mysql v1.6.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
+github.com/go-stomp/stomp/v3 v3.0.5 h1:yOORvXLqSu0qF4loJjfWrcVE1o0+9cFudclcP0an36Y=
 github.com/go-stomp/stomp/v3 v3.0.5/go.mod h1:ztzZej6T2W4Y6FlD+Tb5n7HQP3/O5UNQiuC169pIp10=
 github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
 github.com/gofrs/uuid v4.0.0+incompatible h1:1SD/1F5pU8p29ybwgQSwpQk+mwdRrXCYuPhW6m+TnJw=
@@ -129,7 +131,9 @@ github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 h1:+9834+KizmvFV7pXQGSXQTsaW
 github.com/grpc-ecosystem/go-grpc-middleware v1.3.0/go.mod h1:z0ButlSOZa5vEBq9m2m2hlwIgKw+rp3sdCBRoJY+30Y=
 github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
 github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645/go.mod h1:6iZfnjpejD4L/4DwD7NryNaJyCQdzwWwH2MWhCA90Kw=
+github.com/hashicorp/errwrap v1.0.0 h1:hLrqtEDnRye3+sgx6z4qVLNuviH3MR5aQ0ykNJa/UYA=
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
+github.com/hashicorp/go-multierror v1.0.0 h1:iVjPR7a6H0tWELX5NxNe7bYopibicUzc7uPribsnS6o=
 github.com/hashicorp/go-multierror v1.0.0/go.mod h1:dHtQlpGsu+cZNNAkkCN/P3hoUDHhCYQXV3UM06sGGrk=
 github.com/horahoradev/horahora/partyservice v0.0.0-20221112210953-d9e26138d2ba h1:ykYDVSxmV+3wFhmAaszf2rtk5aQ5wdc8vDYoSiwqhZ0=
 github.com/horahoradev/horahora/partyservice v0.0.0-20221112210953-d9e26138d2ba/go.mod h1:mOWKslyo5g0J+92GVnPjJqHn0m+pUtwxHbz71Ianp6A=
@@ -139,6 +143,8 @@ github.com/horahoradev/horahora/partyservice v0.0.0-20221119201938-57cd4dc334da 
 github.com/horahoradev/horahora/partyservice v0.0.0-20221119201938-57cd4dc334da/go.mod h1:W3mFrLBcBbR3hFlO5RFMxkQbIKuxoQ1CI7GMyHqFruM=
 github.com/horahoradev/horahora/scheduler v0.0.0-20221007025403-b65c4157a3ca h1:vhpbYkA4MDjphqw6U5wr8S/22GMeE2swhyXZy7EWo6o=
 github.com/horahoradev/horahora/scheduler v0.0.0-20221007025403-b65c4157a3ca/go.mod h1:cYpwXaKWyY2cKD2DAjrZDRM+EsQM9/tYrojcRJaWSS4=
+github.com/horahoradev/horahora/scheduler v0.0.0-20221127021653-3ac658d2e012 h1:s+0uvPZREZUMYh58Fbta2yWLjWGW9N3s+Rkww0eBIXU=
+github.com/horahoradev/horahora/scheduler v0.0.0-20221127021653-3ac658d2e012/go.mod h1:cYpwXaKWyY2cKD2DAjrZDRM+EsQM9/tYrojcRJaWSS4=
 github.com/horahoradev/horahora/user_service v0.0.0-20210710200304-9892f28bcdf0/go.mod h1:c2+68tn7GMxziU+YXln0KRssXWtaB8kYqe8zONW5PN4=
 github.com/horahoradev/horahora/user_service v0.0.0-20210922030328-dee03a489f47/go.mod h1:z8FQUYNG7s+DiNmMkdAPG8BwuWjY0zUT+3980/VCjUM=
 github.com/horahoradev/horahora/user_service v0.0.0-20220615065242-005ce0eb6540 h1:9bsq13oRs5YHFGkFhmk4ggPdaaAhrs/jmMeB07CAKCo=

@@ -77,6 +77,9 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config, srv *socketio.Server) {
 	e.GET("/api/partystate/:id", r.handleGetPartyState)
 	e.POST("/api/addvideo/:id", r.handleAddVideo)
 	e.POST("/api/nextvideo/:id", r.handleNextVideo)
+
+	e.GET("/api/unapprovedvideos", r.getUnapprovedVideos)
+	e.POST("/api/approvevideosvideo/:id", r.handleSchedulerVideoApproavl)
 }
 
 type Video struct {
@@ -99,6 +102,11 @@ type VideoInProgress struct {
 	Website  string
 	VideoID  string
 	DlStatus string
+}
+
+type UnapprovedVideo struct {
+	URL     string
+	VideoID string
 }
 
 type VideoDetail struct {
