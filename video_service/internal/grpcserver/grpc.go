@@ -14,6 +14,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/go-redis/redis/v8"
 
 	"github.com/google/uuid"
@@ -28,6 +30,7 @@ import (
 
 	"github.com/horahoradev/horahora/video_service/internal/models"
 
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	proto "github.com/horahoradev/horahora/video_service/protocol"
 
@@ -72,6 +75,11 @@ func NewGRPCServer(bucketName string, db *sqlx.DB, port int, originFQDN string, 
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 		otgrpc.OpenTracingServerInterceptor(tracer))))
 	proto.RegisterVideoServiceServer(grpcServer, g)
+
+	grpc_prometheus.Register(grpcServer)
+	http.Handle("/metrics", promhttp.Handler())
+	go http.ListenAndServe(":8080", nil)
+
 	return grpcServer.Serve(lis)
 }
 

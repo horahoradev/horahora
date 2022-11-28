@@ -6,9 +6,17 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"net/http"
 
+	"github.com/opentracing/opentracing-go"
+
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/horahoradev/horahora/user_service/internal/auth"
 	"github.com/horahoradev/horahora/user_service/internal/model"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jmoiron/sqlx"
@@ -45,8 +53,15 @@ func NewGRPCServer(db *sqlx.DB, privateKey *rsa.PrivateKey, port int64) error {
 	}
 
 	log.Infof("Listening on port %d", port)
-	grpcServer := grpc.NewServer()
+	tracer := opentracing.NoopTracer{}
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+		otgrpc.OpenTracingServerInterceptor(tracer))))
 	proto.RegisterUserServiceServer(grpcServer, g)
+
+	grpc_prometheus.Register(grpcServer)
+	http.Handle("/metrics", promhttp.Handler())
+	go http.ListenAndServe(":8081", nil)
+
 	return grpcServer.Serve(lis)
 }
 

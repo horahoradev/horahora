@@ -1,0 +1,87 @@
+# MIT License
+
+# Copyright (c) 2017 Brian Christner
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+# I took the below from https://github.com/vegasbrianc/prometheus
+# thank you for your work!
+
+# my global config
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+      monitor: 'my-project'
+
+# Load and evaluate rules in this file every 'evaluation_interval' seconds.
+rule_files:
+  - 'alert.rules'
+  # - "first.rules"
+  # - "second.rules"
+
+# alert
+alerting:
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      - "alertmanager:9093"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+
+  - job_name: 'prometheus'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 15s
+
+    static_configs:
+         - targets: ['localhost:9090', 'frontapi:8083', 'videoservice:8080', 'userservice:8081', 'scheduler:8082']
+
+
+  - job_name: 'cadvisor'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 15s
+
+    dns_sd_configs:
+    - names:
+      - 'tasks.cadvisor'
+      type: 'A'
+      port: 8080
+
+#     static_configs:
+#          - targets: ['cadvisor:8080']
+
+  - job_name: 'node-exporter'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 15s
+
+    dns_sd_configs:
+    - names:
+      - 'tasks.node-exporter'
+      type: 'A'
+      port: 9100
