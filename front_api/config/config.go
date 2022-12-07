@@ -6,6 +6,7 @@ import (
 	"github.com/caarlos0/env"
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 
+	partyproto "github.com/horahoradev/horahora/partyservice/protocol"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
@@ -17,10 +18,12 @@ type Config struct {
 	UserServiceGRPCAddress      string `env:"UserServiceGRPCAddress,required"`
 	VideoServiceGRPCAddress     string `env:"VideoServiceGRPCAddress,required"`
 	SchedulerServiceGRPCAddress string `env:"SchedulerServiceGRPCAddress,required"`
+	PartyServiceGRPCAddress     string `env:"PartyServiceGRPCAddress,required"`
 
 	VideoClient     videoproto.VideoServiceClient
 	UserClient      userproto.UserServiceClient
 	SchedulerClient schedulerproto.SchedulerClient
+	PartyClient     partyproto.PartyserviceClient
 }
 
 func New() (*Config, error) {
@@ -56,9 +59,15 @@ func New() (*Config, error) {
 		return nil, err
 	}
 
+	partyGRPCConn, err := grpc.Dial(config.PartyServiceGRPCAddress, dialOpts...)
+	if err != nil {
+		return nil, err
+	}
+
 	config.SchedulerClient = schedulerproto.NewSchedulerClient(schedulerGRPCConn)
 	config.UserClient = userproto.NewUserServiceClient(userGRPCConn)
 	config.VideoClient = videoproto.NewVideoServiceClient(videoGRPCConn)
+	config.PartyClient = partyproto.NewPartyserviceClient(partyGRPCConn)
 
 	return &config, nil
 }

@@ -15,6 +15,7 @@ type LoggedInUserData struct {
 	UserID            int64  `json:"userID"`
 	Username          string `json:"username"`
 	ProfilePictureURL string `json:"profile_picture_url"`
+	Email             string `json:"email"`
 	Rank              int32  `json:"rank"`
 	Banned            bool   `json:"banned"`
 }
@@ -64,6 +65,7 @@ func (r *RouteHandler) getUserProfileInfo(c echo.Context) (*LoggedInUserData, er
 	l.Username = userResp.Username
 	// l.ProfilePictureURL = userResp. // TODO
 	l.Rank = int32(userResp.Rank)
+	l.Email = userResp.Email
 	l.UserID = idInt
 	return &l, nil
 }

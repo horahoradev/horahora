@@ -78,7 +78,7 @@ func (p *poller) getVideos() ([]*models.VideoDLRequest, error) {
 
 	var ret []*models.VideoDLRequest
 	for _, url := range urls {
-		sql := "WITH  j AS (SELECT v.id, v.video_id, v.url, downloads.id AS download_id FROM downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id WHERE downloads.url = $1 AND v.dlStatus = 0 LIMIT 10), up as (UPDATE videos SET dlStatus=3 WHERE videos.id IN (select j.id FROM j) RETURNING videos.id)  SELECT id, j.video_id, j.URL, j.download_id FROM j WHERE j.id IN (select * from up);"
+		sql := "WITH  j AS (SELECT v.id, v.video_id, v.url, downloads.id AS download_id FROM downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v ON d.video_id = v.id WHERE downloads.url = $1 AND v.dlStatus = 0 AND is_approved IS true LIMIT 10), up as (UPDATE videos SET dlStatus=3 WHERE videos.id IN (select j.id FROM j) RETURNING videos.id)  SELECT id, j.video_id, j.URL, j.download_id FROM j WHERE j.id IN (select * from up);"
 		res, err := p.Db.Query(sql, url)
 		if err != nil {
 			return nil, err

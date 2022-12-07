@@ -26,6 +26,20 @@ export async function createNewArchivalRequest(formParams: URLSearchParams) {
   return result;
 }
 
+export async function getUnapprovedVideos() {
+  const url = new PublicAPIURL("/unapprovedvideos");
+  const response = await fetch(url, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    const error = new FetchError("Failed to fetch unapproved videos", response);
+    throw error;
+  }
+
+  return await response.json();
+}
+
 interface IRequestInfo {
   ArchivalEvents: IArchivalEvent[];
   ArchivalRequests: IArchivalRequest[];
@@ -81,6 +95,21 @@ export async function deleteArchivalRequest(formParams: URLSearchParams) {
   }
 
   return null;
+}
+
+export async function approveVideo(videoID: string) {
+  const url = new PublicAPIURL(`/approvevideosvideo/${videoID}`);
+  const response = await fetch(url, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const error = new FetchError(
+      "Failed to approve video",
+      response
+    );
+    throw error;
+  }
 }
 
 export async function retryArchivalRequest(formParams: URLSearchParams) {

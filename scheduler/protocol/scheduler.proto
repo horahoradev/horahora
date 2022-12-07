@@ -15,6 +15,10 @@ service Scheduler {
     rpc retryArchivalRequestDownloadss(retryRequest) returns (Empty) {}
 
     rpc getDownloadsInProgress(downloadsInProgressRequest) returns (downloadsInProgressResponse) {}
+
+    rpc GetUnapprovedVideoList(Empty) returns (UnapprovedList) {}
+
+    rpc ApproveVideo(ApproveVideoReq) returns (Empty) {}
 }
 
 message downloadsInProgressRequest {}
@@ -22,6 +26,19 @@ message downloadsInProgressRequest {}
 
 message downloadsInProgressResponse {
     repeated Video videos = 1;
+}
+
+message UnapprovedList {
+    repeated UnapprovedVideo UnapprovedVideos = 1;
+}
+
+message UnapprovedVideo {
+    string VideoID = 1;
+    string url = 2;
+}
+
+message ApproveVideoReq {
+    string VideoID = 1;
 }
 
 message Video  {
