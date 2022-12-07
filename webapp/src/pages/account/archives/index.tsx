@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import ArchivalEventsPage from "./events/[download_id]";
+import UnapprovedVideosPage from "./unapprovedvideos";
 
 const darkTheme = createTheme({
   palette: {
@@ -120,6 +121,7 @@ function NewArchivePage() {
           <Tab label={<b>Archives</b>} {...a11yProps(0)} />
           <Tab label={<b>Video Downloads</b>} {...a11yProps(1)} />
           <Tab label={<b>Logs</b>} {...a11yProps(2)} />
+          <Tab label={<b>Unapproved Videos</b>} {...a11yProps(3)} />
         </Tabs>
         <TabPanel value={value} index={0}>
         <StartCardList>
@@ -137,10 +139,13 @@ function NewArchivePage() {
         </StartCardList>
         </TabPanel>
         <TabPanel value={value} index={1}>
-        {<ArchivalDownloadsPage></ArchivalDownloadsPage>}
+          {<ArchivalDownloadsPage></ArchivalDownloadsPage>}
         </TabPanel>
         <TabPanel value={value} index={2}>
-        <ArchivalEventsPage downloadID="all"></ArchivalEventsPage>
+          <ArchivalEventsPage downloadID="all"></ArchivalEventsPage>
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          <UnapprovedVideosPage downloadID="all"></UnapprovedVideosPage>
         </TabPanel>
       </Page>
     </ThemeProvider>

@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package proto;
+option go_package = "github.com/horahoradev/horahora/partyservice/protocol";
+
+service Partyservice {
+    rpc NewWatchParty(NewPartyRequest) returns (Empty) {}
+    rpc BecomeLeader(PartyRequest) returns (LeaderResponse) {}
+    rpc JoinParty(PartyRequest) returns (Empty) {}
+    rpc HeartBeat(PartyRequest) returns (Empty) {}
+    rpc GetPartyState(PartyRequest) returns (PartyState) {}
+
+    rpc AddVideo (VideoRequest) returns (Empty) {}
+    rpc NextVideo(PartyRequest) returns (Empty) {}
+}
+
+message NewPartyRequest {
+    int64 UserID = 1;
+    int64 ChannelID = 2;
+}
+
+message NewPartyResponse {
+    int64 PartyID = 1;
+}
+
+message PartyRequest {
+    int64 UserID = 1;
+    int64 PartyID = 2;
+}
+
+message VideoRequest {
+    int64 PartyID = 1;
+    Video video = 2;
+}
+
+message Empty {}
+
+message LeaderResponse {
+    bool IsLeader = 1;
+}
+
+message PartyState {
+    repeated User Users = 1;
+    repeated Video Videos = 2;
+}
+
+message User {
+    int64 UserID = 1;
+    bool IsLeader = 2;
+    string Username = 3;
+}
+
+message Video {
+    string Title = 1;
+    int64 ID = 2;
+    string Location = 3;
+}

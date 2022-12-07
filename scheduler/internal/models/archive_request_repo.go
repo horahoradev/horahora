@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"net/url"
 
+	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/jmoiron/sqlx"
@@ -37,6 +38,36 @@ type Event struct {
 	VideoURL       string
 	Message        string
 	EventTimestamp string
+}
+
+func (m *ArchiveRequestRepo) GetAllUnapprovedVideos() (*proto.UnapprovedList, error) {
+	sql := "select id, url from videos where is_approved is false ORDER BY id desc"
+	rows, err := m.Db.Query(sql)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := make([]*proto.UnapprovedVideo, 0)
+	for rows.Next() {
+		unapprovedVideo := proto.UnapprovedVideo{}
+		err = rows.Scan(&unapprovedVideo.VideoID, &unapprovedVideo.Url)
+		if err != nil {
+			return nil, err
+		}
+
+		ret = append(ret, &unapprovedVideo)
+	}
+
+	return &proto.UnapprovedList{
+		UnapprovedVideos: ret,
+	}, nil
+}
+
+func (m *ArchiveRequestRepo) ApproveVideo(videoID string) error {
+	sql := "UPDATE videos SET is_approved = true WHERE id = $1"
+
+	_, err := m.Db.Exec(sql, videoID)
+	return err
 }
 
 func (m *ArchiveRequestRepo) GetArchivalEvents(downloadID int64, showAll bool) ([]Event, error) {

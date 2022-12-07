@@ -24,6 +24,8 @@ type SchedulerClient interface {
 	DeleteArchivalRequest(ctx context.Context, in *DeletionRequest, opts ...grpc.CallOption) (*Empty, error)
 	RetryArchivalRequestDownloadss(ctx context.Context, in *RetryRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetDownloadsInProgress(ctx context.Context, in *DownloadsInProgressRequest, opts ...grpc.CallOption) (*DownloadsInProgressResponse, error)
+	GetUnapprovedVideoList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UnapprovedList, error)
+	ApproveVideo(ctx context.Context, in *ApproveVideoReq, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type schedulerClient struct {
@@ -88,6 +90,24 @@ func (c *schedulerClient) GetDownloadsInProgress(ctx context.Context, in *Downlo
 	return out, nil
 }
 
+func (c *schedulerClient) GetUnapprovedVideoList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UnapprovedList, error) {
+	out := new(UnapprovedList)
+	err := c.cc.Invoke(ctx, "/proto.Scheduler/GetUnapprovedVideoList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *schedulerClient) ApproveVideo(ctx context.Context, in *ApproveVideoReq, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/proto.Scheduler/ApproveVideo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SchedulerServer is the server API for Scheduler service.
 // All implementations must embed UnimplementedSchedulerServer
 // for forward compatibility
@@ -98,6 +118,8 @@ type SchedulerServer interface {
 	DeleteArchivalRequest(context.Context, *DeletionRequest) (*Empty, error)
 	RetryArchivalRequestDownloadss(context.Context, *RetryRequest) (*Empty, error)
 	GetDownloadsInProgress(context.Context, *DownloadsInProgressRequest) (*DownloadsInProgressResponse, error)
+	GetUnapprovedVideoList(context.Context, *Empty) (*UnapprovedList, error)
+	ApproveVideo(context.Context, *ApproveVideoReq) (*Empty, error)
 	mustEmbedUnimplementedSchedulerServer()
 }
 
@@ -122,6 +144,12 @@ func (UnimplementedSchedulerServer) RetryArchivalRequestDownloadss(context.Conte
 }
 func (UnimplementedSchedulerServer) GetDownloadsInProgress(context.Context, *DownloadsInProgressRequest) (*DownloadsInProgressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDownloadsInProgress not implemented")
+}
+func (UnimplementedSchedulerServer) GetUnapprovedVideoList(context.Context, *Empty) (*UnapprovedList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUnapprovedVideoList not implemented")
+}
+func (UnimplementedSchedulerServer) ApproveVideo(context.Context, *ApproveVideoReq) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApproveVideo not implemented")
 }
 func (UnimplementedSchedulerServer) mustEmbedUnimplementedSchedulerServer() {}
 
@@ -244,6 +272,42 @@ func _Scheduler_GetDownloadsInProgress_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Scheduler_GetUnapprovedVideoList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchedulerServer).GetUnapprovedVideoList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Scheduler/GetUnapprovedVideoList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchedulerServer).GetUnapprovedVideoList(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Scheduler_ApproveVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApproveVideoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchedulerServer).ApproveVideo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Scheduler/ApproveVideo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchedulerServer).ApproveVideo(ctx, req.(*ApproveVideoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Scheduler_ServiceDesc is the grpc.ServiceDesc for Scheduler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -274,6 +338,14 @@ var Scheduler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "getDownloadsInProgress",
 			Handler:    _Scheduler_GetDownloadsInProgress_Handler,
+		},
+		{
+			MethodName: "GetUnapprovedVideoList",
+			Handler:    _Scheduler_GetUnapprovedVideoList_Handler,
+		},
+		{
+			MethodName: "ApproveVideo",
+			Handler:    _Scheduler_ApproveVideo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

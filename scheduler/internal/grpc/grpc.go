@@ -4,11 +4,17 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"net/http"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"github.com/opentracing/opentracing-go"
+
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
-
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/jmoiron/sqlx"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 )
 
@@ -25,8 +31,15 @@ func NewGRPCServer(ctx context.Context, conn *sqlx.DB, port int) error {
 		return err
 	}
 
-	serv := grpc.NewServer()
+	tracer := opentracing.NoopTracer{}
+	serv := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+		otgrpc.OpenTracingServerInterceptor(tracer))))
 	proto.RegisterSchedulerServer(serv, schedulerServer)
+
+	grpc_prometheus.Register(serv)
+	http.Handle("/metrics", promhttp.Handler())
+
+	go http.ListenAndServe(":8082", nil)
 
 	go func() {
 		<-ctx.Done()
@@ -141,4 +154,13 @@ func (s schedulerServer) GetDownloadsInProgress(ctx context.Context, req *proto.
 	}
 
 	return &proto.DownloadsInProgressResponse{Videos: ret}, nil
+}
+
+func (s schedulerServer) GetUnapprovedVideoList(ctx context.Context, in *proto.Empty) (*proto.UnapprovedList, error) {
+	return s.M.GetAllUnapprovedVideos()
+}
+
+func (s schedulerServer) ApproveVideo(ctx context.Context, req *proto.ApproveVideoReq) (*proto.Empty, error) {
+	err := s.M.ApproveVideo(req.VideoID)
+	return &proto.Empty{}, err
 }

@@ -7,29 +7,36 @@ import (
 	"strconv"
 	"time"
 
+	socketio "github.com/googollee/go-socket.io"
 	"github.com/horahoradev/horahora/front_api/config"
+	partyproto "github.com/horahoradev/horahora/partyservice/protocol"
 	schedulerproto "github.com/horahoradev/horahora/scheduler/protocol"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	videoproto "github.com/horahoradev/horahora/video_service/protocol"
+
 	"github.com/labstack/echo/v4"
 )
 
 type RouteHandler struct {
-	v videoproto.VideoServiceClient
-	u userproto.UserServiceClient
-	s schedulerproto.SchedulerClient
+	v   videoproto.VideoServiceClient
+	u   userproto.UserServiceClient
+	s   schedulerproto.SchedulerClient
+	p   partyproto.PartyserviceClient
+	srv *socketio.Server
 }
 
-func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient, s schedulerproto.SchedulerClient) *RouteHandler {
+func NewRouteHandler(v videoproto.VideoServiceClient, u userproto.UserServiceClient, s schedulerproto.SchedulerClient, p partyproto.PartyserviceClient, srv *socketio.Server) *RouteHandler {
 	return &RouteHandler{
-		v: v,
-		u: u,
-		s: s,
+		v:   v,
+		u:   u,
+		s:   s,
+		p:   p,
+		srv: srv,
 	}
 }
 
-func SetupRoutes(e *echo.Echo, cfg *config.Config) {
-	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient)
+func SetupRoutes(e *echo.Echo, cfg *config.Config, srv *socketio.Server) {
+	r := NewRouteHandler(cfg.VideoClient, cfg.UserClient, cfg.SchedulerClient, cfg.PartyClient, srv)
 
 	e.GET("/api/home", r.getHome)
 	e.GET("/api/users/:id", r.getUser)
@@ -42,6 +49,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/api/approve/:id", r.handleApproval)
 
 	e.POST("/api/login", r.handleLogin)
+	e.POST("/api/revoltlogin", r.handleRevoltLogin)
 	e.POST("/api/register", r.handleRegister)
 	e.POST("/api/logout", r.handleLogout)
 
@@ -61,6 +69,17 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config) {
 	e.POST("/api/delete/:id", r.handleDelete)
 	e.POST("/api/setrank/:userid/:rank", r.handleSetRank)
 	e.POST("/api/password-reset", r.handlePasswordReset)
+
+	// Watch party stuff goes here
+	e.POST("/api/newwatchparty/:id", r.handleNewWatchParty)
+	e.POST("/api/joinwatchparty/:id", r.handleJoinWatchParty)
+	e.POST("/api/heartbeat", r.handleHeartbeat)
+	e.GET("/api/partystate/:id", r.handleGetPartyState)
+	e.POST("/api/addvideo/:id", r.handleAddVideo)
+	e.POST("/api/nextvideo/:id", r.handleNextVideo)
+
+	e.GET("/api/unapprovedvideos", r.getUnapprovedVideos)
+	e.POST("/api/approvevideosvideo/:id", r.handleSchedulerVideoApproavl)
 }
 
 type Video struct {
@@ -83,6 +102,11 @@ type VideoInProgress struct {
 	Website  string
 	VideoID  string
 	DlStatus string
+}
+
+type UnapprovedVideo struct {
+	URL     string
+	VideoID string
 }
 
 type VideoDetail struct {
@@ -159,6 +183,7 @@ func setCookie(c echo.Context, jwt string) error {
 	cookie.SameSite = http.SameSiteStrictMode
 	//cookie.Secure = true // set this later
 	cookie.HttpOnly = false
+	cookie.Path = "/"
 
 	c.SetCookie(cookie)
 

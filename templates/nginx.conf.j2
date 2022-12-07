@@ -13,8 +13,65 @@ server {
     }
 
     location /otomads {
-        set $backend_service minio;
+        set $backend_service horaminio;
         proxy_pass http://$backend_service:9000$request_uri;
+    }
+
+    location /chat {
+        set $backend_service web;
+        proxy_pass http://$backend_service:5173$request_uri;
+    }
+
+    location /assets {
+        set $backend_service web;
+        proxy_pass http://$backend_service:5173$request_uri;
+    }
+
+    location /chat/api/auth/session/login {
+        set $backend_service frontapi;
+        proxy_pass http://$backend_service:8083/api/revoltlogin;
+    }
+
+    location /chat/api/ws {
+        set $backend_service events;
+        proxy_pass http://$backend_service:9000$request_uri;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+    }
+
+    location /chat/api {
+        set $backend_service api;
+        proxy_pass http://$backend_service:8000;
+        rewrite /chat/api(.*) $1 break;
+    }
+
+    location /autumn {
+        set $backend_service autumn;
+        proxy_pass http://$backend_service:3000$request_uri;
+        rewrite /autumn(.*) $1 break;
+    }
+
+    location /january {
+        set $backend_service january;
+        proxy_pass http://$backend_service:7000$request_uri;
+        rewrite /january(.*) $1 break;
+    }
+
+    location /socket.io {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+        set $backend_service frontapi;
+        proxy_pass http://$backend_service:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location /voso {
+
     }
 
     location /api/ {

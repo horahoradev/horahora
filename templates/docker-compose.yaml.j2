@@ -51,6 +51,7 @@ services:
       - UserServiceGRPCAddress=userservice:${GRPCPort}
       - VideoServiceGRPCAddress=videoservice:${GRPCPort}
       - SchedulerServiceGRPCAddress=scheduler:${GRPCPort}
+      - PartyServiceGRPCAddress=partyservice:${GRPCPort}
       - JaegerAddress=
     volumes:
       - ./front_api:/horahora/front_api
@@ -171,6 +172,36 @@ services:
     volumes:
       - ./user_service:/horahora/userservice
 
+  partyservice:
+    {% if build_images %}
+    build:
+      context: partyservice
+      dockerfile: Dockerfile
+      args:
+        GOLANG_IMAGE: ${GOLANG_IMAGE}
+        GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
+      labels:
+        org.opencontainers.image.source: https://github.com/horahoradev/horahora
+        name: partyservice
+    {%- else -%}
+    image: ghcr.io/horahoradev/horahora/horahora.partyservice:main
+    {% endif %}
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - pgs_host=postgres
+      - pgs_port=5432
+      - pgs_user=admin
+      - pgs_pass=password
+      - pgs_db=partyservice
+      - VideoServiceGRPCAddress=videoservice:7777
+      - GRPCPort=7777
+    volumes:
+      - ./partyservice:/horahora/partyservice
+
   postgres:
     build:
       context: .
@@ -187,7 +218,7 @@ services:
     volumes:
       - postgresdata_dev:/var/lib/postgresql/data
 
-  minio:
+  horaminio:
     build:
       context: minio
       dockerfile: Dockerfile
@@ -236,14 +267,19 @@ services:
       - scheduler
       - videoservice
       - stomp_proxy
-      - minio
+      - horaminio
     environment:
       - WEBAPP_ORIGIN=${WEBAPP_ORIGIN}
     volumes:
       - ./static:/etc/nginx/html/static/images
       - ./configs/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./videos/otomads:/etc/nginx/html/otomads
-
+  prometheus:
+    image: prom/prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
   rabbitmq:
     build:
       context: activemq
@@ -269,9 +305,74 @@ services:
     volumes:
       - ./stomp_proxy:/horahora/stomp_proxy
 
+# MIT License
+
+# Copyright (c) 2017 Brian Christner
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+# I some of the config below from https://github.com/vegasbrianc/prometheus
+# thank you for your work!
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    restart: always
+    deploy:
+      mode: global
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: always
+    deploy:
+      mode: global
+
+  grafana:
+    image: grafana/grafana
+    user: "472"
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/:/etc/grafana/provisioning/
+
   redis:
     image: "redis:alpine"
     restart: always
 
 volumes:
-  postgresdata_dev:
+  postgresdata_dev: {}
+  prometheus_data: {}
+  grafana_data: {}
