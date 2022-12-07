@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-
 	"github.com/go-redis/redis/v8"
 
 	"github.com/google/uuid"

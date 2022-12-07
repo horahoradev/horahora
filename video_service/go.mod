@@ -11,9 +11,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.5
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/doug-martin/goqu/v9 v9.9.0
-	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
-	github.com/golang/mock v1.4.4
+	github.com/golang/mock v1.4.3
+	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/google/uuid v1.1.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
@@ -28,6 +29,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
+	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	google.golang.org/genproto v0.0.0-20210708141623-e76da96a951f // indirect
 	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.28.1
