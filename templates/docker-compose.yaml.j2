@@ -47,8 +47,6 @@ services:
     restart: unless-stopped
     env_file:
       - ./.env
-    ports:
-      - "8005:8000"
     environment:
       - UserServiceGRPCAddress=userservice:${GRPCPort}
       - VideoServiceGRPCAddress=videoservice:${GRPCPort}
@@ -279,8 +277,6 @@ services:
   prometheus:
     image: prom/prometheus
     restart: unless-stopped
-    ports:
-      - "9090:9090"
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
@@ -351,8 +347,6 @@ services:
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    ports:
-      - 9100:9100
     restart: always
     deploy:
       mode: global
@@ -364,8 +358,6 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    ports:
-      - 8080:8080
     restart: always
     deploy:
       mode: global
