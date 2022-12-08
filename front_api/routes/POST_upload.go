@@ -17,6 +17,10 @@ func (r RouteHandler) upload(c echo.Context) error {
 		return err
 	}
 
+	if profile.Rank != 2 {
+		return c.String(http.StatusForbidden, "Insufficient user status")
+	}
+
 	title := c.FormValue("title")
 	description := c.FormValue("description")
 	tagsList := c.FormValue("tags")

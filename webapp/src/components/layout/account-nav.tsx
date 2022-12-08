@@ -85,6 +85,7 @@ export function AccountNavigation() {
               </LinkInternal>
             </ListItem>
 
+            {isAdmin && (
             <ListItem className={styles.item}>
               <LinkInternal
                 className={styles.link}
@@ -94,6 +95,7 @@ export function AccountNavigation() {
                 Upload
               </LinkInternal>
             </ListItem>
+            )}
 
             {isAdmin && (
               <ListItem className={styles.item}>
