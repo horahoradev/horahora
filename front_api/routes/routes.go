@@ -183,7 +183,6 @@ func setCookie(c echo.Context, jwt string) error {
 	cookie.SameSite = http.SameSiteStrictMode
 	//cookie.Secure = true // set this later
 	cookie.HttpOnly = false
-	cookie.Path = "/"
 
 	c.SetCookie(cookie)
 
