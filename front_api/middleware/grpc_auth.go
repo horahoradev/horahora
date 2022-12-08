@@ -46,7 +46,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 
 		var jwt string
 		for _, cookie := range c.Cookies() {
-			if cookie.Name == "jwt" {
+			if cookie.Name == "jwt" && cookie.Value != "" {
 				jwt = cookie.Value
 			}
 		}
