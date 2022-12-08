@@ -13,7 +13,7 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/horahoradev/horahora/user_service/internal/auth"
 	"github.com/horahoradev/horahora/user_service/internal/model"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -69,6 +69,11 @@ func (g GRPCServer) Register(ctx context.Context, req *proto.RegisterRequest) (*
 	if !req.ForeignUser {
 		if err := req.Validate(); err != nil {
 			return nil, err
+		}
+
+		_, err := g.um.GetUserWithUsername(req.Username)
+		if err == nil {
+			return nil, errors.New("user already registered with that name")
 		}
 
 		// err := auth.RegisterRevolt(req.Email)

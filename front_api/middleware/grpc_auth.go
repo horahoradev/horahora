@@ -44,6 +44,7 @@ func (j *JWTGRPCAuthenticator) GRPCAuth(next echo.HandlerFunc) echo.HandlerFunc 
 			return c.String(http.StatusForbidden, "no cookies")
 		}
 
+		// Why the hell do we have an extra /api session cookie?! WHO ARE YOU?
 		var jwt string
 		for _, cookie := range c.Cookies() {
 			if cookie.Name == "jwt" && cookie.Value != "" {
