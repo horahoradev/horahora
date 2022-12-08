@@ -71,11 +71,11 @@ func (g GRPCServer) Register(ctx context.Context, req *proto.RegisterRequest) (*
 			return nil, err
 		}
 
-		err := auth.RegisterRevolt(req.Email)
-		if err != nil {
-			log.Errorf("revolt registration failed. Err: %v", err)
-			return nil, err
-		}
+		// err := auth.RegisterRevolt(req.Email)
+		// if err != nil {
+		// 	log.Errorf("revolt registration failed. Err: %v", err)
+		// 	return nil, err
+		// }
 	}
 
 	log.Infof("Handling registration for user %s", req.Username)
