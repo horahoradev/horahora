@@ -11,6 +11,7 @@ export function HomePage() {
   const { query, isReady } = router;
   const [pageData, setPageData] = useState<IHomeData>();
   const [currPage, setPage] = useState(1);
+  const { isRegistered } = useAccount();
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
@@ -35,7 +36,7 @@ export function HomePage() {
     };
 
     fetchData();
-  }, [currPage, isReady]);
+  }, [currPage, isReady, isRegistered]);
 
   return (
     <Page title="Videos">
