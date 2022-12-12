@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useAccount } from "#hooks";
 
 import { fetchHome, type IHomeData } from "#api/lib";
 import { PaginationInfo, PaginationLocal } from "#components/pagination";
