@@ -18,8 +18,6 @@ export function HomePage() {
       return;
     }
 
-    let ignore = false;
-
     let fetchData = async () => {
       const { order, category, search } = query;
 
@@ -30,16 +28,13 @@ export function HomePage() {
           order as string,
           category as string
         );
-        if (!ignore) setPageData(data);
+        setPageData(data);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchData();
-    return () => {
-      ignore = true;
-    };
   }, [currPage, isReady]);
 
   return (
