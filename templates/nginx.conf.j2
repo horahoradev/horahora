@@ -43,6 +43,7 @@ server {
 
     location /chat/api {
         set $backend_service api;
+        add_header Cache-Control 'no-store, no-cache';
         proxy_pass http://$backend_service:8000;
         rewrite /chat/api(.*) $1 break;
     }
