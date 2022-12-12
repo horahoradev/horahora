@@ -20,6 +20,8 @@ export function HomePage() {
       return;
     }
 
+    let ignore = false;
+
     let fetchData = async () => {
       const { order, category, search } = query;
 
@@ -30,14 +32,17 @@ export function HomePage() {
           order as string,
           category as string
         );
-        setPageData(data);
+        if (!ignore) setPageData(data);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchData();
-  }, [currPage, isReady, isRegistered]);
+    return () => {
+      ignore = true;
+    };
+  }, [currPage, isReady]);
 
   return (
     <Page title="Videos">
