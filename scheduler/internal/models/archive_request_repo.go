@@ -41,7 +41,7 @@ type Event struct {
 }
 
 func (m *ArchiveRequestRepo) GetAllUnapprovedVideos() (*proto.UnapprovedList, error) {
-	sql := "select id, url from videos where is_approved is false ORDER BY id desc"
+	sql := "select id, url from videos where is_approved is false AND is_unapproved is false ORDER BY id desc"
 	rows, err := m.Db.Query(sql)
 	if err != nil {
 		return nil, err
@@ -65,6 +65,13 @@ func (m *ArchiveRequestRepo) GetAllUnapprovedVideos() (*proto.UnapprovedList, er
 
 func (m *ArchiveRequestRepo) ApproveVideo(videoID string) error {
 	sql := "UPDATE videos SET is_approved = true WHERE id = $1"
+
+	_, err := m.Db.Exec(sql, videoID)
+	return err
+}
+
+func (m *ArchiveRequestRepo) UnapproveVideo(videoID string) error {
+	sql := "UPDATE videos SET is_unapproved = true WHERE id = $1"
 
 	_, err := m.Db.Exec(sql, videoID)
 	return err
