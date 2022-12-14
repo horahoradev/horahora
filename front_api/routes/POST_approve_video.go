@@ -34,6 +34,32 @@ func (v RouteHandler) handleSchedulerVideoApproavl(c echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
+func (v RouteHandler) handleSchedulerVideoUnapproval(c echo.Context) error {
+	id := c.Param("id")
+	// idInt, err := strconv.ParseInt(id, 10, 64)
+	// if err != nil {
+	// 	return err
+	// }
+
+	profile, err := v.getUserProfileInfo(c)
+	if err != nil {
+		return err
+	}
+
+	if profile.Rank < 1 {
+		// privileged user, can show unapproved videos
+		// TODO(ivan): status forbidden
+		return c.String(http.StatusForbidden, "Insufficient user status")
+	}
+
+	_, err = v.s.UnapproveVideo(context.Background(), &schedulerproto.ApproveVideoReq{VideoID: id})
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, nil)
+}
+
 func (v RouteHandler) getUnapprovedVideos(c echo.Context) error {
 	profile, err := v.getUserProfileInfo(c)
 	if err != nil {

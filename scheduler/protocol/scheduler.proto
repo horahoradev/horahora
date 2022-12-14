@@ -19,6 +19,8 @@ service Scheduler {
     rpc GetUnapprovedVideoList(Empty) returns (UnapprovedList) {}
 
     rpc ApproveVideo(ApproveVideoReq) returns (Empty) {}
+
+    rpc UnapproveVideo(ApproveVideoReq) returns (Empty) {}
 }
 
 message downloadsInProgressRequest {}
