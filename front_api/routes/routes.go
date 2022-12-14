@@ -80,6 +80,7 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config, srv *socketio.Server) {
 
 	e.GET("/api/unapprovedvideos", r.getUnapprovedVideos)
 	e.POST("/api/approvevideosvideo/:id", r.handleSchedulerVideoApproavl)
+	e.POST("/api/unapprovevideosvideo/:id", r.handleSchedulerVideoUnapproval)
 }
 
 type Video struct {

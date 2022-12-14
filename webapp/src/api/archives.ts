@@ -97,6 +97,21 @@ export async function deleteArchivalRequest(formParams: URLSearchParams) {
   return null;
 }
 
+export async function unapproveVideo(videoID: string) {
+  const url = new PublicAPIURL(`/unapprovevideosvideo/${videoID}`);
+  const response = await fetch(url, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const error = new FetchError(
+      "Failed to unapprove video",
+      response
+    );
+    throw error;
+  }
+}
+
 export async function approveVideo(videoID: string) {
   const url = new PublicAPIURL(`/approvevideosvideo/${videoID}`);
   const response = await fetch(url, {

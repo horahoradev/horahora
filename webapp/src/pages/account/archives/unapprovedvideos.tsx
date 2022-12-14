@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Page } from "#components/page";
-import { getArchivalEvents, getArchivalRequests, approveVideo, getUnapprovedVideos } from "#api/archives";
+import { getArchivalEvents, getArchivalRequests, approveVideo, getUnapprovedVideos, unapproveVideo } from "#api/archives";
 import { type IArchivalEvent } from "#codegen/schema/001_interfaces";
 import { CardList } from "#components/lists";
 import { LoadingBar } from "#components/loading-bar";
@@ -43,6 +43,14 @@ function UnapprovedVideosPage(params: any) {
         // quite lazy, forces a reload
         setTimerVal((timerVal) => timerVal + 1);
     }
+
+  async function unapproveNewVideo(videoID: string) {
+      await unapproveVideo(videoID);
+
+      // quite lazy, forces a reload
+      setTimerVal((timerVal) => timerVal + 1);
+  }
+
 
   // TODO(ivan): Make a nicer page fetch hook that accounts for failure states
   useEffect(() => {
@@ -88,6 +96,7 @@ function UnapprovedVideosPage(params: any) {
             <TableCell align="left">ID</TableCell>
             <TableCell align="left">URL</TableCell>
             <TableCell align="left">Approve</TableCell>
+            <TableCell align="left">Unapprove</TableCell>
         </TableRow>
         </TableHead>
         <TableBody>
@@ -97,8 +106,10 @@ function UnapprovedVideosPage(params: any) {
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
             <TableCell align="left">{row.VideoID}</TableCell>
-            <TableCell align="left">{row.URL}</TableCell>
+            <TableCell align="left">{<a href={row.URL}>{row.URL}</a>}</TableCell>
             <TableCell align="left"><Button onClick={()=>approveNewVideo(row.VideoID)}></Button></TableCell>
+            <TableCell align="left"><Button onClick={()=>unapproveNewVideo(row.VideoID)}></Button></TableCell>
+
             </TableRow>
         )): null }
         </TableBody>
