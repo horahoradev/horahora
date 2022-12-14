@@ -70,6 +70,13 @@ func (m *ArchiveRequestRepo) ApproveVideo(videoID string) error {
 	return err
 }
 
+func (m *ArchiveRequestRepo) UnapproveVideo(videoID string) error {
+	sql := "UPDATE videos SET is_unapproved = true WHERE id = $1"
+
+	_, err := m.Db.Exec(sql, videoID)
+	return err
+}
+
 func (m *ArchiveRequestRepo) GetArchivalEvents(downloadID int64, showAll bool) ([]Event, error) {
 	var events []Event
 

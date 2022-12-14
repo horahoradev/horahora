@@ -26,6 +26,7 @@ type SchedulerClient interface {
 	GetDownloadsInProgress(ctx context.Context, in *DownloadsInProgressRequest, opts ...grpc.CallOption) (*DownloadsInProgressResponse, error)
 	GetUnapprovedVideoList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UnapprovedList, error)
 	ApproveVideo(ctx context.Context, in *ApproveVideoReq, opts ...grpc.CallOption) (*Empty, error)
+	UnapproveVideo(ctx context.Context, in *ApproveVideoReq, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type schedulerClient struct {
@@ -108,6 +109,15 @@ func (c *schedulerClient) ApproveVideo(ctx context.Context, in *ApproveVideoReq,
 	return out, nil
 }
 
+func (c *schedulerClient) UnapproveVideo(ctx context.Context, in *ApproveVideoReq, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/proto.Scheduler/UnapproveVideo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SchedulerServer is the server API for Scheduler service.
 // All implementations must embed UnimplementedSchedulerServer
 // for forward compatibility
@@ -120,6 +130,7 @@ type SchedulerServer interface {
 	GetDownloadsInProgress(context.Context, *DownloadsInProgressRequest) (*DownloadsInProgressResponse, error)
 	GetUnapprovedVideoList(context.Context, *Empty) (*UnapprovedList, error)
 	ApproveVideo(context.Context, *ApproveVideoReq) (*Empty, error)
+	UnapproveVideo(context.Context, *ApproveVideoReq) (*Empty, error)
 	mustEmbedUnimplementedSchedulerServer()
 }
 
@@ -150,6 +161,9 @@ func (UnimplementedSchedulerServer) GetUnapprovedVideoList(context.Context, *Emp
 }
 func (UnimplementedSchedulerServer) ApproveVideo(context.Context, *ApproveVideoReq) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApproveVideo not implemented")
+}
+func (UnimplementedSchedulerServer) UnapproveVideo(context.Context, *ApproveVideoReq) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnapproveVideo not implemented")
 }
 func (UnimplementedSchedulerServer) mustEmbedUnimplementedSchedulerServer() {}
 
@@ -308,6 +322,24 @@ func _Scheduler_ApproveVideo_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Scheduler_UnapproveVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApproveVideoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchedulerServer).UnapproveVideo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Scheduler/UnapproveVideo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchedulerServer).UnapproveVideo(ctx, req.(*ApproveVideoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Scheduler_ServiceDesc is the grpc.ServiceDesc for Scheduler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -346,6 +378,10 @@ var Scheduler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ApproveVideo",
 			Handler:    _Scheduler_ApproveVideo_Handler,
+		},
+		{
+			MethodName: "UnapproveVideo",
+			Handler:    _Scheduler_UnapproveVideo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

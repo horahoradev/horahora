@@ -164,3 +164,8 @@ func (s schedulerServer) ApproveVideo(ctx context.Context, req *proto.ApproveVid
 	err := s.M.ApproveVideo(req.VideoID)
 	return &proto.Empty{}, err
 }
+
+func (s schedulerServer) UnapproveVideo(ctx context.Context, req *proto.ApproveVideoReq) (*proto.Empty, error) {
+	err := s.M.UNapproveVideo(req.VideoID)
+	return &proto.Empty{}, err
+}
