@@ -67,7 +67,7 @@ function RegisterPage() {
         </Password>
         {/* These should be checkboxes. */}
         <p>
-          By submitting, you agree to the{" "}
+          By submitting, you verify that you are 18+, and agree to the{" "}
           <LinkInternal href="/privacy-policy">Privacy Policy</LinkInternal> and{" "}
           <LinkInternal href="/terms-of-service">TermsOfService</LinkInternal>.
         </p>
