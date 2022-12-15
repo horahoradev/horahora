@@ -23,9 +23,10 @@ export async function apiFetch<ResBody = never>({
   const response = await fetch(url, { ...options, credentials: "include" });
 
   // Why the hell does the status say 200 if it's a 301??
-  // if (response.redirected) {
-  //   console.log(`Redirecting to new location: ${response.url}`);
-  // }
+  if (response.redirected) {
+    console.log(`Redirecting to new location: ${response.url}`);
+    location.replace(response.url);
+  }
 
   if (!response.ok) {
     // @TODO: 403 status handling
