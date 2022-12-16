@@ -118,7 +118,7 @@ func (p *poller) getURLs() ([]string, error) {
 	sql := "select d.url,  count(user_id) * random() AS score FROM " +
 		"user_download_subscriptions s " +
 		"INNER JOIN downloads d ON d.id = s.download_id " +
-		"WHERE d.id IN (select downloads.id from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v on d.video_id = v.id WHERE v.dlStatus = 0 GROUP BY downloads.id) " +
+		"WHERE d.id IN (select downloads.id from downloads INNER JOIN downloads_to_videos d ON downloads.id = d.download_id INNER JOIN videos v on d.video_id = v.id WHERE v.dlStatus = 0 AND is_approved IS true GROUP BY downloads.id) " +
 		"GROUP BY d.id ORDER BY score desc LIMIT 1"
 	row := p.Db.QueryRow(sql)
 
