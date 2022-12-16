@@ -33,7 +33,7 @@ export async function loginAccount(formParams: URLSearchParams) {
   });
 
   if (!response.ok) {
-    const error = new FetchError("Failed to log in", response);
+    const error = await FetchErrorWithBody("Failed to log in", response);
     throw error;
   }
 
