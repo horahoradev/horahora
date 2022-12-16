@@ -30,7 +30,7 @@ export class FetchError extends Error {
       `${baseMessage}. Details:`,
       `Status: ${response.status}`,
       `Message: ${response.statusText}`,
-      `Reason: ${body}`
+      `Reason: ${body.message}`
     ].join("\n");
     super(message);
   }

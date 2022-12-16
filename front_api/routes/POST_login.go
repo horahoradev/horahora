@@ -23,12 +23,12 @@ func (r RouteHandler) handleLogin(c echo.Context) error {
 
 	if len(username) < minNameLength {
 		message := fmt.Sprintf("Username should be at least %v characters long", minNameLength)
-		return c.String(http.StatusForbidden, message)
+		return echo.NewHTTPError(http.StatusForbidden, message)
 	}
 
 	if len(password) < minPasswordLength {
 		message := fmt.Sprintf("Password should be at least %v characters long", minPasswordLength)
-		return c.String(http.StatusForbidden, message)
+		return echo.NewHTTPError(http.StatusForbidden, message)
 	}
 
 	// TODO: grpc auth goes here
@@ -39,7 +39,7 @@ func (r RouteHandler) handleLogin(c echo.Context) error {
 
 	loginResp, err := r.u.Login(context.Background(), loginReq)
 	if err != nil {
-		return c.String(http.StatusForbidden, "Login failed.")
+		return echo.NewHTTPError(http.StatusForbidden, "Login failed.")
 	}
 
 	return setCookie(c, loginResp.Jwt)
