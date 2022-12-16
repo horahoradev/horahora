@@ -28,7 +28,7 @@ func (r RouteHandler) handleRegister(c echo.Context) error {
 	case err != nil && strings.Contains(err.Error(), "invalid"): // no, don't do this TODO FIXME
 		return echo.NewHTTPError(http.StatusForbidden, err.Error())
 	case err != nil:
-		return err
+		return c.String(http.StatusForbidden, "Registration failed.")
 	}
 
 	// NO!!! FIXME
@@ -36,7 +36,7 @@ func (r RouteHandler) handleRegister(c echo.Context) error {
 		Jwt: regisResp.Jwt,
 	})
 	if err != nil {
-		return err
+		return c.String(http.StatusForbidden, "Authentication failed after registering; forward this to OtoMAN immediately (?!)")
 	}
 
 	_, err = r.u.AddAuditEvent(context.TODO(), &userproto.NewAuditEventRequest{
