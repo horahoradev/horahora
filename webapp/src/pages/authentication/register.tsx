@@ -52,6 +52,10 @@ function RegisterPage() {
   return (
     <Page title="Register">
       <FormClient id="auth-register" onSubmit={handleSubmit}>
+        <p>
+          Already registered?{" "}
+          <LinkInternal href="/authentication/login">Login</LinkInternal>
+        </p>
         <Text id="auth-register-username" name={FIELD_NAMES.NAME}>
           Name
         </Text>
