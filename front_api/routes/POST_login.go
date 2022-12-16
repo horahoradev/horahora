@@ -2,7 +2,6 @@ package routes
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
@@ -20,16 +19,6 @@ const (
 func (r RouteHandler) handleLogin(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
-
-	if len(username) < minNameLength {
-		message := fmt.Sprintf("Username should be at least %v characters long", minNameLength)
-		return echo.NewHTTPError(http.StatusForbidden, message)
-	}
-
-	if len(password) < minPasswordLength {
-		message := fmt.Sprintf("Password should be at least %v characters long", minPasswordLength)
-		return echo.NewHTTPError(http.StatusForbidden, message)
-	}
 
 	// TODO: grpc auth goes here
 	loginReq := &userproto.LoginRequest{
