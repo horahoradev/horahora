@@ -78,8 +78,9 @@ func (v RouteHandler) getUnapprovedVideos(c echo.Context) error {
 	var videos []UnapprovedVideo
 	for _, video := range resp.UnapprovedVideos {
 		vid := UnapprovedVideo{
-			VideoID: video.VideoID,
-			URL:     video.Url,
+			VideoID:  video.VideoID,
+			URL:      video.Url,
+			Category: video.Category,
 		}
 		videos = append(videos, vid)
 	}
