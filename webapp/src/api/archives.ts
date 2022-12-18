@@ -26,6 +26,46 @@ export async function createNewArchivalRequest(formParams: URLSearchParams) {
   return result;
 }
 
+//	e.GET("/api/getinferencecategories", r.getInferenceCategories)
+//	e.POST("/api/addinferencecategory", r.addInferenceCategory)
+
+
+export async function getInferenceCategories() {
+  const url = new PublicAPIURL("/getinferencecategories");
+  const response = await fetch(url, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    const error = new FetchError("Failed to fetch inference categories", response);
+    throw error;
+  }
+
+  return await response.json();
+}
+
+export async function addInferenceCategory(formParams: URLSearchParams) {
+  const url = new PublicAPIURL("/addinferencecategory");
+  const headers = new Headers([formHeader]);
+  const response = await fetch(url, {
+    method: "POST",
+    headers,
+    body: formParams,
+  });
+
+  if (!response.ok) {
+    const error = new FetchError(
+      "Failed to retry an archival request",
+      response
+    );
+    throw error;
+  }
+
+  const result: null = await response.json();
+
+  return result;
+}
+
 export async function getUnapprovedVideos() {
   const url = new PublicAPIURL("/unapprovedvideos");
   const response = await fetch(url, {

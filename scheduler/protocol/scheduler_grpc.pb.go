@@ -27,6 +27,8 @@ type SchedulerClient interface {
 	GetUnapprovedVideoList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UnapprovedList, error)
 	ApproveVideo(ctx context.Context, in *ApproveVideoReq, opts ...grpc.CallOption) (*Empty, error)
 	UnapproveVideo(ctx context.Context, in *ApproveVideoReq, opts ...grpc.CallOption) (*Empty, error)
+	GetInferenceCategories(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*InferenceList, error)
+	AddInferenceCategory(ctx context.Context, in *InferenceEntry, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type schedulerClient struct {
@@ -118,6 +120,24 @@ func (c *schedulerClient) UnapproveVideo(ctx context.Context, in *ApproveVideoRe
 	return out, nil
 }
 
+func (c *schedulerClient) GetInferenceCategories(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*InferenceList, error) {
+	out := new(InferenceList)
+	err := c.cc.Invoke(ctx, "/proto.Scheduler/GetInferenceCategories", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *schedulerClient) AddInferenceCategory(ctx context.Context, in *InferenceEntry, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/proto.Scheduler/AddInferenceCategory", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SchedulerServer is the server API for Scheduler service.
 // All implementations must embed UnimplementedSchedulerServer
 // for forward compatibility
@@ -131,6 +151,8 @@ type SchedulerServer interface {
 	GetUnapprovedVideoList(context.Context, *Empty) (*UnapprovedList, error)
 	ApproveVideo(context.Context, *ApproveVideoReq) (*Empty, error)
 	UnapproveVideo(context.Context, *ApproveVideoReq) (*Empty, error)
+	GetInferenceCategories(context.Context, *Empty) (*InferenceList, error)
+	AddInferenceCategory(context.Context, *InferenceEntry) (*Empty, error)
 	mustEmbedUnimplementedSchedulerServer()
 }
 
@@ -164,6 +186,12 @@ func (UnimplementedSchedulerServer) ApproveVideo(context.Context, *ApproveVideoR
 }
 func (UnimplementedSchedulerServer) UnapproveVideo(context.Context, *ApproveVideoReq) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnapproveVideo not implemented")
+}
+func (UnimplementedSchedulerServer) GetInferenceCategories(context.Context, *Empty) (*InferenceList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInferenceCategories not implemented")
+}
+func (UnimplementedSchedulerServer) AddInferenceCategory(context.Context, *InferenceEntry) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddInferenceCategory not implemented")
 }
 func (UnimplementedSchedulerServer) mustEmbedUnimplementedSchedulerServer() {}
 
@@ -340,6 +368,42 @@ func _Scheduler_UnapproveVideo_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Scheduler_GetInferenceCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchedulerServer).GetInferenceCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Scheduler/GetInferenceCategories",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchedulerServer).GetInferenceCategories(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Scheduler_AddInferenceCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InferenceEntry)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SchedulerServer).AddInferenceCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Scheduler/AddInferenceCategory",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SchedulerServer).AddInferenceCategory(ctx, req.(*InferenceEntry))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Scheduler_ServiceDesc is the grpc.ServiceDesc for Scheduler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -382,6 +446,14 @@ var Scheduler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnapproveVideo",
 			Handler:    _Scheduler_UnapproveVideo_Handler,
+		},
+		{
+			MethodName: "GetInferenceCategories",
+			Handler:    _Scheduler_GetInferenceCategories_Handler,
+		},
+		{
+			MethodName: "AddInferenceCategory",
+			Handler:    _Scheduler_AddInferenceCategory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
