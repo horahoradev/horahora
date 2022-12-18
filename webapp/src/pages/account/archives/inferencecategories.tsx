@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Page } from "#components/page";
-import { getArchivalEvents, getArchivalRequests, approveVideo, getUnapprovedVideos, unapproveVideo } from "#api/archives";
+import { getArchivalEvents, getArchivalRequests, approveVideo, getUnapprovedVideos, unapproveVideo, getInferenceCategories } from "#api/archives";
 import { type IArchivalEvent } from "#codegen/schema/001_interfaces";
 import { CardList } from "#components/lists";
 import { LoadingBar } from "#components/loading-bar";
@@ -17,6 +17,7 @@ import Paper from '@mui/material/Paper';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Button } from "#components/buttons";
+import { NewInferenceForm } from "#components/posts/new-inference-category";
 
 const darkTheme = createTheme({
   palette: {
@@ -24,11 +25,10 @@ const darkTheme = createTheme({
   },
 });
 
-function UnapprovedVideosPage(params: any) {
-  const [unapprovedvideos, changeUnapprovedVideos] = useState<[]>();
+function InferenceCategoriesPage(params: any) {
+  const [inferenceCategories, changeInferenceCategories] = useState([]);
   // I think this is a hack? looks okay to me though!
   const [timerVal, setTimerVal] = useState(0);
-  const [category, setCategory] = useState(null);
 
   const router = useRouter();
   const { query, isReady } = router;
@@ -38,18 +38,8 @@ function UnapprovedVideosPage(params: any) {
     setTimerVal((timerVal) => timerVal + 1);
   }
 
-  async function approveNewVideo(videoID: string) {
-        await approveVideo(videoID);
-
-        // quite lazy, forces a reload
-        setTimerVal((timerVal) => timerVal + 1);
-    }
-
-  async function unapproveNewVideo(videoID: string) {
-      await unapproveVideo(videoID);
-
-      // quite lazy, forces a reload
-      setTimerVal((timerVal) => timerVal + 1);
+  async function createNewInference(url: string) {
+    reloadPage();
   }
 
 
@@ -62,13 +52,13 @@ function UnapprovedVideosPage(params: any) {
     }
 
     let fetchData = async () => {
-      let resp = await getUnapprovedVideos();
-
+      let resp = await getInferenceCategories();
+        console.log(resp);
       // videos.map((video, idx) => video.progress = videoInProgressDataset && videoInProgressDataset[idx] ? videoInProgressDataset[idx].progress : 0);
 
       // TODO: diff downloads in progress vs old downloads state, and unsubscribe!
-      if (!ignore) {
-        changeUnapprovedVideos(resp);
+      if (!ignore && resp.Entries != undefined) {
+        changeInferenceCategories(resp.Entries);
       }
     };
 
@@ -86,48 +76,27 @@ function UnapprovedVideosPage(params: any) {
     return () => clearInterval(interval);
   }, []);
 
-  function handleChange(e) {
-    if (e.target.value == "") {
-      setCategory(null);
-      return;
-    }
-    setCategory(e.target.value);
-  }
-
-
-  let filteredVideos = unapprovedvideos ? unapprovedvideos.filter((ele) => category == null || ele.Category == category) : [];
-
 
   return (
     <ThemeProvider theme={darkTheme}>
+    <NewInferenceForm onNewCategory={createNewInference}></NewInferenceForm>
     <CssBaseline />
     <TableContainer component={Paper}>
-    <p>
-      Enter category filter:
-      <input style={{"background-color": "#000000"}} onChange={handleChange}></input>
-    </p>
     <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
         <TableRow>
-            <TableCell align="left">ID</TableCell>
-            <TableCell align="left">URL</TableCell>
+            <TableCell align="left">Tag</TableCell>
             <TableCell align="left">Category</TableCell>
-            <TableCell align="left">Approve</TableCell>
-            <TableCell align="left">Unapprove</TableCell>
         </TableRow>
         </TableHead>
         <TableBody>
-        {filteredVideos ? filteredVideos.map((row: any) => (
+        {inferenceCategories.length != 0 ? inferenceCategories.map((row: any) => (
             <TableRow
             key={row.VideoID}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-            <TableCell align="left">{row.VideoID}</TableCell>
-            <TableCell align="left">{<a href={row.URL}>{row.URL}</a>}</TableCell>
+            <TableCell align="left">{row.Tag}</TableCell>
             <TableCell align="left">{row.Category}</TableCell>
-            <TableCell align="left"><Button onClick={()=>approveNewVideo(row.VideoID)}></Button></TableCell>
-            <TableCell align="left"><Button onClick={()=>unapproveNewVideo(row.VideoID)}></Button></TableCell>
-
             </TableRow>
         )): null }
         </TableBody>
@@ -137,4 +106,4 @@ function UnapprovedVideosPage(params: any) {
   )
 }
 
-export default UnapprovedVideosPage;
+export default InferenceCategoriesPage;

@@ -168,7 +168,7 @@ func (s *SyncWorker) RunVideoClassificationLoop(ctx context.Context) error {
 }
 
 func (s *SyncWorker) GetVideoClassification(videoURL string) (string, error) {
-	cmd := exec.Command("/bin/sh", "-c", fmt.Sprintf("youtube-dl -j %s | jq '.tags'", videoURL))
+	cmd := exec.Command("/bin/sh", "-c", fmt.Sprintf("yt-dlp --add-header 'Accept-Language:ja' -j %s | jq '.tags'", videoURL))
 	payload, err := cmd.Output()
 	if err != nil {
 		log.Errorf("Command `%s` finished with err %s", cmd, err)
