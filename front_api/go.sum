@@ -239,12 +239,16 @@ github.com/hashicorp/go-multierror v1.0.0/go.mod h1:dHtQlpGsu+cZNNAkkCN/P3hoUDHh
 github.com/hashicorp/go-uuid v1.0.2/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
+github.com/horahoradev/horahora v0.5.1-0.20221218222730-094304eae0b2 h1:O+6MjdDiY4LsnEgNWEUs4mKzN+GtcdhJOD24P6RLm80=
+github.com/horahoradev/horahora v0.5.1-0.20221218222730-094304eae0b2/go.mod h1:fX9CJ8gr+I3y/60r87rgkBnjwZnSBGnzwQ0BoQM69a4=
 github.com/horahoradev/horahora/partyservice v0.0.0-20221119201938-57cd4dc334da h1:GOt925CcrlZeBKJ5JH1m8f60++mVfVHde9BOZAcaoPI=
 github.com/horahoradev/horahora/partyservice v0.0.0-20221119201938-57cd4dc334da/go.mod h1:W3mFrLBcBbR3hFlO5RFMxkQbIKuxoQ1CI7GMyHqFruM=
 github.com/horahoradev/horahora/scheduler v0.0.0-20221127021653-3ac658d2e012 h1:s+0uvPZREZUMYh58Fbta2yWLjWGW9N3s+Rkww0eBIXU=
 github.com/horahoradev/horahora/scheduler v0.0.0-20221127021653-3ac658d2e012/go.mod h1:cYpwXaKWyY2cKD2DAjrZDRM+EsQM9/tYrojcRJaWSS4=
 github.com/horahoradev/horahora/scheduler v0.0.0-20221214213206-00562045eca6 h1:YLoJ/UEOWxnxczQsDKOLraTWAtinLcMGE7IunQ+/u58=
 github.com/horahoradev/horahora/scheduler v0.0.0-20221214213206-00562045eca6/go.mod h1:JTfDBAcTqK2BMlt/IUZqU4epuk024VfTteCY0YX7L1M=
+github.com/horahoradev/horahora/scheduler v0.0.0-20221218222730-094304eae0b2 h1:h7OEOEGsE35IYzo6D4s3pYbXvgcDVqJUIJZXgAXWfJc=
+github.com/horahoradev/horahora/scheduler v0.0.0-20221218222730-094304eae0b2/go.mod h1:JTfDBAcTqK2BMlt/IUZqU4epuk024VfTteCY0YX7L1M=
 github.com/horahoradev/horahora/user_service v0.0.0-20210710200304-9892f28bcdf0/go.mod h1:c2+68tn7GMxziU+YXln0KRssXWtaB8kYqe8zONW5PN4=
 github.com/horahoradev/horahora/user_service v0.0.0-20210922030328-dee03a489f47/go.mod h1:z8FQUYNG7s+DiNmMkdAPG8BwuWjY0zUT+3980/VCjUM=
 github.com/horahoradev/horahora/user_service v0.0.0-20220615065242-005ce0eb6540 h1:9bsq13oRs5YHFGkFhmk4ggPdaaAhrs/jmMeB07CAKCo=

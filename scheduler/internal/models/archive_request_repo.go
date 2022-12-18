@@ -41,7 +41,7 @@ type Event struct {
 }
 
 func (m *ArchiveRequestRepo) GetAllUnapprovedVideos() (*proto.UnapprovedList, error) {
-	sql := "select id, url from videos where is_approved is false AND is_unapproved is false ORDER BY id desc"
+	sql := "select id, url, coalesce(content_category, '') from videos where is_approved is false AND is_unapproved is false ORDER BY id desc"
 	rows, err := m.Db.Query(sql)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (m *ArchiveRequestRepo) GetAllUnapprovedVideos() (*proto.UnapprovedList, er
 	ret := make([]*proto.UnapprovedVideo, 0)
 	for rows.Next() {
 		unapprovedVideo := proto.UnapprovedVideo{}
-		err = rows.Scan(&unapprovedVideo.VideoID, &unapprovedVideo.Url)
+		err = rows.Scan(&unapprovedVideo.VideoID, &unapprovedVideo.Url, &unapprovedVideo.Category)
 		if err != nil {
 			return nil, err
 		}
@@ -252,6 +252,44 @@ func (m *ArchiveRequestRepo) GetDownloadsInProgress() ([]Video, error) {
 
 	err := m.Db.Select(&videos, sql)
 	return videos, err
+}
+
+type VideoURL struct {
+	URL string `db:"url"`
+	ID  int    `db:"id"`
+}
+
+func (m *ArchiveRequestRepo) GetUnclassifiedVideoURLs() ([]VideoURL, error) {
+	var videos []VideoURL
+	sql := "select url, id FROM videos WHERE content_category IS null ORDER BY dlStatus ASC"
+
+	err := m.Db.Select(&videos, sql)
+	return videos, err
+}
+
+func (m *ArchiveRequestRepo) UpdateClassification(category string, id int) error {
+	sql := "UPDATE videos SET content_category = $1 WHERE id = $2"
+	_, err := m.Db.Exec(sql, category, id)
+	return err
+}
+
+type InferenceCategory struct {
+	ID       int    `db:"id"`
+	Tag      string `db:"tag"`
+	Category string `db:"category"` // postgres lowercased it, lol
+}
+
+func (m *ArchiveRequestRepo) GetInferenceCategories() ([]InferenceCategory, error) {
+	var entries []InferenceCategory
+	sql := "select id, tag, category from inference_categories order by id DESC"
+	err := m.Db.Select(&entries, sql)
+	return entries, err
+}
+
+func (m *ArchiveRequestRepo) AddInferenceCategory(entry *proto.InferenceEntry) error {
+	sql := "INSERT INTO inference_categories (tag, category) VALUES ($1, $2)"
+	_, err := m.Db.Exec(sql, entry.Tag, entry.Category)
+	return err
 }
 
 func (m *ArchiveRequestRepo) WipeDownloadsInProgress() error {

@@ -81,6 +81,9 @@ func SetupRoutes(e *echo.Echo, cfg *config.Config, srv *socketio.Server) {
 	e.GET("/api/unapprovedvideos", r.getUnapprovedVideos)
 	e.POST("/api/approvevideosvideo/:id", r.handleSchedulerVideoApproavl)
 	e.POST("/api/unapprovevideosvideo/:id", r.handleSchedulerVideoUnapproval)
+
+	e.GET("/api/getinferencecategories", r.getInferenceCategories)
+	e.POST("/api/addinferencecategory", r.addInferenceCategory)
 }
 
 type Video struct {
@@ -106,8 +109,9 @@ type VideoInProgress struct {
 }
 
 type UnapprovedVideo struct {
-	URL     string
-	VideoID string
+	URL      string
+	VideoID  string
+	Category string
 }
 
 type VideoDetail struct {

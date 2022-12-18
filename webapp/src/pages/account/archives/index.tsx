@@ -19,6 +19,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import ArchivalEventsPage from "./events/[download_id]";
 import UnapprovedVideosPage from "./unapprovedvideos";
+import InferenceCategoriesPage from "./inferencecategories";
 
 const darkTheme = createTheme({
   palette: {
@@ -116,14 +117,15 @@ function NewArchivePage() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Page title="View and manage your archives">
-        <span><NewVideoForm onNewURL={createNewArchival} /></span>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label={<b>Archives</b>} {...a11yProps(0)} />
           <Tab label={<b>Video Downloads</b>} {...a11yProps(1)} />
           <Tab label={<b>Logs</b>} {...a11yProps(2)} />
           <Tab label={<b>Unapproved Videos</b>} {...a11yProps(3)} />
+          <Tab label={<b>Inference Categories</b>} {...a11yProps(4)} />
         </Tabs>
         <TabPanel value={value} index={0}>
+        <span><NewVideoForm onNewURL={createNewArchival} /></span>
         <StartCardList>
           {!requests ? (
             <LoadingBar />
@@ -146,6 +148,9 @@ function NewArchivePage() {
         </TabPanel>
         <TabPanel value={value} index={3}>
           <UnapprovedVideosPage downloadID="all"></UnapprovedVideosPage>
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <InferenceCategoriesPage downloadID="all"></InferenceCategoriesPage>
         </TabPanel>
       </Page>
     </ThemeProvider>

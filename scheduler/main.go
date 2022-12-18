@@ -75,27 +75,39 @@ func main() {
 		}()
 	}
 
+	repo := models.NewArchiveRequest(cfg.Conn)
+
+	// Wipe the in-progress downloads that didn't finish
+	err = repo.WipeDownloadsInProgress()
+	if err != nil {
+		log.Fatal("Could not wipe downloads in progress. Err: %s", err)
+	}
+
+	// TODDO: sync worker exit becausse schcema isn't up yet
+	worker, err := syncmanager.NewWorker(repo, cfg.SocksConnStr, cfg.SyncPollDelay)
+	if err != nil {
+		log.Fatalf("Sync worker exited wth err: %s", err)
+	}
+
+	// Sync worker
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 
-		repo := models.NewArchiveRequest(cfg.Conn)
-
-		// Wipe the in-progress downloads that didn't finish
-		err := repo.WipeDownloadsInProgress()
-		if err != nil {
-			log.Fatal("Could not wipe downloads in progress. Err: %s", err)
-		}
-
-		// TODDO: sync worker exit becausse schcema isn't up yet
-		worker, err := syncmanager.NewWorker(repo, cfg.SocksConnStr, cfg.SyncPollDelay)
-		if err != nil {
-			log.Fatalf("Sync worker exited wth err: %s", err)
-		}
-
 		err = worker.Sync()
 		if err != nil {
 			log.Fatalf("Sync worker exited while syncing with err: %s", err)
+		}
+	}()
+
+	// Category inference worker
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		err = worker.RunVideoClassificationLoop(ctx)
+		if err != nil {
+			log.Fatalf("Classification worker exited with err: %s", err)
 		}
 	}()
 

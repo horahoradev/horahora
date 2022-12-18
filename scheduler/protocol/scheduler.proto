@@ -21,6 +21,18 @@ service Scheduler {
     rpc ApproveVideo(ApproveVideoReq) returns (Empty) {}
 
     rpc UnapproveVideo(ApproveVideoReq) returns (Empty) {}
+
+    rpc GetInferenceCategories(Empty) returns (InferenceList) {}
+    rpc AddInferenceCategory(InferenceEntry) returns (Empty) {}
+}
+
+message InferenceList {
+    repeated InferenceEntry Entries = 1;
+}
+
+message InferenceEntry {
+    string Tag = 1;
+    string Category = 2;
 }
 
 message downloadsInProgressRequest {}
@@ -37,6 +49,7 @@ message UnapprovedList {
 message UnapprovedVideo {
     string VideoID = 1;
     string url = 2;
+    string category = 3;
 }
 
 message ApproveVideoReq {

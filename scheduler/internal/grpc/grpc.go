@@ -10,7 +10,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
 
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/horahoradev/horahora/scheduler/internal/models"
 	proto "github.com/horahoradev/horahora/scheduler/protocol"
 	"github.com/jmoiron/sqlx"
@@ -168,4 +168,27 @@ func (s schedulerServer) ApproveVideo(ctx context.Context, req *proto.ApproveVid
 func (s schedulerServer) UnapproveVideo(ctx context.Context, req *proto.ApproveVideoReq) (*proto.Empty, error) {
 	err := s.M.UnapproveVideo(req.VideoID)
 	return &proto.Empty{}, err
+}
+
+func (s schedulerServer) GetInferenceCategories(ctx context.Context, req *proto.Empty) (*proto.InferenceList, error) {
+	entries, err := s.M.GetInferenceCategories()
+	if err != nil {
+		return nil, err
+	}
+
+	var retList []*proto.InferenceEntry
+	for _, entry := range entries {
+		e := proto.InferenceEntry{
+			Category: entry.Category,
+			Tag:      entry.Tag,
+		}
+
+		retList = append(retList, &e)
+	}
+
+	return &proto.InferenceList{Entries: retList}, err
+}
+
+func (s schedulerServer) AddInferenceCategory(ctx context.Context, entry *proto.InferenceEntry) (*proto.Empty, error) {
+	return &proto.Empty{}, s.M.AddInferenceCategory(entry)
 }

@@ -7,8 +7,9 @@ require (
 	github.com/globocom/echo-prometheus v0.1.2 // indirect
 	github.com/googollee/go-socket.io v1.6.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
+	github.com/horahoradev/horahora v0.5.1-0.20221218222730-094304eae0b2 // indirect
 	github.com/horahoradev/horahora/partyservice v0.0.0-20221119201938-57cd4dc334da
-	github.com/horahoradev/horahora/scheduler v0.0.0-20221214213206-00562045eca6
+	github.com/horahoradev/horahora/scheduler v0.0.0-20221218222730-094304eae0b2
 	github.com/horahoradev/horahora/user_service v0.0.0-20220615065242-005ce0eb6540
 	github.com/horahoradev/horahora/video_service v0.0.0-20221023234852-676c653b9466
 	github.com/labstack/echo-contrib v0.13.0
