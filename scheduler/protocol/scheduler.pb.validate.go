@@ -672,6 +672,8 @@ func (m *UnapprovedVideo) validate(all bool) error {
 
 	// no validation rules for Url
 
+	// no validation rules for Category
+
 	if len(errors) > 0 {
 		return UnapprovedVideoMultiError(errors)
 	}

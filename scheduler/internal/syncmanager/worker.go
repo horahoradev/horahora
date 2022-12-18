@@ -1,6 +1,7 @@
 package syncmanager
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -138,6 +139,56 @@ func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJS
 	return videos, nil
 }
 
+func (s *SyncWorker) RunVideoClassificationLoop(ctx context.Context) error {
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+			time.Sleep(time.Second * 30)
+		}
+
+		urls, err := s.R.GetUnclassifiedVideoURLs()
+		if err != nil {
+			return err
+		}
+
+		for _, url := range urls {
+			classification, err := s.GetVideoClassification(url.URL)
+			if err != nil {
+				return err
+			}
+
+			err = s.R.UpdateClassification(classification, url.ID)
+			if err != nil {
+				return err
+			}
+		}
+	}
+}
+
+func (s *SyncWorker) GetVideoClassification(videoURL string) (string, error) {
+	cmd := exec.Command("/bin/sh", "-c", fmt.Sprintf("youtube-dl -j %s | jq '.tags'", videoURL))
+	payload, err := cmd.Output()
+	if err != nil {
+		log.Errorf("Command `%s` finished with err %s", cmd, err)
+		return "", err
+	}
+
+	categories, err := s.R.GetInferenceCategories()
+	if err != nil {
+		return "", err
+	}
+
+	for _, category := range categories {
+		if strings.Index(string(payload), category.Tag) != -1 {
+			return category.Category, nil
+		}
+	}
+
+	return "General", nil
+}
+
 func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]string, error) {
 	// TODO: type safety, switch to enum?
 	args := []string{"yt-dlp",
@@ -166,6 +217,5 @@ func (s *SyncWorker) getVideoListString(dlReq *models.CategoryDLRequest) ([]stri
 	args[0] = "yt-dlp"
 
 	args = append(args, dlReq.Url)
-
 	return args, nil
 }

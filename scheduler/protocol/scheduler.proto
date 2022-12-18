@@ -49,6 +49,7 @@ message UnapprovedList {
 message UnapprovedVideo {
     string VideoID = 1;
     string url = 2;
+    string category = 3;
 }
 
 message ApproveVideoReq {
