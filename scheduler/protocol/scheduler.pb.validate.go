@@ -35,6 +35,244 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on InferenceList with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *InferenceList) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on InferenceList with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in InferenceListMultiError, or
+// nil if none found.
+func (m *InferenceList) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *InferenceList) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetEntries() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, InferenceListValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, InferenceListValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return InferenceListValidationError{
+					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return InferenceListMultiError(errors)
+	}
+
+	return nil
+}
+
+// InferenceListMultiError is an error wrapping multiple validation errors
+// returned by InferenceList.ValidateAll() if the designated constraints
+// aren't met.
+type InferenceListMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InferenceListMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InferenceListMultiError) AllErrors() []error { return m }
+
+// InferenceListValidationError is the validation error returned by
+// InferenceList.Validate if the designated constraints aren't met.
+type InferenceListValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InferenceListValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InferenceListValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InferenceListValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InferenceListValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InferenceListValidationError) ErrorName() string { return "InferenceListValidationError" }
+
+// Error satisfies the builtin error interface
+func (e InferenceListValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInferenceList.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InferenceListValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InferenceListValidationError{}
+
+// Validate checks the field values on InferenceEntry with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *InferenceEntry) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on InferenceEntry with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in InferenceEntryMultiError,
+// or nil if none found.
+func (m *InferenceEntry) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *InferenceEntry) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Tag
+
+	// no validation rules for Category
+
+	if len(errors) > 0 {
+		return InferenceEntryMultiError(errors)
+	}
+
+	return nil
+}
+
+// InferenceEntryMultiError is an error wrapping multiple validation errors
+// returned by InferenceEntry.ValidateAll() if the designated constraints
+// aren't met.
+type InferenceEntryMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InferenceEntryMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InferenceEntryMultiError) AllErrors() []error { return m }
+
+// InferenceEntryValidationError is the validation error returned by
+// InferenceEntry.Validate if the designated constraints aren't met.
+type InferenceEntryValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InferenceEntryValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InferenceEntryValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InferenceEntryValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InferenceEntryValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InferenceEntryValidationError) ErrorName() string { return "InferenceEntryValidationError" }
+
+// Error satisfies the builtin error interface
+func (e InferenceEntryValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInferenceEntry.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InferenceEntryValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InferenceEntryValidationError{}
+
 // Validate checks the field values on DownloadsInProgressRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
