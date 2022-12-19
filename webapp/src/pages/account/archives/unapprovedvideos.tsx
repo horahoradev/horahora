@@ -95,7 +95,7 @@ function UnapprovedVideosPage(params: any) {
   }
 
 
-  let filteredVideos = unapprovedvideos ? unapprovedvideos.filter((ele) => category == null || ele.Category == category) : [];
+  let filteredVideos = unapprovedvideos ? unapprovedvideos.filter((ele: any) => category == null || ele.Category == category) : [];
 
 
   return (
