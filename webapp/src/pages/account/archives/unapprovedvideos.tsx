@@ -86,7 +86,7 @@ function UnapprovedVideosPage(params: any) {
     return () => clearInterval(interval);
   }, []);
 
-  function handleChange(e) {
+  function handleChange(e: any) {
     if (e.target.value == "") {
       setCategory(null);
       return;
