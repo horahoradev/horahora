@@ -39,7 +39,7 @@ func (r *RouteHandler) addInferenceCategory(c echo.Context) error {
 	category := c.FormValue("category")
 	tag := c.FormValue("tag")
 
-	_, err := r.s.AddInferenceCategory(context.Background(), &schedulerproto.InferenceEntry{
+	_, err = r.s.AddInferenceCategory(context.Background(), &schedulerproto.InferenceEntry{
 		Category: category,
 		Tag:      tag,
 	})
