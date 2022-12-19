@@ -9,6 +9,15 @@ import (
 )
 
 func (r *RouteHandler) getInferenceCategories(c echo.Context) error {
+	profile, err := r.getUserProfileInfo(c)
+	if err != nil {
+		return err
+	}
+
+	if !(profile.Rank >= 1) {
+		return c.String(http.StatusForbidden, "Insufficient user status")
+	}
+
 	categories, err := r.s.GetInferenceCategories(context.Background(), &schedulerproto.Empty{})
 	if err != nil {
 		return err
@@ -18,6 +27,15 @@ func (r *RouteHandler) getInferenceCategories(c echo.Context) error {
 }
 
 func (r *RouteHandler) addInferenceCategory(c echo.Context) error {
+	profile, err := r.getUserProfileInfo(c)
+	if err != nil {
+		return err
+	}
+
+	if !(profile.Rank >= 1) {
+		return c.String(http.StatusForbidden, "Insufficient user status")
+	}
+
 	category := c.FormValue("category")
 	tag := c.FormValue("tag")
 
