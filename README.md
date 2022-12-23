@@ -75,3 +75,6 @@ Horahora comes with Gluetun support out of the box. To enable it, you'll need to
 (this currently isn't functioning, I'll fix it later)
 
 Backup_service writes psql dumps of the three databases (userservice, videoservice, scheduler) to backblaze. To restore, place the three latest dumps in the sql dir, `docker-compose up`, run migrations, then run restore.sh from within the container.
+
+## Dedication
+This repository is dedicated to my friend Zihao of otomads.com (defunct). I hope you're still alive...
