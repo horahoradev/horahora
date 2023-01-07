@@ -13,9 +13,10 @@ server {
 
     }
 
-    location /otomads {
+    location ~* /otomads/([a-zA-Z0-9\-]*)(\.mp4|) {
+        add_header Content-Type $content_type;
         set $backend_service horaminio;
-        proxy_pass http://$backend_service:9000$request_uri;
+        proxy_pass http://$backend_service:9000/otomads/$1;
     }
 
     location /chat {
