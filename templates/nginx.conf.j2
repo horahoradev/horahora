@@ -2,6 +2,7 @@ server {
     listen       80;
     listen  [::]:80;
     server_name  {{ origin }};
+    default_type video/mp4;
 
     error_log /dev/stderr debug;
     client_max_body_size 20M;
