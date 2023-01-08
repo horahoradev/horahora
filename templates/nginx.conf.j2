@@ -16,18 +16,13 @@ server {
 
     location ~* /otomads/([a-zA-Z0-9\-]*)\.thumb{
         set $backend_service horaminio;
-        proxy_pass http://$backend_service:9000/$1;
+        proxy_pass http://$backend_service:9000/otomads/$1;
     }
 
     location ~* /otomads/([a-zA-Z0-9\-]*){
         more_set_headers "Content-Type: video/mp4";
         set $backend_service horaminio;
-        proxy_pass http://$backend_service:9000/$1;
-    }
-
-    location ~* /otomads/([a-zA-Z0-9\-]*)(\.thumb|\.jpg) {
-        set $backend_service horaminio;
-        proxy_pass http://$backend_service:9000/$1;
+        proxy_pass http://$backend_service:9000/otomads/$1;
     }
 
     location /chat {
