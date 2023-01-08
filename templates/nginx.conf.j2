@@ -3,6 +3,7 @@ server {
     listen  [::]:80;
     server_name  {{ origin }};
     include /etc/nginx/mime.types;
+    default_type video/mp4;
 
     error_log /dev/stderr debug;
     client_max_body_size 20M;
@@ -14,9 +15,14 @@ server {
     }
 
     location ~* /otomads/([a-zA-Z0-9\-]*)(\.mp4|) {
-        add_header Content-Type $content_type;
+        more_set_headers "Content-Type: video/mp4";
         set $backend_service horaminio;
-        proxy_pass http://$backend_service:9000/otomads/$1;
+        proxy_pass http://$backend_service:9000/$1;
+    }
+
+    location ~* /otomads/([a-zA-Z0-9\-]*)\.thumb {
+        set $backend_service horaminio;
+        proxy_pass http://$backend_service:9000/$1;
     }
 
     location /chat {
