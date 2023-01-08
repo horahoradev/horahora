@@ -255,7 +255,7 @@ services:
       - HTTPPROXY_LOG=on
       - BLOCK_MALCIOUS=off
   nginx:
-    image: nginx:mainline
+    image: anroe/nginx-headers-more
     restart: unless-stopped
     ports:
       - "80:80"
