@@ -14,9 +14,9 @@ server {
 
     }
 
-    location ~* /otomads/([a-zA-Z0-9\-]*)\.thumb{
+    location ~* /otomads/([a-zA-Z0-9\-]*)(\.thumb) {
         set $backend_service horaminio;
-        proxy_pass http://$backend_service:9000/otomads/$1;
+        proxy_pass http://$backend_service:9000/otomads/$1$2;
     }
 
     location ~* /otomads/([a-zA-Z0-9\-]*){
