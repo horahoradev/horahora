@@ -101,15 +101,15 @@ func main() {
 	}()
 
 	// Category inference worker
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	// wg.Add(1)
+	// go func() {
+	// 	defer wg.Done()
 
-		err = worker.RunVideoClassificationLoop(ctx)
-		if err != nil {
-			log.Fatalf("Classification worker exited with err: %s", err)
-		}
-	}()
+	// 	err = worker.RunVideoClassificationLoop(ctx)
+	// 	if err != nil {
+	// 		log.Fatalf("Classification worker exited with err: %s", err)
+	// 	}
+	// }()
 
 	wg.Add(1)
 	go func() {

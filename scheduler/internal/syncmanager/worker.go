@@ -156,7 +156,7 @@ func (s *SyncWorker) RunVideoClassificationLoop(ctx context.Context) error {
 		for _, url := range urls {
 			classification, err := s.GetVideoClassification(url.URL)
 			if err != nil {
-				return err
+				continue
 			}
 
 			err = s.R.UpdateClassification(classification, url.ID)
