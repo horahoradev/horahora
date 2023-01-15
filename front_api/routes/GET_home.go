@@ -49,6 +49,12 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		return c.String(http.StatusForbidden, err.Error())
 	}
 
+	unapprovedVal, err := url.QueryUnescape(c.QueryParam("unapproved"))
+	if err != nil {
+		log.Error("Failed to unecape unapproved data")
+		return c.String(http.StatusForbidden, err.Error())
+	}
+
 	// Default
 	if orderByVal == "" {
 		orderByVal = "upload_date"
@@ -81,6 +87,7 @@ func (h *RouteHandler) getHome(c echo.Context) error {
 		SearchVal:      search,
 		PageNumber:     pageNumber,
 		ShowUnapproved: showUnapproved,
+		UnapprovedOnly: unapprovedVal == "true",
 	}
 
 	videoList, err := h.v.GetVideoList(context.TODO(), &req)

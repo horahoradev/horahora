@@ -1852,6 +1852,8 @@ func (m *VideoQueryConfig) validate(all bool) error {
 
 	// no validation rules for ShowUnapproved
 
+	// no validation rules for UnapprovedOnly
+
 	if len(errors) > 0 {
 		return VideoQueryConfigMultiError(errors)
 	}
