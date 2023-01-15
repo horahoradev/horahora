@@ -212,9 +212,9 @@ func (v *VideoModel) AddRatingToVideoID(ratingUID, videoID int64, ratingValue fl
 
 // For now, this only supports either fromUserID or withTag. Can support both in future, need to switch to
 // goqu and write better tests
-func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, searchVal string, showUnapproved bool,
+func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum int64, fromUserID int64, searchVal string, showUnapproved, unapprovedOnly bool,
 	category videoproto.OrderCategory) ([]*videoproto.Video, error) {
-	sql, err := v.generateVideoListSQL(direction, pageNum, fromUserID, searchVal, showUnapproved, category)
+	sql, err := v.generateVideoListSQL(direction, pageNum, fromUserID, searchVal, showUnapproved, unapprovedOnly, category)
 	if err != nil {
 		return nil, err
 	}
@@ -257,7 +257,7 @@ func (v *VideoModel) GetVideoList(direction videoproto.SortDirection, pageNum in
 }
 
 // FIXME: optimization: move to redis once I figure out what types of queries are necessary
-func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVal string, showUnapproved bool) (int64, error) {
+func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVal string, showUnapproved, unapprovedOnly bool) (int64, error) {
 	var sql string
 	var args []interface{}
 	switch {
@@ -266,6 +266,9 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 		if !showUnapproved {
 			// oh no no no no FIXME
 			sql = sql + " AND is_approved = true"
+		} else if unapprovedOnly {
+			// NO!!!!!!!!!!!!!!!!!!!!!!!!!!! FIXME
+			sql = sql + " AND is_approved = false"
 		}
 
 		args = []interface{}{fromUserID}
@@ -315,7 +318,7 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 	return l, nil
 }
 
-func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, searchVal string, showUnapproved bool, orderCategory videoproto.OrderCategory) (string, error) {
+func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pageNum, fromUserID int64, searchVal string, showUnapproved, unapprovedOnly bool, orderCategory videoproto.OrderCategory) (string, error) {
 	minResultNum := (pageNum - 1) * NumResultsPerPage
 	dialect := goqu.Dialect("postgres")
 
@@ -381,6 +384,8 @@ func (v *VideoModel) generateVideoListSQL(direction videoproto.SortDirection, pa
 	if !showUnapproved {
 		// only show approved
 		ds = ds.Where(goqu.C("is_approved").Eq(true))
+	} else if unapprovedOnly {
+		ds = ds.Where(goqu.C("is_approved").Eq(false))
 	}
 
 	// Only show transcoded videos
@@ -731,7 +736,7 @@ func (v *VideoModel) MakeUpvote(userID, commentID int64, isUpvote bool) error {
 	}
 
 	sql := "INSERT INTO comment_upvotes (user_id, comment_id, vote_score) VALUES ($1, $2, $3)" +
-		"ON CONFLICT (user_id, comment_id) DO update SET vote_score = $4"
+		"ON CONFLICT (user_id, commsortDirectionent_id) DO update SET vote_score = $4"
 	_, err := v.db.Exec(sql, userID, commentID, voteScore, voteScore)
 	if err != nil {
 		return err

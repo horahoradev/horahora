@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/go-redis/redis/v8"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/google/uuid"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -29,7 +29,7 @@ import (
 
 	"github.com/horahoradev/horahora/video_service/internal/models"
 
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	proto "github.com/horahoradev/horahora/video_service/protocol"
 
@@ -490,13 +490,13 @@ func (g GRPCServer) GetVideoList(ctx context.Context, queryConfig *proto.VideoQu
 	switch queryConfig.OrderBy {
 	case proto.OrderCategory_rating, proto.OrderCategory_views, proto.OrderCategory_upload_date, proto.OrderCategory_my_ratings:
 		videos, err := g.VideoModel.GetVideoList(queryConfig.Direction, queryConfig.PageNumber,
-			queryConfig.FromUserID, queryConfig.SearchVal, queryConfig.ShowUnapproved, queryConfig.OrderBy)
+			queryConfig.FromUserID, queryConfig.SearchVal, queryConfig.ShowUnapproved, queryConfig.UnapprovedOnly, queryConfig.OrderBy)
 		if err != nil {
 			log.Errorf("Could not get video list. Err: %s", err)
 			return nil, err
 		}
 
-		numberOfVideos, err := g.VideoModel.GetNumberOfSearchResultsForQuery(queryConfig.FromUserID, queryConfig.SearchVal, queryConfig.ShowUnapproved)
+		numberOfVideos, err := g.VideoModel.GetNumberOfSearchResultsForQuery(queryConfig.FromUserID, queryConfig.SearchVal, queryConfig.ShowUnapproved, queryConfig.UnapprovedOnly)
 		if err != nil {
 			log.Errorf("Could not get count of entries for query. Err: %s", err)
 			return nil, err

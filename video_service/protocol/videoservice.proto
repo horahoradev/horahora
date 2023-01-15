@@ -130,6 +130,7 @@ message VideoQueryConfig {
     string SearchVal = 4;
     int64 fromUserID = 5; // domestic user ID
     bool showUnapproved = 6;
+    bool unapprovedOnly = 7;
 }
 
 
