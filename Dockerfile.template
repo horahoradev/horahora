@@ -1,0 +1,7 @@
+from python:latest
+
+WORKDIR /gen
+
+RUN pip3 install jinja2 pycryptodome
+
+ENTRYPOINT python3 /gen/templates/generate-compose.py
