@@ -172,36 +172,6 @@ services:
     volumes:
       - ./user_service:/horahora/userservice
 
-  partyservice:
-    {% if build_images %}
-    build:
-      context: partyservice
-      dockerfile: Dockerfile
-      args:
-        GOLANG_IMAGE: ${GOLANG_IMAGE}
-        GOLANG_AIR_VERSION: ${GOLANG_AIR_VERSION}
-      labels:
-        org.opencontainers.image.source: https://github.com/horahoradev/horahora
-        name: partyservice
-    {%- else -%}
-    image: ghcr.io/horahoradev/horahora/horahora.partyservice:main
-    {% endif %}
-    depends_on:
-      - postgres
-    restart: unless-stopped
-    env_file:
-      - ./.env
-    environment:
-      - pgs_host=postgres
-      - pgs_port=5432
-      - pgs_user=admin
-      - pgs_pass=password
-      - pgs_db=partyservice
-      - VideoServiceGRPCAddress=videoservice:7777
-      - GRPCPort=7777
-    volumes:
-      - ./partyservice:/horahora/partyservice
-
   postgres:
     build:
       context: .
@@ -274,12 +244,7 @@ services:
       - ./static:/etc/nginx/html/static/images
       - ./configs/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./videos/otomads:/etc/nginx/html/otomads
-  prometheus:
-    image: prom/prometheus
-    restart: unless-stopped
-    volumes:
-      - ./prometheus/:/etc/prometheus/
-      - prometheus_data:/prometheus
+
   rabbitmq:
     build:
       context: activemq
@@ -329,6 +294,13 @@ services:
 # I some of the config below from https://github.com/vegasbrianc/prometheus
 # thank you for your work!
 
+  {% if build_monitoring %}
+  prometheus:
+    image: prom/prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
     volumes:
@@ -371,8 +343,13 @@ services:
   redis:
     image: "redis:alpine"
     restart: always
+  {% endif %}
 
 volumes:
+  {% if build_monitoring %}
   postgresdata_dev: {}
   prometheus_data: {}
   grafana_data: {}
+  {% else %}
+  postgresdata_dev: {}
+  {% endif %}
