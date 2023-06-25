@@ -15,9 +15,9 @@ then
   exit 1
 fi
 
-pip3 install jinja2 pycryptodome && python3 ./templates/generate-compose.py
+sudo docker build -f Dockerfile.template -t gen . && docker run -it -v $(pwd):/gen -t gen
 
 # docker compose by default reads `.env` file
 # so no need to pass it as an option
-DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 sudo docker-compose build --parallel --progress=plain && \
-sudo docker-compose up -d
+DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 sudo docker compose build --parallel --progress=plain && \
+sudo docker compose up -d
