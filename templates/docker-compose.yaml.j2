@@ -270,6 +270,10 @@ services:
     volumes:
       - ./stomp_proxy:/horahora/stomp_proxy
 
+  redis:
+    image: "redis:alpine"
+    restart: always
+
 # MIT License
 
 # Copyright (c) 2017 Brian Christner
@@ -339,12 +343,7 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/:/etc/grafana/provisioning/
-
-  redis:
-    image: "redis:alpine"
-    restart: always
-  {% endif %}
-
+ {% endif %}
 volumes:
   {% if build_monitoring %}
   postgresdata_dev: {}

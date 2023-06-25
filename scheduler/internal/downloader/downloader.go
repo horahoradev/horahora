@@ -489,7 +489,7 @@ type YTDLMetadata struct {
 		FormatID    string `json:"format_id"`
 		FormatNote  string `json:"format_note,omitempty"`
 		Container   string `json:"container,omitempty"`
-		Quality     int    `json:"quality"`
+		Quality     float64    `json:"quality"`
 		Filesize    int    `json:"filesize,omitempty"`
 		Format      string `json:"format"`
 		Protocol    string `json:"protocol"`
@@ -651,7 +651,7 @@ type YTDLMetadata struct {
 	Vbr                float64     `json:"vbr"`
 	Height             int         `json:"height"`
 	Width              int         `json:"width"`
-	Quality            int         `json:"quality"`
+	Quality            float64     `json:"quality"`
 	Tbr                float64     `json:"tbr"`
 	Format             string      `json:"format"`
 	Protocol           string      `json:"protocol"`
