@@ -1,9 +1,9 @@
+Note: this project is no longer maintained. A successor is coming :)
+
+Please contact me if you'd like to be involved.
+
 # Horahora
 ## Locally archive, browse, and share videos from nearly any site
-
-Note: this project is outdated by https://kirakira.dev (source coming soon).
-
-Horahora is a collaborative archival management tool.
 
 It allows you to:
 - download and continuously sync videos from any link supported by yt-dlp
