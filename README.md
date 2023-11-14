@@ -1,4 +1,4 @@
-Note: this project is no longer maintained. A successor is coming :)
+Note: this project is no longer maintained. The successor is: https://github.com/horahoradev/PrometheusTube
 
 Please contact me if you'd like to be involved.
 
