@@ -73,7 +73,7 @@ type VideoDeletionReqMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoDeletionReqMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -171,7 +171,7 @@ type NothingMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m NothingMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -271,7 +271,7 @@ type RecReqMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m RecReqMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -403,7 +403,7 @@ type RecRespMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m RecRespMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -508,7 +508,7 @@ type VideoRecMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoRecMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -615,7 +615,7 @@ type VideoCommentMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoCommentMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -719,7 +719,7 @@ type CommentRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CommentRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -825,7 +825,7 @@ type CommentUpvoteMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CommentUpvoteMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -959,7 +959,7 @@ type CommentListResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CommentListResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1077,7 +1077,7 @@ type CommentMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m CommentMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1195,7 +1195,7 @@ type VideoMetadataMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoMetadataMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1330,7 +1330,7 @@ type VideoListMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoListMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1444,7 +1444,7 @@ type VideoMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1549,7 +1549,7 @@ type VideoRatingMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoRatingMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1650,7 +1650,7 @@ type VideoViewingMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoViewingMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1754,7 +1754,7 @@ type VideoApprovalMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoApprovalMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1868,7 +1868,7 @@ type VideoQueryConfigMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoQueryConfigMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1970,7 +1970,7 @@ type VideoExistenceResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoExistenceResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2076,7 +2076,7 @@ type ForeignVideoCheckMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ForeignVideoCheckMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2179,7 +2179,7 @@ type VideoRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2265,9 +2265,18 @@ func (m *InputVideoChunk) validate(all bool) error {
 
 	var errors []error
 
-	switch m.Payload.(type) {
-
+	switch v := m.Payload.(type) {
 	case *InputVideoChunk_Content:
+		if v == nil {
+			err := InputVideoChunkValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetContent()).(type) {
@@ -2299,6 +2308,16 @@ func (m *InputVideoChunk) validate(all bool) error {
 		}
 
 	case *InputVideoChunk_Meta:
+		if v == nil {
+			err := InputVideoChunkValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetMeta()).(type) {
@@ -2330,6 +2349,16 @@ func (m *InputVideoChunk) validate(all bool) error {
 		}
 
 	case *InputVideoChunk_Rawmeta:
+		if v == nil {
+			err := InputVideoChunkValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetRawmeta()).(type) {
@@ -2360,6 +2389,8 @@ func (m *InputVideoChunk) validate(all bool) error {
 			}
 		}
 
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -2376,7 +2407,7 @@ type InputVideoChunkMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m InputVideoChunkMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2462,9 +2493,18 @@ func (m *ResponseVideoChunk) validate(all bool) error {
 
 	var errors []error
 
-	switch m.Payload.(type) {
-
+	switch v := m.Payload.(type) {
 	case *ResponseVideoChunk_Content:
+		if v == nil {
+			err := ResponseVideoChunkValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetContent()).(type) {
@@ -2496,6 +2536,16 @@ func (m *ResponseVideoChunk) validate(all bool) error {
 		}
 
 	case *ResponseVideoChunk_Meta:
+		if v == nil {
+			err := ResponseVideoChunkValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
 
 		if all {
 			switch v := interface{}(m.GetMeta()).(type) {
@@ -2526,6 +2576,8 @@ func (m *ResponseVideoChunk) validate(all bool) error {
 			}
 		}
 
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -2542,7 +2594,7 @@ type ResponseVideoChunkMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ResponseVideoChunkMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2645,7 +2697,7 @@ type FileContentMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m FileContentMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2746,7 +2798,7 @@ type RawMetadataMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m RawMetadataMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2864,7 +2916,7 @@ type InputFileMetadataMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m InputFileMetadataMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2974,7 +3026,7 @@ type ResponseFileMetadataMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ResponseFileMetadataMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -3078,7 +3130,7 @@ type UploadResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UploadResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
