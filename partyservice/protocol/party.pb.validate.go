@@ -75,7 +75,7 @@ type NewPartyRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m NewPartyRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -177,7 +177,7 @@ type NewPartyResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m NewPartyResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -280,7 +280,7 @@ type PartyRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m PartyRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -410,7 +410,7 @@ type VideoRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -508,7 +508,7 @@ type EmptyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m EmptyMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -610,7 +610,7 @@ type LeaderResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m LeaderResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -777,7 +777,7 @@ type PartyStateMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m PartyStateMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -881,7 +881,7 @@ type UserMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UserMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -985,7 +985,7 @@ type VideoMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}

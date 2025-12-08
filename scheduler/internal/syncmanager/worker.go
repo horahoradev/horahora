@@ -91,11 +91,12 @@ func (s *SyncWorker) syncDownloadList(dlReq *models.CategoryDLRequest) (bool, er
 }
 
 type VideoJSON struct {
-	Type  string `json:"_type"`
-	URL   string `json:"original_url"`
-	IeKey string `json:"ie_key"`
-	ID    string `json:"id"`
-	Title string `json:"title"`
+	Type  string   `json:"_type"`
+	URL   string   `json:"original_url"`
+	IeKey string   `json:"ie_key"`
+	ID    string   `json:"id"`
+	Title string   `json:"title"`
+	Tags  []string `json:"tags"`
 }
 
 func (s *SyncWorker) getDownloadList(dlReq *models.CategoryDLRequest) ([]VideoJSON, error) {
@@ -168,10 +169,18 @@ func (s *SyncWorker) RunVideoClassificationLoop(ctx context.Context) error {
 }
 
 func (s *SyncWorker) GetVideoClassification(videoURL string) (string, error) {
-	cmd := exec.Command("/bin/sh", "-c", fmt.Sprintf("yt-dlp --add-header 'Accept-Language:ja' -j %s | jq '.tags'", videoURL))
+	// Vulnerability Fix: Avoid shell injection by running command directly
+	cmd := exec.Command("yt-dlp", "--add-header", "Accept-Language:ja", "-j", videoURL)
 	payload, err := cmd.Output()
 	if err != nil {
 		log.Errorf("Command `%s` finished with err %s", cmd, err)
+		return "", err
+	}
+
+	var video VideoJSON
+	err = json.Unmarshal(payload, &video)
+	if err != nil {
+		log.Errorf("Failed to unmarshal json from yt-dlp: %s", err)
 		return "", err
 	}
 
@@ -180,9 +189,12 @@ func (s *SyncWorker) GetVideoClassification(videoURL string) (string, error) {
 		return "", err
 	}
 
-	for _, category := range categories {
-		if strings.Index(string(payload), category.Tag) != -1 {
-			return category.Category, nil
+	// Check if any of the tags match a category
+	for _, tag := range video.Tags {
+		for _, category := range categories {
+			if strings.Contains(tag, category.Tag) {
+				return category.Category, nil
+			}
 		}
 	}
 

@@ -8,13 +8,15 @@ import (
 	"encoding/pem"
 	"errors"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/horahoradev/horahora/user_service/internal/model"
 	"golang.org/x/crypto/bcrypt"
 	jose "gopkg.in/square/go-jose.v2"
 )
 
-const hashCost = 5
+const hashCost = 12
 
 func Login(username, password string, privateKey *rsa.PrivateKey, u *model.UserModel) (string, error) {
 	uid, err := u.GetUserWithUsername(username)
@@ -47,7 +49,10 @@ func Login(username, password string, privateKey *rsa.PrivateKey, u *model.UserM
 	}
 
 	// Password is valid
-	payload := JWTPayload{UID: uid}
+	payload := JWTPayload{
+		UID: uid,
+		Exp: time.Now().Add(time.Hour * 24).Unix(),
+	}
 	return CreateJWT(payload, privateKey)
 }
 
@@ -57,9 +62,15 @@ type revoltPayload struct {
 }
 
 func RegisterRevolt(email string) error {
+	// TODO: Use environment variable or proper secret management
+	password := os.Getenv("REVOLT_PASSWORD")
+	if password == "" {
+		return errors.New("REVOLT_PASSWORD environment variable not set")
+	}
+
 	payload := revoltPayload{
 		Email:    email,
-		Password: "null01010",
+		Password: password,
 	}
 
 	buf, err := json.Marshal(&payload)
@@ -106,12 +117,16 @@ func Register(username, email, password string, u *model.UserModel, privateKey *
 		return "", err
 	}
 
-	payload := JWTPayload{UID: uid}
+	payload := JWTPayload{
+		UID: uid,
+		Exp: time.Now().Add(time.Hour * 24).Unix(),
+	}
 	return CreateJWT(payload, privateKey)
 }
 
 type JWTPayload struct {
 	UID int64 `json:"uid"`
+	Exp int64 `json:"exp"`
 }
 
 func GenerateHash(password []byte) ([]byte, error) {

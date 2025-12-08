@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -25,7 +26,7 @@ func (r RouteHandler) handleRevoltLogin(c echo.Context) error {
 	log.Errorf("LOGIN FOR %v", profile.Email)
 	payload := revoltPayload{
 		Email:    profile.Email,
-		Password: "null01010",
+		Password: os.Getenv("REVOLT_PASSWORD"),
 	}
 
 	buf, err := json.Marshal(&payload)

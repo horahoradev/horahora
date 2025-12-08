@@ -3,6 +3,7 @@ package routes
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -57,21 +58,17 @@ func (r RouteHandler) upload(c echo.Context) error {
 		return err
 	}
 
-	// TODO: rewrite me, this isn't memory efficient
-	videoBytes, err := ioutil.ReadAll(videoFile)
-	if err != nil {
-		return err
-	}
-
+	// Thumbnail is small, so we can read it into memory
 	thumbBytes, err := ioutil.ReadAll(thumbFile)
 	if err != nil {
 		return err
 	}
+	thumbFile.Close()
 
 	log.Infof("Title: %s", title)
 	log.Infof("Description: %s", description)
 	log.Infof("Tags: %s", tags)
-	log.Infof("Video len: %d thumb len: %d", len(videoBytes), len(thumbBytes))
+	log.Infof("Thumb len: %d", len(thumbBytes))
 
 	uploadClient, err := r.v.UploadVideo(context.Background())
 	if err != nil {
@@ -100,13 +97,21 @@ func (r RouteHandler) upload(c echo.Context) error {
 		return err
 	}
 
-	for byteInd := 0; byteInd < len(videoBytes); byteInd += fileUploadChunkSize {
-		videoByteSlice := videoBytes[byteInd:min(len(videoBytes), byteInd+fileUploadChunkSize)]
-		log.Infof("uploading byte %d", byteInd)
+	// Stream video file
+	buffer := make([]byte, fileUploadChunkSize)
+	for {
+		n, err := videoFile.Read(buffer)
+		if err != nil && err != io.EOF {
+			return err
+		}
+		if n == 0 {
+			break
+		}
+
 		videoChunk := &videoproto.InputVideoChunk{
 			Payload: &videoproto.InputVideoChunk_Content{
 				Content: &videoproto.FileContent{
-					Data: videoByteSlice,
+					Data: buffer[:n],
 				},
 			},
 		}
@@ -115,7 +120,12 @@ func (r RouteHandler) upload(c echo.Context) error {
 		if err != nil {
 			return err
 		}
+
+		if err == io.EOF {
+			break
+		}
 	}
+	videoFile.Close()
 
 	resp, err := uploadClient.CloseAndRecv()
 	if err != nil {

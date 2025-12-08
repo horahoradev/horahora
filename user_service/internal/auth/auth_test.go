@@ -2,11 +2,11 @@ package auth
 
 import (
 	"crypto/rsa"
-	"github.com/horahoradev/horahora/user_service/internal/config"
-	"github.com/horahoradev/horahora/user_service/internal/model"
-	proto "github.com/horahoradev/horahora/user_service/protocol"
 	"log"
 	"testing"
+
+	"github.com/horahoradev/horahora/user_service/internal/config"
+	"github.com/horahoradev/horahora/user_service/internal/model"
 
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
@@ -91,7 +91,7 @@ var RegistrationTests = []struct {
 func TestDomesticRegistrationAndLogin(t *testing.T) {
 	for _, user := range RegistrationTests {
 		// FIXME: need to clean up function signature
-		_, err := Register(user.username, user.email, user.password, u, privateKey, false, "", proto.Site_niconico)
+		_, err := Register(user.username, user.email, user.password, u, privateKey, false, "", "niconico")
 		assert.NoError(t, err)
 
 		_, err = Login(user.username, user.password, privateKey, u)
@@ -100,6 +100,6 @@ func TestDomesticRegistrationAndLogin(t *testing.T) {
 }
 
 func TestForeignRegistration(t *testing.T) {
-	_, err := Register("foreignUser", "", "", u, privateKey, true, "10", proto.Site_niconico)
+	_, err := Register("foreignUser", "", "", u, privateKey, true, "10", "niconico")
 	assert.NoError(t, err)
 }
