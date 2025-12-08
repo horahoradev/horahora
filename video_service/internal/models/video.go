@@ -288,11 +288,10 @@ func (v *VideoModel) GetNumberOfSearchResultsForQuery(fromUserID int64, searchVa
 			Where(goqu.C("transcoded").Eq(true)).
 			Where(goqu.C("is_deleted").Eq(false))
 		var err error
-		sql, _, err = ds.ToSQL()
+		sql, args, err = ds.ToSQL()
 		if err != nil {
 			return 0, err
 		}
-		args = []interface{}{}
 	default:
 		sql = "SELECT COUNT(*) FROM videos WHERE transcoded=true AND is_deleted=false"
 		if !showUnapproved {

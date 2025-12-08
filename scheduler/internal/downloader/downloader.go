@@ -129,7 +129,7 @@ currVideoLoop:
 	for currentRetryNum := 1; currentRetryNum <= d.numberOfRetries+1; currentRetryNum++ {
 		select {
 		case <-ctx.Done():
-			log.Infof("Context done, returning from download request loop for parent url", video.ParentURL)
+			log.Infof("Context done, returning from download request loop for parent url %s", video.ParentURL)
 			return nil
 		default:
 		}
@@ -440,7 +440,7 @@ func (d *downloader) getVideoDownloadArgs(video *models.VideoDLRequest) ([]strin
 		"--verbose",
 		"-o",
 		// Some websites have two IDs per video, so I made it explicit just to avoid issues
-		fmt.Sprintf("%s/%s.%s", d.outputLoc, video.VideoID, "%(ext)s"),
+		fmt.Sprintf("%s/%s.%s", d.outputLoc, filepath.Base(video.VideoID), "%(ext)s"),
 	}
 
 	if d.maxFS != 0 {
@@ -484,15 +484,15 @@ type YTDLMetadata struct {
 	ID      string `json:"id"`
 	Title   string `json:"title"`
 	Formats []struct {
-		URL         string `json:"url"`
-		Ext         string `json:"ext"`
-		FormatID    string `json:"format_id"`
-		FormatNote  string `json:"format_note,omitempty"`
-		Container   string `json:"container,omitempty"`
-		Quality     float64    `json:"quality"`
-		Filesize    int    `json:"filesize,omitempty"`
-		Format      string `json:"format"`
-		Protocol    string `json:"protocol"`
+		URL         string  `json:"url"`
+		Ext         string  `json:"ext"`
+		FormatID    string  `json:"format_id"`
+		FormatNote  string  `json:"format_note,omitempty"`
+		Container   string  `json:"container,omitempty"`
+		Quality     float64 `json:"quality"`
+		Filesize    int     `json:"filesize,omitempty"`
+		Format      string  `json:"format"`
+		Protocol    string  `json:"protocol"`
 		HTTPHeaders struct {
 			UserAgent      string `json:"User-Agent"`
 			AcceptCharset  string `json:"Accept-Charset"`

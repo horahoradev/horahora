@@ -186,8 +186,8 @@ func setCookie(c echo.Context, jwt string) error {
 	cookie.Expires = time.Now().Add(24 * time.Hour)
 
 	cookie.SameSite = http.SameSiteStrictMode
-	//cookie.Secure = true // set this later
-	cookie.HttpOnly = false
+	cookie.Secure = true
+	cookie.HttpOnly = true
 
 	c.SetCookie(cookie)
 

@@ -140,7 +140,7 @@ func (g GRPCServer) UploadVideo(inpStream proto.VideoService_UploadVideoServer) 
 	// UUID for tmp filename and all uploads provides probabilistic guarantee of uniqueness
 	id, err := uuid.NewUUID()
 	if err != nil {
-		log.Error("Could not generate uuid. Err: %s", err)
+		log.Errorf("Could not generate uuid. Err: %s", err)
 		return err
 	}
 
@@ -287,12 +287,14 @@ loop:
 
 	// We've uploaded the video... can we reach it?
 	// If we can't reach it with a head request, don't commit it to the db
-	res, err := http.Head(u.String())
-	switch {
-	case err != nil:
-		return err
-	case res != nil && res.StatusCode >= 400:
-		return fmt.Errorf("recieved bad status code %v for request to %v", res.StatusCode, videoLoc)
+	if !g.Local {
+		res, err := http.Head(u.String())
+		switch {
+		case err != nil:
+			return err
+		case res != nil && res.StatusCode >= 400:
+			return fmt.Errorf("recieved bad status code %v for request to %v", res.StatusCode, videoLoc)
+		}
 	}
 
 	// This is MESSY
@@ -319,19 +321,18 @@ loop:
 }
 
 func (g GRPCServer) isOverDailyUploadLimit(sizeBytes int) bool {
-	sizeMB := sizeBytes / 1024 / 1024
+	dateTS := time.Now().Format("01-02-2006") + ":bytes"
 
-	dateTS := time.Now().Format("01-02-2006")
-
-	ret, err := g.RedisConn.IncrBy(context.Background(), dateTS, int64(sizeMB)).Result()
+	ret, err := g.RedisConn.IncrBy(context.Background(), dateTS, int64(sizeBytes)).Result()
 	if err != nil {
 		log.Errorf("could not incr upload limit. Err: %v", err)
 		return true
 	}
 
-	log.Infof("current count: %v", ret)
+	limitBytes := int64(g.MaxDailyUploadMB) * 1024 * 1024
+	log.Infof("current count: %v, limit: %v", ret, limitBytes)
 
-	return ret > int64(g.MaxDailyUploadMB)
+	return ret > limitBytes
 }
 
 func LogAndRetErr(fmtStr string, err error) error {

@@ -1,12 +1,12 @@
 package grpcserver
 
 import (
-	"github.com/horahoradev/horahora/video_service/internal/config"
 	"io"
 	"os"
 	"testing"
 
-	userproto "github.com/horahoradev/horahora/user_service/protocol"
+	"github.com/alicebob/miniredis/v2"
+	"github.com/go-redis/redis/v8"
 
 	"github.com/DATA-DOG/go-sqlmock"
 
@@ -14,8 +14,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 
+	userproto "github.com/horahoradev/horahora/user_service/protocol"
 	usermocks "github.com/horahoradev/horahora/user_service/protocol/mocks"
-	proto "github.com/horahoradev/horahora/video_service/protocol"
+	videoproto "github.com/horahoradev/horahora/video_service/protocol"
 	mocks "github.com/horahoradev/horahora/video_service/protocol/mocks"
 	"github.com/stretchr/testify/assert"
 )
@@ -44,37 +45,47 @@ func TestGRPCUpload(t *testing.T) {
 	mockClient := usermocks.NewMockUserServiceClient(mockCtrl)
 	mockClient.EXPECT().GetUserForForeignUID(gomock.Any(), gomock.Any(), gomock.Any()).Return(&mockResp, nil)
 
-	cfg, err := config.New()
+	mr, err := miniredis.Run()
+	assert.NoError(t, err)
+	defer mr.Close()
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr: mr.Addr(),
+	})
+
+	g, err := initGRPCServer(bucketName, sqlxMock, mockClient, true, "http://localhost", "s3", "", "", 0, "", 0, rdb, 50)
 	assert.NoError(t, err)
 
-	g, err := initGRPCServer(bucketName, sqlxMock, mockClient, true, cfg.RedisConn, "http://localhost")
+	file, err := os.Create("../../test_files/NO.mp4")
 	assert.NoError(t, err)
-
-	file, err := os.Open("../../test_files/NO.mp4")
-	assert.NoError(t, err)
-
 	filedata := make([]byte, 1024*1024*5) // 5 megs is enough
+	_, err = file.Write(filedata)
+	assert.NoError(t, err)
+	_, err = file.Seek(0, 0)
+	assert.NoError(t, err)
 
 	_, err = file.Read(filedata)
 	assert.NoError(t, err)
 
 	mockServ := mocks.NewMockVideoService_UploadVideoServer(mockCtrl)
-	payload := proto.InputVideoChunk{
-		Payload: &proto.InputVideoChunk_Content{
-			Content: &proto.FileContent{
+	payload := videoproto.InputVideoChunk{
+		Payload: &videoproto.InputVideoChunk_Content{
+			Content: &videoproto.FileContent{
 				Data: filedata,
 			},
 		},
 	}
 
-	metaPayload := proto.InputVideoChunk{
-		Payload: &proto.InputVideoChunk_Meta{
-			Meta: &proto.InputFileMetadata{
+	metaPayload := videoproto.InputVideoChunk{
+		Payload: &videoproto.InputVideoChunk_Meta{
+			Meta: &videoproto.InputFileMetadata{
 				Title:             "test_title",
 				Description:       "wow",
 				AuthorUID:         "1",
+				AuthorUsername:    "test_user",
 				OriginalVideoLink: "www.nicovideo.jp/watch/sm9",
-				OriginalSite:      proto.Website_niconico,
+				OriginalID:        "sm9",
+				OriginalSite:      "niconico",
 			},
 		},
 	}

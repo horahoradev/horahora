@@ -1,0 +1,29 @@
+=== RUN   TestGRPCUpload
+    grpc_test.go:49: 
+        	Error Trace:	grpc_test.go:49
+        	Error:      	Received unexpected error:
+        	            	required environment variable "redis_host" is not set. required environment variable "redis_port" is not set. required environment variable "redis_pass" is not set
+        	Test:       	TestGRPCUpload
+--- FAIL: TestGRPCUpload (0.00s)
+panic: runtime error: invalid memory address or nil pointer dereference [recovered, repanicked]
+[signal SIGSEGV: segmentation violation code=0x1 addr=0x70 pc=0xf1a13e]
+
+goroutine 13 [running]:
+testing.tRunner.func1.2({0x10836c0, 0x1b5e2f0})
+	/usr/lib/go/src/testing/testing.go:1872 +0x237
+testing.tRunner.func1()
+	/usr/lib/go/src/testing/testing.go:1875 +0x35b
+panic({0x10836c0?, 0x1b5e2f0?})
+	/usr/lib/go/src/runtime/panic.go:783 +0x132
+github.com/golang/mock/gomock.(*Controller).Finish(0xc0002318c0)
+	/home/alonexe/go/pkg/mod/github.com/golang/mock@v1.4.4/gomock/controller.go:246 +0x3e5
+panic({0x10836c0?, 0x1b5e2f0?})
+	/usr/lib/go/src/runtime/panic.go:783 +0x132
+github.com/horahoradev/horahora/video_service/internal/grpcserver.TestGRPCUpload(0xc000195340)
+	/home/alonexe/Documents/horahora/video_service/internal/grpcserver/grpc_test.go:51 +0x6de
+testing.tRunner(0xc000195340, 0x125bc70)
+	/usr/lib/go/src/testing/testing.go:1934 +0xea
+created by testing.(*T).Run in goroutine 1
+	/usr/lib/go/src/testing/testing.go:1997 +0x465
+FAIL	github.com/horahoradev/horahora/video_service/internal/grpcserver	0.007s
+FAIL

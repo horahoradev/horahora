@@ -105,7 +105,7 @@ type InferenceListMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m InferenceListMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -209,7 +209,7 @@ type InferenceEntryMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m InferenceEntryMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -309,7 +309,7 @@ type DownloadsInProgressRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m DownloadsInProgressRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -445,7 +445,7 @@ type DownloadsInProgressResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m DownloadsInProgressResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -582,7 +582,7 @@ type UnapprovedListMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UnapprovedListMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -688,7 +688,7 @@ type UnapprovedVideoMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m UnapprovedVideoMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -790,7 +790,7 @@ type ApproveVideoReqMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ApproveVideoReqMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -894,7 +894,7 @@ type VideoMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m VideoMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -992,7 +992,7 @@ type EmptyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m EmptyMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1095,7 +1095,7 @@ type RetryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m RetryRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1199,7 +1199,7 @@ type DeletionRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m DeletionRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1301,7 +1301,7 @@ type ListArchivalEntriesRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListArchivalEntriesRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1407,7 +1407,7 @@ type ListArchivalEventsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListArchivalEventsRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1543,7 +1543,7 @@ type ListArchivalEntriesResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListArchivalEntriesResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1680,7 +1680,7 @@ type ListArchivalEventsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ListArchivalEventsResponseMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1790,7 +1790,7 @@ type ArchivalEventMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ArchivalEventMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -1893,7 +1893,7 @@ type URLRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m URLRequestMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}
@@ -2009,7 +2009,7 @@ type ContentArchivalEntryMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
 func (m ContentArchivalEntryMultiError) Error() string {
-	var msgs []string
+	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
 	}

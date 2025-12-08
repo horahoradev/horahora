@@ -1,0 +1,25 @@
+panic: proto: file "videoservice.proto" has a name conflict over proto.Nothing
+		previously from: "github.com/horahoradev/horahora/user_service/protocol"
+		currently from:  "github.com/horahoradev/horahora/video_service/protocol"
+	See https://protobuf.dev/reference/go/faq#namespace-conflict
+	
+
+goroutine 1 [running]:
+google.golang.org/protobuf/reflect/protoregistry.init.func1({0x1394e80?, 0xc0001120b0?}, {0x1394e80, 0xc0001120f0})
+	/home/alonexe/go/pkg/mod/google.golang.org/protobuf@v1.36.10/reflect/protoregistry/registry.go:56 +0x1ec
+google.golang.org/protobuf/reflect/protoregistry.(*Files).RegisterFile.func1({0x13a7560, 0xc00015c0f0})
+	/home/alonexe/go/pkg/mod/google.golang.org/protobuf@v1.36.10/reflect/protoregistry/registry.go:154 +0x24e
+google.golang.org/protobuf/reflect/protoregistry.rangeTopLevelDescriptors({0x13ac4e8, 0xc0001401e0}, 0xc0002a7978)
+	/home/alonexe/go/pkg/mod/google.golang.org/protobuf@v1.36.10/reflect/protoregistry/registry.go:417 +0x131
+google.golang.org/protobuf/reflect/protoregistry.(*Files).RegisterFile(0xc00019e138, {0x13ac4e8, 0xc0001401e0})
+	/home/alonexe/go/pkg/mod/google.golang.org/protobuf@v1.36.10/reflect/protoregistry/registry.go:149 +0x67c
+google.golang.org/protobuf/internal/filedesc.Builder.Build({{0xffd81a, 0x36}, {0x1251d02, 0x109a, 0x109a}, 0x2, 0x1b, 0x0, 0x1, {0x139c100, ...}, ...})
+	/home/alonexe/go/pkg/mod/google.golang.org/protobuf@v1.36.10/internal/filedesc/build.go:112 +0x1d6
+google.golang.org/protobuf/internal/filetype.Builder.Build({{{0xffd81a, 0x36}, {0x1251d02, 0x109a, 0x109a}, 0x2, 0x1b, 0x0, 0x1, {0x0, ...}, ...}, ...})
+	/home/alonexe/go/pkg/mod/google.golang.org/protobuf@v1.36.10/internal/filetype/build.go:138 +0x185
+github.com/horahoradev/horahora/video_service/protocol.file_videoservice_proto_init()
+	/home/alonexe/Documents/horahora/video_service/protocol/videoservice.pb.go:2124 +0x2b8
+github.com/horahoradev/horahora/video_service/protocol.init.0()
+	/home/alonexe/Documents/horahora/video_service/protocol/videoservice.pb.go:2096 +0xf
+FAIL	github.com/horahoradev/horahora/video_service/internal/grpcserver	0.010s
+FAIL
